@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>by.aurorasoft</groupId>
-    <artifactId>replicator</artifactId>
+    <artifactId>library</artifactId>
     <name>library</name>
     <version>1.0</version>
 
@@ -101,7 +101,27 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${springboot.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.jayway.jsonpath</groupId>
+                    <artifactId>json-path</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
