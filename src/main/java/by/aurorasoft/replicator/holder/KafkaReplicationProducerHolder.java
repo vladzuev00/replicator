@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.holder;
 
-import by.aurorasoft.replicator.producer.KafkaProducerReplication;
+import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
 
@@ -11,9 +11,9 @@ import static java.util.Optional.ofNullable;
 
 @RequiredArgsConstructor
 public final class KafkaReplicationProducerHolder {
-    private final Map<AbsServiceRUD<?, ?, ?, ?, ?>, KafkaProducerReplication<?, ?>> producersByServices;
+    private final Map<AbsServiceRUD<?, ?, ?, ?, ?>, KafkaReplicationProducer<?, ?>> producersByServices;
 
-    public Optional<KafkaProducerReplication<?, ?>> findByService(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    public Optional<KafkaReplicationProducer<?, ?>> findByService(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
         return ofNullable(producersByServices.get(service));
     }
 }

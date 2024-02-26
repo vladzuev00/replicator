@@ -52,12 +52,12 @@ public final class KafkaProducerReplicationHolderFactory {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private KafkaProducerReplication<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private KafkaReplicationProducer<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
         final ReplicatedService annotation = service.getClass().getAnnotation(ReplicatedService.class);
         final Map<String, Object> configsByKeys = createProducerConfigsByKeys(annotation.keySerializer());
         final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
         final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
-        return new KafkaProducerReplication<>(annotation.topicName(), kafkaTemplate, schema, objectMapper);
+        return new KafkaReplicationProducer<>(annotation.topicName(), kafkaTemplate, schema, objectMapper);
     }
 
     private Map<String, Object> createProducerConfigsByKeys(final Class<? extends Serializer<?>> keySerializerType) {

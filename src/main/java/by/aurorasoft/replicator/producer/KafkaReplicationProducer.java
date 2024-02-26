@@ -10,11 +10,11 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 
-public final class KafkaProducerReplication<ID, DTO extends AbstractDto<ID>>
+public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>>
         extends KafkaProducerGenericRecordIntermediaryHooks<ID, TransportableReplication, Replication<ID, DTO>> {
     private final ObjectMapper objectMapper;
 
-    public KafkaProducerReplication(final String topicName,
+    public KafkaReplicationProducer(final String topicName,
                                     final KafkaTemplate<ID, GenericRecord> kafkaTemplate,
                                     final Schema schema,
                                     final ObjectMapper objectMapper) {
