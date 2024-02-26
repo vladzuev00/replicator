@@ -62,12 +62,24 @@
             <groupId>com.github.NikolayNN.crud-generic</groupId>
             <artifactId>crud-abstract-generic</artifactId>
             <version>${crud-generic.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.github.NikolayNN</groupId>
             <artifactId>kafka-vars</artifactId>
             <version>${kafka-vars.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-compress</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
