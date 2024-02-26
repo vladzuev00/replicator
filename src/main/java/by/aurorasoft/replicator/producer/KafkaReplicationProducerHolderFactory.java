@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 @Component
-public final class KafkaProducerReplicationHolderFactory {
+public final class KafkaReplicationProducerHolderFactory {
     private static final String PRODUCER_CONFIG_KEY_SCHEMA = "SCHEMA";
 
     private final ReplicatedServiceHolder replicatedServiceHolder;
@@ -33,7 +33,7 @@ public final class KafkaProducerReplicationHolderFactory {
     private final Schema schema;
     private final String bootstrapAddress;
 
-    public KafkaProducerReplicationHolderFactory(final ReplicatedServiceHolder replicatedServiceHolder,
+    public KafkaReplicationProducerHolderFactory(final ReplicatedServiceHolder replicatedServiceHolder,
                                                  final ObjectMapper objectMapper,
                                                  final ReplicationProducerConfig producerConfig,
                                                  @Qualifier("replicationSchema") final Schema schema,

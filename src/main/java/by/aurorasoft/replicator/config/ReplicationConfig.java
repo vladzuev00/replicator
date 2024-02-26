@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
 import by.aurorasoft.replicator.model.TransportableReplication;
-import by.aurorasoft.replicator.producer.KafkaProducerReplicationHolderFactory;
+import by.aurorasoft.replicator.producer.KafkaReplicationProducerHolderFactory;
 import org.apache.avro.Schema;
 import org.apache.avro.reflect.ReflectData;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ public class ReplicationConfig {
     }
 
     @Bean
-    public KafkaReplicationProducerHolder replicationProducerHolder(final KafkaProducerReplicationHolderFactory factory) {
+    public KafkaReplicationProducerHolder replicationProducerHolder(final KafkaReplicationProducerHolderFactory factory) {
         return factory.create();
     }
 }
