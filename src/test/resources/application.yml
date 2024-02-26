@@ -1,8 +1,4 @@
 kafka.entity-replication:
-  producer:
-    batch-size: 10
-    linger-ms: 500
-    delivery-timeout-ms: 100000
   topic:
     partition-count: 1
     replication-factor: 3

@@ -31,9 +31,9 @@ public final class ReplicationProducerConfig {
     private final int lingerMs;
     private final int deliveryTimeoutMs;
 
-    public ReplicationProducerConfig(@Value("${kafka.entity-replication.producer.batch-size}") final int batchSize,
-                                     @Value("${kafka.entity-replication.producer.linger-ms}") final int lingerMs,
-                                     @Value("${kafka.entity-replication.producer.delivery-timeout-ms}") final int deliveryTimeoutMs) {
+    public ReplicationProducerConfig(@Value("${kafka.entity-replication.producer.batch-size:#{10}}") final int batchSize,
+                                     @Value("${kafka.entity-replication.producer.linger-ms:#{500}}") final int lingerMs,
+                                     @Value("${kafka.entity-replication.producer.delivery-timeout-ms:#{100000}}") final int deliveryTimeoutMs) {
         validateBatchSize(batchSize);
         validateLingerMs(lingerMs);
         validateDeliveryTimeoutMs(deliveryTimeoutMs);
