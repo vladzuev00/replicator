@@ -34,7 +34,7 @@ public class ReplicationAspect {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @AfterReturning(pointcut = "replicatedSaveAll()", returning = "savedDtos")
     public void replicateSaveAll(final JoinPoint joinPoint, final List savedDtos) {
-        savedDtos.forEach(dto -> replicateSave(joinPoint, (AbstractDto) dto));
+        ((List<AbstractDto>) savedDtos).forEach(dto -> replicateSave(joinPoint, dto));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

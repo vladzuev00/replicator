@@ -170,8 +170,7 @@ public final class ReplicationAspectTest extends AbstractTest {
         final Long givenId = 255L;
         final Object givenPartial = new Object();
 
-        when(producerHolder.findByService(same(unProxy(service, TestCRUDService.class))))
-                .thenReturn(empty());
+        when(producerHolder.findByService(same(unProxy(service, TestCRUDService.class)))).thenReturn(empty());
 
         service.updatePartial(givenId, givenPartial);
     }
