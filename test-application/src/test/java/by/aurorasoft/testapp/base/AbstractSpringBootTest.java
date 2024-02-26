@@ -1,7 +1,7 @@
 package by.aurorasoft.testapp.base;
 
-import by.aurorasoft.kafka.base.containerinitializer.DBContainerInitializer;
-import by.aurorasoft.kafka.base.containerinitializer.KafkaContainerInitializer;
+import by.aurorasoft.testapp.base.containerinitializer.DBContainerInitializer;
+import by.aurorasoft.testapp.base.containerinitializer.KafkaContainerInitializer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.BeforeClass;
