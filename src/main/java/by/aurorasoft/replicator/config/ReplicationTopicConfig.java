@@ -27,8 +27,8 @@ public final class ReplicationTopicConfig {
     private final int partitionCount;
     private final int replicationFactor;
 
-    public ReplicationTopicConfig(@Value("${kafka.entity-replication.topic.partition-count}") final int partitionCount,
-                                  @Value("${kafka.entity-replication.topic.replication-factor}") final int replicationFactor) {
+    public ReplicationTopicConfig(@Value("${kafka.entity-replication.topic.partition-count:#{1}}") final int partitionCount,
+                                  @Value("${kafka.entity-replication.topic.replication-factor:#{3}}") final int replicationFactor) {
         validatePartitionCount(partitionCount);
         validateReplicationFactor(replicationFactor);
         this.partitionCount = partitionCount;

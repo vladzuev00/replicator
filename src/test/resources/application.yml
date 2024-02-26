@@ -1,4 +1,0 @@
-kafka.entity-replication:
-  topic:
-    partition-count: 1
-    replication-factor: 3
