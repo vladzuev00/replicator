@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Getter
-public class ReplicationTopicConfig {
+public final class ReplicationTopicConfig {
     private final int partitionCount;
     private final int replicationFactor;
 
