@@ -1,12 +1,11 @@
-package by.aurarosoft.testapp.crud.entity;
+package by.aurorasoft.testapp.crud.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,11 +14,12 @@ import java.time.LocalDate;
 @ToString
 @Builder
 @Entity
-@Table(name = "replicated_persons")
-public class ReplicatedPersonEntity extends AbstractEntity<Long> {
+@Table(name = "persons")
+public class PersonEntity extends AbstractEntity<Long> {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -27,6 +27,9 @@ public class ReplicatedPersonEntity extends AbstractEntity<Long> {
 
     @Column(name = "surname")
     private String surname;
+
+    @Column(name = "patronymic")
+    private String patronymic;
 
     @Column(name = "birth_date")
     private LocalDate birthDate;

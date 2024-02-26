@@ -1,4 +1,4 @@
-package by.aurarosoft.testapp.crud.entity;
+package by.aurorasoft.testapp.crud.entity;
 
 import org.hibernate.Hibernate;
 
