@@ -8,6 +8,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
-public abstract class AbstractTest {
+public abstract class AbstractSpringBootTest {
 
 }

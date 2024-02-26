@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.producer;
 import by.aurorasoft.kafka.serialize.AvroGenericRecordSerializer;
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.config.ReplicationProducerConfig;
-import by.aurorasoft.replicator.holder.KafkaProducerReplicationHolder;
+import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,10 +45,10 @@ public final class KafkaProducerReplicationHolderFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public KafkaProducerReplicationHolder create() {
+    public KafkaReplicationProducerHolder create() {
         return replicatedServiceHolder.getServices()
                 .stream()
-                .collect(collectingAndThen(toMap(identity(), this::createProducer), KafkaProducerReplicationHolder::new));
+                .collect(collectingAndThen(toMap(identity(), this::createProducer), KafkaReplicationProducerHolder::new));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

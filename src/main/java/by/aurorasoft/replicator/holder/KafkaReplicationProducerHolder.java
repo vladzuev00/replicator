@@ -10,7 +10,7 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
 @RequiredArgsConstructor
-public final class KafkaProducerReplicationHolder {
+public final class KafkaReplicationProducerHolder {
     private final Map<AbsServiceRUD<?, ?, ?, ?, ?>, KafkaProducerReplication<?, ?>> producersByServices;
 
     public Optional<KafkaProducerReplication<?, ?>> findByService(final AbsServiceRUD<?, ?, ?, ?, ?> service) {

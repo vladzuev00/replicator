@@ -2,8 +2,8 @@ package by.aurorasoft.replicator.aop;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.aop.ReplicationAspect.NoReplicationProducerException;
-import by.aurorasoft.replicator.base.AbstractTest;
-import by.aurorasoft.replicator.holder.KafkaProducerReplicationHolder;
+import by.aurorasoft.replicator.base.AbstractSpringBootTest;
+import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
 import by.aurorasoft.replicator.model.replication.DeleteReplication;
 import by.aurorasoft.replicator.model.replication.Replication;
 import by.aurorasoft.replicator.model.replication.SaveReplication;
@@ -36,10 +36,10 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
 
-public final class ReplicationAspectTest extends AbstractTest {
+public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
     @MockBean
-    private KafkaProducerReplicationHolder producerHolder;
+    private KafkaReplicationProducerHolder producerHolder;
 
     @Autowired
     private TestCRUDService service;
