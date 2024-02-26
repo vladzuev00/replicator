@@ -24,6 +24,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>6.1.4</spring.version>
+        <crud-generic.version>12.5-jakarta</crud-generic.version>
+        <kafka-vars.version>1.0.19-spring-6</kafka-vars.version>
+        <javacutil.version>3.42.0</javacutil.version>
+        <lombok.version>1.18.26</lombok.version>
+        <junit.version>RELEASE</junit.version>
+        <springboot.version>3.2.2</springboot.version>
     </properties>
 
     <repositories>
@@ -38,63 +45,63 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>6.1.4</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>6.1.4</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>6.1.4</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
-            <version>6.1.4</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.NikolayNN.crud-generic</groupId>
             <artifactId>crud-abstract-generic</artifactId>
-            <version>12.5-jakarta</version>
+            <version>${crud-generic.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.NikolayNN</groupId>
             <artifactId>kafka-vars</artifactId>
-            <version>1.0.19-spring-6</version>
+            <version>${kafka-vars.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>javacutil</artifactId>
-            <version>3.42.0</version>
+            <version>${javacutil.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>RELEASE</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>3.2.2</version>
+            <version>${springboot.version}</version>
             <scope>test</scope>
         </dependency>
 
