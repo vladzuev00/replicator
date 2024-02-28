@@ -1,8 +1,7 @@
 package by.aurorasoft.testapp.kafka.config;
 
-import org.apache.avro.generic.GenericRecord;
+import by.aurorasoft.replicator.model.TransportableReplication;
 import org.apache.kafka.common.serialization.LongDeserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +15,9 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import java.util.Map;
 
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
-import static org.springframework.kafka.listener.ContainerProperties.AckMode.MANUAL_IMMEDIATE;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 
+//TODO: think about do in library
 //TODO: refactor
 @Configuration
 public class KafkaConsumerConfig {
@@ -28,7 +27,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     @Autowired
-    public ConsumerFactory<Long, String> consumerFactorySyncPerson(
+    public ConsumerFactory<Long, TransportableReplication> consumerFactorySyncPerson(
             @Value("${kafka.topic.sync-person.consumer.group-id}") final String groupId
     ) {
         return createConsumerFactory(groupId);
@@ -36,26 +35,26 @@ public class KafkaConsumerConfig {
 
     @Bean
     @Autowired
-    public ConcurrentKafkaListenerContainerFactory<Long, String> listenerContainerFactorySyncPerson(
-            @Qualifier("consumerFactorySyncPerson") final ConsumerFactory<Long, String> consumerFactory
+    public ConcurrentKafkaListenerContainerFactory<Long, TransportableReplication> listenerContainerFactorySyncPerson(
+            @Qualifier("consumerFactorySyncPerson") final ConsumerFactory<Long, TransportableReplication> consumerFactory
     ) {
         return createListenerContainerFactory(consumerFactory);
     }
 
-    private <K, V> ConsumerFactory<K, V> createConsumerFactory(final String groupId) {
+    private ConsumerFactory<Long, TransportableReplication> createConsumerFactory(final String groupId) {
         final Map<String, Object> configsByNames = Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
-                GROUP_ID_CONFIG, groupId,
-                KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class,
-                VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class
+                GROUP_ID_CONFIG, groupId
+//                KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class,
+//                VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class
         );
-        return new DefaultKafkaConsumerFactory<>(configsByNames);
+        return new DefaultKafkaConsumerFactory<>(configsByNames, new LongDeserializer(), new JsonDeserializer<>(TransportableReplication.class));
     }
 
-    private static <K, V> ConcurrentKafkaListenerContainerFactory<K, V> createListenerContainerFactory(
-            final ConsumerFactory<K, V> consumerFactory
+    private static ConcurrentKafkaListenerContainerFactory<Long, TransportableReplication> createListenerContainerFactory(
+            final ConsumerFactory<Long, TransportableReplication> consumerFactory
     ) {
-        final ConcurrentKafkaListenerContainerFactory<K, V> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        final ConcurrentKafkaListenerContainerFactory<Long, TransportableReplication> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }

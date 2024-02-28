@@ -11,14 +11,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 //TODO: refactor
 @RequiredArgsConstructor
-public abstract class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> extends KafkaConsumerAbstract<ID, String> {
+public abstract class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> extends KafkaConsumerAbstract<ID, TransportableReplication> {
     private final AbsServiceCRUD<ID, ?, DTO, ?> service;
     private final ObjectMapper objectMapper;
     private final Class<DTO> dtoType;
 
     @Override
-    public void listen(final ConsumerRecord<ID, String> consumerRecord) {
-        final TransportableReplication transportableReplication = deserialize(consumerRecord.value(), TransportableReplication.class);
+    public void listen(final ConsumerRecord<ID, TransportableReplication> consumerRecord) {
+        final TransportableReplication transportableReplication = consumerRecord.value();
         final DTO dto = getDto(transportableReplication);
         transportableReplication.getType().createReplication(dto).execute(service);
     }

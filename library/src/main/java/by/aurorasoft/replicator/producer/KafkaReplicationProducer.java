@@ -9,11 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 
 //TODO: refactor
-public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> extends KafkaProducerAbstract<ID, String, TransportableReplication, Replication<ID, DTO>> {
+public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> extends KafkaProducerAbstract<ID, TransportableReplication, TransportableReplication, Replication<ID, DTO>> {
     private final ObjectMapper objectMapper;
 
     public KafkaReplicationProducer(final String topicName,
-                                    final KafkaTemplate<ID, String> kafkaTemplate,
+                                    final KafkaTemplate<ID, TransportableReplication> kafkaTemplate,
                                     final ObjectMapper objectMapper) {
         super(topicName, kafkaTemplate);
         this.objectMapper = objectMapper;
@@ -31,8 +31,8 @@ public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> ext
     }
 
     @Override
-    protected String convertTransportableToTopicValue(final TransportableReplication replication) {
-        return serialize(replication);
+    protected TransportableReplication convertTransportableToTopicValue(final TransportableReplication replication) {
+        return replication;
     }
 
     private String serialize(final Object object) {

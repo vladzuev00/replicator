@@ -40,7 +40,7 @@ public final class KafkaPersonReplicationConsumer extends KafkaReplicationConsum
             groupId = "${kafka.topic.sync-person.consumer.group-id}",
             containerFactory = "listenerContainerFactorySyncPerson"
     )
-    public void listen(final ConsumerRecord<Long, String> records) {
+    public void listen(final ConsumerRecord<Long, TransportableReplication> records) {
         super.listen(records);
         phaser.arriveAndDeregister();
     }
