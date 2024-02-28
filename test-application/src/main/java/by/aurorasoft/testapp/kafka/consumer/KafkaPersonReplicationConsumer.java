@@ -1,6 +1,7 @@
 package by.aurorasoft.testapp.kafka.consumer;
 
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
+import by.aurorasoft.replicator.model.TransportableReplication;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.producer;
 
-import by.aurorasoft.kafka.serialize.JsonPojoSerializer;
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.config.ReplicationProducerConfig;
 import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
@@ -8,10 +7,12 @@ import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -57,7 +58,7 @@ public final class KafkaReplicationProducerHolderFactory {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 KEY_SERIALIZER_CLASS_CONFIG, idSerializerType,
-                VALUE_SERIALIZER_CLASS_CONFIG, JsonPojoSerializer.class,
+                VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
                 BATCH_SIZE_CONFIG, producerConfig.getBatchSize(),
                 LINGER_MS_CONFIG, producerConfig.getLingerMs(),
                 DELIVERY_TIMEOUT_MS_CONFIG, producerConfig.getDeliveryTimeoutMs()

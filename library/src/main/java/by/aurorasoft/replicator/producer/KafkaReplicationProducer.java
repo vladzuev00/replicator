@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 
+//TODO: refactor
 public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> extends KafkaProducerAbstract<ID, String, TransportableReplication, Replication<ID, DTO>> {
     private final ObjectMapper objectMapper;
 
