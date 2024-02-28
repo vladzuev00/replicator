@@ -15,5 +15,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface ReplicatedService {
     String topicName();
 
-    Class<? extends Serializer<?>> keySerializer();
+    Class<? extends Serializer<?>> idSerializer();
 }

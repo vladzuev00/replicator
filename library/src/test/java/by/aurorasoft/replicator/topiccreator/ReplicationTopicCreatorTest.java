@@ -43,7 +43,7 @@ public final class ReplicationTopicCreatorTest extends AbstractSpringBootTest {
         assertEquals(expectedCreatedTopics, actualCreatedTopics);
     }
 
-    @ReplicatedService(topicName = "first-topic", keySerializer = LongSerializer.class)
+    @ReplicatedService(topicName = "first-topic", idSerializer = LongSerializer.class)
     static class TestFirstService extends AbsServiceRUD<
             Long,
             AbstractEntity<Long>,
@@ -57,7 +57,7 @@ public final class ReplicationTopicCreatorTest extends AbstractSpringBootTest {
         }
     }
 
-    @ReplicatedService(topicName = "second-topic", keySerializer = LongSerializer.class)
+    @ReplicatedService(topicName = "second-topic", idSerializer = LongSerializer.class)
     static class TestSecondService extends AbsServiceRUD<
             Long,
             AbstractEntity<Long>,
@@ -71,7 +71,7 @@ public final class ReplicationTopicCreatorTest extends AbstractSpringBootTest {
         }
     }
 
-    @ReplicatedService(topicName = "third-topic", keySerializer = LongSerializer.class)
+    @ReplicatedService(topicName = "third-topic", idSerializer = LongSerializer.class)
     static class TestThirdService extends AbsServiceRUD<
             Long,
             AbstractEntity<Long>,

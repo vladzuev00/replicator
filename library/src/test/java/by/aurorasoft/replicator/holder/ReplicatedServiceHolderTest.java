@@ -53,7 +53,7 @@ public final class ReplicatedServiceHolderTest extends AbstractSpringBootTest {
         return requireNonNullElse(getSingletonTarget(object), object);
     }
 
-    @ReplicatedService(topicName = "first-topic", keySerializer = LongSerializer.class)
+    @ReplicatedService(topicName = "first-topic", idSerializer = LongSerializer.class)
     static class TestFirstService extends AbsServiceRUD<
             Long,
             AbstractEntity<Long>,
@@ -67,7 +67,7 @@ public final class ReplicatedServiceHolderTest extends AbstractSpringBootTest {
         }
     }
 
-    @ReplicatedService(topicName = "second-topic", keySerializer = LongSerializer.class)
+    @ReplicatedService(topicName = "second-topic", idSerializer = LongSerializer.class)
     static class TestSecondService extends AbsServiceRUD<
             Long,
             AbstractEntity<Long>,
@@ -95,7 +95,7 @@ public final class ReplicatedServiceHolderTest extends AbstractSpringBootTest {
         }
     }
 
-    @ReplicatedService(topicName = "fourth-topic", keySerializer = LongSerializer.class)
+    @ReplicatedService(topicName = "fourth-topic", idSerializer = LongSerializer.class)
     static class TestFourthService extends AbsServiceRUD<
             Long,
             AbstractEntity<Long>,

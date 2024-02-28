@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.annotation;
 
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
-import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -17,7 +16,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
 import static org.checkerframework.javacutil.ElementUtils.getAllSupertypes;
 
-@AutoService(Processor.class)
+//@AutoService(Processor.class)
 public final class ReplicatedServiceProcessor extends AbstractProcessor {
     private static final Class<? extends Annotation> ANNOTATION = ReplicatedService.class;
 

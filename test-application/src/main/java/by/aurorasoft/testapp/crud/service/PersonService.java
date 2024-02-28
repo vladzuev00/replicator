@@ -8,7 +8,7 @@ import by.aurorasoft.testapp.crud.repository.PersonRepository;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.apache.kafka.common.serialization.LongSerializer;
 
-@ReplicatedService(topicName = "sync-person", keySerializer = LongSerializer.class)
+@ReplicatedService(topicName = "sync-person", idSerializer = LongSerializer.class)
 public class PersonService extends AbsServiceCRUD<Long, PersonEntity, Person, PersonRepository> {
 
     public PersonService(final PersonMapper mapper, final PersonRepository repository) {

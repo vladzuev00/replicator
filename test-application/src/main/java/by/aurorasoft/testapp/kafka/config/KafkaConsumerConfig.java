@@ -1,6 +1,7 @@
 package by.aurorasoft.testapp.kafka.config;
 
 import by.aurorasoft.kafka.serialize.AvroGenericRecordDeserializer;
+import by.aurorasoft.kafka.serialize.JsonPojoDeserializer;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.common.serialization.LongDeserializer;
@@ -19,9 +20,9 @@ import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS
 import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
 import static org.springframework.kafka.listener.ContainerProperties.AckMode.MANUAL_IMMEDIATE;
 
+//TODO: refactor if needed
 @Configuration
 public class KafkaConsumerConfig {
-    private static final String SCHEMA_CONFIG_NAME = "SCHEMA";
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
@@ -32,10 +33,9 @@ public class KafkaConsumerConfig {
             @Value("${kafka.topic.sync-person.consumer.group-id}") final String groupId,
             @Value("${kafka.topic.sync-person.consumer.max-poll-records}") final int maxPollRecords,
             @Value("${kafka.topic.sync-person.consumer.fetch-max-wait-ms}") final int fetchMaxWaitMs,
-            @Value("${kafka.topic.sync-person.consumer.fetch-min-bytes}") final int fetchMinBytes,
-            @Qualifier("replicationSchema") final Schema schema
+            @Value("${kafka.topic.sync-person.consumer.fetch-min-bytes}") final int fetchMinBytes
     ) {
-        return createConsumerFactory(groupId, maxPollRecords, fetchMaxWaitMs, fetchMinBytes, schema);
+        return createConsumerFactory(groupId, maxPollRecords, fetchMaxWaitMs, fetchMinBytes);
     }
 
     @Bean
@@ -49,18 +49,16 @@ public class KafkaConsumerConfig {
     private <K, V> ConsumerFactory<K, V> createConsumerFactory(final String groupId,
                                                                final int maxPollRecords,
                                                                final int fetchMaxWaitMs,
-                                                               final int fetchMinBytes,
-                                                               final Schema schema) {
+                                                               final int fetchMinBytes) {
         final Map<String, Object> configsByNames = Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 GROUP_ID_CONFIG, groupId,
                 KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class,
-                VALUE_DESERIALIZER_CLASS_CONFIG, AvroGenericRecordDeserializer.class,
+                VALUE_DESERIALIZER_CLASS_CONFIG, JsonPojoDeserializer.class,
                 MAX_POLL_RECORDS_CONFIG, maxPollRecords,
                 FETCH_MAX_WAIT_MS_CONFIG, fetchMaxWaitMs,
                 FETCH_MIN_BYTES_CONFIG, fetchMinBytes,
-                ENABLE_AUTO_COMMIT_CONFIG, false,
-                SCHEMA_CONFIG_NAME, schema
+                ENABLE_AUTO_COMMIT_CONFIG, false
         );
         return new DefaultKafkaConsumerFactory<>(configsByNames);
     }

@@ -1,37 +1,42 @@
 package by.aurorasoft.replicator.producer;
 
-import by.aurorasoft.kafka.producer.KafkaProducerGenericRecordIntermediaryHooks;
+import by.aurorasoft.kafka.producer.KafkaProducerAbstract;
 import by.aurorasoft.replicator.model.TransportableReplication;
 import by.aurorasoft.replicator.model.replication.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 
-public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>>
-        extends KafkaProducerGenericRecordIntermediaryHooks<ID, TransportableReplication, Replication<ID, DTO>> {
+public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> extends KafkaProducerAbstract<ID, String, TransportableReplication, Replication<ID, DTO>> {
     private final ObjectMapper objectMapper;
 
     public KafkaReplicationProducer(final String topicName,
-                                    final KafkaTemplate<ID, GenericRecord> kafkaTemplate,
-                                    final Schema schema,
+                                    final KafkaTemplate<ID, String> kafkaTemplate,
                                     final ObjectMapper objectMapper) {
-        super(topicName, kafkaTemplate, schema);
+        super(topicName, kafkaTemplate);
         this.objectMapper = objectMapper;
     }
 
     @Override
-    protected ID getTopicKey(final Replication<ID, DTO> replication) {
-        return replication.getEntityId();
+    public void send(final Replication<ID, DTO> replication) {
+        sendModel(replication.getEntityId(), replication);
     }
 
     @Override
     protected TransportableReplication convertModelToTransportable(final Replication<ID, DTO> replication) {
+        final String dtoJson = serialize(replication.getDto());
+        return new TransportableReplication(replication.getType(), dtoJson);
+    }
+
+    @Override
+    protected String convertTransportableToTopicValue(final TransportableReplication replication) {
+        return serialize(replication);
+    }
+
+    private String serialize(final Object object) {
         try {
-            final String dtoJson = objectMapper.writeValueAsString(replication.getDto());
-            return new TransportableReplication(replication.getType(), dtoJson);
+            return objectMapper.writeValueAsString(object);
         } catch (final JsonProcessingException cause) {
             throw new ReplicationProducingException(cause);
         }

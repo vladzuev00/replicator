@@ -218,7 +218,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
     @Setter
     @Getter
-    @ReplicatedService(topicName = "sync-dto", keySerializer = LongSerializer.class)
+    @ReplicatedService(topicName = "sync-dto", idSerializer = LongSerializer.class)
     static class TestCRUDService extends AbsServiceCRUD<
             Long,
             AbstractEntity<Long>,

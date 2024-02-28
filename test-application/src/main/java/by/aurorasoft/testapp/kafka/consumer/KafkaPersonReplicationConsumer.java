@@ -4,12 +4,10 @@ import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeoutException;
 
@@ -17,6 +15,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.rangeClosed;
 
+//TODO: refactor if it is needed because of consumer consume only one record
 @Component
 public final class KafkaPersonReplicationConsumer extends KafkaReplicationConsumer<Long, ReplicatedPerson> {
     private static final int WAIT_CONSUMING_SECONDS = 5;
@@ -40,9 +39,9 @@ public final class KafkaPersonReplicationConsumer extends KafkaReplicationConsum
             groupId = "${kafka.topic.sync-person.consumer.group-id}",
             containerFactory = "listenerContainerFactorySyncPerson"
     )
-    public void listen(final List<ConsumerRecord<Long, GenericRecord>> records) {
+    public void listen(final ConsumerRecord<Long, String> records) {
         super.listen(records);
-        records.forEach(i -> phaser.arriveAndDeregister());
+        phaser.arriveAndDeregister();
     }
 
     public boolean isSuccessConsuming() {
