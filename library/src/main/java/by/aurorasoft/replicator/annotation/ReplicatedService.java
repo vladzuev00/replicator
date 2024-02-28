@@ -16,4 +16,12 @@ public @interface ReplicatedService {
     String topicName();
 
     Class<? extends Serializer<?>> idSerializer();
+
+    int producerBatchSize() default 10;
+
+    int producerLingerMs() default 500;
+
+    int producerDeliveryTimeoutMs() default 100000;
+
+
 }
