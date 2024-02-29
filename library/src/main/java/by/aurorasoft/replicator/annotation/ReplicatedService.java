@@ -13,17 +13,24 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 @Retention(RUNTIME)
 public @interface ReplicatedService {
-    String topicName();
+    ProducerConfig producerConfig();
+    TopicConfig topicConfig();
 
-    Class<? extends Serializer<?>> idSerializer();
+    @interface ProducerConfig {
+        Class<? extends Serializer<?>> idSerializer();
 
-    int producerBatchSize() default 10;
+        int producerBatchSize() default 10;
 
-    int producerLingerMs() default 500;
+        int producerLingerMs() default 500;
 
-    int producerDeliveryTimeoutMs() default 100000;
+        int producerDeliveryTimeoutMs() default 100000;
+    }
 
-    int topicPartitionCount() default 1;
+    @interface TopicConfig {
+        String topicName();
 
-    int topicReplicationFactor() default 1;
+        int topicPartitionCount() default 1;
+
+        int topicReplicationFactor() default 1;
+    }
 }
