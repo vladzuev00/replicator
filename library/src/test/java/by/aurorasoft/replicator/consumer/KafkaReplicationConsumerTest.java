@@ -1,13 +1,10 @@
 package by.aurorasoft.replicator.consumer;
 
+import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer.ReplicationConsumingException;
 import by.aurorasoft.replicator.model.TransportableReplication;
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Value;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,16 +71,6 @@ public final class KafkaReplicationConsumerTest {
         public TestKafkaReplicationConsumer(final AbsServiceCRUD<Long, ?, TestDto, ?> service,
                                             final ObjectMapper objectMapper) {
             super(service, objectMapper, TestDto.class);
-        }
-    }
-
-    @Value
-    private static class TestDto implements AbstractDto<Long> {
-        Long id;
-
-        @JsonCreator
-        public TestDto(@JsonProperty("id") final Long id) {
-            this.id = id;
         }
     }
 }
