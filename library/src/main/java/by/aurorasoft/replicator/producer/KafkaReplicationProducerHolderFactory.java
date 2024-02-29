@@ -1,12 +1,12 @@
 package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.config.ReplicationProducerConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -25,16 +25,13 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 public final class KafkaReplicationProducerHolderFactory {
     private final ReplicatedServiceHolder replicatedServiceHolder;
     private final ObjectMapper objectMapper;
-    private final ReplicationProducerConfig producerConfig;
     private final String bootstrapAddress;
 
     public KafkaReplicationProducerHolderFactory(final ReplicatedServiceHolder replicatedServiceHolder,
                                                  final ObjectMapper objectMapper,
-                                                 final ReplicationProducerConfig producerConfig,
                                                  @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
         this.replicatedServiceHolder = replicatedServiceHolder;
         this.objectMapper = objectMapper;
-        this.producerConfig = producerConfig;
         this.bootstrapAddress = bootstrapAddress;
     }
 
@@ -46,21 +43,34 @@ public final class KafkaReplicationProducerHolderFactory {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private KafkaReplicationProducer<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        final ReplicatedService annotation = service.getClass().getAnnotation(ReplicatedService.class);
-        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(annotation.idSerializer());
+        final ProducerConfig producerConfig = getProducerConfig(service);
+        final TopicConfig topicConfig = getTopicConfig(service);
+        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
         final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
         final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
-        return new KafkaReplicationProducer<>(annotation.topicName(), kafkaTemplate, objectMapper);
+        return new KafkaReplicationProducer<>(topicConfig.name(), kafkaTemplate, objectMapper);
     }
 
-    private Map<String, Object> createProducerConfigsByKeys(final Class<? extends Serializer<?>> idSerializerType) {
+    private static ProducerConfig getProducerConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        return getReplicatedServiceAnnotation(service).producerConfig();
+    }
+
+    private static TopicConfig getTopicConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        return getReplicatedServiceAnnotation(service).topicConfig();
+    }
+
+    private static ReplicatedService getReplicatedServiceAnnotation(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        return service.getClass().getAnnotation(ReplicatedService.class);
+    }
+
+    private Map<String, Object> createProducerConfigsByKeys(final ProducerConfig config) {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
-                KEY_SERIALIZER_CLASS_CONFIG, idSerializerType,
+                KEY_SERIALIZER_CLASS_CONFIG, config.idSerializer(),
                 VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
-                BATCH_SIZE_CONFIG, producerConfig.getBatchSize(),
-                LINGER_MS_CONFIG, producerConfig.getLingerMs(),
-                DELIVERY_TIMEOUT_MS_CONFIG, producerConfig.getDeliveryTimeoutMs()
+                BATCH_SIZE_CONFIG, config.batchSize(),
+                LINGER_MS_CONFIG, config.lingerMs(),
+                DELIVERY_TIMEOUT_MS_CONFIG, config.deliveryTimeoutMs()
         );
     }
 }
