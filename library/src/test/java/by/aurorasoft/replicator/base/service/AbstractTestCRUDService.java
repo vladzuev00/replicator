@@ -21,6 +21,11 @@ public abstract class AbstractTestCRUDService extends AbsServiceCRUD<
     }
 
     @Override
+    public TestDto getById(final Long id) {
+        return new TestDto(id);
+    }
+
+    @Override
     public TestDto save(final TestDto dto) {
         return dto;
     }
@@ -41,7 +46,7 @@ public abstract class AbstractTestCRUDService extends AbsServiceCRUD<
     }
 
     @Override
-    public void delete(final Long id){
+    public void delete(final Long id) {
 
     }
 }
