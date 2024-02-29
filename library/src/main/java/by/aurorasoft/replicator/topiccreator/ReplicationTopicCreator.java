@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 public final class ReplicationTopicCreator {
     private final ReplicatedServiceHolder replicatedServiceHolder;
     private final KafkaAdmin kafkaAdmin;
-    private final ReplicationTopicConfig config;
 
     @EventListener(ContextRefreshedEvent.class)
     public void createTopics() {
@@ -24,14 +24,15 @@ public final class ReplicationTopicCreator {
     }
 
     private void createTopic(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        final NewTopic topic = TopicBuilder.name(getTopicName(service))
-                .partitions(config.getPartitionCount())
-                .replicas(config.getReplicationFactor())
+        final TopicConfig config = getTopicConfig(service);
+        final NewTopic topic = TopicBuilder.name(config.name())
+                .partitions(config.partitionCount())
+                .replicas(config.replicationFactor())
                 .build();
         kafkaAdmin.createOrModifyTopics(topic);
     }
 
-    private static String getTopicName(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        return service.getClass().getAnnotation(ReplicatedService.class).topicName();
+    private static TopicConfig getTopicConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        return service.getClass().getAnnotation(ReplicatedService.class).topicConfig();
     }
 }
