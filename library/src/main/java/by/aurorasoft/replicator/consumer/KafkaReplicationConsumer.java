@@ -18,13 +18,13 @@ public abstract class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> 
     @Override
     public void listen(final ConsumerRecord<ID, TransportableReplication> record) {
         final TransportableReplication replication = record.value();
-        final DTO dto = getDto(replication);
+        final DTO dto = deserializeDto(replication.getDtoJson());
         replication.getType().createReplication(dto).execute(service);
     }
 
-    private DTO getDto(final TransportableReplication replication) {
+    private DTO deserializeDto(final String dtoJson) {
         try {
-            return objectMapper.readValue(replication.getDtoJson(), dtoType);
+            return objectMapper.readValue(dtoJson, dtoType);
         } catch (final JsonProcessingException cause) {
             throw new ReplicationConsumingException(cause);
         }
