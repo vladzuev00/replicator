@@ -1,14 +1,16 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
-import by.aurorasoft.replicator.model.replication.Replication;
-import by.aurorasoft.replicator.model.replication.SaveReplication;
-import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
 import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.aop.ReplicationAspect.NoReplicationProducerException;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
+import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
 import by.aurorasoft.replicator.model.replication.DeleteReplication;
+import by.aurorasoft.replicator.model.replication.Replication;
+import by.aurorasoft.replicator.model.replication.SaveReplication;
 import by.aurorasoft.replicator.model.replication.UpdateReplication;
+import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
@@ -218,7 +220,10 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
     @Setter
     @Getter
-    @ReplicatedService(topicName = "sync-dto", idSerializer = LongSerializer.class)
+    @ReplicatedService(
+            producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+            topicConfig = @TopicConfig(name = "sync-dto")
+    )
     static class TestCRUDService extends AbsServiceCRUD<
             Long,
             AbstractEntity<Long>,
