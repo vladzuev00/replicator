@@ -31,6 +31,6 @@ public @interface ReplicatedService {
 
         int partitionCount() default 1;
 
-        int replicationFactor() default 1;
+        short replicationFactor() default 1;
     }
 }

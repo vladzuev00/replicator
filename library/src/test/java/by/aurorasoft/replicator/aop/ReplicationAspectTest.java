@@ -213,11 +213,6 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         return targetType.cast(target);
     }
 
-    @Value
-    private static class TestDto implements AbstractDto<Long> {
-        Long id;
-    }
-
     @Setter
     @Getter
     @ReplicatedService(
