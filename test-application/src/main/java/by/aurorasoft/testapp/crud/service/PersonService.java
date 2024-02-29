@@ -12,7 +12,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 
 @ReplicatedService(
         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-        topicConfig = @TopicConfig(topicName = "sync-person")
+        topicConfig = @TopicConfig(name = "sync-person")
 )
 public class PersonService extends AbsServiceCRUD<Long, PersonEntity, Person, PersonRepository> {
 

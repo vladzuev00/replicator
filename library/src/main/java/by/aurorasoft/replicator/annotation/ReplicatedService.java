@@ -19,18 +19,18 @@ public @interface ReplicatedService {
     @interface ProducerConfig {
         Class<? extends Serializer<?>> idSerializer();
 
-        int producerBatchSize() default 10;
+        int batchSize() default 10;
 
-        int producerLingerMs() default 500;
+        int lingerMs() default 500;
 
-        int producerDeliveryTimeoutMs() default 100000;
+        int deliveryTimeoutMs() default 100000;
     }
 
     @interface TopicConfig {
-        String topicName();
+        String name();
 
-        int topicPartitionCount() default 1;
+        int partitionCount() default 1;
 
-        int topicReplicationFactor() default 1;
+        int replicationFactor() default 1;
     }
 }
