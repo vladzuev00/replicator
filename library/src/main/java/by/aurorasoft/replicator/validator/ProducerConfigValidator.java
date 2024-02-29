@@ -1,9 +1,11 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+import org.springframework.stereotype.Component;
 
 import static by.aurorasoft.replicator.util.ValidationUtil.withinIntervalOrElseThrow;
 
+@Component
 public final class ProducerConfigValidator {
     private static final int MIN_VALID_BATCH_SIZE = 1;
     private static final int MAX_VALID_BATCH_SIZE = 10000;
