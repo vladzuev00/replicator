@@ -23,5 +23,7 @@ public @interface ReplicatedService {
 
     int producerDeliveryTimeoutMs() default 100000;
 
-    //TODO: add field for topic
+    int topicPartitionCount() default 1;
+
+    int topicReplicationFactor() default 1;
 }
