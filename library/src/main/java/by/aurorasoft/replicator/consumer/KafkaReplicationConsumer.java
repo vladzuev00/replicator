@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-//TODO: refactor
 @RequiredArgsConstructor
 public abstract class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> extends KafkaConsumerAbstract<ID, TransportableReplication> {
     private final AbsServiceCRUD<ID, ?, DTO, ?> service;
@@ -17,19 +16,15 @@ public abstract class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> 
     private final Class<DTO> dtoType;
 
     @Override
-    public void listen(final ConsumerRecord<ID, TransportableReplication> consumerRecord) {
-        final TransportableReplication transportableReplication = consumerRecord.value();
-        final DTO dto = getDto(transportableReplication);
-        transportableReplication.getType().createReplication(dto).execute(service);
+    public void listen(final ConsumerRecord<ID, TransportableReplication> record) {
+        final TransportableReplication replication = record.value();
+        final DTO dto = getDto(replication);
+        replication.getType().createReplication(dto).execute(service);
     }
 
     private DTO getDto(final TransportableReplication replication) {
-        return deserialize(replication.getDtoJson(), dtoType);
-    }
-
-    private <T> T deserialize(final String json, final Class<T> objectType) {
         try {
-            return objectMapper.readValue(json, objectType);
+            return objectMapper.readValue(replication.getDtoJson(), dtoType);
         } catch (final JsonProcessingException cause) {
             throw new ReplicationConsumingException(cause);
         }

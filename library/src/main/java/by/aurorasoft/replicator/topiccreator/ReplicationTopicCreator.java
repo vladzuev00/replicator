@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.config.ReplicationTopicConfig;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
