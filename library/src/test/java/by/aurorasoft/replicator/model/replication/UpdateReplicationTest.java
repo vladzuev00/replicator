@@ -1,9 +1,8 @@
 package by.aurorasoft.replicator.model.replication;
 
+import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.model.ReplicationType;
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
-import lombok.Value;
 import org.junit.Test;
 
 import static by.aurorasoft.replicator.model.ReplicationType.UPDATE;
@@ -33,10 +32,5 @@ public final class UpdateReplicationTest {
         givenReplication.execute(givenService, givenDto);
 
         verify(givenService, times(1)).update(same(givenDto));
-    }
-
-    @Value
-    private static class TestDto implements AbstractDto<Long> {
-        Long id;
     }
 }

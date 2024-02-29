@@ -1,13 +1,9 @@
 package by.aurorasoft.replicator.producer;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
+import by.aurorasoft.replicator.base.service.SecondTestCRUDService;
 import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
-import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -20,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.lang.reflect.Field;
@@ -67,10 +62,9 @@ public final class KafkaReplicationProducerHolderFactoryTest {
     @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void replicationProducersShouldBeCreated() {
-        final TestFirstService firstGivenService = new TestFirstService();
-        final TestSecondService secondGivenService = new TestSecondService();
-        final TestThirdService thirdGivenService = new TestThirdService();
-        final List givenServices = List.of(firstGivenService, secondGivenService, thirdGivenService);
+        final FirstTestCRUDService firstGivenService = new FirstTestCRUDService();
+        final SecondTestCRUDService secondGivenService = new SecondTestCRUDService();
+        final List givenServices = List.of(firstGivenService, secondGivenService);
 
         when(mockedReplicatedServiceHolder.getServices()).thenReturn(givenServices);
 
@@ -84,10 +78,7 @@ public final class KafkaReplicationProducerHolderFactoryTest {
                 createProducerInfo("first-topic", 10, 500, 100000),
 
                 secondGivenService,
-                createProducerInfo("second-topic", 20, 600, 110000),
-
-                thirdGivenService,
-                createProducerInfo("third-topic", 10, 500, 100000)
+                createProducerInfo("second-topic", 15, 515, 110000)
         );
         assertEquals(expectedProducersInfosByServices, actualProducersInfosByServices);
     }
@@ -172,62 +163,6 @@ public final class KafkaReplicationProducerHolderFactoryTest {
             return valueType.cast(value);
         } finally {
             field.setAccessible(false);
-        }
-    }
-
-    @ReplicatedService(
-            producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-            topicConfig = @TopicConfig(name = "first-topic")
-    )
-    static class TestFirstService extends AbsServiceRUD<
-            Long,
-            AbstractEntity<Long>,
-            AbstractDto<Long>,
-            AbsMapperEntityDto<AbstractEntity<Long>, AbstractDto<Long>>,
-            JpaRepository<AbstractEntity<Long>, Long>
-            > {
-
-        public TestFirstService() {
-            super(null, null);
-        }
-    }
-
-    @ReplicatedService(
-            producerConfig = @ProducerConfig(
-                    idSerializer = LongSerializer.class,
-                    batchSize = 20,
-                    lingerMs = 600,
-                    deliveryTimeoutMs = 110000
-            ),
-            topicConfig = @TopicConfig(name = "second-topic")
-    )
-    static class TestSecondService extends AbsServiceRUD<
-            Long,
-            AbstractEntity<Long>,
-            AbstractDto<Long>,
-            AbsMapperEntityDto<AbstractEntity<Long>, AbstractDto<Long>>,
-            JpaRepository<AbstractEntity<Long>, Long>
-            > {
-
-        public TestSecondService() {
-            super(null, null);
-        }
-    }
-
-    @ReplicatedService(
-            producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-            topicConfig = @TopicConfig(name = "third-topic")
-    )
-    static class TestThirdService extends AbsServiceRUD<
-            Long,
-            AbstractEntity<Long>,
-            AbstractDto<Long>,
-            AbsMapperEntityDto<AbstractEntity<Long>, AbstractDto<Long>>,
-            JpaRepository<AbstractEntity<Long>, Long>
-            > {
-
-        public TestThirdService() {
-            super(null, null);
         }
     }
 

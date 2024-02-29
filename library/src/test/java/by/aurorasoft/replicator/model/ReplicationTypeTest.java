@@ -1,11 +1,10 @@
 package by.aurorasoft.replicator.model;
 
+import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.model.replication.DeleteReplication;
 import by.aurorasoft.replicator.model.replication.Replication;
 import by.aurorasoft.replicator.model.replication.SaveReplication;
 import by.aurorasoft.replicator.model.replication.UpdateReplication;
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-import lombok.Value;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -31,10 +30,5 @@ public final class ReplicationTypeTest {
                 Arguments.of(UPDATE, new UpdateReplication<>(GIVEN_DTO)),
                 Arguments.of(DELETE, new DeleteReplication<>(GIVEN_DTO))
         );
-    }
-
-    @Value
-    private static class TestDto implements AbstractDto<Long> {
-        Long id;
     }
 }
