@@ -4,6 +4,8 @@ import by.aurorasoft.replicator.model.ReplicationType;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 
+import static by.aurorasoft.replicator.model.ReplicationType.UPDATE;
+
 public final class UpdateReplication<ID, DTO extends AbstractDto<ID>> extends Replication<ID, DTO> {
 
     public UpdateReplication(final DTO dto) {
@@ -12,7 +14,7 @@ public final class UpdateReplication<ID, DTO extends AbstractDto<ID>> extends Re
 
     @Override
     public ReplicationType getType() {
-        return ReplicationType.UPDATE;
+        return UPDATE;
     }
 
     @Override

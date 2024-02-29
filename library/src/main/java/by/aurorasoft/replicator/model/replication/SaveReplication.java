@@ -4,6 +4,8 @@ import by.aurorasoft.replicator.model.ReplicationType;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 
+import static by.aurorasoft.replicator.model.ReplicationType.SAVE;
+
 public final class SaveReplication<ID, DTO extends AbstractDto<ID>> extends Replication<ID, DTO> {
 
     public SaveReplication(final DTO dto) {
@@ -12,7 +14,7 @@ public final class SaveReplication<ID, DTO extends AbstractDto<ID>> extends Repl
 
     @Override
     public ReplicationType getType() {
-        return ReplicationType.SAVE;
+        return SAVE;
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 
-//TODO: refactor
 public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> extends KafkaProducerAbstract<ID, TransportableReplication, TransportableReplication, Replication<ID, DTO>> {
     private final ObjectMapper objectMapper;
 
@@ -35,9 +34,9 @@ public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> ext
         return replication;
     }
 
-    private String serialize(final Object object) {
+    private String serialize(final DTO dto) {
         try {
-            return objectMapper.writeValueAsString(object);
+            return objectMapper.writeValueAsString(dto);
         } catch (final JsonProcessingException cause) {
             throw new ReplicationProducingException(cause);
         }
