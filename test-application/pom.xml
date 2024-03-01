@@ -3,17 +3,18 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <name>test-application</name>
+
+    <groupId>by.aurorasoft</groupId>
+    <artifactId>replicator-test</artifactId>
+    <version>1.0</version>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.1</version>
         <relativePath/>
     </parent>
-
-    <groupId>by.aurorasoft</groupId>
-    <artifactId>replicator-test</artifactId>
-    <name>test-application</name>
-    <version>1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
