@@ -55,7 +55,7 @@
 
         <dependency>
             <groupId>by.aurorasoft</groupId>
-            <artifactId>library</artifactId>
+            <artifactId>replication</artifactId>
             <version>1.0</version>
         </dependency>
 
