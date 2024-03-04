@@ -8,7 +8,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 
 @RequiredArgsConstructor
 @Getter
-public abstract class KafkaReplicationConsumerConfig<ID, DTO extends AbstractDto<ID>> {
+public final class KafkaReplicationConsumerConfig<ID, DTO extends AbstractDto<ID>> {
     private final String groupId;
     private final String topic;
     private final Deserializer<ID> idDeserializer;
