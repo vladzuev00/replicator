@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 @RequiredArgsConstructor
-public abstract class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> extends KafkaConsumerAbstract<ID, TransportableReplication> {
+public final class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> extends KafkaConsumerAbstract<ID, TransportableReplication> {
     private final AbsServiceCRUD<ID, ?, DTO, ?> service;
     private final ObjectMapper objectMapper;
     private final Class<DTO> dtoType;

@@ -24,6 +24,3 @@ kafka:
       name: sync-person
       consumer:
         group-id: sync-person-group
-        max-poll-records: 2
-        fetch-max-wait-ms: 1000
-        fetch-min-bytes: 10000
