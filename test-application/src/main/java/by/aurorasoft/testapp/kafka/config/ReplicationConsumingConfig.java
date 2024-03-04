@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ReplicationConsumingConfig {
 
-    @Value("${kafka.topic.sync-person.group-id}")
+    @Value("${kafka.topic.sync-person.consumer.group-id}")
     private String groupId;
 
     @Value("${kafka.topic.sync-person.name}")

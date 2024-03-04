@@ -62,7 +62,7 @@ public final class KafkaReplicationConsumerStarter {
         endpoint.setAutoStartup(true);
         endpoint.setTopics(consumer.getTopic());
         endpoint.setMessageHandlerMethodFactory(new DefaultMessageHandlerMethodFactory());
-        endpoint.setBean(this);
+        endpoint.setBean(consumer);
         endpoint.setMethod(getMethodProcessingRecords());
         return endpoint;
     }
