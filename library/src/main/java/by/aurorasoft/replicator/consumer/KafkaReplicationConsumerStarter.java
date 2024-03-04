@@ -34,13 +34,18 @@ public final class KafkaReplicationConsumerStarter {
                 .start();
     }
 
-    private <ID> ConcurrentKafkaListenerContainerFactory<ID, TransportableReplication> createListenerContainerFactory(final KafkaReplicationConsumer<ID, ?> consumer) {
-        final ConcurrentKafkaListenerContainerFactory<ID, TransportableReplication> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    private <ID> ConcurrentKafkaListenerContainerFactory<ID, TransportableReplication> createListenerContainerFactory(
+            final KafkaReplicationConsumer<ID, ?> consumer
+    ) {
+        final ConcurrentKafkaListenerContainerFactory<ID, TransportableReplication> factory
+                = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(createConsumerFactory(consumer));
         return factory;
     }
 
-    private <ID> ConsumerFactory<ID, TransportableReplication> createConsumerFactory(final KafkaReplicationConsumer<ID, ?> consumer) {
+    private <ID> ConsumerFactory<ID, TransportableReplication> createConsumerFactory(
+            final KafkaReplicationConsumer<ID, ?> consumer
+    ) {
         return new DefaultKafkaConsumerFactory<>(
                 createConfigsByNames(consumer),
                 consumer.getIdDeserializer(),

@@ -18,18 +18,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static java.util.Objects.requireNonNull;
+import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.springframework.util.ReflectionUtils.findField;
-import static org.springframework.util.ReflectionUtils.getField;
 
 @RunWith(MockitoJUnitRunner.class)
 public final class KafkaReplicationProducerHolderFactoryTest {
@@ -153,17 +150,6 @@ public final class KafkaReplicationProducerHolderFactoryTest {
 
     private static KafkaTemplate<?, ?> getKafkaTemplate(final KafkaReplicationProducer<?, ?> producer) {
         return getFieldValue(producer, FIELD_NAME_PRODUCER_KAFKA_TEMPLATE, KafkaTemplate.class);
-    }
-
-    private static <P, T> P getFieldValue(final T target, final String fieldName, final Class<P> valueType) {
-        final Field field = requireNonNull(findField(target.getClass(), fieldName));
-        field.setAccessible(true);
-        try {
-            final Object value = getField(field, target);
-            return valueType.cast(value);
-        } finally {
-            field.setAccessible(false);
-        }
     }
 
     @Value
