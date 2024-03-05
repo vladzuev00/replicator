@@ -5,7 +5,7 @@ import org.junit.Test;
 public final class KafkaReplicationConsumerStarterTest {
 
     @Test
-    public void a() {
+    public void consumerShouldBeStarted() {
         throw new RuntimeException();
     }
 }

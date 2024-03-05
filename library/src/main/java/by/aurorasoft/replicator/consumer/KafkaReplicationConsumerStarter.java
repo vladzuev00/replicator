@@ -37,8 +37,7 @@ public final class KafkaReplicationConsumerStarter {
     private <ID> ConcurrentKafkaListenerContainerFactory<ID, TransportableReplication> createListenerContainerFactory(
             final KafkaReplicationConsumer<ID, ?> consumer
     ) {
-        final ConcurrentKafkaListenerContainerFactory<ID, TransportableReplication> factory
-                = new ConcurrentKafkaListenerContainerFactory<>();
+        final var factory = new ConcurrentKafkaListenerContainerFactory<ID, TransportableReplication>();
         factory.setConsumerFactory(createConsumerFactory(consumer));
         return factory;
     }
