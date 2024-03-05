@@ -6,7 +6,6 @@ import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,14 +23,11 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 @Component
 public final class KafkaReplicationProducerHolderFactory {
     private final ReplicatedServiceHolder replicatedServiceHolder;
-    private final ObjectMapper objectMapper;
     private final String bootstrapAddress;
 
     public KafkaReplicationProducerHolderFactory(final ReplicatedServiceHolder replicatedServiceHolder,
-                                                 final ObjectMapper objectMapper,
                                                  @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
         this.replicatedServiceHolder = replicatedServiceHolder;
-        this.objectMapper = objectMapper;
         this.bootstrapAddress = bootstrapAddress;
     }
 
