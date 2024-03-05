@@ -12,12 +12,12 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
 import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
+import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.times;
@@ -73,11 +73,36 @@ public final class ReplicationConsumingStarterTest {
 
         verify(mockedConsumerStarter, times(2)).start(consumerArgumentCaptor.capture());
 
-        throw new RuntimeException();
+        final List<KafkaReplicationConsumer<?, ?>> actualStartedConsumers = consumerArgumentCaptor.getAllValues();
+        final List<KafkaReplicationConsumer<?, ?>> expectedStartedConsumers = List.of(
+                new KafkaReplicationConsumer<>(
+                        firstGivenService,
+                        mockedObjectMapper,
+                        firstGivenDtoType,
+                        firstGivenGroupId,
+                        firstGivenTopic,
+                        firstGivenIdDeserializer
+                ),
+                new KafkaReplicationConsumer<>(
+                        secondGivenService,
+                        mockedObjectMapper,
+                        secondGivenDtoType,
+                        secondGivenGroupId,
+                        secondGivenTopic,
+                        secondGivenIdDeserializer
+                )
+        );
+        checkEquals(expectedStartedConsumers, actualStartedConsumers);
     }
 
     private ReplicationConsumingStarter createStarter(final KafkaReplicationConsumerConfig<?, ?>... consumerConfigs) {
         return new ReplicationConsumingStarter(List.of(consumerConfigs), mockedObjectMapper, mockedConsumerStarter);
+    }
+
+    private static void checkEquals(final List<KafkaReplicationConsumer<?, ?>> expected,
+                                    final List<KafkaReplicationConsumer<?, ?>> actual) {
+        assertEquals(expected.size(), actual.size());
+        range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 
     private static void checkEquals(final KafkaReplicationConsumer<?, ?> expected,
