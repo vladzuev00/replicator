@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.consumer;
 
 import by.aurorasoft.replicator.model.Replication;
+import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -28,21 +29,23 @@ public final class KafkaReplicationConsumerStarter {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public void start(final KafkaReplicationConsumer<?, ?> consumer) {
+    public <ID, DTO extends AbstractDto<ID>> void start(final KafkaReplicationConsumer<ID, DTO> consumer) {
         createListenerContainerFactory(consumer)
                 .createListenerContainer(createListenerEndpoint(consumer))
                 .start();
     }
 
-    private <ID> ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, ?>> createListenerContainerFactory(
-            final KafkaReplicationConsumer<ID, ?> consumer
+    private <ID, DTO extends AbstractDto<ID>> ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>> createListenerContainerFactory(
+            final KafkaReplicationConsumer<ID, DTO> consumer
     ) {
-        final var factory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, ?>>();
+        final var factory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>>();
         factory.setConsumerFactory(createConsumerFactory(consumer));
         return factory;
     }
 
-    private <ID> ConsumerFactory<ID, Replication<?, ?>> createConsumerFactory(final KafkaReplicationConsumer<ID, ?> consumer) {
+    private <ID, DTO extends AbstractDto<ID>> ConsumerFactory<ID, Replication<ID, DTO>> createConsumerFactory(
+            final KafkaReplicationConsumer<ID, DTO> consumer
+    ) {
         return new DefaultKafkaConsumerFactory<>(
                 createConfigsByNames(consumer),
                 consumer.getIdDeserializer(),
@@ -54,7 +57,7 @@ public final class KafkaReplicationConsumerStarter {
         return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, consumer.getGroupId());
     }
 
-    private JsonDeserializer<Replication<?, ?>> createReplicationDeserializer() {
+    private <ID, DTO extends AbstractDto<ID>> JsonDeserializer<Replication<ID, DTO>> createReplicationDeserializer() {
         return new JsonDeserializer<>(Replication.class);
     }
 
