@@ -80,4 +80,33 @@ public final class ReplicationTest extends AbstractSpringBootTest {
         final Replication<Long, TestDto> expected = new UpdateReplication<>(new TestDto(255L));
         Assert.assertEquals(expected, actual);
     }
+
+    @Test
+    public void deleteReplicationShouldBeSerializedToJson()
+            throws Exception {
+        final Replication<Long, TestDto> givenReplication = new DeleteReplication<>(255L);
+
+        final String actual = objectMapper.writeValueAsString(givenReplication);
+        final String expected = """
+                {
+                   "@type": "DeleteReplication",
+                   "entityId": 255
+                }""";
+        JSONAssert.assertEquals(expected, actual, true);
+    }
+
+    @Test
+    public void deleteReplicationShouldBeDeserializedFromJson()
+            throws Exception {
+        final String givenJson = """
+                {
+                   "@type": "DeleteReplication",
+                   "entityId": 255
+                }""";
+
+        final Replication<Long, TestDto> actual = objectMapper.readValue(givenJson, new TypeReference<>() {
+        });
+        final Replication<Long, TestDto> expected = new DeleteReplication<>(255L);
+        Assert.assertEquals(expected, actual);
+    }
 }
