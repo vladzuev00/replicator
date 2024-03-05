@@ -32,14 +32,11 @@ public final class ReplicationConsumingStarter {
     private <ID, DTO extends AbstractDto<ID>> KafkaReplicationConsumer<ID, DTO> createConsumer(
             final KafkaReplicationConsumerConfig<ID, DTO> config
     ) {
-//        return new KafkaReplicationConsumer<>(
-//                config.getService(),
-//                objectMapper,
-//                config.getDtoType(),
-//                config.getGroupId(),
-//                config.getTopic(),
-//                config.getIdDeserializer()
-//        );
-        return null;
+        return new KafkaReplicationConsumer<>(
+                config.getService(),
+                config.getGroupId(),
+                config.getTopic(),
+                config.getIdDeserializer()
+        );
     }
 }

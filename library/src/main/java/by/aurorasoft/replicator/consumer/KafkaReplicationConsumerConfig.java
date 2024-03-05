@@ -12,6 +12,5 @@ public final class KafkaReplicationConsumerConfig<ID, DTO extends AbstractDto<ID
     private final String groupId;
     private final String topic;
     private final Deserializer<ID> idDeserializer;
-    private final Class<DTO> dtoType;
     private final AbsServiceCRUD<ID, ?, DTO, ?> service;
 }
