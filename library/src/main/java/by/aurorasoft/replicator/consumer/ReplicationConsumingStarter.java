@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.consumer;
 
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -21,18 +20,7 @@ public final class ReplicationConsumingStarter {
     @EventListener(ContextRefreshedEvent.class)
     public void start() {
         consumerConfigs.stream()
-                .map(this::createConsumer)
+                .map(KafkaReplicationConsumer::new)
                 .forEach(consumerStarter::start);
-    }
-
-    private <ID, DTO extends AbstractDto<ID>> KafkaReplicationConsumer<ID, DTO> createConsumer(
-            final KafkaReplicationConsumerConfig<ID, DTO> config
-    ) {
-        return new KafkaReplicationConsumer<>(
-                config.getService(),
-                config.getGroupId(),
-                config.getTopic(),
-                config.getIdDeserializer()
-        );
     }
 }

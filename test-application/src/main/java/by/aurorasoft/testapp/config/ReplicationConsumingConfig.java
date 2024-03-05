@@ -3,6 +3,7 @@ package by.aurorasoft.testapp.config;
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ public class ReplicationConsumingConfig {
 
     @Bean
     public KafkaReplicationConsumerConfig<Long, ReplicatedPerson> consumerConfig(final ReplicatedPersonService service) {
-        return new KafkaReplicationConsumerConfig<>(groupId, topic, new LongDeserializer(), service);
+        return new KafkaReplicationConsumerConfig<>(groupId, topic, new LongDeserializer(), service, new TypeReference<>() {
+        });
     }
 }

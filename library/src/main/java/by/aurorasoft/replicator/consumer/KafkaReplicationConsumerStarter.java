@@ -19,6 +19,7 @@ import java.util.Map;
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 
+//TODO: remove generics
 @Component
 public final class KafkaReplicationConsumerStarter {
     private static final String METHOD_NAME_PROCESSING_RECORDS = "listen";
@@ -30,44 +31,45 @@ public final class KafkaReplicationConsumerStarter {
     }
 
     public <ID, DTO extends AbstractDto<ID>> void start(final KafkaReplicationConsumer<ID, DTO> consumer) {
-        createListenerContainerFactory(consumer)
-                .createListenerContainer(createListenerEndpoint(consumer))
+        final KafkaReplicationConsumerConfig<ID, DTO> config = consumer.getConfig();
+        createListenerContainerFactory(config)
+                .createListenerContainer(createListenerEndpoint(config))
                 .start();
     }
 
     private <ID, DTO extends AbstractDto<ID>> ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>> createListenerContainerFactory(
-            final KafkaReplicationConsumer<ID, DTO> consumer
+            final KafkaReplicationConsumerConfig<ID, DTO> config
     ) {
         final var factory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>>();
-        factory.setConsumerFactory(createConsumerFactory(consumer));
+        factory.setConsumerFactory(createConsumerFactory(config));
         return factory;
     }
 
     private <ID, DTO extends AbstractDto<ID>> ConsumerFactory<ID, Replication<ID, DTO>> createConsumerFactory(
-            final KafkaReplicationConsumer<ID, DTO> consumer
+            final KafkaReplicationConsumerConfig<ID, DTO> config
     ) {
         return new DefaultKafkaConsumerFactory<>(
-                createConfigsByNames(consumer),
-                consumer.getIdDeserializer(),
-                createReplicationDeserializer()
+                createConfigsByNames(config),
+                config.getIdDeserializer(),
+                createReplicationDeserializer(config)
         );
     }
 
-    private Map<String, Object> createConfigsByNames(final KafkaReplicationConsumer<?, ?> consumer) {
-        return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, consumer.getGroupId());
+    private <ID, DTO extends AbstractDto<ID>> Map<String, Object> createConfigsByNames(final KafkaReplicationConsumerConfig<ID, DTO> config) {
+        return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, config.getGroupId());
     }
 
-    private <ID, DTO extends AbstractDto<ID>> JsonDeserializer<Replication<ID, DTO>> createReplicationDeserializer() {
-        return new JsonDeserializer<>(Replication.class);
+    private <ID, DTO extends AbstractDto<ID>> JsonDeserializer<Replication<ID, DTO>> createReplicationDeserializer(final KafkaReplicationConsumerConfig<ID, DTO> config) {
+        return new JsonDeserializer<>(config.getReplicationTypeReference());
     }
 
-    private KafkaListenerEndpoint createListenerEndpoint(final KafkaReplicationConsumer<?, ?> consumer) {
+    private <ID, DTO extends AbstractDto<ID>> KafkaListenerEndpoint createListenerEndpoint(final KafkaReplicationConsumerConfig<ID, DTO> config) {
         final MethodKafkaListenerEndpoint<String, String> endpoint = new MethodKafkaListenerEndpoint<>();
-        endpoint.setGroupId(consumer.getGroupId());
+        endpoint.setGroupId(config.getGroupId());
         endpoint.setAutoStartup(true);
-        endpoint.setTopics(consumer.getTopic());
+        endpoint.setTopics(config.getTopic());
         endpoint.setMessageHandlerMethodFactory(new DefaultMessageHandlerMethodFactory());
-        endpoint.setBean(consumer);
+        endpoint.setBean(config);
         endpoint.setMethod(getMethodProcessingRecords());
         return endpoint;
     }
