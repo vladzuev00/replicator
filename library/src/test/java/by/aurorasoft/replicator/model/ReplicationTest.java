@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.replication;
+package by.aurorasoft.replicator.model;
 
 import by.aurorasoft.replicator.base.dto.TestDto;
 import com.fasterxml.jackson.core.type.TypeReference;

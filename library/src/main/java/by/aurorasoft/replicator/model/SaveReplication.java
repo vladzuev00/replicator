@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.replication;
+package by.aurorasoft.replicator.model;
 
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
@@ -12,11 +12,11 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode
 @ToString
-public final class UpdateReplication<ID, DTO extends AbstractDto<ID>> implements Replication<ID, DTO> {
+public final class SaveReplication<ID, DTO extends AbstractDto<ID>> implements Replication<ID, DTO> {
     private final DTO dto;
 
     @JsonCreator
-    public UpdateReplication(@JsonProperty("dto") final DTO dto) {
+    public SaveReplication(@JsonProperty("dto") final DTO dto) {
         this.dto = dto;
     }
 
@@ -28,6 +28,6 @@ public final class UpdateReplication<ID, DTO extends AbstractDto<ID>> implements
 
     @Override
     public void execute(final AbsServiceCRUD<ID, ?, DTO, ?> service) {
-        service.update(dto);
+        service.save(dto);
     }
 }

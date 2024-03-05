@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.replication;
+package by.aurorasoft.replicator.model;
 
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;

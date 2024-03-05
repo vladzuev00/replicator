@@ -1,9 +1,8 @@
 package by.aurorasoft.replicator.producer;
 
-import by.aurorasoft.replicator.model.TransportableReplication;
-import by.aurorasoft.replicator.model.replication.Replication;
-import by.aurorasoft.replicator.model.replication.SaveReplication;
-import by.aurorasoft.replicator.model.replication.UpdateReplication;
+import by.aurorasoft.replicator.model.Replication;
+import by.aurorasoft.replicator.model.SaveReplication;
+import by.aurorasoft.replicator.model.UpdateReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,8 +1,7 @@
 package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.kafka.producer.KafkaProducerAbstract;
-import by.aurorasoft.replicator.model.TransportableReplication;
-import by.aurorasoft.replicator.model.replication.Replication;
+import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

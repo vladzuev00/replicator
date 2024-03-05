@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.consumer;
 
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer.ReplicationConsumingException;
-import by.aurorasoft.replicator.model.TransportableReplication;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

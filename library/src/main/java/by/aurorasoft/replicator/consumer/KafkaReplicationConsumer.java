@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.consumer;
 
 import by.aurorasoft.kafka.consumer.KafkaConsumerAbstract;
-import by.aurorasoft.replicator.model.TransportableReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import com.fasterxml.jackson.core.JsonProcessingException;

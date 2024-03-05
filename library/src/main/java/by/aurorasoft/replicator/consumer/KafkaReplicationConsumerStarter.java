@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.consumer;
 
-import by.aurorasoft.replicator.model.TransportableReplication;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
