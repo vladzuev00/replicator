@@ -6,7 +6,6 @@ import by.aurorasoft.replicator.model.replication.Replication;
 import by.aurorasoft.replicator.model.replication.SaveReplication;
 import by.aurorasoft.replicator.model.replication.UpdateReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-import by.nhorushko.crudgeneric.v2.service.AbsServiceR;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
@@ -48,10 +47,8 @@ public class ReplicationAspect {
     public Object replicateDeleteById(final ProceedingJoinPoint joinPoint)
             throws Throwable {
         final Object entityId = joinPoint.getArgs()[0];
-        final AbsServiceR service = (AbsServiceR) joinPoint.getTarget();
-        final AbstractDto dto = service.getById(entityId);
         final Object result = joinPoint.proceed();
-        replicate(joinPoint, new DeleteReplication(dto));
+        replicate(joinPoint, new DeleteReplication(entityId));
         return result;
     }
 
