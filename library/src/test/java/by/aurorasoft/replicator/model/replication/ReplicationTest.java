@@ -56,10 +56,28 @@ public final class ReplicationTest extends AbstractSpringBootTest {
         final String actual = objectMapper.writeValueAsString(givenReplication);
         final String expected = """
                 {
-                  "@class": "by.aurorasoft.replicator.model.replication.UpdateReplication",
-                  "type": "UPDATE",
-                  "entityId": 255
+                   "@type": "UpdateReplication",
+                   "dto": {
+                     "id": 255
+                   }
                 }""";
         JSONAssert.assertEquals(expected, actual, true);
+    }
+
+    @Test
+    public void updateReplicationShouldBeDeserializedFromJson()
+            throws Exception {
+        final String givenJson = """
+                {
+                   "@type": "UpdateReplication",
+                   "dto": {
+                     "id": 255
+                   }
+                }""";
+
+        final Replication<Long, TestDto> actual = objectMapper.readValue(givenJson, new TypeReference<>() {
+        });
+        final Replication<Long, TestDto> expected = new UpdateReplication<>(new TestDto(255L));
+        Assert.assertEquals(expected, actual);
     }
 }
