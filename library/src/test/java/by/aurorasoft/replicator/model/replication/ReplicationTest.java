@@ -23,7 +23,7 @@ public final class ReplicationTest extends AbstractSpringBootTest {
         final String actual = objectMapper.writeValueAsString(givenReplication);
         final String expected = """
                 {
-                   "type": "SaveReplication",
+                   "@type": "SaveReplication",
                    "dto": {
                      "id": 255
                    }
@@ -36,7 +36,7 @@ public final class ReplicationTest extends AbstractSpringBootTest {
             throws Exception {
         final String givenJson = """
                 {
-                   "type": "SaveReplication",
+                   "@type": "SaveReplication",
                    "dto": {
                      "id": 255
                    }
