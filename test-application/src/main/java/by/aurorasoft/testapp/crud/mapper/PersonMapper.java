@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public final class PersonMapper extends AbsMapperEntityDto<PersonEntity, Person> {
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public PersonMapper(final ModelMapper modelMapper, final EntityManager entityManager) {
         super(modelMapper, entityManager, PersonEntity.class, Person.class);
     }

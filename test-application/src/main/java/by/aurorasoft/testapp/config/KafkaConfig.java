@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.kafka.config;
+package by.aurorasoft.testapp.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
 
 @Configuration
-public class KafkaAdminConfig {
+public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;

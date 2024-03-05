@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.kafka.config;
+package by.aurorasoft.testapp.config;
 
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
