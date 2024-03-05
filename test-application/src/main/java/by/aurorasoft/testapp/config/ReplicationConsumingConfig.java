@@ -19,6 +19,6 @@ public class ReplicationConsumingConfig {
 
     @Bean
     public KafkaReplicationConsumerConfig<Long, ReplicatedPerson> consumerConfig(final ReplicatedPersonService service) {
-        return new KafkaReplicationConsumerConfig<>(groupId, topic, new LongDeserializer(), ReplicatedPerson.class, service);
+        return new KafkaReplicationConsumerConfig<>(groupId, topic, new LongDeserializer(), service);
     }
 }
