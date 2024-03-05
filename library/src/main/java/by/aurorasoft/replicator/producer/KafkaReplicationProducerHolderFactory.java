@@ -48,7 +48,7 @@ public final class KafkaReplicationProducerHolderFactory {
         final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
         final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
         final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
-        return new KafkaReplicationProducer<>(topicConfig.name(), kafkaTemplate, objectMapper);
+        return new KafkaReplicationProducer<>(topicConfig.name(), kafkaTemplate);
     }
 
     private static ProducerConfig getProducerConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
