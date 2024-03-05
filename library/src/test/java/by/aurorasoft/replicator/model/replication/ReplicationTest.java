@@ -1,52 +1,65 @@
 package by.aurorasoft.replicator.model.replication;
 
+import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.dto.TestDto;
-import by.aurorasoft.replicator.model.ReplicationType;
-import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.*;
 
-public final class ReplicationTest {
+public final class ReplicationTest extends AbstractSpringBootTest {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
-    public void entityIdShouldBeGot() {
-        final Long givenId = 255L;
-        final TestDto givenDto = new TestDto(givenId);
-        final TestReplication givenReplication = new TestReplication(givenDto);
+    public void saveReplicationShouldBeSerializedToJson()
+            throws Exception {
+        final Replication<Long, TestDto> givenReplication = new SaveReplication<>(new TestDto(255L));
 
-        final Long actual = givenReplication.getEntityId();
-        assertSame(givenId, actual);
+        final String actual = objectMapper.writeValueAsString(givenReplication);
+        final String expected = """
+                {
+                   "type": "SaveReplication",
+                   "dto": {
+                     "id": 255
+                   }
+                }""";
+        JSONAssert.assertEquals(expected, actual, true);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void replicationShouldBeExecuted() {
-        final TestDto givenDto = new TestDto(255L);
-        final TestReplication givenReplication = new TestReplication(givenDto);
+    public void saveReplicationShouldBeDeserializedFromJson()
+            throws Exception {
+        final String givenJson = """
+                {
+                   "type": "SaveReplication",
+                   "dto": {
+                     "id": 255
+                   }
+                }""";
 
-        final AbsServiceCRUD<Long, ?, TestDto, ?> givenService = mock(AbsServiceCRUD.class);
-
-        givenReplication.execute(givenService);
-
-        verify(givenService, times(1)).save(same(givenDto));
+        final Replication<Long, TestDto> actual = objectMapper.readValue(givenJson, new TypeReference<>() {
+        });
+        final Replication<Long, TestDto> expected = new SaveReplication<>(new TestDto(255L));
+        Assert.assertEquals(expected, actual);
     }
 
-    private static final class TestReplication extends Replication<Long, TestDto> {
+    @Test
+    public void updateReplicationShouldBeSerializedToJson()
+            throws Exception {
+        final Replication<Long, TestDto> givenReplication = new UpdateReplication<>(new TestDto(255L));
 
-        public TestReplication(final TestDto dto) {
-            super(dto);
-        }
-
-        @Override
-        public ReplicationType getType() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        protected void execute(final AbsServiceCRUD<Long, ?, TestDto, ?> service, final TestDto dto) {
-            service.save(dto);
-        }
+        final String actual = objectMapper.writeValueAsString(givenReplication);
+        final String expected = """
+                {
+                  "@class": "by.aurorasoft.replicator.model.replication.UpdateReplication",
+                  "type": "UPDATE",
+                  "entityId": 255
+                }""";
+        JSONAssert.assertEquals(expected, actual, true);
     }
 }

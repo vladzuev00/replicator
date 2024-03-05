@@ -25,8 +25,9 @@ public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> ext
 
     @Override
     protected TransportableReplication convertModelToTransportable(final Replication<ID, DTO> replication) {
-        final String dtoJson = serialize(replication.getDto());
-        return new TransportableReplication(replication.getType(), dtoJson);
+//        final String dtoJson = serialize(replication.getDto());
+//        return new TransportableReplication(replication.getType(), dtoJson);
+        return null;
     }
 
     @Override

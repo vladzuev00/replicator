@@ -24,7 +24,8 @@ public enum ReplicationType {
     DELETE {
         @Override
         public <ID, DTO extends AbstractDto<ID>> DeleteReplication<ID, DTO> createReplication(final DTO dto) {
-            return new DeleteReplication<>(dto);
+//            return new DeleteReplication<>(dto);
+            return null;
         }
     };
 

@@ -1,17 +1,27 @@
 package by.aurorasoft.replicator.model.replication;
 
-import by.aurorasoft.replicator.model.ReplicationType;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-import static by.aurorasoft.replicator.model.ReplicationType.SAVE;
-
-@RequiredArgsConstructor
+@Getter
+@EqualsAndHashCode
+@ToString
 public final class SaveReplication<ID, DTO extends AbstractDto<ID>> implements Replication<ID, DTO> {
     private final DTO dto;
 
+    @JsonCreator
+    public SaveReplication(@JsonProperty("dto") final DTO dto) {
+        this.dto = dto;
+    }
+
     @Override
+    @JsonIgnore
     public ID getEntityId() {
         return dto.getId();
     }
@@ -19,10 +29,5 @@ public final class SaveReplication<ID, DTO extends AbstractDto<ID>> implements R
     @Override
     public void execute(final AbsServiceCRUD<ID, ?, DTO, ?> service) {
         service.save(dto);
-    }
-
-    @Override
-    public ReplicationType getType() {
-        return SAVE;
     }
 }
