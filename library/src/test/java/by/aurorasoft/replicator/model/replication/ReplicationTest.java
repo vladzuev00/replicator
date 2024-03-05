@@ -1,112 +1,102 @@
 package by.aurorasoft.replicator.model.replication;
 
-import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.dto.TestDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.stream.Stream;
 
 
-public final class ReplicationTest extends AbstractSpringBootTest {
+public final class ReplicationTest {
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Test
-    public void saveReplicationShouldBeSerializedToJson()
+    @ParameterizedTest
+    @MethodSource("provideReplicationAndExpectedJson")
+    public void replicationShouldBeSerializedToJson(final Replication<Long, TestDto> givenReplication,
+                                                    final String expected)
             throws Exception {
-        final Replication<Long, TestDto> givenReplication = new SaveReplication<>(new TestDto(255L));
-
         final String actual = objectMapper.writeValueAsString(givenReplication);
-        final String expected = """
-                {
-                   "@type": "SaveReplication",
-                   "dto": {
-                     "id": 255
-                   }
-                }""";
         JSONAssert.assertEquals(expected, actual, true);
     }
 
-    @Test
-    public void saveReplicationShouldBeDeserializedFromJson()
+    @ParameterizedTest
+    @MethodSource("provideJsonAndExpectedReplication")
+    public void replicationShouldBeDeserializedFromJson(final String givenJson,
+                                                        final Replication<Long, TestDto> expected)
             throws Exception {
-        final String givenJson = """
-                {
-                   "@type": "SaveReplication",
-                   "dto": {
-                     "id": 255
-                   }
-                }""";
-
         final Replication<Long, TestDto> actual = objectMapper.readValue(givenJson, new TypeReference<>() {
         });
-        final Replication<Long, TestDto> expected = new SaveReplication<>(new TestDto(255L));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
-    @Test
-    public void updateReplicationShouldBeSerializedToJson()
-            throws Exception {
-        final Replication<Long, TestDto> givenReplication = new UpdateReplication<>(new TestDto(255L));
-
-        final String actual = objectMapper.writeValueAsString(givenReplication);
-        final String expected = """
-                {
-                   "@type": "UpdateReplication",
-                   "dto": {
-                     "id": 255
-                   }
-                }""";
-        JSONAssert.assertEquals(expected, actual, true);
+    private static Stream<Arguments> provideReplicationAndExpectedJson() {
+        return Stream.of(
+                Arguments.of(
+                        new SaveReplication<>(new TestDto(255L)),
+                        """
+                                {
+                                   "@type": "SaveReplication",
+                                   "dto": {
+                                     "id": 255
+                                   }
+                                }"""
+                ),
+                Arguments.of(
+                        new UpdateReplication<>(new TestDto(255L)),
+                        """
+                                {
+                                   "@type": "UpdateReplication",
+                                   "dto": {
+                                     "id": 255
+                                   }
+                                }"""
+                ),
+                Arguments.of(
+                        new DeleteReplication<>(255L),
+                        """
+                                {
+                                   "@type": "DeleteReplication",
+                                   "entityId": 255
+                                }"""
+                )
+        );
     }
 
-    @Test
-    public void updateReplicationShouldBeDeserializedFromJson()
-            throws Exception {
-        final String givenJson = """
-                {
-                   "@type": "UpdateReplication",
-                   "dto": {
-                     "id": 255
-                   }
-                }""";
-
-        final Replication<Long, TestDto> actual = objectMapper.readValue(givenJson, new TypeReference<>() {
-        });
-        final Replication<Long, TestDto> expected = new UpdateReplication<>(new TestDto(255L));
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void deleteReplicationShouldBeSerializedToJson()
-            throws Exception {
-        final Replication<Long, TestDto> givenReplication = new DeleteReplication<>(255L);
-
-        final String actual = objectMapper.writeValueAsString(givenReplication);
-        final String expected = """
-                {
-                   "@type": "DeleteReplication",
-                   "entityId": 255
-                }""";
-        JSONAssert.assertEquals(expected, actual, true);
-    }
-
-    @Test
-    public void deleteReplicationShouldBeDeserializedFromJson()
-            throws Exception {
-        final String givenJson = """
-                {
-                   "@type": "DeleteReplication",
-                   "entityId": 255
-                }""";
-
-        final Replication<Long, TestDto> actual = objectMapper.readValue(givenJson, new TypeReference<>() {
-        });
-        final Replication<Long, TestDto> expected = new DeleteReplication<>(255L);
-        Assert.assertEquals(expected, actual);
+    private static Stream<Arguments> provideJsonAndExpectedReplication() {
+        return Stream.of(
+                Arguments.of(
+                        """
+                                {
+                                   "@type": "SaveReplication",
+                                   "dto": {
+                                     "id": 255
+                                   }
+                                }""",
+                        new SaveReplication<>(new TestDto(255L))
+                ),
+                Arguments.of(
+                        """
+                                {
+                                   "@type": "UpdateReplication",
+                                   "dto": {
+                                     "id": 255
+                                   }
+                                }""",
+                        new UpdateReplication<>(new TestDto(255L))
+                ),
+                Arguments.of(
+                        """
+                                {
+                                   "@type": "DeleteReplication",
+                                   "entityId": 255
+                                }""",
+                        new DeleteReplication<>(255L)
+                )
+        );
     }
 }
