@@ -11,7 +11,7 @@ import static org.springframework.util.ReflectionUtils.getField;
 @UtilityClass
 public final class ReflectionUtil {
 
-    public static <P, T> P getFieldValue(final T target, final String fieldName, final Class<P> valueType) {
+    public static <V, T> V getFieldValue(final T target, final String fieldName, final Class<V> valueType) {
         final Field field = requireNonNull(findField(target.getClass(), fieldName));
         field.setAccessible(true);
         try {
