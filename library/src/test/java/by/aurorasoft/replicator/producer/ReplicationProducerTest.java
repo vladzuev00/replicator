@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public final class KafkaReplicationProducerTest {
+public final class ReplicationProducerTest {
     private static final String GIVEN_TOPIC_NAME = "sync-dto";
 
     @Mock
