@@ -1,8 +1,9 @@
 package by.aurorasoft.replicator.consumer.starter;
 
-import by.aurorasoft.replicator.ReplicationListenerEndpointFactory;
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
+import by.aurorasoft.replicator.deserializer.ReplicationDeserializer;
+import by.aurorasoft.replicator.factory.ReplicationListenerEndpointFactory;
 import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -62,9 +62,7 @@ public final class KafkaReplicationConsumerStarter {
         return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, config.getGroupId());
     }
 
-    private <ID, DTO extends AbstractDto<ID>> JsonDeserializer<Replication<ID, DTO>> createReplicationDeserializer(final KafkaReplicationConsumerConfig<ID, DTO> config) {
-        JsonDeserializer<Replication<ID, DTO>> deserializer = new JsonDeserializer<>(config.getReplicationTypeReference(), objectMapper);
-        deserializer.setUseTypeHeaders(false);
-        return deserializer;
+    private <ID, DTO extends AbstractDto<ID>> ReplicationDeserializer<ID, DTO> createReplicationDeserializer(final KafkaReplicationConsumerConfig<ID, DTO> config) {
+        return new ReplicationDeserializer<>(config.getReplicationTypeReference(), objectMapper);
     }
 }

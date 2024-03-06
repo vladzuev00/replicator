@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator;
+package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
 import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
@@ -12,48 +12,46 @@ import java.lang.reflect.Method;
 
 @Component
 public final class ReplicationListenerEndpointFactory {
-    private static final String METHOD_NAME_PROCESSING_REPLICATION = "listen";
+    private static final String PROCESSING_METHOD_NAME = "listen";
 
     public KafkaListenerEndpoint create(final KafkaReplicationConsumer<?, ?> consumer) {
-        final KafkaReplicationConsumerConfig<?, ?> consumerConfig = consumer.getConfig();
+        final KafkaReplicationConsumerConfig<?, ?> config = consumer.getConfig();
         final MethodKafkaListenerEndpoint<String, String> endpoint = new MethodKafkaListenerEndpoint<>();
-        endpoint.setGroupId(consumerConfig.getGroupId());
+        endpoint.setGroupId(config.getGroupId());
         endpoint.setAutoStartup(true);
-        endpoint.setTopics(consumerConfig.getTopic());
+        endpoint.setTopics(config.getTopic());
         endpoint.setMessageHandlerMethodFactory(new DefaultMessageHandlerMethodFactory());
         endpoint.setBean(consumer);
-        endpoint.setMethod(getMethodProcessingReplication());
+        endpoint.setMethod(getProcessingMethod());
         return endpoint;
     }
 
-    private static Method getMethodProcessingReplication() {
+    private static Method getProcessingMethod() {
         try {
-            return KafkaReplicationConsumer.class.getMethod(METHOD_NAME_PROCESSING_REPLICATION, ConsumerRecord.class);
+            return KafkaReplicationConsumer.class.getMethod(PROCESSING_METHOD_NAME, ConsumerRecord.class);
         } catch (final NoSuchMethodException cause) {
-            throw new NoMethodProcessingReplicationException(
-                    "Method processing replication should be named as %s".formatted(METHOD_NAME_PROCESSING_REPLICATION)
-            );
+            throw new NoProcessingMethodException("Method '%s' doesn't exist".formatted(PROCESSING_METHOD_NAME));
         }
     }
 
-    static final class NoMethodProcessingReplicationException extends RuntimeException {
+    static final class NoProcessingMethodException extends RuntimeException {
 
         @SuppressWarnings("unused")
-        public NoMethodProcessingReplicationException() {
+        public NoProcessingMethodException() {
 
         }
 
-        public NoMethodProcessingReplicationException(final String description) {
+        public NoProcessingMethodException(final String description) {
             super(description);
         }
 
         @SuppressWarnings("unused")
-        public NoMethodProcessingReplicationException(final Exception cause) {
+        public NoProcessingMethodException(final Exception cause) {
             super(cause);
         }
 
         @SuppressWarnings("unused")
-        public NoMethodProcessingReplicationException(final String description, final Exception cause) {
+        public NoProcessingMethodException(final String description, final Exception cause) {
             super(description, cause);
         }
     }
