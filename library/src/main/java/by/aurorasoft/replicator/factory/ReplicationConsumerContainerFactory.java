@@ -50,7 +50,7 @@ public final class ReplicationConsumerContainerFactory {
             final ReplicationConsumerConfig<ID, DTO> config
     ) {
         final Map<String, Object> configsByNames = createConfigsByNames(config);
-        final var replicationDeserializer = replicationDeserializerFactory.createDeserializer(config);
+        final var replicationDeserializer = replicationDeserializerFactory.create(config);
         return new DefaultKafkaConsumerFactory<>(configsByNames, config.getIdDeserializer(), replicationDeserializer);
     }
 

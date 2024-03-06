@@ -45,7 +45,7 @@ public final class ReplicationDeserializerFactoryTest {
         };
         when(givenConfig.getReplicationTypeReference()).thenReturn(givenTypeReference);
 
-        final ReplicationDeserializer<Long, TestDto> actual = factory.createDeserializer(givenConfig);
+        final ReplicationDeserializer<Long, TestDto> actual = factory.create(givenConfig);
 
         final ObjectMapper actualObjectMapper = getObjectMapper(actual);
         assertSame(mockedObjectMapper, actualObjectMapper);
