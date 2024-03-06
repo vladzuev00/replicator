@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public final class KafkaReplicationConsumerStarter {
+public final class ReplicationConsumerStarter {
     private final ReplicationListenerContainerFactory containerFactory;
     private final ReplicationListenerEndpointFactory endpointFactory;
 
-    public <ID, DTO extends AbstractDto<ID>> void start(final KafkaReplicationConsumer<ID, DTO> consumer) {
+    public <ID, DTO extends AbstractDto<ID>> void start(final ReplicationConsumer<ID, DTO> consumer) {
         containerFactory.create(consumer.getConfig())
                 .createListenerContainer(endpointFactory.create(consumer))
                 .start();

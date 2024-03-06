@@ -1,6 +1,6 @@
 package by.aurorasoft.testapp.config;
 
-import by.aurorasoft.replicator.consuming.consumer.KafkaReplicationConsumerConfig;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,8 +19,8 @@ public class ReplicationConsumingConfig {
     private String topic;
 
     @Bean
-    public KafkaReplicationConsumerConfig<Long, ReplicatedPerson> consumerConfig(final ReplicatedPersonService service) {
-        return new KafkaReplicationConsumerConfig<>(groupId, topic, new LongDeserializer(), service, new TypeReference<>() {
+    public ReplicationConsumerConfig<Long, ReplicatedPerson> consumerConfig(final ReplicatedPersonService service) {
+        return new ReplicationConsumerConfig<>(groupId, topic, new LongDeserializer(), service, new TypeReference<>() {
         });
     }
 }

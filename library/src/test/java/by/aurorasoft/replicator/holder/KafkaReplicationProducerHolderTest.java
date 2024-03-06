@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.holder;
 
-import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,16 +19,16 @@ public final class KafkaReplicationProducerHolderTest {
     @Test
     public void producerShouldBeFoundByService() {
         final AbsServiceRUD<?, ?, ?, ?, ?> givenService = mock(AbsServiceRUD.class);
-        final KafkaReplicationProducer<?, ?> givenProducer = mock(KafkaReplicationProducer.class);
-        final Map<AbsServiceRUD<?, ?, ?, ?, ?>, KafkaReplicationProducer<?, ?>> givenProducersByServices = Map.of(
+        final ReplicationProducer<?, ?> givenProducer = mock(ReplicationProducer.class);
+        final Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?, ?>> givenProducersByServices = Map.of(
                 givenService,
                 givenProducer
         );
-        final KafkaReplicationProducerHolder givenHolder = new KafkaReplicationProducerHolder(givenProducersByServices);
+        final ReplicationProducerHolder givenHolder = new ReplicationProducerHolder(givenProducersByServices);
 
-        final Optional<KafkaReplicationProducer<?, ?>> optionalActual = givenHolder.findByService(givenService);
+        final Optional<ReplicationProducer<?, ?>> optionalActual = givenHolder.findByService(givenService);
         assertTrue(optionalActual.isPresent());
-        final KafkaReplicationProducer<?, ?> actual = optionalActual.get();
+        final ReplicationProducer<?, ?> actual = optionalActual.get();
         assertSame(givenProducer, actual);
     }
 
@@ -36,14 +36,14 @@ public final class KafkaReplicationProducerHolderTest {
     public void producerShouldNotBeFoundByService() {
         final AbsServiceRUD<?, ?, ?, ?, ?> firstGivenService = mock(AbsServiceRUD.class);
         final AbsServiceRUD<?, ?, ?, ?, ?> secondGivenService = mock(AbsServiceRUD.class);
-        final KafkaReplicationProducer<?, ?> givenProducer = mock(KafkaReplicationProducer.class);
-        final Map<AbsServiceRUD<?, ?, ?, ?, ?>, KafkaReplicationProducer<?, ?>> givenProducersByServices = Map.of(
+        final ReplicationProducer<?, ?> givenProducer = mock(ReplicationProducer.class);
+        final Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?, ?>> givenProducersByServices = Map.of(
                 firstGivenService,
                 givenProducer
         );
-        final KafkaReplicationProducerHolder givenHolder = new KafkaReplicationProducerHolder(givenProducersByServices);
+        final ReplicationProducerHolder givenHolder = new ReplicationProducerHolder(givenProducersByServices);
 
-        final Optional<KafkaReplicationProducer<?, ?>> optionalActual = givenHolder.findByService(secondGivenService);
+        final Optional<ReplicationProducer<?, ?>> optionalActual = givenHolder.findByService(secondGivenService);
         assertTrue(optionalActual.isEmpty());
     }
 }

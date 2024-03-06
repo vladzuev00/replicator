@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
-import by.aurorasoft.replicator.producer.KafkaReplicationProducerHolderFactory;
+import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+import by.aurorasoft.replicator.producer.ReplicationProducerHolderFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class ReplicationConfig {
 
     @Bean
-    public KafkaReplicationProducerHolder replicationProducerHolder(final KafkaReplicationProducerHolderFactory factory) {
+    public ReplicationProducerHolder replicationProducerHolder(final ReplicationProducerHolderFactory factory) {
         return factory.create();
     }
 }

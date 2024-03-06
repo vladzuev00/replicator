@@ -4,12 +4,12 @@ import by.aurorasoft.replicator.aop.ReplicationAspect.NoReplicationProducerExcep
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
-import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.model.DeleteReplication;
 import by.aurorasoft.replicator.model.Replication;
 import by.aurorasoft.replicator.model.SaveReplication;
 import by.aurorasoft.replicator.model.UpdateReplication;
-import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -29,7 +29,7 @@ import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget
 public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
     @MockBean
-    private KafkaReplicationProducerHolder producerHolder;
+    private ReplicationProducerHolder producerHolder;
 
     @Autowired
     private FirstTestCRUDService service;
@@ -41,7 +41,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
     @SuppressWarnings("unchecked")
     public void saveShouldBeReplicated() {
         final TestDto givenDto = new TestDto(255L);
-        final KafkaReplicationProducer<Long, TestDto> givenProducer = mock(KafkaReplicationProducer.class);
+        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -71,7 +71,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         final TestDto secondGivenDto = new TestDto(256L);
         final List<TestDto> givenDtos = List.of(firstGivenDto, secondGivenDto);
 
-        final KafkaReplicationProducer<Long, TestDto> givenProducer = mock(KafkaReplicationProducer.class);
+        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -101,7 +101,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
     @SuppressWarnings("unchecked")
     public void updateShouldBeReplicated() {
         final TestDto givenDto = new TestDto(255L);
-        final KafkaReplicationProducer<Long, TestDto> givenProducer = mock(KafkaReplicationProducer.class);
+        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -131,7 +131,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         final TestDto givenDto = new TestDto(givenId);
 
         final Object givenPartial = new Object();
-        final KafkaReplicationProducer<Long, TestDto> givenProducer = mock(KafkaReplicationProducer.class);
+        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -160,7 +160,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
     public void deleteByIdShouldBeReplicated() {
         final Long givenId = 255L;
 
-        final KafkaReplicationProducer<Long, TestDto> givenProducer = mock(KafkaReplicationProducer.class);
+        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 

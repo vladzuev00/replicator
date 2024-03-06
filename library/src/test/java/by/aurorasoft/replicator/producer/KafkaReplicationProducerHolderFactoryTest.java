@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
 import by.aurorasoft.replicator.base.service.SecondTestCRUDService;
-import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.AllArgsConstructor;
@@ -40,11 +40,11 @@ public final class KafkaReplicationProducerHolderFactoryTest {
     @Mock
     private ReplicatedServiceHolder mockedReplicatedServiceHolder;
 
-    private KafkaReplicationProducerHolderFactory factory;
+    private ReplicationProducerHolderFactory factory;
 
     @Before
     public void initializeFactory() {
-        factory = new KafkaReplicationProducerHolderFactory(mockedReplicatedServiceHolder, GIVEN_BOOTSTRAP_ADDRESS);
+        factory = new ReplicationProducerHolderFactory(mockedReplicatedServiceHolder, GIVEN_BOOTSTRAP_ADDRESS);
     }
 
     @Test
@@ -56,7 +56,7 @@ public final class KafkaReplicationProducerHolderFactoryTest {
 
         when(mockedReplicatedServiceHolder.getServices()).thenReturn(givenServices);
 
-        final KafkaReplicationProducerHolder actual = factory.create();
+        final ReplicationProducerHolder actual = factory.create();
         final var actualProducersInfosByServices = findProducersByServices(actual)
                 .entrySet()
                 .stream()
@@ -72,8 +72,8 @@ public final class KafkaReplicationProducerHolderFactoryTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<AbsServiceRUD<?, ?, ?, ?, ?>, KafkaReplicationProducer<?, ?>> findProducersByServices(
-            final KafkaReplicationProducerHolder holder
+    private static Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?, ?>> findProducersByServices(
+            final ReplicationProducerHolder holder
     ) {
         return getFieldValue(holder, FIELD_NAME_HOLDER_PRODUCERS_BY_SERVICES, Map.class);
     }
@@ -92,7 +92,7 @@ public final class KafkaReplicationProducerHolderFactoryTest {
                 .build();
     }
 
-    private static TestProducerInfo createProducerInfo(final KafkaReplicationProducer<?, ?> producer) {
+    private static TestProducerInfo createProducerInfo(final ReplicationProducer<?, ?> producer) {
         return TestProducerInfo.builder()
                 .topicName(getTopicName(producer))
                 .keySerializerType(getKeySerializerType(producer))
@@ -102,28 +102,28 @@ public final class KafkaReplicationProducerHolderFactoryTest {
                 .build();
     }
 
-    private static String getTopicName(final KafkaReplicationProducer<?, ?> producer) {
+    private static String getTopicName(final ReplicationProducer<?, ?> producer) {
         return getFieldValue(producer, FIELD_NAME_PRODUCER_TOPIC_NAME, String.class);
     }
 
     @SuppressWarnings("unchecked")
-    private static Class<? extends Serializer<?>> getKeySerializerType(final KafkaReplicationProducer<?, ?> producer) {
+    private static Class<? extends Serializer<?>> getKeySerializerType(final ReplicationProducer<?, ?> producer) {
         return getKafkaTemplateProperty(producer, KEY_SERIALIZER_CLASS_CONFIG, Class.class);
     }
 
-    private static int getBatchSize(final KafkaReplicationProducer<?, ?> producer) {
+    private static int getBatchSize(final ReplicationProducer<?, ?> producer) {
         return getKafkaTemplateProperty(producer, BATCH_SIZE_CONFIG, Integer.class);
     }
 
-    private static int getLingerMs(final KafkaReplicationProducer<?, ?> producer) {
+    private static int getLingerMs(final ReplicationProducer<?, ?> producer) {
         return getKafkaTemplateProperty(producer, LINGER_MS_CONFIG, Integer.class);
     }
 
-    private static int getDeliveryTimeout(final KafkaReplicationProducer<?, ?> producer) {
+    private static int getDeliveryTimeout(final ReplicationProducer<?, ?> producer) {
         return getKafkaTemplateProperty(producer, DELIVERY_TIMEOUT_MS_CONFIG, Integer.class);
     }
 
-    private static <P> P getKafkaTemplateProperty(final KafkaReplicationProducer<?, ?> producer,
+    private static <P> P getKafkaTemplateProperty(final ReplicationProducer<?, ?> producer,
                                                   final String propertyKey,
                                                   final Class<P> propertyType) {
         final Object value = getKafkaTemplate(producer)
@@ -133,7 +133,7 @@ public final class KafkaReplicationProducerHolderFactoryTest {
         return propertyType.cast(value);
     }
 
-    private static KafkaTemplate<?, ?> getKafkaTemplate(final KafkaReplicationProducer<?, ?> producer) {
+    private static KafkaTemplate<?, ?> getKafkaTemplate(final ReplicationProducer<?, ?> producer) {
         return getFieldValue(producer, FIELD_NAME_PRODUCER_KAFKA_TEMPLATE, KafkaTemplate.class);
     }
 

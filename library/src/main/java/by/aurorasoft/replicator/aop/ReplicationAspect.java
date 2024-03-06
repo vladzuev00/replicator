@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.model.DeleteReplication;
 import by.aurorasoft.replicator.model.Replication;
 import by.aurorasoft.replicator.model.SaveReplication;
@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ReplicationAspect {
-    private final KafkaReplicationProducerHolder producerHolder;
+    private final ReplicationProducerHolder producerHolder;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @AfterReturning(pointcut = "replicatedSave()", returning = "savedDto")

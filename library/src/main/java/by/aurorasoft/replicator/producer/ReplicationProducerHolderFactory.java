@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.producer;
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-import by.aurorasoft.replicator.holder.KafkaReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,30 +21,30 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 @Component
-public final class KafkaReplicationProducerHolderFactory {
+public final class ReplicationProducerHolderFactory {
     private final ReplicatedServiceHolder replicatedServiceHolder;
     private final String bootstrapAddress;
 
-    public KafkaReplicationProducerHolderFactory(final ReplicatedServiceHolder replicatedServiceHolder,
-                                                 @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
+    public ReplicationProducerHolderFactory(final ReplicatedServiceHolder replicatedServiceHolder,
+                                            @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
         this.replicatedServiceHolder = replicatedServiceHolder;
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public KafkaReplicationProducerHolder create() {
+    public ReplicationProducerHolder create() {
         return replicatedServiceHolder.getServices()
                 .stream()
-                .collect(collectingAndThen(toMap(identity(), this::createProducer), KafkaReplicationProducerHolder::new));
+                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private KafkaReplicationProducer<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private ReplicationProducer<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
         final ProducerConfig producerConfig = getProducerConfig(service);
         final TopicConfig topicConfig = getTopicConfig(service);
         final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
         final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
         final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
-        return new KafkaReplicationProducer<>(topicConfig.name(), kafkaTemplate);
+        return new ReplicationProducer<>(topicConfig.name(), kafkaTemplate);
     }
 
     private static ProducerConfig getProducerConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {

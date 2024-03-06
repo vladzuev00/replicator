@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.consuming.consumer.KafkaReplicationConsumerConfig;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
 import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,7 @@ public final class ReplicationListenerContainerFactory {
     }
 
     public <ID, DTO extends AbstractDto<ID>> ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>> create(
-            final KafkaReplicationConsumerConfig<ID, DTO> config
+            final ReplicationConsumerConfig<ID, DTO> config
     ) {
         final var factory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>>();
         factory.setConsumerFactory(createConsumerFactory(config));
@@ -34,7 +34,7 @@ public final class ReplicationListenerContainerFactory {
     }
 
     private <ID, DTO extends AbstractDto<ID>> ConsumerFactory<ID, Replication<ID, DTO>> createConsumerFactory(
-            final KafkaReplicationConsumerConfig<ID, DTO> config
+            final ReplicationConsumerConfig<ID, DTO> config
     ) {
         return new DefaultKafkaConsumerFactory<>(
                 createConfigsByNames(config),
@@ -43,7 +43,7 @@ public final class ReplicationListenerContainerFactory {
         );
     }
 
-    private Map<String, Object> createConfigsByNames(final KafkaReplicationConsumerConfig<?, ?> config) {
+    private Map<String, Object> createConfigsByNames(final ReplicationConsumerConfig<?, ?> config) {
         return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, config.getGroupId());
     }
 

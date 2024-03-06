@@ -5,9 +5,9 @@ import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.springframework.kafka.core.KafkaTemplate;
 
-public final class KafkaReplicationProducer<ID, DTO extends AbstractDto<ID>> extends KafkaProducerAbstractSimple<ID, Replication<ID, DTO>> {
+public final class ReplicationProducer<ID, DTO extends AbstractDto<ID>> extends KafkaProducerAbstractSimple<ID, Replication<ID, DTO>> {
 
-    public KafkaReplicationProducer(final String topicName, final KafkaTemplate<ID, Replication<ID, DTO>> kafkaTemplate) {
+    public ReplicationProducer(final String topicName, final KafkaTemplate<ID, Replication<ID, DTO>> kafkaTemplate) {
         super(topicName, kafkaTemplate);
     }
 
