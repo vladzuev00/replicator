@@ -1,12 +1,15 @@
 package by.aurorasoft.replicator.factory;
 
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
 import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
 import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -16,16 +19,23 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 
 @Component
 public final class ReplicationListenerContainerFactory {
+    private final ReplicationListenerEndpointFactory endpointFactory;
     private final ReplicationDeserializerFactory deserializerFactory;
     private final String bootstrapAddress;
 
-    public ReplicationListenerContainerFactory(final ReplicationDeserializerFactory deserializerFactory,
+    public ReplicationListenerContainerFactory(final ReplicationListenerEndpointFactory endpointFactory,
+                                               final ReplicationDeserializerFactory deserializerFactory,
                                                @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
+        this.endpointFactory = endpointFactory;
         this.deserializerFactory = deserializerFactory;
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public <ID, DTO extends AbstractDto<ID>> ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>> create(
+    public MessageListenerContainer create(final ReplicationConsumer<?, ?> consumer) {
+        return createContainerFactory(consumer.getConfig()).createListenerContainer(endpointFactory.create(consumer));
+    }
+
+    private <ID, DTO extends AbstractDto<ID>> KafkaListenerContainerFactory<?> createContainerFactory(
             final ReplicationConsumerConfig<ID, DTO> config
     ) {
         final var factory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>>();
