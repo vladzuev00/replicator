@@ -12,11 +12,11 @@ import java.lang.reflect.Method;
 
 @Component
 public final class ReplicationConsumerEndpointFactory {
-    private static final String PROCESSING_METHOD_NAME = "listen";
+    static final String PROCESSING_METHOD_NAME = "listen";
 
     public KafkaListenerEndpoint create(final ReplicationConsumer<?, ?> consumer) {
         final ReplicationConsumerConfig<?, ?> config = consumer.getConfig();
-        final MethodKafkaListenerEndpoint<String, String> endpoint = new MethodKafkaListenerEndpoint<>();
+        final MethodKafkaListenerEndpoint<?, ?> endpoint = new MethodKafkaListenerEndpoint<>();
         endpoint.setGroupId(config.getGroupId());
         endpoint.setAutoStartup(true);
         endpoint.setTopics(config.getTopic());
@@ -34,7 +34,7 @@ public final class ReplicationConsumerEndpointFactory {
         }
     }
 
-    static final class NoProcessingMethodException extends RuntimeException {
+    private static final class NoProcessingMethodException extends RuntimeException {
 
         @SuppressWarnings("unused")
         public NoProcessingMethodException() {
