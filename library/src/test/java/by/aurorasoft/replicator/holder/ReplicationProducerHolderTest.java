@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public final class KafkaReplicationProducerHolderTest {
+public final class ReplicationProducerHolderTest {
 
     @Test
     public void producerShouldBeFoundByService() {
