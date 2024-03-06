@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 @Component
-public final class ReplicationListenerEndpointFactory {
+public final class ReplicationConsumerEndpointFactory {
     private static final String PROCESSING_METHOD_NAME = "listen";
 
     public KafkaListenerEndpoint create(final ReplicationConsumer<?, ?> consumer) {

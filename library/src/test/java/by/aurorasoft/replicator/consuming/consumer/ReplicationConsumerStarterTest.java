@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.consumer;
 
-import by.aurorasoft.replicator.factory.ReplicationListenerContainerFactory;
+import by.aurorasoft.replicator.factory.ReplicationConsumerContainerFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 public final class ReplicationConsumerStarterTest {
 
     @Mock
-    private ReplicationListenerContainerFactory mockedContainerFactory;
+    private ReplicationConsumerContainerFactory mockedContainerFactory;
 
     private ReplicationConsumerStarter starter;
 

@@ -7,6 +7,7 @@ import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
+import org.springframework.kafka.config.KafkaListenerEndpoint;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.MessageListenerContainer;
@@ -18,21 +19,23 @@ import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 
 @Component
-public final class ReplicationListenerContainerFactory {
-    private final ReplicationListenerEndpointFactory endpointFactory;
-    private final ReplicationDeserializerFactory deserializerFactory;
+public final class ReplicationConsumerContainerFactory {
+    private final ReplicationConsumerEndpointFactory endpointFactory;
+    private final ReplicationDeserializerFactory replicationDeserializerFactory;
     private final String bootstrapAddress;
 
-    public ReplicationListenerContainerFactory(final ReplicationListenerEndpointFactory endpointFactory,
-                                               final ReplicationDeserializerFactory deserializerFactory,
+    public ReplicationConsumerContainerFactory(final ReplicationConsumerEndpointFactory endpointFactory,
+                                               final ReplicationDeserializerFactory replicationDeserializerFactory,
                                                @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
         this.endpointFactory = endpointFactory;
-        this.deserializerFactory = deserializerFactory;
+        this.replicationDeserializerFactory = replicationDeserializerFactory;
         this.bootstrapAddress = bootstrapAddress;
     }
 
     public MessageListenerContainer create(final ReplicationConsumer<?, ?> consumer) {
-        return createContainerFactory(consumer.getConfig()).createListenerContainer(endpointFactory.create(consumer));
+        final KafkaListenerContainerFactory<?> factory = createContainerFactory(consumer.getConfig());
+        final KafkaListenerEndpoint endpoint = endpointFactory.create(consumer);
+        return factory.createListenerContainer(endpoint);
     }
 
     private <ID, DTO extends AbstractDto<ID>> KafkaListenerContainerFactory<?> createContainerFactory(
@@ -46,15 +49,12 @@ public final class ReplicationListenerContainerFactory {
     private <ID, DTO extends AbstractDto<ID>> ConsumerFactory<ID, Replication<ID, DTO>> createConsumerFactory(
             final ReplicationConsumerConfig<ID, DTO> config
     ) {
-        return new DefaultKafkaConsumerFactory<>(
-                createConfigsByNames(config),
-                config.getIdDeserializer(),
-                deserializerFactory.createDeserializer(config)
-        );
+        final Map<String, Object> configsByNames = createConfigsByNames(config);
+        final var replicationDeserializer = replicationDeserializerFactory.createDeserializer(config);
+        return new DefaultKafkaConsumerFactory<>(configsByNames, config.getIdDeserializer(), replicationDeserializer);
     }
 
     private Map<String, Object> createConfigsByNames(final ReplicationConsumerConfig<?, ?> config) {
         return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, config.getGroupId());
     }
-
 }
