@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public final class KafkaReplicationProducerHolderFactoryTest {
+public final class ReplicationProducerHolderFactoryTest {
     private static final String FIELD_NAME_HOLDER_PRODUCERS_BY_SERVICES = "producersByServices";
 
     private static final String FIELD_NAME_PRODUCER_TOPIC_NAME = "topicName";
