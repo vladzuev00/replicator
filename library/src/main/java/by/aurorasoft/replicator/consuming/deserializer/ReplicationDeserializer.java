@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.deserializer;
+package by.aurorasoft.replicator.consuming.deserializer;
 
 import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
@@ -9,8 +9,8 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 public final class ReplicationDeserializer<ID, DTO extends AbstractDto<ID>>
         extends JsonDeserializer<Replication<ID, DTO>> {
 
-    public ReplicationDeserializer(final TypeReference<Replication<ID, DTO>> typeReference,
-                                   final ObjectMapper objectMapper) {
+    public ReplicationDeserializer(final ObjectMapper objectMapper,
+                                   final TypeReference<Replication<ID, DTO>> typeReference) {
         super(typeReference, objectMapper, false);
     }
 }
