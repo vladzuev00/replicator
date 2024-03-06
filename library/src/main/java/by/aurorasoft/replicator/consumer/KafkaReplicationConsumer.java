@@ -9,7 +9,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 @RequiredArgsConstructor
 @Getter
-public final class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>> extends KafkaConsumerAbstract<ID, Replication<ID, DTO>> {
+public final class KafkaReplicationConsumer<ID, DTO extends AbstractDto<ID>>
+        extends KafkaConsumerAbstract<ID, Replication<ID, DTO>> {
     private final KafkaReplicationConsumerConfig<ID, DTO> config;
 
     @Override
