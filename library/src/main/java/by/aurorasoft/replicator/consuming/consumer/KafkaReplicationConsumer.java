@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consumer;
+package by.aurorasoft.replicator.consuming.consumer;
 
 import by.aurorasoft.kafka.consumer.KafkaConsumerAbstract;
 import by.aurorasoft.replicator.model.Replication;

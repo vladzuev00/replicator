@@ -1,6 +1,5 @@
-package by.aurorasoft.replicator.consumer.starter;
+package by.aurorasoft.replicator.consuming.consumer;
 
-import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
 import by.aurorasoft.replicator.factory.ReplicationListenerContainerFactory;
 import by.aurorasoft.replicator.factory.ReplicationListenerEndpointFactory;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;

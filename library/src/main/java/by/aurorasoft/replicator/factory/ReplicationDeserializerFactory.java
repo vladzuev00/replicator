@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
+import by.aurorasoft.replicator.consuming.consumer.KafkaReplicationConsumerConfig;
 import by.aurorasoft.replicator.deserializer.ReplicationDeserializer;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import com.fasterxml.jackson.databind.ObjectMapper;

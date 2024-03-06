@@ -1,6 +1,6 @@
 package by.aurorasoft.testapp.config;
 
-import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
+import by.aurorasoft.replicator.consuming.consumer.KafkaReplicationConsumerConfig;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
 import com.fasterxml.jackson.core.type.TypeReference;

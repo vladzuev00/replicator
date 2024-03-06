@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
-import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
+import by.aurorasoft.replicator.consuming.consumer.KafkaReplicationConsumer;
+import by.aurorasoft.replicator.consuming.consumer.KafkaReplicationConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.config.KafkaListenerEndpoint;
 import org.springframework.kafka.config.MethodKafkaListenerEndpoint;
