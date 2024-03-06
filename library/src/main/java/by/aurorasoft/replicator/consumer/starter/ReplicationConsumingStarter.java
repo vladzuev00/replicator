@@ -1,5 +1,7 @@
-package by.aurorasoft.replicator.consumer;
+package by.aurorasoft.replicator.consumer.starter;
 
+import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
+import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

@@ -1,19 +1,18 @@
-package by.aurorasoft.replicator.consumer;
+package by.aurorasoft.replicator.consumer.starter;
 
+import by.aurorasoft.replicator.ReplicationListenerEndpointFactory;
+import by.aurorasoft.replicator.consumer.KafkaReplicationConsumer;
+import by.aurorasoft.replicator.consumer.KafkaReplicationConsumerConfig;
 import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.KafkaListenerEndpoint;
-import org.springframework.kafka.config.MethodKafkaListenerEndpoint;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
@@ -22,18 +21,22 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 //TODO: remove generics
 @Component
 public final class KafkaReplicationConsumerStarter {
-    private static final String METHOD_NAME_PROCESSING_RECORDS = "listen";
-
     private final String bootstrapAddress;
+    private final ObjectMapper objectMapper;
+    private final ReplicationListenerEndpointFactory endpointFactory;
 
-    public KafkaReplicationConsumerStarter(@Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
+    public KafkaReplicationConsumerStarter(@Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress,
+                                           final ObjectMapper objectMapper,
+                                           final ReplicationListenerEndpointFactory endpointFactory) {
         this.bootstrapAddress = bootstrapAddress;
+        this.objectMapper = objectMapper;
+        this.endpointFactory = endpointFactory;
     }
 
     public <ID, DTO extends AbstractDto<ID>> void start(final KafkaReplicationConsumer<ID, DTO> consumer) {
         final KafkaReplicationConsumerConfig<ID, DTO> config = consumer.getConfig();
         createListenerContainerFactory(config)
-                .createListenerContainer(createListenerEndpoint(config))
+                .createListenerContainer(endpointFactory.create(consumer))
                 .start();
     }
 
@@ -60,47 +63,8 @@ public final class KafkaReplicationConsumerStarter {
     }
 
     private <ID, DTO extends AbstractDto<ID>> JsonDeserializer<Replication<ID, DTO>> createReplicationDeserializer(final KafkaReplicationConsumerConfig<ID, DTO> config) {
-        return new JsonDeserializer<>(config.getReplicationTypeReference());
-    }
-
-    private <ID, DTO extends AbstractDto<ID>> KafkaListenerEndpoint createListenerEndpoint(final KafkaReplicationConsumerConfig<ID, DTO> config) {
-        final MethodKafkaListenerEndpoint<String, String> endpoint = new MethodKafkaListenerEndpoint<>();
-        endpoint.setGroupId(config.getGroupId());
-        endpoint.setAutoStartup(true);
-        endpoint.setTopics(config.getTopic());
-        endpoint.setMessageHandlerMethodFactory(new DefaultMessageHandlerMethodFactory());
-        endpoint.setBean(config);
-        endpoint.setMethod(getMethodProcessingRecords());
-        return endpoint;
-    }
-
-    private static Method getMethodProcessingRecords() {
-        try {
-            return KafkaReplicationConsumer.class.getMethod(METHOD_NAME_PROCESSING_RECORDS, ConsumerRecord.class);
-        } catch (final NoSuchMethodException cause) {
-            throw new ReplicationConsumerStartingException(cause);
-        }
-    }
-
-    static final class ReplicationConsumerStartingException extends RuntimeException {
-
-        @SuppressWarnings("unused")
-        public ReplicationConsumerStartingException() {
-
-        }
-
-        @SuppressWarnings("unused")
-        public ReplicationConsumerStartingException(final String description) {
-            super(description);
-        }
-
-        public ReplicationConsumerStartingException(final Exception cause) {
-            super(cause);
-        }
-
-        @SuppressWarnings("unused")
-        public ReplicationConsumerStartingException(final String description, final Exception cause) {
-            super(description, cause);
-        }
+        JsonDeserializer<Replication<ID, DTO>> deserializer = new JsonDeserializer<>(config.getReplicationTypeReference(), objectMapper);
+        deserializer.setUseTypeHeaders(false);
+        return deserializer;
     }
 }

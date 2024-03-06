@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
-@JsonTypeInfo(use= NAME)
-@JsonSubTypes({@Type(SaveReplication.class), @Type(UpdateReplication.class), @Type(DeleteReplication.class),})
+@JsonTypeInfo(use = NAME)
+@JsonSubTypes({@Type(SaveReplication.class), @Type(UpdateReplication.class), @Type(DeleteReplication.class)})
 public interface Replication<ID, DTO extends AbstractDto<ID>> {
     ID getEntityId();
 

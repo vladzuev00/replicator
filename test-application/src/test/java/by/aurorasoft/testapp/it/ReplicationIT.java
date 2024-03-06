@@ -6,8 +6,10 @@ import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.service.PersonService;
 import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
 import by.aurorasoft.testapp.model.PersonName;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +30,42 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Autowired
     private ReplicatedPersonService replicatedPersonService;
 
+    //TODO: remove
+    @Autowired
+    private ObjectMapper objectMapper;
+
 //    @Autowired
 //    private KafkaPersonReplicationConsumer replicationConsumer;
+
+    //TODO: remove
+    @Test
+    public void a() {
+        final JsonDeserializer deserializer = new JsonDeserializer();
+
+        final Object a = deserializer.deserialize("", """
+                {
+                  "@type": "UpdateReplication",
+                  "dto": {
+                    "id": 255,
+                    "name": "Ivan",
+                    "surname": "Ivanov",
+                    "patronymic": "Ivanovich",
+                    "birthDate": [
+                      2000,
+                      2,
+                      19
+                    ]
+                  }
+                }""".getBytes());
+        System.out.println(a);
+        System.out.println();
+    }
+
+    //TODO: remove
+    @Test
+    public void b() {
+
+    }
 
     @Test
     @Transactional(propagation = NOT_SUPPORTED)
@@ -172,7 +208,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 //        assertTrue(replicationConsumer.isSuccessConsuming());
 
         try {
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
