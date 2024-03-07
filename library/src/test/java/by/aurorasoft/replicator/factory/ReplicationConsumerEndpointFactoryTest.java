@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Test;
 import org.springframework.kafka.config.MethodKafkaListenerEndpoint;
@@ -29,11 +29,7 @@ public final class ReplicationConsumerEndpointFactoryTest {
             throws Exception {
         final String givenGroupId = "sync-dto-group";
         final String givenTopic = "sync-dto";
-        final ReplicationConsumerConfig<Long, TestDto> givenConsumerConfig = createConsumerConfig(
-                givenGroupId,
-                givenTopic
-        );
-        final ReplicationConsumer<Long, TestDto> givenConsumer = new ReplicationConsumer<>(givenConsumerConfig);
+        final ReplicationConsumer<Long, TestDto> givenConsumer = createConsumer(givenGroupId, givenTopic);
 
         final MethodKafkaListenerEndpoint<?, ?> actual = (MethodKafkaListenerEndpoint<?, ?>) factory.create(givenConsumer);
 
@@ -61,11 +57,15 @@ public final class ReplicationConsumerEndpointFactoryTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private ReplicationConsumerConfig<Long, TestDto> createConsumerConfig(final String groupId, final String topic) {
-        return ReplicationConsumerConfig.<Long, TestDto>builder()
-                .groupId(groupId)
-                .topic(topic)
-                .build();
+    private ReplicationConsumer<Long, TestDto> createConsumer(final String groupId, final String topic) {
+        return new ReplicationConsumer<>(
+                groupId,
+                topic,
+                null,
+                new TypeReference<>() {
+                },
+                null
+        );
     }
 
     private static MessageHandlerMethodFactory getMessageHandlerMethodFactory(
