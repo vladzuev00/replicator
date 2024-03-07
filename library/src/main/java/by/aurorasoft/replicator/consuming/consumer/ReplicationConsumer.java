@@ -14,7 +14,8 @@ import static lombok.AccessLevel.NONE;
 
 @RequiredArgsConstructor
 @Getter
-public final class ReplicationConsumer<ID, DTO extends AbstractDto<ID>> extends KafkaConsumerAbstract<ID, Replication<ID, DTO>> {
+public final class ReplicationConsumer<ID, DTO extends AbstractDto<ID>>
+        extends KafkaConsumerAbstract<ID, Replication<ID, DTO>> {
     private final String groupId;
     private final String topic;
     private final Deserializer<ID> idDeserializer;

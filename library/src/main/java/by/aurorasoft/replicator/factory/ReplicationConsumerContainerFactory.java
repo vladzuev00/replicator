@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
 import by.aurorasoft.replicator.model.Replication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,28 +32,30 @@ public final class ReplicationConsumerContainerFactory {
     }
 
     public MessageListenerContainer create(final ReplicationConsumer<?, ?> consumer) {
-        final KafkaListenerContainerFactory<?> factory = createContainerFactory(consumer.getConfig());
+        final KafkaListenerContainerFactory<?> factory = createContainerFactory(consumer);
         final KafkaListenerEndpoint endpoint = endpointFactory.create(consumer);
         return factory.createListenerContainer(endpoint);
     }
 
     private <ID, DTO extends AbstractDto<ID>> KafkaListenerContainerFactory<?> createContainerFactory(
-            final ReplicationConsumerConfig<ID, DTO> config
+            final ReplicationConsumer<ID, DTO> consumer
     ) {
         final var factory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>>();
-        factory.setConsumerFactory(createConsumerFactory(config));
+        factory.setConsumerFactory(createConsumerFactory(consumer));
         return factory;
     }
 
     private <ID, DTO extends AbstractDto<ID>> ConsumerFactory<ID, Replication<ID, DTO>> createConsumerFactory(
-            final ReplicationConsumerConfig<ID, DTO> config
+            final ReplicationConsumer<ID, DTO> consumer
     ) {
-        final Map<String, Object> configsByNames = createConfigsByNames(config);
-        final var replicationDeserializer = replicationDeserializerFactory.create(config);
-        return new DefaultKafkaConsumerFactory<>(configsByNames, config.getIdDeserializer(), replicationDeserializer);
+        final Map<String, Object> configsByNames = getConfigsByNames(consumer);
+        final var replicationDeserializer = replicationDeserializerFactory.create(consumer);
+        return new DefaultKafkaConsumerFactory<>(configsByNames, consumer.getIdDeserializer(), replicationDeserializer);
     }
 
-    private Map<String, Object> createConfigsByNames(final ReplicationConsumerConfig<?, ?> config) {
-        return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, config.getGroupId());
+    private <ID, DTO extends AbstractDto<ID>> Map<String, Object> getConfigsByNames(
+            final ReplicationConsumer<ID, DTO> consumer
+    ) {
+        return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, consumer.getGroupId());
     }
 }
