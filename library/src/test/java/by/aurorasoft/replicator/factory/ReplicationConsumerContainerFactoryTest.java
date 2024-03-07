@@ -2,8 +2,8 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
 import by.aurorasoft.replicator.consuming.deserializer.ReplicationDeserializer;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,21 +54,15 @@ public final class ReplicationConsumerContainerFactoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void containerShouldBeCreated() {
-        final ReplicationConsumer<Long, TestDto> givenConsumer = mock(ReplicationConsumer.class);
-
-        final Deserializer<Long> givenIdDeserializer = mock(Deserializer.class);
         final String givenGroupId = "test-dto-group";
-        final ReplicationConsumerConfig<Long, TestDto> givenConfig = createConsumerConfig(
-                givenIdDeserializer,
-                givenGroupId
-        );
-        when(givenConsumer.getConfig()).thenReturn(givenConfig);
+        final Deserializer<Long> givenIdDeserializer = mock(Deserializer.class);
+        final ReplicationConsumer<Long, TestDto> givenConsumer = createConsumer(givenGroupId, givenIdDeserializer);
 
         final KafkaListenerEndpoint givenEndpoint = createEndPoint();
         when(mockedEndpointFactory.create(same(givenConsumer))).thenReturn(givenEndpoint);
 
         final ReplicationDeserializer<Long, TestDto> givenReplicationDeserializer = mock(ReplicationDeserializer.class);
-        when(mockedReplicationDeserializerFactory.create(givenConfig)).thenReturn(givenReplicationDeserializer);
+        when(mockedReplicationDeserializerFactory.create(same(givenConsumer))).thenReturn(givenReplicationDeserializer);
 
         final MessageListenerContainer actual = factory.create(givenConsumer);
         final ConsumerFactory<Long, TestDto> actualConsumerFactory = getConsumerFactory(actual);
@@ -90,12 +84,16 @@ public final class ReplicationConsumerContainerFactoryTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private ReplicationConsumerConfig<Long, TestDto> createConsumerConfig(final Deserializer<Long> idDeserializer,
-                                                                          final String groupId) {
-        return ReplicationConsumerConfig.<Long, TestDto>builder()
-                .idDeserializer(idDeserializer)
-                .groupId(groupId)
-                .build();
+    private static ReplicationConsumer<Long, TestDto> createConsumer(final String groupId,
+                                                                     final Deserializer<Long> idDeserializer) {
+        return new ReplicationConsumer<>(
+                groupId,
+                GIVEN_TOPIC,
+                idDeserializer,
+                new TypeReference<>() {
+                },
+                null
+        );
     }
 
     private static KafkaListenerEndpoint createEndPoint() {
