@@ -18,27 +18,30 @@ public final class ReplicationConsumerTest {
     private static final String GIVEN_TOPIC = "sync-dto";
 
     @Mock
-    private ReplicationConsumerConfig<Long, TestDto> mockedConfig;
+    private AbsServiceCRUD<Long, ?, TestDto, ?> mockedService;
 
     private ReplicationConsumer<Long, TestDto> consumer;
 
     @Before
     public void initializeConsumer() {
-        consumer = new ReplicationConsumer<>(mockedConfig);
+        consumer = new ReplicationConsumer<>(
+                null,
+                GIVEN_TOPIC,
+                null,
+                null,
+                mockedService
+        );
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     public void recordsShouldBeListened() {
         final Replication<Long, TestDto> givenReplication = mock(Replication.class);
         final ConsumerRecord<Long, Replication<Long, TestDto>> givenRecord = createRecord(255L, givenReplication);
 
-        final AbsServiceCRUD givenService = mock(AbsServiceCRUD.class);
-        when(mockedConfig.getService()).thenReturn(givenService);
-
         consumer.listen(givenRecord);
 
-        verify(givenReplication, times(1)).execute(givenService);
+        verify(givenReplication, times(1)).execute(mockedService);
     }
 
     @SuppressWarnings("SameParameterValue")
