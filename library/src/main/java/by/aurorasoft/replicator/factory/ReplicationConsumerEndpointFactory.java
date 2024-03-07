@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.config.KafkaListenerEndpoint;
 import org.springframework.kafka.config.MethodKafkaListenerEndpoint;
@@ -15,11 +14,10 @@ public final class ReplicationConsumerEndpointFactory {
     static final String PROCESSING_METHOD_NAME = "listen";
 
     public KafkaListenerEndpoint create(final ReplicationConsumer<?, ?> consumer) {
-        final ReplicationConsumerConfig<?, ?> config = consumer.getConfig();
         final MethodKafkaListenerEndpoint<?, ?> endpoint = new MethodKafkaListenerEndpoint<>();
-        endpoint.setGroupId(config.getGroupId());
+        endpoint.setGroupId(consumer.getGroupId());
         endpoint.setAutoStartup(true);
-        endpoint.setTopics(config.getTopic());
+        endpoint.setTopics(consumer.getTopic());
         endpoint.setMessageHandlerMethodFactory(new DefaultMessageHandlerMethodFactory());
         endpoint.setBean(consumer);
         endpoint.setMethod(getProcessingMethod());
