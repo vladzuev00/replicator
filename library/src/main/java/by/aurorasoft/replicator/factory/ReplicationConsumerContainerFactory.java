@@ -40,9 +40,10 @@ public final class ReplicationConsumerContainerFactory {
     private <ID, DTO extends AbstractDto<ID>> KafkaListenerContainerFactory<?> createContainerFactory(
             final ReplicationConsumer<ID, DTO> consumer
     ) {
-        final var factory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>>();
-        factory.setConsumerFactory(createConsumerFactory(consumer));
-        return factory;
+        final var containerFactory = new ConcurrentKafkaListenerContainerFactory<ID, Replication<ID, DTO>>();
+        final ConsumerFactory<ID, Replication<ID, DTO>> consumerFactory = createConsumerFactory(consumer);
+        containerFactory.setConsumerFactory(consumerFactory);
+        return containerFactory;
     }
 
     private <ID, DTO extends AbstractDto<ID>> ConsumerFactory<ID, Replication<ID, DTO>> createConsumerFactory(
