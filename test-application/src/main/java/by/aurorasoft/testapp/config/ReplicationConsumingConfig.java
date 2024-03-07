@@ -1,5 +1,6 @@
 package by.aurorasoft.testapp.config;
 
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,8 +19,14 @@ public class ReplicationConsumingConfig {
     private String topic;
 
     @Bean
-    public ReplicationConsumerConfig<Long, ReplicatedPerson> consumerConfig(final ReplicatedPersonService service) {
-        return new ReplicationConsumerConfig<>(groupId, topic, new LongDeserializer(), service, new TypeReference<>() {
-        });
+    public ReplicationConsumer<Long, ReplicatedPerson> consumerConfig(final ReplicatedPersonService service) {
+        return new ReplicationConsumer<>(
+                groupId,
+                topic,
+                new LongDeserializer(),
+                new TypeReference<>() {
+                },
+                service
+        );
     }
 }
