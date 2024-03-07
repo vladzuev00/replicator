@@ -1,6 +1,5 @@
 package by.aurorasoft.testapp.config;
 
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerConfig;
 import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
 import com.fasterxml.jackson.core.type.TypeReference;
