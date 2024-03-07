@@ -6,66 +6,29 @@ import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.service.PersonService;
 import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
 import by.aurorasoft.testapp.model.PersonName;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import static java.lang.Thread.currentThread;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 public class ReplicationIT extends AbstractSpringBootTest {
+    private static final long WAIT_REPLICATING_SECONDS = 5;
 
     @Autowired
     private PersonService personService;
 
     @Autowired
     private ReplicatedPersonService replicatedPersonService;
-
-    //TODO: remove
-    @Autowired
-    private ObjectMapper objectMapper;
-
-//    @Autowired
-//    private KafkaPersonReplicationConsumer replicationConsumer;
-
-    //TODO: remove
-    @Test
-    public void a() {
-        final JsonDeserializer deserializer = new JsonDeserializer();
-
-        final Object a = deserializer.deserialize("", """
-                {
-                  "@type": "UpdateReplication",
-                  "dto": {
-                    "id": 255,
-                    "name": "Ivan",
-                    "surname": "Ivanov",
-                    "patronymic": "Ivanovich",
-                    "birthDate": [
-                      2000,
-                      2,
-                      19
-                    ]
-                  }
-                }""".getBytes());
-        System.out.println(a);
-        System.out.println();
-    }
-
-    //TODO: remove
-    @Test
-    public void b() {
-
-    }
 
     @Test
     @Transactional(propagation = NOT_SUPPORTED)
@@ -82,8 +45,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .birthDate(givenBirthDate)
                 .build();
 
-//        replicationConsumer.setExpectedReplicationCount(1);
         final Person actualSavedPerson = personService.save(givenPerson);
+        waitReplicating();
 
         final Long expectedSavedPersonId = 1L;
         final Person expectedSavedPerson = Person.builder()
@@ -94,8 +57,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .birthDate(givenBirthDate)
                 .build();
         assertEquals(expectedSavedPerson, actualSavedPerson);
-
-//        assertTrue(replicationConsumer.isSuccessConsuming());
 
         final ReplicatedPerson actualReplicatedPerson = replicatedPersonService.getById(expectedSavedPersonId);
         final ReplicatedPerson expectedReplicatedPerson = ReplicatedPerson.builder()
@@ -135,8 +96,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
                         .build()
         );
 
-//        replicationConsumer.setExpectedReplicationCount(2);
         final List<Person> actualSavedPersons = personService.saveAll(givenPersons);
+        waitReplicating();
 
         final Long expectedFirstSavedPersonId = 1L;
         final Long expectedSecondSavedPersonId = 2L;
@@ -157,8 +118,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
                         .build()
         );
         assertEquals(expectedSavedPersons, actualSavedPersons);
-
-//        assertTrue(replicationConsumer.isSuccessConsuming());
 
         final List<ReplicatedPerson> actualReplicatedPersons = replicatedPersonService.getById(
                 List.of(
@@ -201,26 +160,19 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .birthDate(givenNewBirthDate)
                 .build();
 
-//        replicationConsumer.setExpectedReplicationCount(1);
         final Person actualUpdatedPerson = personService.update(givenNewPerson);
+        waitReplicating();
+
         assertEquals(givenNewPerson, actualUpdatedPerson);
 
-//        assertTrue(replicationConsumer.isSuccessConsuming());
-
-        try {
-            TimeUnit.SECONDS.sleep(200);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        final ReplicatedPerson actualUpdatedReplication = replicatedPersonService.getById(givenId);
-        final ReplicatedPerson expectedUpdatedReplication = ReplicatedPerson.builder()
+        final ReplicatedPerson actualUpdatedReplicatedPerson = replicatedPersonService.getById(givenId);
+        final ReplicatedPerson expectedUpdatedReplicatedPerson = ReplicatedPerson.builder()
                 .id(givenId)
                 .name(givenNewName)
                 .surname(givenNewSurname)
                 .birthDate(givenNewBirthDate)
                 .build();
-        assertEquals(expectedUpdatedReplication, actualUpdatedReplication);
+        assertEquals(expectedUpdatedReplicatedPerson, actualUpdatedReplicatedPerson);
     }
 
     @Test
@@ -235,8 +187,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String givenNewPatronymic = "Ivanovich";
         final PersonName givenPartial = new PersonName(givenNewName, givenNewSurname, givenNewPatronymic);
 
-//        replicationConsumer.setExpectedReplicationCount(1);
         final Person actualUpdatedPerson = personService.updatePartial(givenId, givenPartial);
+        waitReplicating();
+
         final LocalDate expectedBirthDate = LocalDate.of(2000, 2, 18);
         final Person expectedUpdatedPerson = Person.builder()
                 .id(givenId)
@@ -247,16 +200,14 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
         assertEquals(expectedUpdatedPerson, actualUpdatedPerson);
 
-//        assertTrue(replicationConsumer.isSuccessConsuming());
-
-        final ReplicatedPerson actualUpdatedReplication = replicatedPersonService.getById(givenId);
-        final ReplicatedPerson expectedUpdatedReplication = ReplicatedPerson.builder()
+        final ReplicatedPerson actualUpdatedReplicatedPerson = replicatedPersonService.getById(givenId);
+        final ReplicatedPerson expectedUpdatedReplicatedPerson = ReplicatedPerson.builder()
                 .id(givenId)
                 .name(givenNewName)
                 .surname(givenNewSurname)
                 .birthDate(expectedBirthDate)
                 .build();
-        assertEquals(expectedUpdatedReplication, actualUpdatedReplication);
+        assertEquals(expectedUpdatedReplicatedPerson, actualUpdatedReplicatedPerson);
     }
 
     @Test
@@ -266,12 +217,18 @@ public class ReplicationIT extends AbstractSpringBootTest {
     public void personAndReplicatedPersonShouldBeDeleted() {
         final Long givenId = 255L;
 
-//        replicationConsumer.setExpectedReplicationCount(1);
         personService.delete(givenId);
-
-//        assertTrue(replicationConsumer.isSuccessConsuming());
+        waitReplicating();
 
         final boolean successDeleting = !personService.isExist(givenId) && !replicatedPersonService.isExist(givenId);
         assertTrue(successDeleting);
+    }
+
+    private static void waitReplicating() {
+        try {
+            SECONDS.sleep(WAIT_REPLICATING_SECONDS);
+        } catch (final InterruptedException cause) {
+            currentThread().interrupt();
+        }
     }
 }
