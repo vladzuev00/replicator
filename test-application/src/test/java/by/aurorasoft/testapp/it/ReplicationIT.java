@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
+@Transactional(propagation = NOT_SUPPORTED)
 public class ReplicationIT extends AbstractSpringBootTest {
     private static final long WAIT_REPLICATING_SECONDS = 5;
 
@@ -31,8 +32,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private ReplicatedPersonService replicatedPersonService;
 
     @Test
-    @Transactional(propagation = NOT_SUPPORTED)
-    @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personAndReplicatedPersonShouldBeSaved() {
         final String givenName = "Vlad";
         final String givenSurname = "Zuev";
@@ -143,7 +142,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Transactional(propagation = NOT_SUPPORTED)
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
     @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personAndReplicatedPersonShouldBeUpdated() {
@@ -176,7 +174,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Transactional(propagation = NOT_SUPPORTED)
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
     @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personAndReplicatedPersonShouldBeUpdatedPartially() {
@@ -211,7 +208,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Transactional(propagation = NOT_SUPPORTED)
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
     @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personAndReplicatedPersonShouldBeDeleted() {
