@@ -20,6 +20,7 @@
         <auto-service.version>1.1.1</auto-service.version>
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <java.version>17</java.version>
+        <joor.version>0.9.15</joor.version>
     </properties>
 
     <repositories>
@@ -65,7 +66,7 @@
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId> org.springframework</groupId>
+                    <groupId>org.springframework</groupId>
                     <artifactId>spring-web</artifactId>
                 </exclusion>
             </exclusions>
@@ -115,6 +116,13 @@
                     <artifactId>json-path</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>joor</artifactId>
+            <version>${joor.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
