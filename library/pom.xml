@@ -14,7 +14,6 @@
         <spring.version>6.1.4</spring.version>
         <crud-generic.version>12.5-jakarta</crud-generic.version>
         <kafka-vars.version>1.0.19-spring-6</kafka-vars.version>
-        <javacutil.version>3.42.0</javacutil.version>
         <lombok.version>1.18.26</lombok.version>
         <junit.version>RELEASE</junit.version>
         <springboot.version>3.2.2</springboot.version>
@@ -82,12 +81,6 @@
                     <artifactId>commons-compress</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.checkerframework</groupId>
-            <artifactId>javacutil</artifactId>
-            <version>${javacutil.version}</version>
         </dependency>
 
         <dependency>
