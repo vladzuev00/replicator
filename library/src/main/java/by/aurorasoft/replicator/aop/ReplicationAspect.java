@@ -101,46 +101,37 @@ public class ReplicationAspect {
 
     }
 
-    @Pointcut("target(by.nhorushko.crudgeneric.v2.service.AbsServiceRUD+)")
+    @Pointcut("target(by.nhorushko.crudgeneric.v2.service.AbsServiceRUD)")
     private void rudService() {
 
     }
 
-    @Pointcut("target(by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD+)")
+    @Pointcut("target(by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD)")
     private void crudService() {
 
     }
 
-    @Pointcut(
-            "execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto+ *.save("
-                    + "by.nhorushko.crudgeneric.v2.domain.AbstractDto+))"
-    )
+    @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto *.save(by.nhorushko.crudgeneric.v2.domain.AbstractDto))")
     private void save() {
 
     }
 
-    @Pointcut(
-            "execution(public java.util.List<by.nhorushko.crudgeneric.v2.domain.AbstractDto+> *.saveAll("
-                    + "java.util.Collection<by.nhorushko.crudgeneric.v2.domain.AbstractDto+>))"
-    )
+    @Pointcut("execution(public java.util.List *.saveAll(java.util.Collection))")
     private void saveAll() {
 
     }
 
-    @Pointcut(
-            "execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto+ *.update("
-                    + "by.nhorushko.crudgeneric.v2.domain.AbstractDto+))"
-    )
+    @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto *.update(by.nhorushko.crudgeneric.v2.domain.AbstractDto))")
     private void update() {
 
     }
 
-    @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto+ *.updatePartial(Object+, Object))")
+    @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto *.updatePartial(Object, Object))")
     private void updatePartial() {
 
     }
 
-    @Pointcut("execution(public void *.delete(Object+))")
+    @Pointcut("execution(public void *.delete(Object))")
     private void deleteById() {
 
     }
