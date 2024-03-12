@@ -4,6 +4,7 @@ import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
 import jakarta.persistence.EntityManager;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -23,5 +24,15 @@ public final class ReplicatedPersonMapper extends AbsMapperEntityDto<ReplicatedP
                 entity.getSurname(),
                 entity.getBirthDate()
         );
+    }
+
+    //TODO: remove
+    protected Converter<ReplicatedPerson, ReplicatedPersonEntity> createConverterDtoToEntity() {
+        return (context) -> {
+            final ReplicatedPerson source = context.getSource();
+            final ReplicatedPersonEntity destination = context.getDestination();
+            mapSpecificFields(source, destination);
+            return destination;
+        };
     }
 }
