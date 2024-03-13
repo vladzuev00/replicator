@@ -6,13 +6,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import static by.aurorasoft.replicator.util.TransportConfigUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
-@JsonTypeInfo(use = NAME, property = "type")
+@JsonTypeInfo(use = NAME, property = TYPE_PROPERTY)
 @JsonSubTypes(
         {
-                @Type(value = SaveConsumedReplication.class, name = "save"),
-                @Type(value = DeleteConsumedReplication.class, name = "delete")
+                @Type(value = SaveConsumedReplication.class, name = SAVE),
+                @Type(value = DeleteConsumedReplication.class, name = DELETE)
         }
 )
 public interface ConsumedReplication<ID, E extends AbstractEntity<ID>> {
