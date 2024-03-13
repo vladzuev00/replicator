@@ -6,8 +6,8 @@ import lombok.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Value
-public final class DeleteConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
-    private final ID entityId;
+public class DeleteConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
+    ID entityId;
 
     public DeleteConsumedReplication(@JsonProperty("entityId") final ID entityId) {
         this.entityId = entityId;
