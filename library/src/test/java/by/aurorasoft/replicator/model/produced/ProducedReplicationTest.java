@@ -25,21 +25,11 @@ public final class ProducedReplicationTest {
     private static Stream<Arguments> provideReplicationAndExpectedJson() {
         return Stream.of(
                 Arguments.of(
-                        new CreateProducedReplication<>(new TestDto(255L)),
+                        new SaveProducedReplication<>(new TestDto(255L)),
                         """
                                 {
-                                  "type": "create",
-                                  "dto": {
-                                    "id": 255
-                                  }
-                                }"""
-                ),
-                Arguments.of(
-                        new UpdateProducedReplication<>(new TestDto(255L)),
-                        """
-                                {
-                                  "type": "update",
-                                  "dto": {
+                                  "type": "save",
+                                  "body": {
                                     "id": 255
                                   }
                                 }"""
