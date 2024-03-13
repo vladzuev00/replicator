@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Value;
 
 @Value
-public class SaveProducedReplication<ID, DTO extends AbstractDto<ID>> implements ProducedReplication<ID> {
+public class CreateProducedReplication<ID, DTO extends AbstractDto<ID>> implements ProducedReplication<ID> {
     DTO dto;
 
     @Override
