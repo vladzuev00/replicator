@@ -1,10 +1,8 @@
 package by.aurorasoft.replicator.model.produced;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-@RequiredArgsConstructor
-@Getter
-public final class DeleteProducedReplication<ID> implements ProducedReplication<ID> {
-    private final ID entityId;
+@Value
+public class DeleteProducedReplication<ID> implements ProducedReplication<ID> {
+    ID entityId;
 }
