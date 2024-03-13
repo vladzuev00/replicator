@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @RequiredArgsConstructor
 @Getter
-public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
-    private final E entity;
+public final class DeleteConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
+    private final ID id;
 
     @Override
     public void execute(final JpaRepository<E, ID> repository) {
-        repository.save(entity);
+        repository.deleteById(id);
     }
 }
