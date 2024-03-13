@@ -1,10 +1,9 @@
 package by.aurorasoft.replicator.aop;
 
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
-import by.aurorasoft.replicator.model.DeleteReplication;
-import by.aurorasoft.replicator.model.Replication;
-import by.aurorasoft.replicator.model.SaveReplication;
-import by.aurorasoft.replicator.model.UpdateReplication;
+import by.aurorasoft.replicator.model.produced.DeleteProducedReplication;
+import by.aurorasoft.replicator.model.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
@@ -24,36 +23,45 @@ import java.util.List;
 public class ReplicationAspect {
     private final ReplicationProducerHolder producerHolder;
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @AfterReturning(pointcut = "replicatedSave()", returning = "savedDto")
-    public void replicateSave(final JoinPoint joinPoint, final AbstractDto savedDto) {
-        replicate(joinPoint, new SaveReplication(savedDto));
+    @SuppressWarnings("rawtypes")
+    @AfterReturning(pointcut = "replicatedCreate()", returning = "createdDto")
+    public void replicateCreate(final JoinPoint joinPoint, final AbstractDto createdDto) {
+        produceSaveReplication(createdDto, joinPoint);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @AfterReturning(pointcut = "replicatedSaveAll()", returning = "savedDtos")
-    public void replicateSaveAll(final JoinPoint joinPoint, final List savedDtos) {
-        ((List<AbstractDto>) savedDtos).forEach(dto -> replicateSave(joinPoint, dto));
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @AfterReturning(value = "replicatedUpdate()", returning = "updatedDto")
+    @SuppressWarnings("rawtypes")
+    @AfterReturning(pointcut = "replicatedUpdate()", returning = "updatedDto")
     public void replicateUpdate(final JoinPoint joinPoint, final AbstractDto updatedDto) {
-        replicate(joinPoint, new UpdateReplication(updatedDto));
+        produceSaveReplication(updatedDto, joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
+    @AfterReturning(pointcut = "replicatedCreateAll()", returning = "createdDtos")
+    public void replicateCreateAll(final JoinPoint joinPoint, final List createdDtos) {
+        ((List<AbstractDto>) createdDtos).forEach(dto -> produceSaveReplication(dto, joinPoint));
+    }
+
     @Around("replicatedDeleteById()")
     public Object replicateDeleteById(final ProceedingJoinPoint joinPoint)
             throws Throwable {
         final Object entityId = joinPoint.getArgs()[0];
         final Object result = joinPoint.proceed();
-        replicate(joinPoint, new DeleteReplication(entityId));
+        produceDeleteReplication(entityId, joinPoint);
         return result;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void replicate(final JoinPoint joinPoint, final Replication replication) {
+    private void produceSaveReplication(final AbstractDto dto, final JoinPoint joinPoint) {
+        produceReplication(new SaveProducedReplication(dto), joinPoint);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void produceDeleteReplication(final Object entityId, final JoinPoint joinPoint) {
+        produceReplication(new DeleteProducedReplication(entityId), joinPoint);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void produceReplication(final ProducedReplication replication, final JoinPoint joinPoint) {
         final AbsServiceRUD<?, ?, ?, ?, ?> service = (AbsServiceRUD<?, ?, ?, ?, ?>) joinPoint.getTarget();
         producerHolder.findByService(service)
                 .orElseThrow(() -> createNoProducerException(service))
@@ -66,13 +74,13 @@ public class ReplicationAspect {
         );
     }
 
-    @Pointcut("replicatedCrudService() && save()")
-    private void replicatedSave() {
+    @Pointcut("replicatedCrudService() && create()")
+    private void replicatedCreate() {
 
     }
 
-    @Pointcut("replicatedCrudService() && saveAll()")
-    private void replicatedSaveAll() {
+    @Pointcut("replicatedCrudService() && createAll()")
+    private void replicatedCreateAll() {
 
     }
 
@@ -112,12 +120,12 @@ public class ReplicationAspect {
     }
 
     @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto *.save(by.nhorushko.crudgeneric.v2.domain.AbstractDto))")
-    private void save() {
+    private void create() {
 
     }
 
     @Pointcut("execution(public java.util.List *.saveAll(java.util.Collection))")
-    private void saveAll() {
+    private void createAll() {
 
     }
 
