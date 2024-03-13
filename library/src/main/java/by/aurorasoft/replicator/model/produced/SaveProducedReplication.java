@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import static by.aurorasoft.replicator.util.TransportConfigUtil.SAVE_BODY;
+
 @RequiredArgsConstructor
 @Getter
 public final class SaveProducedReplication<ID, DTO extends AbstractDto<ID>> implements ProducedReplication<ID> {
 
-    @JsonProperty("body")
+    @JsonProperty(SAVE_BODY)
     private final DTO dto;
 
     @Override

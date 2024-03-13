@@ -7,11 +7,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import static by.aurorasoft.replicator.util.TransportConfigUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
-@JsonTypeInfo(use = NAME, property = TYPE_PROPERTY_NAME)
+@JsonTypeInfo(use = NAME, property = TYPE_PROPERTY)
 @JsonSubTypes(
         {
-                @Type(value = SaveProducedReplication.class, name = SAVE_TYPE_NAME),
-                @Type(value = DeleteProducedReplication.class, name = DELETE_TYPE_NAME)
+                @Type(value = SaveProducedReplication.class, name = SAVE),
+                @Type(value = DeleteProducedReplication.class, name = DELETE)
         }
 )
 public interface ProducedReplication<ID> {
