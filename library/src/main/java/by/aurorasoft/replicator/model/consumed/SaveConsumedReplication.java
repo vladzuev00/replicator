@@ -6,12 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import static by.aurorasoft.replicator.util.TransportNameUtil.SAVE_BODY;
+
 @Value
-public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
-    private final E entity;
+public class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
+    E entity;
 
     @JsonCreator
-    public SaveConsumedReplication(@JsonProperty("body") final E entity) {
+    public SaveConsumedReplication(@JsonProperty(SAVE_BODY) final E entity) {
         this.entity = entity;
     }
 
