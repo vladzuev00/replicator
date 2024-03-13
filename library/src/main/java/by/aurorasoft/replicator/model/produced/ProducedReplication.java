@@ -9,8 +9,7 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 @JsonTypeInfo(use = NAME, property = "type")
 @JsonSubTypes(
         {
-                @Type(value = CreateProducedReplication.class, name = "create"),
-                @Type(value = UpdateProducedReplication.class, name = "update"),
+                @Type(value = SaveProducedReplication.class, name = "save"),
                 @Type(value = DeleteProducedReplication.class, name = "delete")
         }
 )
