@@ -1,8 +1,11 @@
 package by.aurorasoft.replicator.model.produced;
 
+import by.aurorasoft.replicator.model.Replication;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import java.util.UUID;
 
 import static by.aurorasoft.replicator.util.TransportNameUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
@@ -14,6 +17,11 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
                 @Type(value = DeleteProducedReplication.class, name = DELETE)
         }
 )
-public interface ProducedReplication<ID> {
-    ID getEntityId();
+public abstract class ProducedReplication<ID> extends Replication {
+
+    public ProducedReplication(final UUID uuid) {
+        super(uuid);
+    }
+
+    public abstract ID getEntityId();
 }
