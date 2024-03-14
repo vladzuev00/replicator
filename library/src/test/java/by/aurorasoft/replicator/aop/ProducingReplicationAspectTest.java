@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.aop.ReplicationAspect.NoReplicationProducerException;
+import by.aurorasoft.replicator.aop.ProducingReplicationAspect.NoReplicationProducerException;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
@@ -9,6 +9,7 @@ import by.aurorasoft.replicator.model.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -20,12 +21,11 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Optional.empty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
 
-public final class ReplicationAspectTest extends AbstractSpringBootTest {
+public final class ProducingReplicationAspectTest extends AbstractSpringBootTest {
 
     @MockBean
     private ReplicationProducerHolder producerHolder;
@@ -50,8 +50,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-//        final ProducedReplication<Long> expectedReplication = new SaveProducedReplication<>(givenDto);
-//        assertEquals(expectedReplication, actualReplication);
+        assertSaveReplication(actualReplication, givenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -80,11 +79,9 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         verify(givenProducer, times(givenDtos.size())).send(replicationArgumentCaptor.capture());
 
         final List<ProducedReplication<Long>> actualReplications = replicationArgumentCaptor.getAllValues();
-        final List<ProducedReplication<Long>> expectedReplications = List.of(
-//                new SaveProducedReplication<>(firstGivenDto),
-//                new SaveProducedReplication<>(secondGivenDto)
-        );
-        assertEquals(expectedReplications, actualReplications);
+        assertEquals(2, actualReplications.size());
+        assertSaveReplication(actualReplications.get(0), firstGivenDto);
+        assertSaveReplication(actualReplications.get(1), secondGivenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -110,8 +107,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-//        final ProducedReplication<Long> expectedReplication = new SaveProducedReplication<>(givenDto);
-//        assertEquals(expectedReplication, actualReplication);
+        assertSaveReplication(actualReplication, givenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -140,8 +136,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-//        final ProducedReplication<Long> expectedReplication = new SaveProducedReplication<>(givenDto);
-//        assertEquals(expectedReplication, actualReplication);
+        assertSaveReplication(actualReplication, givenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -160,7 +155,6 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         final Long givenId = 255L;
 
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
-
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
         service.delete(givenId);
@@ -168,8 +162,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-//        final ProducedReplication<Long> expectedReplication = new DeleteProducedReplication<>(givenId);
-//        assertEquals(expectedReplication, actualReplication);
+        assertDeleteReplication(actualReplication, givenId);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -183,5 +176,25 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
     private FirstTestCRUDService unProxyService() {
         return (FirstTestCRUDService) requireNonNullElse(getSingletonTarget(service), service);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void assertSaveReplication(final ProducedReplication<Long> actual, final TestDto expectedDto) {
+        final var actualSaveReplication = assertTypeThenCast(actual, SaveProducedReplication.class);
+        final AbstractDto<?> actualDto = actualSaveReplication.getDto();
+        assertEquals(expectedDto, actualDto);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void assertDeleteReplication(final ProducedReplication<Long> actual, final Long expectedEntityId) {
+        final var actualDeleteReplication = assertTypeThenCast(actual, DeleteProducedReplication.class);
+        final Object actualEntityId = actualDeleteReplication.getEntityId();
+        assertEquals(expectedEntityId, actualEntityId);
+    }
+
+    private static <R extends ProducedReplication<Long>> R assertTypeThenCast(final ProducedReplication<Long> actual,
+                                                                              final Class<R> expectedType) {
+        assertTrue(expectedType.isInstance(actual));
+        return expectedType.cast(actual);
     }
 }

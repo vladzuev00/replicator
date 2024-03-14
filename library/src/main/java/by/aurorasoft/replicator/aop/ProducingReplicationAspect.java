@@ -16,11 +16,15 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
+
+import static java.util.UUID.randomUUID;
 
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class ReplicationAspect {
+public class ProducingReplicationAspect {
     private final ReplicationProducerHolder producerHolder;
 
     @SuppressWarnings("rawtypes")
@@ -52,16 +56,17 @@ public class ReplicationAspect {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void produceSaveReplication(final AbstractDto dto, final JoinPoint joinPoint) {
-//        produceReplication(new SaveProducedReplication(dto), joinPoint);
+        produceReplication(uuid -> new SaveProducedReplication(uuid, dto), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void produceDeleteReplication(final Object entityId, final JoinPoint joinPoint) {
-//        produceReplication(new DeleteProducedReplication(entityId), joinPoint);
+        produceReplication(uuid -> new DeleteProducedReplication(uuid, entityId), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void produceReplication(final ProducedReplication replication, final JoinPoint joinPoint) {
+    private void produceReplication(final Function<UUID, ProducedReplication> factory, final JoinPoint joinPoint) {
+        final ProducedReplication replication = factory.apply(randomUUID());
         final AbsServiceRUD<?, ?, ?, ?, ?> service = (AbsServiceRUD<?, ?, ?, ?, ?>) joinPoint.getTarget();
         producerHolder.findByService(service)
                 .orElseThrow(() -> createNoProducerException(service))

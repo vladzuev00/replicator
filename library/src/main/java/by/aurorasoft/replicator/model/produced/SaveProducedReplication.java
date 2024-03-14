@@ -3,17 +3,13 @@ package by.aurorasoft.replicator.model.produced;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.UUID;
 
 import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 public final class SaveProducedReplication<ID, DTO extends AbstractDto<ID>> extends ProducedReplication<ID> {
 
     @JsonProperty(BODY_NAME)
