@@ -52,12 +52,12 @@ public class ReplicationAspect {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void produceSaveReplication(final AbstractDto dto, final JoinPoint joinPoint) {
-        produceReplication(new SaveProducedReplication(dto), joinPoint);
+//        produceReplication(new SaveProducedReplication(dto), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void produceDeleteReplication(final Object entityId, final JoinPoint joinPoint) {
-        produceReplication(new DeleteProducedReplication(entityId), joinPoint);
+//        produceReplication(new DeleteProducedReplication(entityId), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -7,8 +7,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
+import static java.util.UUID.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class ConsumedReplicationTest {
@@ -34,7 +36,10 @@ public final class ConsumedReplicationTest {
                                     "id": 255
                                   }
                                 }""",
-                        new SaveConsumedReplication<>(new TestEntity(255L))
+                        new SaveConsumedReplication<>(
+                                fromString("e52232e1-0ded-4587-999f-4dd135a4a94f"),
+                                new TestEntity(255L)
+                        )
                 ),
                 Arguments.of(
                         """
@@ -42,7 +47,10 @@ public final class ConsumedReplicationTest {
                                   "type": "delete",
                                   "entityId": 255
                                 }""",
-                        new DeleteConsumedReplication<>(255L)
+                        new DeleteConsumedReplication<>(
+                                fromString("e52232e1-0ded-4587-999f-4dd135a4a95f"),
+                                255L
+                        )
                 )
         );
     }
