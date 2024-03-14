@@ -1,31 +1,30 @@
 package by.aurorasoft.replicator.consuming.consumer;
 
 import by.aurorasoft.kafka.consumer.KafkaConsumerAbstract;
-import by.aurorasoft.replicator.model.Replication;
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
+import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
+import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Deserializer;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import static lombok.AccessLevel.NONE;
 
 @RequiredArgsConstructor
 @Getter
-public final class ReplicationConsumer<ID, DTO extends AbstractDto<ID>>
-        extends KafkaConsumerAbstract<ID, Replication<ID, DTO>> {
+public final class ReplicationConsumer<ID, E extends AbstractEntity<ID>> extends KafkaConsumerAbstract<ID, ConsumedReplication<ID, E>> {
     private final String groupId;
     private final String topic;
     private final Deserializer<ID> idDeserializer;
-    private final TypeReference<Replication<ID, DTO>> replicationTypeReference;
+    private final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference;
 
     @Getter(NONE)
-    private final AbsServiceCRUD<ID, ?, DTO, ?> service;
+    private final JpaRepository<E, ID> repository;
 
     @Override
-    public void listen(final ConsumerRecord<ID, Replication<ID, DTO>> record) {
-        record.value().execute(service);
+    public void listen(final ConsumerRecord<ID, ConsumedReplication<ID, E>> record) {
+        record.value().execute(repository);
     }
 }

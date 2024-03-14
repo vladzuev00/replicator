@@ -13,8 +13,9 @@ public final class ReplicationDeserializerFactory {
     private final ObjectMapper objectMapper;
 
     public <ID, DTO extends AbstractDto<ID>> ReplicationDeserializer<ID, DTO> create(
-            final ReplicationConsumer<ID, DTO> consumer
+            final ReplicationConsumer<ID, ?> consumer
     ) {
-        return new ReplicationDeserializer<>(objectMapper, consumer.getReplicationTypeReference());
+//        return new ReplicationDeserializer<>(objectMapper, consumer.getReplicationTypeReference());
+        return null;
     }
 }

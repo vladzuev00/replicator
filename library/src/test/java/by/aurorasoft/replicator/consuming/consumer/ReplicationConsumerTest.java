@@ -1,14 +1,14 @@
 package by.aurorasoft.replicator.consuming.consumer;
 
-import by.aurorasoft.replicator.base.dto.TestDto;
-import by.aurorasoft.replicator.model.Replication;
-import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
+import by.aurorasoft.replicator.base.entity.TestEntity;
+import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import static java.lang.Integer.MIN_VALUE;
 import static org.mockito.Mockito.*;
@@ -18,9 +18,9 @@ public final class ReplicationConsumerTest {
     private static final String GIVEN_TOPIC = "sync-dto";
 
     @Mock
-    private AbsServiceCRUD<Long, ?, TestDto, ?> mockedService;
+    private JpaRepository<TestEntity, Long> mockedRepository;
 
-    private ReplicationConsumer<Long, TestDto> consumer;
+    private ReplicationConsumer<Long, TestEntity> consumer;
 
     @Before
     public void initializeConsumer() {
@@ -29,24 +29,29 @@ public final class ReplicationConsumerTest {
                 GIVEN_TOPIC,
                 null,
                 null,
-                mockedService
+                mockedRepository
         );
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void recordsShouldBeListened() {
-        final Replication<Long, TestDto> givenReplication = mock(Replication.class);
-        final ConsumerRecord<Long, Replication<Long, TestDto>> givenRecord = createRecord(255L, givenReplication);
+    public void recordShouldBeListened() {
+        final ConsumedReplication<Long, TestEntity> givenReplication = mock(ConsumedReplication.class);
+        final ConsumerRecord<Long, ConsumedReplication<Long, TestEntity>> givenRecord = createRecord(
+                255L,
+                givenReplication
+        );
 
         consumer.listen(givenRecord);
 
-        verify(givenReplication, times(1)).execute(mockedService);
+        verify(givenReplication, times(1)).execute(mockedRepository);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static ConsumerRecord<Long, Replication<Long, TestDto>> createRecord(final Long id,
-                                                                                 final Replication<Long, TestDto> replication) {
+    private static ConsumerRecord<Long, ConsumedReplication<Long, TestEntity>> createRecord(
+            final Long id,
+            final ConsumedReplication<Long, TestEntity> replication
+    ) {
         return new ConsumerRecord<>(GIVEN_TOPIC, MIN_VALUE, MIN_VALUE, id, replication);
     }
 }
