@@ -4,6 +4,8 @@ import by.aurorasoft.replicator.model.Replication;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.UUID;
 
@@ -17,6 +19,8 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
                 @Type(value = DeleteProducedReplication.class, name = DELETE)
         }
 )
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public abstract class ProducedReplication<ID> extends Replication {
 
     public ProducedReplication(final UUID uuid) {
