@@ -3,17 +3,24 @@ package by.aurorasoft.replicator.model.consumed;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.SAVE_BODY;
+import java.util.UUID;
 
-@Value
-public class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
-    E entity;
+import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
+import static by.aurorasoft.replicator.util.TransportNameUtil.UUID_NAME;
+
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> extends ConsumedReplication<ID, E> {
+    private final E entity;
 
     @JsonCreator
-    public SaveConsumedReplication(@JsonProperty(SAVE_BODY) final E entity) {
+    public SaveConsumedReplication(@JsonProperty(UUID_NAME) final UUID uuid,
+                                   @JsonProperty(BODY_NAME) final E entity) {
+        super(uuid);
         this.entity = entity;
     }
 

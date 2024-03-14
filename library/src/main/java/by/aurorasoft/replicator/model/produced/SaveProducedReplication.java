@@ -9,14 +9,14 @@ import lombok.ToString;
 
 import java.util.UUID;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.SAVE_BODY;
+import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public final class SaveProducedReplication<ID, DTO extends AbstractDto<ID>> extends ProducedReplication<ID> {
 
-    @JsonProperty(SAVE_BODY)
+    @JsonProperty(BODY_NAME)
     private final DTO dto;
 
     public SaveProducedReplication(final UUID uuid, final DTO dto) {
