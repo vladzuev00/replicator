@@ -16,8 +16,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.ReplicationAssertUtil.assertDeleteProducedReplication;
-import static by.aurorasoft.replicator.util.ReplicationAssertUtil.assertSaveProducedReplication;
+import static by.aurorasoft.replicator.util.ReplicationAssertUtil.assertProducingDelete;
+import static by.aurorasoft.replicator.util.ReplicationAssertUtil.assertProducingSave;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Optional.empty;
 import static org.junit.Assert.assertEquals;
@@ -50,7 +50,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-        assertSaveProducedReplication(actualReplication, givenDto);
+        assertProducingSave(actualReplication, givenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -80,8 +80,8 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
         final List<ProducedReplication<Long>> actualReplications = replicationArgumentCaptor.getAllValues();
         assertEquals(2, actualReplications.size());
-        assertSaveProducedReplication(actualReplications.get(0), firstGivenDto);
-        assertSaveProducedReplication(actualReplications.get(1), secondGivenDto);
+        assertProducingSave(actualReplications.get(0), firstGivenDto);
+        assertProducingSave(actualReplications.get(1), secondGivenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -107,7 +107,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-        assertSaveProducedReplication(actualReplication, givenDto);
+        assertProducingSave(actualReplication, givenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -136,7 +136,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-        assertSaveProducedReplication(actualReplication, givenDto);
+        assertProducingSave(actualReplication, givenDto);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -162,7 +162,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
         final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
-        assertDeleteProducedReplication(actualReplication, givenId);
+        assertProducingDelete(actualReplication, givenId);
     }
 
     @Test(expected = NoReplicationProducerException.class)

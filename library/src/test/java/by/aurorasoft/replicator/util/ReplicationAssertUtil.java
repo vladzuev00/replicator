@@ -8,31 +8,31 @@ import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import lombok.experimental.UtilityClass;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @UtilityClass
 public final class ReplicationAssertUtil {
 
     @SuppressWarnings("unchecked")
-    public static void assertSaveProducedReplication(final ProducedReplication<Long> actual,
-                                                     final TestDto expectedDto) {
-        final var actualSaveReplication = assertTypeThenCast(actual, SaveProducedReplication.class);
+    public static void assertProducingSave(final ProducedReplication<Long> actual, final TestDto expectedDto) {
+        final var actualSaveReplication = assertTypeAndDefinedUUIDThenCast(actual, SaveProducedReplication.class);
         final AbstractDto<?> actualDto = actualSaveReplication.getDto();
         assertEquals(expectedDto, actualDto);
     }
 
     @SuppressWarnings("unchecked")
-    public static void assertDeleteProducedReplication(final ProducedReplication<Long> actual,
-                                                       final Long expectedEntityId) {
-        final var actualDeleteReplication = assertTypeThenCast(actual, DeleteProducedReplication.class);
+    public static void assertProducingDelete(final ProducedReplication<Long> actual, final Long expectedEntityId) {
+        final var actualDeleteReplication = assertTypeAndDefinedUUIDThenCast(actual, DeleteProducedReplication.class);
         final Object actualEntityId = actualDeleteReplication.getEntityId();
         assertEquals(expectedEntityId, actualEntityId);
     }
 
-    private static <R extends ProducedReplication<Long>> R assertTypeThenCast(final Replication actual,
-                                                                              final Class<R> expectedType) {
+
+
+    private static <R extends ProducedReplication<Long>> R assertTypeAndDefinedUUIDThenCast(final Replication actual,
+                                                                                            final Class<R> expectedType) {
         assertTrue(expectedType.isInstance(actual));
+        assertNotNull(actual.getUuid());
         return expectedType.cast(actual);
     }
 }
