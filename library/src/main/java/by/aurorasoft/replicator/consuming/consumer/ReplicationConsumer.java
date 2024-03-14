@@ -21,7 +21,7 @@ public final class ReplicationConsumer<ID, E extends AbstractEntity<ID>> extends
     private final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference;
     private final JpaRepository<E, ID> repository;
 
-    //TODO: каждый раз придется указывать eventPublisher - исправить
+    //TODO: каждый раз в сервисах придется указывать eventPublisher - исправить
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
