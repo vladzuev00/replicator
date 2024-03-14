@@ -42,7 +42,7 @@ public final class ReplicationConsumingStarterTest {
     }
 
     @Test
-    public void consumersShouldBeStarted() {
+    public void consumingShouldBeStarted() {
         starter.start();
 
         verify(mockedConsumerStarter, times(2)).start(consumerArgumentCaptor.capture());
