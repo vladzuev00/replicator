@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.consuming.consumer;
 
 import by.aurorasoft.kafka.consumer.KafkaConsumerAbstract;
+import by.aurorasoft.replicator.event.ReplicationEvent;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Deserializer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @RequiredArgsConstructor
@@ -19,8 +21,12 @@ public final class ReplicationConsumer<ID, E extends AbstractEntity<ID>> extends
     private final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference;
     private final JpaRepository<E, ID> repository;
 
+    //TODO: каждый раз придется указывать eventPublisher - исправить
+    private final ApplicationEventPublisher eventPublisher;
+
     @Override
     public void listen(final ConsumerRecord<ID, ConsumedReplication<ID, E>> record) {
-        record.value().execute(repository);
+        final ReplicationEvent<ID, E> event = new ReplicationEvent<>(this, record.value());
+        eventPublisher.publishEvent(event);
     }
 }

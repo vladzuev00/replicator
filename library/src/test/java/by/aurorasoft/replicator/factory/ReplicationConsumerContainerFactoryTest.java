@@ -91,6 +91,7 @@ public final class ReplicationConsumerContainerFactoryTest {
                 idDeserializer,
                 new TypeReference<>() {
                 },
+                null,
                 null
         );
     }

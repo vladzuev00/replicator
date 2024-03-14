@@ -64,6 +64,7 @@ public final class ReplicationConsumerEndpointFactoryTest {
                 null,
                 new TypeReference<>() {
                 },
+                null,
                 null
         );
     }
