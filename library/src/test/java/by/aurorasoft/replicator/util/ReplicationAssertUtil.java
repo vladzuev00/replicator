@@ -19,33 +19,33 @@ import static org.junit.Assert.*;
 @UtilityClass
 public final class ReplicationAssertUtil {
 
-    public static void assertProducedSave(final ProducedReplication<Long> actual, final TestDto expectedDto) {
-        final var actualSaveReplication = assertDefinedUUIDAndTypeThenCast(actual, SaveProducedReplication.class);
-        final AbstractDto<?> actualDto = actualSaveReplication.getDto();
+    public static void assertSave(final ProducedReplication<Long> actual, final TestDto expectedDto) {
+        final var castedActual = assertDefinedUUIDThenCast(actual, SaveProducedReplication.class);
+        final AbstractDto<?> actualDto = castedActual.getDto();
         assertEquals(expectedDto, actualDto);
     }
 
-    public static void assertProducedDelete(final ProducedReplication<Long> actual, final Long expectedEntityId) {
-        final var actualDeleteReplication = assertDefinedUUIDAndTypeThenCast(actual, DeleteProducedReplication.class);
-        assertEquals(expectedEntityId, actualDeleteReplication.getEntityId());
+    public static void assertDelete(final ProducedReplication<Long> actual, final Long expectedEntityId) {
+        final var castedActual = assertDefinedUUIDThenCast(actual, DeleteProducedReplication.class);
+        assertEquals(expectedEntityId, castedActual.getEntityId());
     }
 
-    public static void assertConsumedSave(final ConsumedReplication<Long, TestEntity> actual,
-                                          final UUID expectedUUID,
-                                          final TestEntity expectedEntity) {
-        final var actualSaveReplication = assertUUIDAndTypeThenCast(actual, expectedUUID, SaveConsumedReplication.class);
-        assertEquals(expectedEntity, actualSaveReplication.getEntity());
+    public static void assertSave(final ConsumedReplication<Long, TestEntity> actual,
+                                  final UUID expectedUUID,
+                                  final TestEntity expectedEntity) {
+        final var castedActual = assertUUIDAndTypeThenCast(actual, expectedUUID, SaveConsumedReplication.class);
+        assertEquals(expectedEntity, castedActual.getEntity());
     }
 
-    public static void assertConsumedDelete(final ConsumedReplication<Long, TestEntity> actual,
-                                            final UUID expectedUUID,
-                                            final Long expectedEntityId) {
-        final var actualDeleteReplication = assertUUIDAndTypeThenCast(actual, expectedUUID, DeleteConsumedReplication.class);
-        assertEquals(expectedEntityId, actualDeleteReplication.getEntityId());
+    public static void assertDelete(final ConsumedReplication<Long, TestEntity> actual,
+                                    final UUID expectedUUID,
+                                    final Long expectedEntityId) {
+        final var castedActual = assertUUIDAndTypeThenCast(actual, expectedUUID, DeleteConsumedReplication.class);
+        assertEquals(expectedEntityId, castedActual.getEntityId());
     }
 
-    private static <R extends Replication> R assertDefinedUUIDAndTypeThenCast(final Replication actual,
-                                                                              final Class<R> expectedType) {
+    private static <R extends Replication> R assertDefinedUUIDThenCast(final Replication actual,
+                                                                       final Class<R> expectedType) {
         assertNotNull(actual.getUuid());
         return assertTypeThenCast(actual, expectedType);
     }
