@@ -2,9 +2,9 @@ package by.aurorasoft.testapp.it;
 
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.Person;
-import by.aurorasoft.testapp.crud.dto.ReplicatedPerson;
+import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
+import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.crud.service.PersonService;
-import by.aurorasoft.testapp.crud.service.ReplicatedPersonService;
 import by.aurorasoft.testapp.model.PersonName;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil.checkEquals;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
@@ -29,7 +30,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private PersonService personService;
 
     @Autowired
-    private ReplicatedPersonService replicatedPersonService;
+    private ReplicatedPersonRepository replicatedPersonRepository;
 
     @Test
     public void personAndReplicatedPersonShouldBeSaved() {
@@ -57,14 +58,16 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
         assertEquals(expectedSavedPerson, actualSavedPerson);
 
-        final ReplicatedPerson actualReplicatedPerson = replicatedPersonService.getById(expectedSavedPersonId);
-        final ReplicatedPerson expectedReplicatedPerson = ReplicatedPerson.builder()
+        final var optionalActualReplicatedPerson = replicatedPersonRepository.findById(expectedSavedPersonId);
+        assertTrue(optionalActualReplicatedPerson.isPresent());
+        final ReplicatedPersonEntity actualReplicatedPerson = optionalActualReplicatedPerson.get();
+        final ReplicatedPersonEntity expectedReplicatedPerson = ReplicatedPersonEntity.builder()
                 .id(expectedSavedPersonId)
                 .name(givenName)
                 .surname(givenSurname)
                 .birthDate(givenBirthDate)
                 .build();
-        assertEquals(expectedReplicatedPerson, actualReplicatedPerson);
+        checkEquals(expectedReplicatedPerson, actualReplicatedPerson);
     }
 
     @Test
@@ -118,27 +121,27 @@ public class ReplicationIT extends AbstractSpringBootTest {
         );
         assertEquals(expectedSavedPersons, actualSavedPersons);
 
-        final List<ReplicatedPerson> actualReplicatedPersons = replicatedPersonService.getById(
+        final List<ReplicatedPersonEntity> actualReplicatedPersons = replicatedPersonRepository.findAllById(
                 List.of(
                         expectedFirstSavedPersonId,
                         expectedSecondSavedPersonId
                 )
         );
-        final List<ReplicatedPerson> expectedReplicatedPersons = List.of(
-                ReplicatedPerson.builder()
+        final List<ReplicatedPersonEntity> expectedReplicatedPersons = List.of(
+                ReplicatedPersonEntity.builder()
                         .id(expectedFirstSavedPersonId)
                         .name(givenFirstPersonName)
                         .surname(givenFirstPersonSurname)
                         .birthDate(givenFirstPersonBirthDate)
                         .build(),
-                ReplicatedPerson.builder()
+                ReplicatedPersonEntity.builder()
                         .id(expectedSecondSavedPersonId)
                         .name(givenSecondPersonName)
                         .surname(givenSecondPersonSurname)
                         .birthDate(givenSecondPersonBirthDate)
                         .build()
         );
-        assertEquals(expectedReplicatedPersons, actualReplicatedPersons);
+        checkEquals(expectedReplicatedPersons, actualReplicatedPersons);
     }
 
     @Test
@@ -163,14 +166,16 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         assertEquals(givenNewPerson, actualUpdatedPerson);
 
-        final ReplicatedPerson actualUpdatedReplicatedPerson = replicatedPersonService.getById(givenId);
-        final ReplicatedPerson expectedUpdatedReplicatedPerson = ReplicatedPerson.builder()
+        final var optionalActualReplicatedPerson = replicatedPersonRepository.findById(givenId);
+        assertTrue(optionalActualReplicatedPerson.isPresent());
+        final ReplicatedPersonEntity actualReplicationPerson = optionalActualReplicatedPerson.get();
+        final ReplicatedPersonEntity expectedReplicatedPerson = ReplicatedPersonEntity.builder()
                 .id(givenId)
                 .name(givenNewName)
                 .surname(givenNewSurname)
                 .birthDate(givenNewBirthDate)
                 .build();
-        assertEquals(expectedUpdatedReplicatedPerson, actualUpdatedReplicatedPerson);
+        checkEquals(expectedReplicatedPerson, actualReplicationPerson);
     }
 
     @Test
@@ -197,14 +202,16 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
         assertEquals(expectedUpdatedPerson, actualUpdatedPerson);
 
-        final ReplicatedPerson actualUpdatedReplicatedPerson = replicatedPersonService.getById(givenId);
-        final ReplicatedPerson expectedUpdatedReplicatedPerson = ReplicatedPerson.builder()
+        final var optionalActualReplicatedPerson = replicatedPersonRepository.findById(givenId);
+        assertTrue(optionalActualReplicatedPerson.isPresent());
+        final ReplicatedPersonEntity actualReplicationPerson = optionalActualReplicatedPerson.get();
+        final ReplicatedPersonEntity expectedReplicatedPerson = ReplicatedPersonEntity.builder()
                 .id(givenId)
                 .name(givenNewName)
                 .surname(givenNewSurname)
                 .birthDate(expectedBirthDate)
                 .build();
-        assertEquals(expectedUpdatedReplicatedPerson, actualUpdatedReplicatedPerson);
+        checkEquals(expectedReplicatedPerson, actualReplicationPerson);
     }
 
     @Test
@@ -216,7 +223,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
         personService.delete(givenId);
         waitReplicating();
 
-        final boolean successDeleting = !personService.isExist(givenId) && !replicatedPersonService.isExist(givenId);
+        final boolean personDeleted = !personService.isExist(givenId);
+        final boolean replicatedPersonDeleted = !replicatedPersonRepository.existsById(givenId);
+        final boolean successDeleting = personDeleted && replicatedPersonDeleted;
         assertTrue(successDeleting);
     }
 
