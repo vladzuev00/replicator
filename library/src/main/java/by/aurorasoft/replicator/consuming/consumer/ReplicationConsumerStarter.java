@@ -1,15 +1,15 @@
 package by.aurorasoft.replicator.consuming.consumer;
 
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
+import by.aurorasoft.replicator.factory.ReplicationConsumerContainerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public final class ReplicationConsumerStarter {
-//    private final ReplicationConsumerContainerFactory containerFactory;
+    private final ReplicationConsumerContainerFactory containerFactory;
 
-    public <ID, DTO extends AbstractDto<ID>> void start(final ReplicationConsumer<ID, ?> consumer) {
-//        containerFactory.create(consumer).start();
+    public void start(final ReplicationConsumer<?, ?> consumer) {
+        containerFactory.create(consumer).start();
     }
 }
