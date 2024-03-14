@@ -10,8 +10,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import static lombok.AccessLevel.NONE;
-
 @RequiredArgsConstructor
 @Getter
 public final class ReplicationConsumer<ID, E extends AbstractEntity<ID>> extends KafkaConsumerAbstract<ID, ConsumedReplication<ID, E>> {
@@ -19,8 +17,6 @@ public final class ReplicationConsumer<ID, E extends AbstractEntity<ID>> extends
     private final String topic;
     private final Deserializer<ID> idDeserializer;
     private final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference;
-
-    @Getter(NONE)
     private final JpaRepository<E, ID> repository;
 
     @Override
