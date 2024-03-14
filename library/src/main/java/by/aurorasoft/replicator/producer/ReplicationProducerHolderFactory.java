@@ -32,20 +32,21 @@ public final class ReplicationProducerHolderFactory {
     }
 
     public ReplicationProducerHolder create() {
-        return replicatedServiceHolder.getServices()
-                .stream()
-                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
+//        return replicatedServiceHolder.getServices()
+//                .stream()
+//                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
+        return null;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private ReplicationProducer<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        final ProducerConfig producerConfig = getProducerConfig(service);
-        final TopicConfig topicConfig = getTopicConfig(service);
-        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
-        final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
-        final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
-        return new ReplicationProducer<>(topicConfig.name(), kafkaTemplate);
-    }
+//    private ReplicationProducer<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+//        final ProducerConfig producerConfig = getProducerConfig(service);
+//        final TopicConfig topicConfig = getTopicConfig(service);
+//        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
+//        final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
+//        final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
+//        return new ReplicationProducer<>(topicConfig.name(), kafkaTemplate);
+//    }
 
     private static ProducerConfig getProducerConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
         return getReplicatedServiceAnnotation(service).producerConfig();

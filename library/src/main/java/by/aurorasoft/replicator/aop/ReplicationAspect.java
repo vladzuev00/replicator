@@ -29,16 +29,16 @@ public class ReplicationAspect {
         produceSaveReplication(createdDto, joinPoint);
     }
 
-    @SuppressWarnings("rawtypes")
-    @AfterReturning(pointcut = "replicatedUpdate()", returning = "updatedDto")
-    public void replicateUpdate(final JoinPoint joinPoint, final AbstractDto updatedDto) {
-        produceSaveReplication(updatedDto, joinPoint);
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     @AfterReturning(pointcut = "replicatedCreateAll()", returning = "createdDtos")
     public void replicateCreateAll(final JoinPoint joinPoint, final List createdDtos) {
         ((List<AbstractDto>) createdDtos).forEach(dto -> produceSaveReplication(dto, joinPoint));
+    }
+
+    @SuppressWarnings("rawtypes")
+    @AfterReturning(pointcut = "replicatedUpdate()", returning = "updatedDto")
+    public void replicateUpdate(final JoinPoint joinPoint, final AbstractDto updatedDto) {
+        produceSaveReplication(updatedDto, joinPoint);
     }
 
     @Around("replicatedDeleteById()")

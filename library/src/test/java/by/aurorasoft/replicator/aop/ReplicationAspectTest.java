@@ -5,10 +5,9 @@ import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
-import by.aurorasoft.replicator.model.DeleteReplication;
-import by.aurorasoft.replicator.model.Replication;
-import by.aurorasoft.replicator.model.SaveReplication;
-import by.aurorasoft.replicator.model.UpdateReplication;
+import by.aurorasoft.replicator.model.produced.DeleteProducedReplication;
+import by.aurorasoft.replicator.model.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,13 +34,13 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
     private FirstTestCRUDService service;
 
     @Captor
-    private ArgumentCaptor<Replication<Long, TestDto>> replicationArgumentCaptor;
+    private ArgumentCaptor<ProducedReplication<Long>> replicationArgumentCaptor;
 
     @Test
     @SuppressWarnings("unchecked")
-    public void saveShouldBeReplicated() {
+    public void createShouldBeReplicated() {
         final TestDto givenDto = new TestDto(255L);
-        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
+        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -50,13 +49,13 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
-        final Replication<Long, TestDto> actualReplication = replicationArgumentCaptor.getValue();
-        final Replication<Long, TestDto> expectedReplication = new SaveReplication<>(givenDto);
+        final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
+        final ProducedReplication<Long> expectedReplication = new SaveProducedReplication<>(givenDto);
         assertEquals(expectedReplication, actualReplication);
     }
 
     @Test(expected = NoReplicationProducerException.class)
-    public void saveShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+    public void createShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final TestDto givenDto = new TestDto(255L);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(empty());
@@ -66,12 +65,12 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void saveAllShouldBeReplicated() {
+    public void createAllShouldBeReplicated() {
         final TestDto firstGivenDto = new TestDto(255L);
         final TestDto secondGivenDto = new TestDto(256L);
         final List<TestDto> givenDtos = List.of(firstGivenDto, secondGivenDto);
 
-        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
+        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -80,16 +79,16 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
         verify(givenProducer, times(givenDtos.size())).send(replicationArgumentCaptor.capture());
 
-        final List<Replication<Long, TestDto>> actualReplications = replicationArgumentCaptor.getAllValues();
-        final List<Replication<Long, TestDto>> expectedReplications = List.of(
-                new SaveReplication<>(firstGivenDto),
-                new SaveReplication<>(secondGivenDto)
+        final List<ProducedReplication<Long>> actualReplications = replicationArgumentCaptor.getAllValues();
+        final List<ProducedReplication<Long>> expectedReplications = List.of(
+                new SaveProducedReplication<>(firstGivenDto),
+                new SaveProducedReplication<>(secondGivenDto)
         );
         assertEquals(expectedReplications, actualReplications);
     }
 
     @Test(expected = NoReplicationProducerException.class)
-    public void saveAllShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+    public void createAllShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final List<TestDto> givenDtos = List.of(new TestDto(255L), new TestDto(256L));
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(empty());
@@ -101,7 +100,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
     @SuppressWarnings("unchecked")
     public void updateShouldBeReplicated() {
         final TestDto givenDto = new TestDto(255L);
-        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
+        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -110,8 +109,8 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
-        final Replication<Long, TestDto> actualReplication = replicationArgumentCaptor.getValue();
-        final Replication<Long, TestDto> expectedReplication = new UpdateReplication<>(givenDto);
+        final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
+        final ProducedReplication<Long> expectedReplication = new SaveProducedReplication<>(givenDto);
         assertEquals(expectedReplication, actualReplication);
     }
 
@@ -131,7 +130,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
         final TestDto givenDto = new TestDto(givenId);
 
         final Object givenPartial = new Object();
-        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
+        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -140,8 +139,8 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
-        final Replication<Long, TestDto> actualReplication = replicationArgumentCaptor.getValue();
-        final Replication<Long, TestDto> expectedReplication = new UpdateReplication<>(givenDto);
+        final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
+        final ProducedReplication<Long> expectedReplication = new SaveProducedReplication<>(givenDto);
         assertEquals(expectedReplication, actualReplication);
     }
 
@@ -160,7 +159,7 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
     public void deleteByIdShouldBeReplicated() {
         final Long givenId = 255L;
 
-        final ReplicationProducer<Long, TestDto> givenProducer = mock(ReplicationProducer.class);
+        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
         when(producerHolder.findByService(same(unProxyService()))).thenReturn(Optional.of(givenProducer));
 
@@ -168,8 +167,8 @@ public final class ReplicationAspectTest extends AbstractSpringBootTest {
 
         verify(givenProducer, times(1)).send(replicationArgumentCaptor.capture());
 
-        final Replication<Long, TestDto> actualReplication = replicationArgumentCaptor.getValue();
-        final Replication<Long, TestDto> expectedReplication = new DeleteReplication<>(givenId);
+        final ProducedReplication<Long> actualReplication = replicationArgumentCaptor.getValue();
+        final ProducedReplication<Long> expectedReplication = new DeleteProducedReplication<>(givenId);
         assertEquals(expectedReplication, actualReplication);
     }
 
