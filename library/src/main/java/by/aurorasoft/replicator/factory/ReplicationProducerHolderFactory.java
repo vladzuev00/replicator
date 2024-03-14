@@ -3,8 +3,9 @@ package by.aurorasoft.replicator.factory;
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
+import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -32,21 +33,20 @@ public final class ReplicationProducerHolderFactory {
     }
 
     public ReplicationProducerHolder create() {
-//        return replicatedServiceHolder.getServices()
-//                .stream()
-//                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
-        return new ReplicationProducerHolder();
+        return replicatedServiceHolder.getServices()
+                .stream()
+                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-//    private ReplicationProducer<?, ?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-//        final ProducerConfig producerConfig = getProducerConfig(service);
-//        final TopicConfig topicConfig = getTopicConfig(service);
-//        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
-//        final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
-//        final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
-//        return new ReplicationProducer<>(topicConfig.name(), kafkaTemplate);
-//    }
+    private ReplicationProducer<?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        final ProducerConfig producerConfig = getProducerConfig(service);
+        final TopicConfig topicConfig = getTopicConfig(service);
+        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
+        final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
+        final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
+        return new ReplicationProducer<>(topicConfig.name(), kafkaTemplate);
+    }
 
     private static ProducerConfig getProducerConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
         return getReplicatedServiceAnnotation(service).producerConfig();
