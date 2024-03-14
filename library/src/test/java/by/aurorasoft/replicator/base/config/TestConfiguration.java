@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.base;
+package by.aurorasoft.replicator.base.config;
 
 import by.aurorasoft.replicator.config.ReplicationConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;

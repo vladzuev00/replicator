@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.producer;
+package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
@@ -35,7 +35,7 @@ public final class ReplicationProducerHolderFactory {
 //        return replicatedServiceHolder.getServices()
 //                .stream()
 //                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
-        return null;
+        return new ReplicationProducerHolder();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
