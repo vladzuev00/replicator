@@ -16,8 +16,8 @@ public final class ConsumedReplicationTest {
 
     @ParameterizedTest
     @MethodSource("provideJsonAndExpectedReplication")
-    public void saveReplicationShouldBeDeserializedFromJson(final String givenJson,
-                                                            final ConsumedReplication<Long, TestEntity> expected)
+    public void replicationShouldBeDeserializedFromJson(final String givenJson,
+                                                        final ConsumedReplication<Long, TestEntity> expected)
             throws Exception {
         final ConsumedReplication<Long, TestEntity> actual = objectMapper.readValue(givenJson, new TypeReference<>() {
         });
