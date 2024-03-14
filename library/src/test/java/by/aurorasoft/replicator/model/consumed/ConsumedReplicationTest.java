@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.util.UUID.fromString;
@@ -32,6 +31,7 @@ public final class ConsumedReplicationTest {
                         """
                                 {
                                   "type": "save",
+                                  "uuid": "e52232e1-0ded-4587-999f-4dd135a4a94f",
                                   "body": {
                                     "id": 255
                                   }
@@ -45,10 +45,11 @@ public final class ConsumedReplicationTest {
                         """
                                 {
                                   "type": "delete",
+                                  "uuid": "e52232e2-0ded-4587-999f-4dd135a4a95f",
                                   "entityId": 255
                                 }""",
                         new DeleteConsumedReplication<>(
-                                fromString("e52232e1-0ded-4587-999f-4dd135a4a95f"),
+                                fromString("e52232e2-0ded-4587-999f-4dd135a4a95f"),
                                 255L
                         )
                 )
