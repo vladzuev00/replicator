@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public final class ReplicationDeserializerFactory {
     private final ObjectMapper objectMapper;
 
-    public <ID, DTO extends AbstractDto<ID>> ReplicationDeserializer<ID, DTO> create(
+    public <ID, DTO extends AbstractDto<ID>> ReplicationDeserializer<ID, ?> create(
             final ReplicationConsumer<ID, ?> consumer
     ) {
 //        return new ReplicationDeserializer<>(objectMapper, consumer.getReplicationTypeReference());

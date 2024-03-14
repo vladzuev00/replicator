@@ -1,10 +1,9 @@
 package by.aurorasoft.replicator.consuming.deserializer;
 
-import by.aurorasoft.replicator.base.dto.TestDto;
-import by.aurorasoft.replicator.model.DeleteReplication;
-import by.aurorasoft.replicator.model.Replication;
-import by.aurorasoft.replicator.model.SaveReplication;
-import by.aurorasoft.replicator.model.UpdateReplication;
+import by.aurorasoft.replicator.base.entity.TestEntity;
+import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.model.consumed.DeleteConsumedReplication;
+import by.aurorasoft.replicator.model.consumed.SaveConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,15 +15,16 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class ReplicationDeserializerTest {
-    private final ReplicationDeserializer<Long, TestDto> deserializer = createDeserializer();
+    private final ReplicationDeserializer<Long, TestEntity> deserializer = createDeserializer();
 
     @ParameterizedTest
     @MethodSource("provideJsonAndExpectedReplication")
-    public void replicationShouldBeDeserialized(final String givenJson, final Replication<Long, TestDto> expected) {
+    public void replicationShouldBeDeserialized(final String givenJson,
+                                                final ConsumedReplication<Long, TestEntity> expected) {
         final String givenTopicName = "topic";
         final byte[] givenJsonBytes = givenJson.getBytes();
 
-        final Replication<Long, TestDto> actual = deserializer.deserialize(givenTopicName, givenJsonBytes);
+        final ConsumedReplication<Long, TestEntity> actual = deserializer.deserialize(givenTopicName, givenJsonBytes);
         assertEquals(expected, actual);
     }
 
@@ -33,35 +33,25 @@ public final class ReplicationDeserializerTest {
                 Arguments.of(
                         """
                                 {
-                                   "@type": "SaveReplication",
-                                   "dto": {
+                                   "type": "save",
+                                   "body": {
                                      "id": 255
                                    }
                                 }""",
-                        new SaveReplication<>(new TestDto(255L))
+                        new SaveConsumedReplication<>(new TestEntity(255L))
                 ),
                 Arguments.of(
                         """
                                 {
-                                   "@type": "UpdateReplication",
-                                   "dto": {
-                                     "id": 255
-                                   }
-                                }""",
-                        new UpdateReplication<>(new TestDto(255L))
-                ),
-                Arguments.of(
-                        """
-                                {
-                                   "@type": "DeleteReplication",
+                                   "type": "delete",
                                    "entityId": 255
                                 }""",
-                        new DeleteReplication<>(255L)
+                        new DeleteConsumedReplication<>(255L)
                 )
         );
     }
 
-    private ReplicationDeserializer<Long, TestDto> createDeserializer() {
+    private ReplicationDeserializer<Long, TestEntity> createDeserializer() {
         return new ReplicationDeserializer<>(
                 new ObjectMapper(),
                 new TypeReference<>() {
