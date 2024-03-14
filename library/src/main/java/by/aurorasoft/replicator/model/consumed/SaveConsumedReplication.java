@@ -18,8 +18,7 @@ public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> ext
     private final E entity;
 
     @JsonCreator
-    public SaveConsumedReplication(@JsonProperty(UUID_NAME) final UUID uuid,
-                                   @JsonProperty(BODY_NAME) final E entity) {
+    public SaveConsumedReplication(@JsonProperty(UUID_NAME) final UUID uuid, @JsonProperty(BODY_NAME) final E entity) {
         super(uuid);
         this.entity = entity;
     }
