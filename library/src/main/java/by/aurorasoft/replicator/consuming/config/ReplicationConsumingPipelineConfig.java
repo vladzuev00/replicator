@@ -1,5 +1,6 @@
-package by.aurorasoft.replicator.consuming;
+package by.aurorasoft.replicator.consuming.config;
 
+import by.aurorasoft.replicator.consuming.serde.ConsumedReplicationSerde;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.core.type.TypeReference;

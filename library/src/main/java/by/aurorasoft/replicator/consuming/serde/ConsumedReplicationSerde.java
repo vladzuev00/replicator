@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consuming;
+package by.aurorasoft.replicator.consuming.serde;
 
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;

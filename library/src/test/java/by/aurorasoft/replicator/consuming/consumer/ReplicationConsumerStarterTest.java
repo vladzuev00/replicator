@@ -1,6 +1,6 @@
 //package by.aurorasoft.replicator.consuming.consumer;
 //
-//import by.aurorasoft.replicator.consuming.ReplicationConsumingPipelineStarter;
+//import by.aurorasoft.replicator.consuming.starter.ReplicationConsumingPipelineStarter;
 //import by.aurorasoft.replicator.factory.ReplicationConsumerContainerFactory;
 //import org.junit.Before;
 //import org.junit.Test;

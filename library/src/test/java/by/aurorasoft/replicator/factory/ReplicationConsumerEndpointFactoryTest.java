@@ -1,7 +1,7 @@
 //package by.aurorasoft.replicator.factory;
 //
 //import by.aurorasoft.replicator.base.entity.TestEntity;
-//import by.aurorasoft.replicator.consuming.ReplicationConsumingPipelineStarter;
+//import by.aurorasoft.replicator.consuming.starter.ReplicationConsumingPipelineStarter;
 //import com.fasterxml.jackson.core.type.TypeReference;
 //import org.apache.kafka.clients.consumer.ConsumerRecord;
 //import org.junit.Test;

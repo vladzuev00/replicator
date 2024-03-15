@@ -1,7 +1,7 @@
 //package by.aurorasoft.replicator.factory;
 //
 //import by.aurorasoft.replicator.base.entity.TestEntity;
-//import by.aurorasoft.replicator.consuming.ReplicationConsumingPipelineStarter;
+//import by.aurorasoft.replicator.consuming.starter.ReplicationConsumingPipelineStarter;
 //import by.aurorasoft.replicator.consuming.deserializer.ReplicationDeserializer;
 //import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 //import com.fasterxml.jackson.core.type.TypeReference;
