@@ -19,10 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Function;
 
-import static java.util.UUID.randomUUID;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
 
 @Aspect
@@ -60,18 +57,17 @@ public class ProducingReplicationAspect {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void registerSaveReplication(final AbstractDto dto, final JoinPoint joinPoint) {
-        registerReplication(uuid -> new SaveProducedReplication(uuid, dto), joinPoint);
+        registerReplication(new SaveProducedReplication(dto), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void registerDeleteReplication(final Object entityId, final JoinPoint joinPoint) {
-        registerReplication(uuid -> new DeleteProducedReplication(uuid, entityId), joinPoint);
+        registerReplication(new DeleteProducedReplication(entityId), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void registerReplication(final Function<UUID, ProducedReplication> factory, final JoinPoint joinPoint) {
+    private void registerReplication(final ProducedReplication<?> replication, final JoinPoint joinPoint) {
         final ReplicationProducer<?> producer = getProducer(joinPoint);
-        final ProducedReplication<?> replication = factory.apply(randomUUID());
         final ReplicationCallback callback = new ReplicationCallback(producer, replication);
         registerSynchronization(callback);
     }
