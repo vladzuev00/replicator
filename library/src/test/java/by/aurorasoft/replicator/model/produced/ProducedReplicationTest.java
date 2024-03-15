@@ -19,17 +19,18 @@ public final class ProducedReplicationTest {
     public void replicationShouldBeSerializedToJson(final ProducedReplication<Long> givenReplication,
                                                     final String expected)
             throws Exception {
-        final String actual = objectMapper.writeValueAsString(givenReplication);
-        assertEquals(expected, actual, true);
+//        final String actual = objectMapper.writeValueAsString(givenReplication);
+//        assertEquals(expected, actual, true);
+        throw new RuntimeException();
     }
 
     private static Stream<Arguments> provideReplicationAndExpectedJson() {
         return Stream.of(
                 Arguments.of(
-                        new SaveProducedReplication<>(
-                                fromString("e52232e1-0ded-4587-999f-4dd135a4a94f"),
-                                new TestDto(255L)
-                        ),
+//                        new SaveProducedReplication<>(
+//                                fromString("e52232e1-0ded-4587-999f-4dd135a4a94f"),
+//                                new TestDto(255L)
+//                        ),
                         """
                                 {
                                   "type": "save",
@@ -40,10 +41,10 @@ public final class ProducedReplicationTest {
                                 }"""
                 ),
                 Arguments.of(
-                        new DeleteProducedReplication<>(
-                                fromString("e52232e2-0ded-4587-999f-4dd135a4a95f"),
-                                255L
-                        ),
+//                        new DeleteProducedReplication<>(
+//                                fromString("e52232e2-0ded-4587-999f-4dd135a4a95f"),
+//                                255L
+//                        ),
                         """
                                 {
                                   "type": "delete",

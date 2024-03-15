@@ -18,6 +18,7 @@ public final class ReplicationTopicCreator {
     private final ReplicatedServiceHolder replicatedServiceHolder;
     private final KafkaAdmin kafkaAdmin;
 
+    //TODO: replace by @PostConstruct
     @EventListener(ContextRefreshedEvent.class)
     public void createTopics() {
         replicatedServiceHolder.getServices().forEach(this::createTopic);

@@ -13,13 +13,14 @@ public final class DeleteConsumedReplicationTest {
     @Test
     @SuppressWarnings("unchecked")
     public void replicationShouldBeExecuted() {
-        final Long givenEntityId = 255L;
-        final var givenReplication = new DeleteConsumedReplication<Long, TestEntity>(randomUUID(), givenEntityId);
-
-        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
-
-        givenReplication.execute(givenRepository);
-
-        verify(givenRepository, times(1)).deleteById(same(givenEntityId));
+//        final Long givenEntityId = 255L;
+//        final var givenReplication = new DeleteConsumedReplication<Long, TestEntity>(randomUUID(), givenEntityId);
+//
+//        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+//
+//        givenReplication.execute(givenRepository);
+//
+//        verify(givenRepository, times(1)).deleteById(same(givenEntityId));
+        throw new RuntimeException();
     }
 }

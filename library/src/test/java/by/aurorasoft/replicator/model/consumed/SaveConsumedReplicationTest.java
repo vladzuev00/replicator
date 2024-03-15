@@ -13,16 +13,17 @@ public final class SaveConsumedReplicationTest {
     @Test
     @SuppressWarnings("unchecked")
     public void replicationShouldBeExecuted() {
-        final TestEntity givenEntity = new TestEntity(255L);
-        final SaveConsumedReplication<Long, TestEntity> givenReplication = new SaveConsumedReplication<>(
-                randomUUID(),
-                givenEntity
-        );
-
-        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
-
-        givenReplication.execute(givenRepository);
-
-        verify(givenRepository, times(1)).save(same(givenEntity));
+//        final TestEntity givenEntity = new TestEntity(255L);
+//        final SaveConsumedReplication<Long, TestEntity> givenReplication = new SaveConsumedReplication<>(
+//                randomUUID(),
+//                givenEntity
+//        );
+//
+//        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+//
+//        givenReplication.execute(givenRepository);
+//
+//        verify(givenRepository, times(1)).save(same(givenEntity));
+        throw new RuntimeException();
     }
 }
