@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+//TODO: remove
 @UtilityClass
 public final class ReplicationAssertUtil {
 

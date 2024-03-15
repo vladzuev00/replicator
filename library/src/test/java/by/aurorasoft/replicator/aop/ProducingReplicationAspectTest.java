@@ -7,8 +7,8 @@ import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.model.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.util.ReplicationAssertUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Optional.empty;
+import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
@@ -67,7 +68,11 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         mockedTransactionManager.verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(1));
 
         final ReplicationCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
-        assertSave(actualCallback, givenProducer, givenDto);
+        final ReplicationCallback<Long> expectedCallback = new ReplicationCallback<>(
+                givenProducer,
+                new SaveProducedReplication<>(givenDto)
+        );
+        checkEquals(expectedCallback, actualCallback);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -206,22 +211,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         return (FirstTestCRUDService) requireNonNullElse(getSingletonTarget(service), service);
     }
 
-    private static void assertSave(final ReplicationCallback<Long> actual,
-                                   final ReplicationProducer<Long> expectedProducer,
-                                   final TestDto expectedDto) {
-        assertProducer(actual, expectedProducer);
-        ReplicationAssertUtil.assertSave(actual.getReplication(), expectedDto);
+    private static void checkEquals(final ReplicationCallback<?> expected, final ReplicationCallback<?> actual) {
+        assertSame(expected.getProducer(), actual.getProducer());
+        assertEquals(expected.getReplication(), actual.getReplication());
     }
 
-    private static void assertDelete(final ReplicationCallback<Long> actual,
-                                     final ReplicationProducer<Long> expectedProducer,
-                                     final Long expectedEntityId) {
-        assertProducer(actual, expectedProducer);
-        ReplicationAssertUtil.assertDelete(actual.getReplication(), expectedEntityId);
-    }
-
-    private static void assertProducer(final ReplicationCallback<Long> actual,
-                                       final ReplicationProducer<Long> expectedProducer) {
-        assertSame(expectedProducer, actual.getProducer());
+    private static void checkEquals(final List<ReplicationCallback<?>> expected,
+                                    final List<ReplicationCallback<?>> actual) {
+        assertEquals(expected.size(), actual.size());
+        range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 }
