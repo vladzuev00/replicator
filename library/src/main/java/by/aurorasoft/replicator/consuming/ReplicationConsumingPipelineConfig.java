@@ -7,9 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import org.apache.kafka.common.serialization.Serde;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerde;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Getter
 public final class ReplicationConsumingPipelineConfig<ID, E extends AbstractEntity<ID>> {
@@ -25,7 +22,7 @@ public final class ReplicationConsumingPipelineConfig<ID, E extends AbstractEnti
                                               final JpaRepository<E, ID> repository) {
         this.topic = topic;
         this.idSerde = idSerde;
-        this.replicationSerde = new JsonSerde<>(new JsonSerializer<>(), new JsonDeserializer<>(replicationTypeReference, false));
+        this.replicationSerde = new ConsumedReplicationSerde<>(replicationTypeReference);
         this.repository = repository;
     }
 }
