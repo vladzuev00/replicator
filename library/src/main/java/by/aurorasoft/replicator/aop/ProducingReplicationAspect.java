@@ -4,6 +4,7 @@ import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.model.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +15,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.UUID.randomUUID;
+import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
 
 @Aspect
 @Component
@@ -29,54 +32,56 @@ public class ProducingReplicationAspect {
 
     @SuppressWarnings("rawtypes")
     @AfterReturning(pointcut = "replicatedCreate()", returning = "createdDto")
-    public void replicateCreate(final JoinPoint joinPoint, final AbstractDto createdDto) {
-        produceSaveReplication(createdDto, joinPoint);
+    public void registerCreate(final JoinPoint joinPoint, final AbstractDto createdDto) {
+        registerSaveReplication(createdDto, joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @AfterReturning(pointcut = "replicatedCreateAll()", returning = "createdDtos")
-    public void replicateCreateAll(final JoinPoint joinPoint, final List createdDtos) {
-        ((List<AbstractDto>) createdDtos).forEach(dto -> produceSaveReplication(dto, joinPoint));
+    public void registerCreateAll(final JoinPoint joinPoint, final List createdDtos) {
+        ((List<AbstractDto>) createdDtos).forEach(dto -> registerSaveReplication(dto, joinPoint));
     }
 
     @SuppressWarnings("rawtypes")
     @AfterReturning(pointcut = "replicatedUpdate()", returning = "updatedDto")
-    public void replicateUpdate(final JoinPoint joinPoint, final AbstractDto updatedDto) {
-        produceSaveReplication(updatedDto, joinPoint);
+    public void registerUpdate(final JoinPoint joinPoint, final AbstractDto updatedDto) {
+        registerSaveReplication(updatedDto, joinPoint);
     }
 
     @Around("replicatedDeleteById()")
-    public Object replicateDeleteById(final ProceedingJoinPoint joinPoint)
+    public Object registerDeleteById(final ProceedingJoinPoint joinPoint)
             throws Throwable {
         final Object entityId = joinPoint.getArgs()[0];
         final Object result = joinPoint.proceed();
-        produceDeleteReplication(entityId, joinPoint);
+        registerDeleteReplication(entityId, joinPoint);
         return result;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void produceSaveReplication(final AbstractDto dto, final JoinPoint joinPoint) {
-        produceReplication(uuid -> new SaveProducedReplication(uuid, dto), joinPoint);
+    private void registerSaveReplication(final AbstractDto dto, final JoinPoint joinPoint) {
+        registerReplication(uuid -> new SaveProducedReplication(uuid, dto), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void produceDeleteReplication(final Object entityId, final JoinPoint joinPoint) {
-        produceReplication(uuid -> new DeleteProducedReplication(uuid, entityId), joinPoint);
+    private void registerDeleteReplication(final Object entityId, final JoinPoint joinPoint) {
+        registerReplication(uuid -> new DeleteProducedReplication(uuid, entityId), joinPoint);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void produceReplication(final Function<UUID, ProducedReplication> factory, final JoinPoint joinPoint) {
-        final ProducedReplication replication = factory.apply(randomUUID());
+    private void registerReplication(final Function<UUID, ProducedReplication> factory, final JoinPoint joinPoint) {
+        final ReplicationProducer<?> producer = getProducer(joinPoint);
+        final ProducedReplication<?> replication = factory.apply(randomUUID());
+        final ReplicateAfterCommitCallback callback = new ReplicateAfterCommitCallback(producer, replication);
+        registerSynchronization(callback);
+    }
+
+    private ReplicationProducer<?> getProducer(final JoinPoint joinPoint) {
         final AbsServiceRUD<?, ?, ?, ?, ?> service = (AbsServiceRUD<?, ?, ?, ?, ?>) joinPoint.getTarget();
-        producerHolder.findByService(service)
-                .orElseThrow(() -> createNoProducerException(service))
-                .send(replication);
+        return producerHolder.findByService(service).orElseThrow(() -> throwNoProducerException(joinPoint));
     }
 
-    private NoReplicationProducerException createNoProducerException(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        throw new NoReplicationProducerException(
-                "There is no replication producer for service %s".formatted(service.getClass())
-        );
+    private NoReplicationProducerException throwNoProducerException(final JoinPoint joinPoint) {
+        throw new NoReplicationProducerException("There is no replication producer for '%s'".formatted(joinPoint));
     }
 
     @Pointcut("replicatedCrudService() && create()")
@@ -147,6 +152,17 @@ public class ProducingReplicationAspect {
     @Pointcut("execution(public void *.delete(Object))")
     private void deleteById() {
 
+    }
+
+    @RequiredArgsConstructor
+    private static final class ReplicateAfterCommitCallback<ID> implements TransactionSynchronization {
+        private final ReplicationProducer<ID> producer;
+        private final ProducedReplication<ID> replication;
+
+        @Override
+        public void afterCommit() {
+            producer.send(replication);
+        }
     }
 
     static final class NoReplicationProducerException extends RuntimeException {
