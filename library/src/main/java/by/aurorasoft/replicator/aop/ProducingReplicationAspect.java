@@ -72,7 +72,7 @@ public class ProducingReplicationAspect {
     private void registerReplication(final Function<UUID, ProducedReplication> factory, final JoinPoint joinPoint) {
         final ReplicationProducer<?> producer = getProducer(joinPoint);
         final ProducedReplication<?> replication = factory.apply(randomUUID());
-        final ReplicateAfterCommitCallback callback = new ReplicateAfterCommitCallback(producer, replication);
+        final ReplicationCallback callback = new ReplicationCallback(producer, replication);
         registerSynchronization(callback);
     }
 
@@ -157,7 +157,7 @@ public class ProducingReplicationAspect {
 
     @RequiredArgsConstructor
     @Getter
-    static final class ReplicateAfterCommitCallback<ID> implements TransactionSynchronization {
+    static final class ReplicationCallback<ID> implements TransactionSynchronization {
         private final ReplicationProducer<ID> producer;
         private final ProducedReplication<ID> replication;
 

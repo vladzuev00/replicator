@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.aop;
 
 import by.aurorasoft.replicator.aop.ProducingReplicationAspect.NoReplicationProducerException;
-import by.aurorasoft.replicator.aop.ProducingReplicationAspect.ReplicateAfterCommitCallback;
+import by.aurorasoft.replicator.aop.ProducingReplicationAspect.ReplicationCallback;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
@@ -41,7 +41,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     private MockedStatic<TransactionSynchronizationManager> mockedTransactionManager;
 
     @Captor
-    private ArgumentCaptor<ReplicateAfterCommitCallback<Long>> callbackArgumentCaptor;
+    private ArgumentCaptor<ReplicationCallback<Long>> callbackArgumentCaptor;
 
     @Before
     public void mockTransactionManager() {
@@ -66,7 +66,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
         mockedTransactionManager.verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(1));
 
-        final ReplicateAfterCommitCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
+        final ReplicationCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
         assertSave(actualCallback, givenProducer, givenDto);
     }
 
@@ -95,7 +95,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
         mockedTransactionManager.verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(2));
 
-        final List<ReplicateAfterCommitCallback<Long>> actualCallbacks = callbackArgumentCaptor.getAllValues();
+        final List<ReplicationCallback<Long>> actualCallbacks = callbackArgumentCaptor.getAllValues();
         assertSave(actualCallbacks.get(0), givenProducer, firstGivenDto);
         assertSave(actualCallbacks.get(1), givenProducer, secondGivenDto);
     }
@@ -122,7 +122,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
         mockedTransactionManager.verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(1));
 
-        final ReplicateAfterCommitCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
+        final ReplicationCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
         assertSave(actualCallback, givenProducer, givenDto);
     }
 
@@ -151,7 +151,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
         mockedTransactionManager.verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(1));
 
-        final ReplicateAfterCommitCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
+        final ReplicationCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
         assertSave(actualCallback, givenProducer, givenDto);
     }
 
@@ -177,7 +177,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
         mockedTransactionManager.verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(1));
 
-        final ReplicateAfterCommitCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
+        final ReplicationCallback<Long> actualCallback = callbackArgumentCaptor.getValue();
         assertDelete(actualCallback, givenProducer, givenId);
     }
 
@@ -195,7 +195,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     public void replicationShouldBeSent() {
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
         final ProducedReplication<Long> givenReplication = mock(ProducedReplication.class);
-        final ReplicateAfterCommitCallback<Long> givenCallback = new ReplicateAfterCommitCallback<>(
+        final ReplicationCallback<Long> givenCallback = new ReplicationCallback<>(
                 givenProducer,
                 givenReplication
         );
@@ -209,21 +209,21 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         return (FirstTestCRUDService) requireNonNullElse(getSingletonTarget(service), service);
     }
 
-    private static void assertSave(final ReplicateAfterCommitCallback<Long> actual,
+    private static void assertSave(final ReplicationCallback<Long> actual,
                                    final ReplicationProducer<Long> expectedProducer,
                                    final TestDto expectedDto) {
         assertProducer(actual, expectedProducer);
         ReplicationAssertUtil.assertSave(actual.getReplication(), expectedDto);
     }
 
-    private static void assertDelete(final ReplicateAfterCommitCallback<Long> actual,
+    private static void assertDelete(final ReplicationCallback<Long> actual,
                                      final ReplicationProducer<Long> expectedProducer,
                                      final Long expectedEntityId) {
         assertProducer(actual, expectedProducer);
         ReplicationAssertUtil.assertDelete(actual.getReplication(), expectedEntityId);
     }
 
-    private static void assertProducer(final ReplicateAfterCommitCallback<Long> actual,
+    private static void assertProducer(final ReplicationCallback<Long> actual,
                                        final ReplicationProducer<Long> expectedProducer) {
         assertSame(expectedProducer, actual.getProducer());
     }
