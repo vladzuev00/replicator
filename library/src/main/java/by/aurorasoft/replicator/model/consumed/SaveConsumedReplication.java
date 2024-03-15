@@ -6,18 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.UUID;
-
 import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
-import static by.aurorasoft.replicator.util.TransportNameUtil.UUID_NAME;
 
 @Getter
-public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> extends ConsumedReplication<ID, E> {
+public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
     private final E entity;
 
     @JsonCreator
-    public SaveConsumedReplication(@JsonProperty(UUID_NAME) final UUID uuid, @JsonProperty(BODY_NAME) final E entity) {
-        super(uuid);
+    public SaveConsumedReplication(@JsonProperty(BODY_NAME) final E entity) {
         this.entity = entity;
     }
 
