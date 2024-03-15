@@ -7,6 +7,7 @@ import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -155,7 +156,8 @@ public class ProducingReplicationAspect {
     }
 
     @RequiredArgsConstructor
-    private static final class ReplicateAfterCommitCallback<ID> implements TransactionSynchronization {
+    @Getter
+    static final class ReplicateAfterCommitCallback<ID> implements TransactionSynchronization {
         private final ReplicationProducer<ID> producer;
         private final ProducedReplication<ID> replication;
 
