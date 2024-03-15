@@ -12,17 +12,17 @@ import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Getter
-public final class ReplicationConsumingPipeline<ID, E extends AbstractEntity<ID>> {
+public final class ReplicationConsumingPipelineConfig<ID, E extends AbstractEntity<ID>> {
     private final String topic;
     private final Serde<ID> idSerde;
     private final Serde<ConsumedReplication<ID, E>> replicationSerde;
     private final JpaRepository<E, ID> repository;
 
     @Builder
-    public ReplicationConsumingPipeline(final String topic,
-                                        final Serde<ID> idSerde,
-                                        final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference,
-                                        final JpaRepository<E, ID> repository) {
+    public ReplicationConsumingPipelineConfig(final String topic,
+                                              final Serde<ID> idSerde,
+                                              final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference,
+                                              final JpaRepository<E, ID> repository) {
         this.topic = topic;
         this.idSerde = idSerde;
         this.replicationSerde = new JsonSerde<>(new JsonSerializer<>(), new JsonDeserializer<>(replicationTypeReference, false));

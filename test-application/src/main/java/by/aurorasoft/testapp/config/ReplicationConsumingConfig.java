@@ -1,6 +1,6 @@
 package by.aurorasoft.testapp.config;
 
-import by.aurorasoft.replicator.consuming.ReplicationConsumingPipeline;
+import by.aurorasoft.replicator.consuming.ReplicationConsumingPipelineConfig;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,8 +17,8 @@ public class ReplicationConsumingConfig {
     private String topic;
 
     @Bean
-    public ReplicationConsumingPipeline<Long, ReplicatedPersonEntity> consumerConfig(final ReplicatedPersonRepository repository) {
-        return ReplicationConsumingPipeline.<Long, ReplicatedPersonEntity>builder()
+    public ReplicationConsumingPipelineConfig<Long, ReplicatedPersonEntity> consumerConfig(final ReplicatedPersonRepository repository) {
+        return ReplicationConsumingPipelineConfig.<Long, ReplicatedPersonEntity>builder()
                 .topic(topic)
                 .idSerde(Long())
                 .replicationTypeReference(new TypeReference<>() {})
