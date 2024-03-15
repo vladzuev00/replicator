@@ -9,14 +9,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractTestCRUDService extends AbsServiceCRUD<
-        Long,
-        AbstractEntity<Long>,
-        TestDto,
-        JpaRepository<AbstractEntity<Long>, Long>
-        > {
+public abstract class TestCRUDService extends AbsServiceCRUD<Long, AbstractEntity<Long>, TestDto, JpaRepository<AbstractEntity<Long>, Long>> {
 
-    public AbstractTestCRUDService() {
+    public TestCRUDService() {
         super(null, null);
     }
 

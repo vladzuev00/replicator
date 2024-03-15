@@ -9,6 +9,6 @@ import org.apache.kafka.common.serialization.LongSerializer;
         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
         topicConfig = @TopicConfig(name = "first-topic")
 )
-public class FirstTestCRUDService extends AbstractTestCRUDService {
+public class FirstTestCRUDService extends TestCRUDService {
 
 }

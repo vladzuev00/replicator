@@ -18,6 +18,6 @@ import org.apache.kafka.common.serialization.LongSerializer;
                 replicationFactor = 2
         )
 )
-public class SecondTestCRUDService extends AbstractTestCRUDService {
+public class SecondTestCRUDService extends TestCRUDService {
 
 }
