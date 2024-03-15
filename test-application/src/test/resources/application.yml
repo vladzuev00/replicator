@@ -22,5 +22,3 @@ kafka:
   topic:
     sync-person:
       name: sync-person
-      consumer:
-        group-id: sync-person-group

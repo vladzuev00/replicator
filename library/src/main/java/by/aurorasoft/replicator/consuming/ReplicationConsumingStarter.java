@@ -1,27 +1,31 @@
 package by.aurorasoft.replicator.consuming;
 
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumingPipelineStarter;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerStarter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+//TODO: refactor
 @Component
-@RequiredArgsConstructor
 public final class ReplicationConsumingStarter {
     private final List<ReplicationConsumingPipeline<?, ?>> pipelines;
+    private final ReplicationConsumingPipelineStarter pipelineStarter;
+    private final StreamsBuilder streamsBuilder;
+
+    public ReplicationConsumingStarter(List<ReplicationConsumingPipeline<?, ?>> pipelines, ReplicationConsumingPipelineStarter pipelineStarter, StreamsBuilder streamsBuilder) {
+        this.pipelines = pipelines;
+        this.pipelineStarter = pipelineStarter;
+        this.streamsBuilder = streamsBuilder;
+        pipelines.forEach(this::start);
+    }
 
 
-
-    //TODO: StreamsBuilder streamsBuilder
-    private final List<ReplicationConsumingPipelineStarter<?, ?>> consumers;
-    private final ReplicationConsumerStarter consumerStarter;
-
-    @EventListener(ContextRefreshedEvent.class)
+//    @EventListener(ContextRefreshedEvent.class)
     public void start() {
-        consumers.forEach(consumerStarter::start);
+        pipelines.forEach(this::start);
+    }
+
+    private void start(final ReplicationConsumingPipeline<?, ?> pipeline) {
+        pipelineStarter.start(pipeline, streamsBuilder);
     }
 }
