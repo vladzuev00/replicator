@@ -12,6 +12,9 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationConsumingStarter {
+    private final List<ReplicationConsumingPipeline<?, ?>> pipelines;
+
+
 
     //TODO: StreamsBuilder streamsBuilder
     private final List<ReplicationConsumingPipelineStarter<?, ?>> consumers;

@@ -42,7 +42,7 @@ public final class ReplicationConsumerTest {
                 givenReplication
         );
 
-        consumer.build(givenRecord);
+        consumer.start(givenRecord);
 
         verify(givenReplication, times(1)).execute(mockedRepository);
     }
