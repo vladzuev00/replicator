@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.UUID;
-
 import static by.aurorasoft.replicator.util.TransportNameUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
@@ -18,11 +16,6 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
                 @Type(value = DeleteConsumedReplication.class, name = DELETE)
         }
 )
-public abstract class ConsumedReplication<ID, E extends AbstractEntity<ID>> extends Replication {
-
-    public ConsumedReplication(final UUID uuid) {
-        super(uuid);
-    }
-
-    public abstract void execute(final JpaRepository<E, ID> repository);
+public interface ConsumedReplication<ID, E extends AbstractEntity<ID>> {
+    void execute(final JpaRepository<E, ID> repository);
 }
