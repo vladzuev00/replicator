@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.util;
 
 import by.aurorasoft.replicator.base.dto.TestDto;
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.model.Replication;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.consumed.DeleteConsumedReplication;
 import by.aurorasoft.replicator.model.consumed.SaveConsumedReplication;
