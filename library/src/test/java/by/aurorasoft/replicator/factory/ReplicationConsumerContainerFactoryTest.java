@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumingPipelineStarter;
 import by.aurorasoft.replicator.consuming.deserializer.ReplicationDeserializer;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -57,7 +57,7 @@ public final class ReplicationConsumerContainerFactoryTest {
     public void containerShouldBeCreated() {
         final String givenGroupId = "test-dto-group";
         final Deserializer<Long> givenIdDeserializer = mock(Deserializer.class);
-        final ReplicationConsumer<Long, TestEntity> givenConsumer = createConsumer(givenGroupId, givenIdDeserializer);
+        final ReplicationConsumingPipelineStarter<Long, TestEntity> givenConsumer = createConsumer(givenGroupId, givenIdDeserializer);
 
         final KafkaListenerEndpoint givenEndpoint = createEndPoint();
         when(mockedEndpointFactory.create(same(givenConsumer))).thenReturn(givenEndpoint);
@@ -83,9 +83,9 @@ public final class ReplicationConsumerContainerFactoryTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static ReplicationConsumer<Long, TestEntity> createConsumer(final String groupId,
-                                                                        final Deserializer<Long> idDeserializer) {
-        return new ReplicationConsumer<>(
+    private static ReplicationConsumingPipelineStarter<Long, TestEntity> createConsumer(final String groupId,
+                                                                                        final Deserializer<Long> idDeserializer) {
+        return new ReplicationConsumingPipelineStarter<>(
                 groupId,
                 GIVEN_TOPIC,
                 idDeserializer,

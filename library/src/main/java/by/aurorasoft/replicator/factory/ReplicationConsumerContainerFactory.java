@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumingPipelineStarter;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -32,14 +32,14 @@ public final class ReplicationConsumerContainerFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public MessageListenerContainer create(final ReplicationConsumer<?, ?> consumer) {
+    public MessageListenerContainer create(final ReplicationConsumingPipelineStarter<?, ?> consumer) {
         final KafkaListenerContainerFactory<?> factory = createContainerFactory(consumer);
         final KafkaListenerEndpoint endpoint = endpointFactory.create(consumer);
         return factory.createListenerContainer(endpoint);
     }
 
     private <ID, E extends AbstractEntity<ID>> KafkaListenerContainerFactory<?> createContainerFactory(
-            final ReplicationConsumer<ID, E> consumer
+            final ReplicationConsumingPipelineStarter<ID, E> consumer
     ) {
         final var containerFactory = new ConcurrentKafkaListenerContainerFactory<ID, ConsumedReplication<ID, E>>();
         final ConsumerFactory<ID, ConsumedReplication<ID, E>> consumerFactory = createConsumerFactory(consumer);
@@ -48,15 +48,15 @@ public final class ReplicationConsumerContainerFactory {
     }
 
     private <ID, E extends AbstractEntity<ID>> ConsumerFactory<ID, ConsumedReplication<ID, E>> createConsumerFactory(
-            final ReplicationConsumer<ID, E> consumer
+            final ReplicationConsumingPipelineStarter<ID, E> consumer
     ) {
         final Map<String, Object> configsByNames = getConfigsByNames(consumer);
-        final Deserializer<ID> idDeserializer = consumer.getIdDeserializer();
+        final Deserializer<ID> idDeserializer = consumer.getIdSerde();
         final var replicationDeserializer = replicationDeserializerFactory.create(consumer);
         return new DefaultKafkaConsumerFactory<>(configsByNames, idDeserializer, replicationDeserializer);
     }
 
-    private Map<String, Object> getConfigsByNames(final ReplicationConsumer<?, ?> consumer) {
+    private Map<String, Object> getConfigsByNames(final ReplicationConsumingPipelineStarter<?, ?> consumer) {
         return Map.of(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress, GROUP_ID_CONFIG, consumer.getGroupId());
     }
 }

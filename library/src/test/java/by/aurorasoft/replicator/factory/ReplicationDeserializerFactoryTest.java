@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumingPipelineStarter;
 import by.aurorasoft.replicator.consuming.deserializer.ReplicationDeserializer;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,7 +39,7 @@ public final class ReplicationDeserializerFactoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void deserializeShouldBeCreated() {
-        final ReplicationConsumer<Long, TestEntity> givenConfig = mock(ReplicationConsumer.class);
+        final ReplicationConsumingPipelineStarter<Long, TestEntity> givenConfig = mock(ReplicationConsumingPipelineStarter.class);
 
         final TypeReference<ConsumedReplication<Long, TestEntity>> givenTypeReference = new TypeReference<>() {
         };

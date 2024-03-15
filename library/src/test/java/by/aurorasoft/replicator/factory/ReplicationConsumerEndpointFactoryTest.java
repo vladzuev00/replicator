@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumingPipelineStarter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public final class ReplicationConsumerEndpointFactoryTest {
             throws Exception {
         final String givenGroupId = "sync-dto-group";
         final String givenTopic = "sync-dto";
-        final ReplicationConsumer<Long, TestEntity> givenConsumer = createConsumer(givenGroupId, givenTopic);
+        final ReplicationConsumingPipelineStarter<Long, TestEntity> givenConsumer = createConsumer(givenGroupId, givenTopic);
 
         final MethodKafkaListenerEndpoint<?, ?> actual = (MethodKafkaListenerEndpoint<?, ?>) factory.create(givenConsumer);
 
@@ -57,8 +57,8 @@ public final class ReplicationConsumerEndpointFactoryTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private ReplicationConsumer<Long, TestEntity> createConsumer(final String groupId, final String topic) {
-        return new ReplicationConsumer<>(
+    private ReplicationConsumingPipelineStarter<Long, TestEntity> createConsumer(final String groupId, final String topic) {
+        return new ReplicationConsumingPipelineStarter<>(
                 groupId,
                 topic,
                 null,
@@ -76,6 +76,6 @@ public final class ReplicationConsumerEndpointFactoryTest {
 
     private static Method getProcessingMethod()
             throws Exception {
-        return ReplicationConsumer.class.getMethod(PROCESSING_METHOD_NAME, ConsumerRecord.class);
+        return ReplicationConsumingPipelineStarter.class.getMethod(PROCESSING_METHOD_NAME, ConsumerRecord.class);
     }
 }

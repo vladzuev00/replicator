@@ -20,11 +20,11 @@ public final class ReplicationConsumerTest {
     @Mock
     private JpaRepository<TestEntity, Long> mockedRepository;
 
-    private ReplicationConsumer<Long, TestEntity> consumer;
+    private ReplicationConsumingPipelineStarter<Long, TestEntity> consumer;
 
     @Before
     public void initializeConsumer() {
-        consumer = new ReplicationConsumer<>(
+        consumer = new ReplicationConsumingPipelineStarter<>(
                 null,
                 GIVEN_TOPIC,
                 null,
@@ -42,7 +42,7 @@ public final class ReplicationConsumerTest {
                 givenReplication
         );
 
-        consumer.listen(givenRecord);
+        consumer.build(givenRecord);
 
         verify(givenReplication, times(1)).execute(mockedRepository);
     }

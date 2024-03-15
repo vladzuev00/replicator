@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming;
 
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumingPipelineStarter;
 import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumerStarter;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,10 +20,10 @@ import static org.mockito.Mockito.verify;
 public final class ReplicationConsumingStarterTest {
 
     @Mock
-    private ReplicationConsumer<?, ?> firstMockedConsumer;
+    private ReplicationConsumingPipelineStarter<?, ?> firstMockedConsumer;
 
     @Mock
-    private ReplicationConsumer<?, ?> secondMockedConsumer;
+    private ReplicationConsumingPipelineStarter<?, ?> secondMockedConsumer;
 
     @Mock
     private ReplicationConsumerStarter mockedConsumerStarter;
@@ -31,7 +31,7 @@ public final class ReplicationConsumingStarterTest {
     private ReplicationConsumingStarter starter;
 
     @Captor
-    private ArgumentCaptor<ReplicationConsumer<?, ?>> consumerArgumentCaptor;
+    private ArgumentCaptor<ReplicationConsumingPipelineStarter<?, ?>> consumerArgumentCaptor;
 
     @Before
     public void initializeStarter() {
@@ -47,8 +47,8 @@ public final class ReplicationConsumingStarterTest {
 
         verify(mockedConsumerStarter, times(2)).start(consumerArgumentCaptor.capture());
 
-        final List<ReplicationConsumer<?, ?>> actualStartedConsumers = consumerArgumentCaptor.getAllValues();
-        final List<ReplicationConsumer<?, ?>> expectedStartedConsumers = List.of(
+        final List<ReplicationConsumingPipelineStarter<?, ?>> actualStartedConsumers = consumerArgumentCaptor.getAllValues();
+        final List<ReplicationConsumingPipelineStarter<?, ?>> expectedStartedConsumers = List.of(
                 firstMockedConsumer,
                 secondMockedConsumer
         );

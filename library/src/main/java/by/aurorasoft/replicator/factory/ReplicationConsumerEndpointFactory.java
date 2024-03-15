@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumer;
+import by.aurorasoft.replicator.consuming.consumer.ReplicationConsumingPipelineStarter;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.config.KafkaListenerEndpoint;
 import org.springframework.kafka.config.MethodKafkaListenerEndpoint;
@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 public final class ReplicationConsumerEndpointFactory {
     static final String PROCESSING_METHOD_NAME = "listen";
 
-    public KafkaListenerEndpoint create(final ReplicationConsumer<?, ?> consumer) {
+    public KafkaListenerEndpoint create(final ReplicationConsumingPipelineStarter<?, ?> consumer) {
         final MethodKafkaListenerEndpoint<?, ?> endpoint = new MethodKafkaListenerEndpoint<>();
         endpoint.setGroupId(consumer.getGroupId());
         endpoint.setAutoStartup(true);
@@ -26,7 +26,7 @@ public final class ReplicationConsumerEndpointFactory {
 
     private static Method getProcessingMethod() {
         try {
-            return ReplicationConsumer.class.getMethod(PROCESSING_METHOD_NAME, ConsumerRecord.class);
+            return ReplicationConsumingPipelineStarter.class.getMethod(PROCESSING_METHOD_NAME, ConsumerRecord.class);
         } catch (final NoSuchMethodException cause) {
             throw new NoProcessingMethodException("Method '%s' doesn't exist".formatted(PROCESSING_METHOD_NAME));
         }

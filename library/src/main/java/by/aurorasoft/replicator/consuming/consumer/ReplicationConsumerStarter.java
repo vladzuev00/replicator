@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public final class ReplicationConsumerStarter {
     private final ReplicationConsumerContainerFactory containerFactory;
 
-    public void start(final ReplicationConsumer<?, ?> consumer) {
+    public void start(final ReplicationConsumingPipelineStarter<?, ?> consumer) {
         containerFactory.create(consumer).start();
     }
 }

@@ -21,6 +21,7 @@
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <java.version>17</java.version>
         <joor.version>0.9.15</joor.version>
+        <kafka-streams.version>3.6.1</kafka-streams.version>
     </properties>
 
     <repositories>
@@ -82,6 +83,12 @@
                     <artifactId>commons-compress</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>${kafka-streams.version}</version>
         </dependency>
 
         <dependency>

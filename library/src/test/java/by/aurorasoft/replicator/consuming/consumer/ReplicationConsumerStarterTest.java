@@ -26,7 +26,7 @@ public final class ReplicationConsumerStarterTest {
 
     @Test
     public void consumerShouldBeStarted() {
-        final ReplicationConsumer<?, ?> givenConsumer = mock(ReplicationConsumer.class);
+        final ReplicationConsumingPipelineStarter<?, ?> givenConsumer = mock(ReplicationConsumingPipelineStarter.class);
 
         final MessageListenerContainer givenContainer = mock(MessageListenerContainer.class);
         when(mockedContainerFactory.create(same(givenConsumer))).thenReturn(givenContainer);
