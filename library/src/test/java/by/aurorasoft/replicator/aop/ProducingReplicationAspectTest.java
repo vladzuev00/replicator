@@ -195,10 +195,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     public void replicationShouldBeSent() {
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
         final ProducedReplication<Long> givenReplication = mock(ProducedReplication.class);
-        final ReplicationCallback<Long> givenCallback = new ReplicationCallback<>(
-                givenProducer,
-                givenReplication
-        );
+        final ReplicationCallback<Long> givenCallback = new ReplicationCallback<>(givenProducer, givenReplication);
 
         givenCallback.afterCommit();
 

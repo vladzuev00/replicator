@@ -16,12 +16,12 @@
         <kafka-vars.version>1.0.19-spring-6</kafka-vars.version>
         <lombok.version>1.18.26</lombok.version>
         <junit.version>RELEASE</junit.version>
-        <springboot.version>3.2.2</springboot.version>
+        <springboot.version>3.2.3</springboot.version>
         <auto-service.version>1.1.1</auto-service.version>
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <java.version>17</java.version>
         <joor.version>0.9.15</joor.version>
-        <kafka-streams.version>3.6.1</kafka-streams.version>
+        <kafka-streams.version>3.7.0</kafka-streams.version>
     </properties>
 
     <repositories>
