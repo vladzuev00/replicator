@@ -10,7 +10,7 @@ public final class ReplicatedServiceProcessorTest {
     @Test
     public void replicatedRUDServiceShouldBeCompiled() {
         compile(
-                "by.aurorasoft.replicator.EntityRUDService",
+                "by.aurorasoft.replicator.TestRUDService",
                 """
                         package by.aurorasoft.replicator;
                                                 
@@ -26,9 +26,9 @@ public final class ReplicatedServiceProcessorTest {
                                 producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
                                 topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
                         )
-                        public class EntityRUDService extends AbsServiceRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
+                        public class TestRUDService extends AbsServiceRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
                                                 
-                            public EntityRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
+                            public TestRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
                                                     final JpaRepository<AbstractEntity<Object>, Object> repository) {
                                 super(mapper, repository);
                             }
@@ -40,7 +40,7 @@ public final class ReplicatedServiceProcessorTest {
     @Test
     public void replicatedCRUDServiceShouldBeCompiled() {
         compile(
-                "by.aurorasoft.replicator.EntityCRUDService",
+                "by.aurorasoft.replicator.TestCRUDService",
                 """
                         package by.aurorasoft.replicator;
 
@@ -56,9 +56,9 @@ public final class ReplicatedServiceProcessorTest {
                                 producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
                                 topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
                         )
-                        public class EntityCRUDService extends AbsServiceCRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, JpaRepository<AbstractEntity<Object>, Object>> {
+                        public class TestCRUDService extends AbsServiceCRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, JpaRepository<AbstractEntity<Object>, Object>> {
 
-                            public EntityCRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
+                            public TestCRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
                                                      final JpaRepository<AbstractEntity<Object>, Object> repository) {
                                 super(mapper, repository);
                             }
@@ -69,7 +69,7 @@ public final class ReplicatedServiceProcessorTest {
     @Test(expected = ReflectException.class)
     public void replicatedReadServiceShouldNotBeCompiled() {
         compile(
-                "by.aurorasoft.replicator.EntityRService",
+                "by.aurorasoft.replicator.TestRService",
                 """
                         package by.aurorasoft.replicator;
                                                 
@@ -85,9 +85,9 @@ public final class ReplicatedServiceProcessorTest {
                                 producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
                                 topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
                         )
-                        public class EntityRService extends AbsServiceR<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
+                        public class TestRService extends AbsServiceR<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
                                                 
-                            public EntityRService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
+                            public TestRService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
                                                   final JpaRepository<AbstractEntity<Object>, Object> repository) {
                                 super(mapper, repository);
                             }
@@ -99,7 +99,7 @@ public final class ReplicatedServiceProcessorTest {
     @Test(expected = ReflectException.class)
     public void notCorrespondingServiceShouldNotBeCompiled() {
         compile(
-                "by.aurorasoft.replicator.Service",
+                "by.aurorasoft.replicator.TestService",
                 """
                         package by.aurorasoft.replicator;
                                                 
@@ -110,7 +110,7 @@ public final class ReplicatedServiceProcessorTest {
                                 producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
                                 topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
                         )
-                        public final class Service {
+                        public final class TestService {
                                                 
                         }"""
         );
