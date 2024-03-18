@@ -97,7 +97,7 @@ public final class ReplicatedServiceProcessorTest {
                         public class TestRService extends AbsServiceR<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
                                                 
                             public TestRService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
-                                                  final JpaRepository<AbstractEntity<Object>, Object> repository) {
+                                                final JpaRepository<AbstractEntity<Object>, Object> repository) {
                                 super(mapper, repository);
                             }
                         }
