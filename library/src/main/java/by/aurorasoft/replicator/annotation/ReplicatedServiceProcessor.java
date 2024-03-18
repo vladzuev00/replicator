@@ -23,7 +23,7 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 @AutoService(Processor.class)
 public final class ReplicatedServiceProcessor extends AbstractProcessor {
     private static final Class<? extends Annotation> ANNOTATION = ReplicatedService.class;
-    private static final Class<?> RUD_SERVICE_CLASS = AbsServiceRUD.class;
+    private static final Class<?> RUD_SERVICE = AbsServiceRUD.class;
 
     @Override
     public boolean process(final Set<? extends TypeElement> handledAnnotations, final RoundEnvironment env) {
@@ -58,7 +58,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     }
 
     private TypeMirror getRUDServiceType() {
-        return getElementUtils().getTypeElement(RUD_SERVICE_CLASS.getName()).asType();
+        return getElementUtils().getTypeElement(RUD_SERVICE.getName()).asType();
     }
 
     private void alertWrongAnnotating(final Element element) {
@@ -68,7 +68,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     private String getWrongAnnotatingMessage() {
         return "Annotation '@%s' can be applied only for subclasses of '%s'".formatted(
                 ANNOTATION.getSimpleName(),
-                RUD_SERVICE_CLASS
+                RUD_SERVICE
         );
     }
 

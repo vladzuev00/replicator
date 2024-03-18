@@ -21,15 +21,18 @@ public final class ReplicatedServiceProcessorTest {
                         import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
                         import org.apache.kafka.common.serialization.LongSerializer;
                         import org.springframework.data.jpa.repository.JpaRepository;
+                        
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
                                                 
                         @ReplicatedService(
-                                producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
-                                topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
+                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                topicConfig = @TopicConfig(name = "sync-person")
                         )
                         public class TestRUDService extends AbsServiceRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
                                                 
                             public TestRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
-                                                    final JpaRepository<AbstractEntity<Object>, Object> repository) {
+                                                  final JpaRepository<AbstractEntity<Object>, Object> repository) {
                                 super(mapper, repository);
                             }
                         }
@@ -52,14 +55,17 @@ public final class ReplicatedServiceProcessorTest {
                         import org.apache.kafka.common.serialization.LongSerializer;
                         import org.springframework.data.jpa.repository.JpaRepository;
 
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+
                         @ReplicatedService(
-                                producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
-                                topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
+                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                topicConfig = @TopicConfig(name = "sync-person")
                         )
                         public class TestCRUDService extends AbsServiceCRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, JpaRepository<AbstractEntity<Object>, Object>> {
 
                             public TestCRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
-                                                     final JpaRepository<AbstractEntity<Object>, Object> repository) {
+                                                   final JpaRepository<AbstractEntity<Object>, Object> repository) {
                                 super(mapper, repository);
                             }
                         }"""
@@ -80,10 +86,13 @@ public final class ReplicatedServiceProcessorTest {
                         import by.nhorushko.crudgeneric.v2.service.AbsServiceR;
                         import org.apache.kafka.common.serialization.LongSerializer;
                         import org.springframework.data.jpa.repository.JpaRepository;
+                                               
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
                                                 
                         @ReplicatedService(
-                                producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
-                                topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
+                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                topicConfig = @TopicConfig(name = "sync-person")
                         )
                         public class TestRService extends AbsServiceR<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
                                                 
@@ -105,10 +114,13 @@ public final class ReplicatedServiceProcessorTest {
                                                 
                         import by.aurorasoft.replicator.annotation.ReplicatedService;
                         import org.apache.kafka.common.serialization.LongSerializer;
+                        
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+                        import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
                                                 
                         @ReplicatedService(
-                                producerConfig = @ReplicatedService.ProducerConfig(idSerializer = LongSerializer.class),
-                                topicConfig = @ReplicatedService.TopicConfig(name = "sync-person")
+                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                topicConfig = @TopicConfig(name = "sync-person")
                         )
                         public final class TestService {
                                                 
