@@ -10,17 +10,17 @@ import org.apache.kafka.common.serialization.Serde;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Getter
-public final class ReplicationConsumePipelineConfig<ID, E extends AbstractEntity<ID>> {
+public final class ReplicationConsumePipeline<ID, E extends AbstractEntity<ID>> {
     private final String topic;
     private final Serde<ID> idSerde;
     private final Serde<ConsumedReplication<ID, E>> replicationSerde;
     private final JpaRepository<E, ID> repository;
 
     @Builder
-    public ReplicationConsumePipelineConfig(final String topic,
-                                            final Serde<ID> idSerde,
-                                            final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference,
-                                            final JpaRepository<E, ID> repository) {
+    public ReplicationConsumePipeline(final String topic,
+                                      final Serde<ID> idSerde,
+                                      final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference,
+                                      final JpaRepository<E, ID> repository) {
         this.topic = topic;
         this.idSerde = idSerde;
         replicationSerde = new ConsumedReplicationSerde<>(replicationTypeReference);

@@ -11,19 +11,19 @@ import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 
-public final class ReplicationConsumePipelineConfigTest {
+public final class ReplicationConsumePipelineTest {
     private static final String REPLICATION_TYPE_REFERENCE_FIELD_NAME = "replicationTypeReference";
 
     @Test
     @SuppressWarnings("unchecked")
-    public void configShouldBeCreated() {
+    public void pipelineShouldBeCreated() {
         final String givenTopic = "topic";
         final Serde<Long> givenIdSerde = mock(Serde.class);
         final TypeReference<ConsumedReplication<Long, TestEntity>> givenReplicationTypeReference = new TypeReference<>() {
         };
         final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
-        final var actual = new ReplicationConsumePipelineConfig<>(
+        final var actual = new ReplicationConsumePipeline<>(
                 givenTopic,
                 givenIdSerde,
                 givenReplicationTypeReference,
@@ -38,8 +38,8 @@ public final class ReplicationConsumePipelineConfigTest {
 
     @SuppressWarnings("unchecked")
     private static TypeReference<ConsumedReplication<Long, TestEntity>> getReplicationTypeReference(
-            final ReplicationConsumePipelineConfig<Long, TestEntity> config
+            final ReplicationConsumePipeline<Long, TestEntity> pipeline
     ) {
-        return getFieldValue(config.getReplicationSerde(), REPLICATION_TYPE_REFERENCE_FIELD_NAME, TypeReference.class);
+        return getFieldValue(pipeline.getReplicationSerde(), REPLICATION_TYPE_REFERENCE_FIELD_NAME, TypeReference.class);
     }
 }
