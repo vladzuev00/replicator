@@ -16,14 +16,16 @@ import static org.springframework.kafka.annotation.KafkaStreamsDefaultConfigurat
 @EnableKafkaStreams
 public class KafkaConfig {
 
+    @Value("${spring.kafka.app-id}")
+    private String applicationId;
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
     @Bean(name = DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public KafkaStreamsConfiguration streamsConfiguration() {
         final Map<String, Object> configsByNames = Map.of(
-                //TODO: refactor
-                APPLICATION_ID_CONFIG, "test-app,",
+                APPLICATION_ID_CONFIG, applicationId,
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress
         );
         return new KafkaStreamsConfiguration(configsByNames);
