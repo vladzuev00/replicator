@@ -4,41 +4,23 @@ import by.aurorasoft.replicator.base.entity.TestEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static by.aurorasoft.replicator.util.ReplicationAssertUtil.assertDelete;
-import static by.aurorasoft.replicator.util.ReplicationAssertUtil.assertSave;
-import static java.util.UUID.fromString;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class ConsumedReplicationTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    public void saveReplicationShouldBeDeserializedFromJson() {
-        final String givenJson = """
-                {
-                  "type": "save",
-                  "uuid": "e52232e1-0ded-4587-999f-4dd135a4a94f",
-                  "body": {
-                    "id": 255
-                  }
-                }""";
-
+    @ParameterizedTest
+    @MethodSource("provideJsonAndExpectedReplication")
+    public void replicationShouldBeDeserializedFromJson(final String givenJson,
+                                                        final ConsumedReplication<Long, TestEntity> expected) {
         final ConsumedReplication<Long, TestEntity> actual = deserialize(givenJson);
-        assertSave(actual, fromString("e52232e1-0ded-4587-999f-4dd135a4a94f"), new TestEntity(255L));
-    }
-
-    @Test
-    public void deleteReplicationShouldBeDeserializedFromJson() {
-        final String givenJson = """
-                {
-                  "type": "delete",
-                  "uuid": "e52232e2-0ded-4587-999f-4dd135a4a95f",
-                  "entityId": 255
-                }""";
-
-        final ConsumedReplication<Long, TestEntity> actual = deserialize(givenJson);
-        assertDelete(actual, fromString("e52232e2-0ded-4587-999f-4dd135a4a95f"), 255L);
+        assertEquals(expected, actual);
     }
 
     private ConsumedReplication<Long, TestEntity> deserialize(final String json) {
@@ -48,5 +30,28 @@ public final class ConsumedReplicationTest {
         } catch (final JsonProcessingException cause) {
             throw new RuntimeException(cause);
         }
+    }
+
+    private static Stream<Arguments> provideJsonAndExpectedReplication() {
+        return Stream.of(
+                Arguments.of(
+                        """
+                                {
+                                  "type": "save",
+                                  "body": {
+                                    "id": 255
+                                  }
+                                }""",
+                        new SaveConsumedReplication<>(new TestEntity(255L))
+                ),
+                Arguments.of(
+                        """
+                                {
+                                  "type": "delete",
+                                  "entityId": 255
+                                }""",
+                        new DeleteConsumedReplication<>(255L)
+                )
+        );
     }
 }
