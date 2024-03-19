@@ -23,17 +23,17 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 @Component
 public final class ReplicationProducerHolderFactory {
-    private final ReplicatedServiceHolder replicatedServiceHolder;
+    private final ReplicatedServiceHolder serviceHolder;
     private final String bootstrapAddress;
 
-    public ReplicationProducerHolderFactory(final ReplicatedServiceHolder replicatedServiceHolder,
+    public ReplicationProducerHolderFactory(final ReplicatedServiceHolder serviceHolder,
                                             @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
-        this.replicatedServiceHolder = replicatedServiceHolder;
+        this.serviceHolder = serviceHolder;
         this.bootstrapAddress = bootstrapAddress;
     }
 
     public ReplicationProducerHolder create() {
-        return replicatedServiceHolder.getServices()
+        return serviceHolder.getServices()
                 .stream()
                 .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
     }

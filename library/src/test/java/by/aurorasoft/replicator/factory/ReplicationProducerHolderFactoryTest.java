@@ -39,13 +39,13 @@ public final class ReplicationProducerHolderFactoryTest {
     private static final Class<? extends Serializer<?>> GIVEN_KEY_SERIALIZER_TYPE = LongSerializer.class;
 
     @Mock
-    private ReplicatedServiceHolder mockedReplicatedServiceHolder;
+    private ReplicatedServiceHolder mockedServiceHolder;
 
     private ReplicationProducerHolderFactory factory;
 
     @Before
     public void initializeFactory() {
-        factory = new ReplicationProducerHolderFactory(mockedReplicatedServiceHolder, GIVEN_BOOTSTRAP_ADDRESS);
+        factory = new ReplicationProducerHolderFactory(mockedServiceHolder, GIVEN_BOOTSTRAP_ADDRESS);
     }
 
     @Test
@@ -55,7 +55,7 @@ public final class ReplicationProducerHolderFactoryTest {
         final SecondTestCRUDService secondGivenService = new SecondTestCRUDService();
         final List givenServices = List.of(firstGivenService, secondGivenService);
 
-        when(mockedReplicatedServiceHolder.getServices()).thenReturn(givenServices);
+        when(mockedServiceHolder.getServices()).thenReturn(givenServices);
 
         final ReplicationProducerHolder actual = factory.create();
         final var actualProducersInfosByServices = findProducersByServices(actual)
