@@ -17,7 +17,9 @@ public class ReplicationConsumingConfig {
     private String topic;
 
     @Bean
-    public ReplicationConsumePipeline<Long, ReplicatedPersonEntity> consumePipeline(final ReplicatedPersonRepository repository) {
+    public ReplicationConsumePipeline<Long, ReplicatedPersonEntity> consumePipeline(
+            final ReplicatedPersonRepository repository
+    ) {
         return ReplicationConsumePipeline.<Long, ReplicatedPersonEntity>builder()
                 .topic(topic)
                 .idSerde(Long())
