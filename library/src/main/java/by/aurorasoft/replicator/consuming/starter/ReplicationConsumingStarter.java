@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.consuming.config.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.StreamsBuilder;

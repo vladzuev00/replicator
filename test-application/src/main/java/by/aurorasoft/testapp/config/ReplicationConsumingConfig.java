@@ -1,6 +1,6 @@
 package by.aurorasoft.testapp.config;
 
-import by.aurorasoft.replicator.consuming.config.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import com.fasterxml.jackson.core.type.TypeReference;

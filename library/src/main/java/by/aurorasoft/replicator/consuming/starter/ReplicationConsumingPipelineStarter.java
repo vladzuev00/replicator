@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.consuming.config.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.springframework.stereotype.Component;

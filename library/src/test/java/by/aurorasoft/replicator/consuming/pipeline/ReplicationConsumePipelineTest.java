@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consuming.config;
+package by.aurorasoft.replicator.consuming.pipeline;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
