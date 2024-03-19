@@ -1,34 +1,54 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.base.AbstractSpringBootTest;
+import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
+import by.aurorasoft.replicator.base.service.SecondTestCRUDService;
+import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.kafka.core.KafkaAdmin;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
-public final class ReplicationTopicCreatorTest extends AbstractSpringBootTest {
+@RunWith(MockitoJUnitRunner.class)
+public final class ReplicationTopicCreatorTest {
 
-    @Autowired
-    private KafkaAdmin kafkaAdmin;
+    @Mock
+    private ReplicatedServiceHolder mockedServiceHolder;
+
+    @Mock
+    private KafkaAdmin mockedKafkaAdmin;
+
+    private ReplicationTopicCreator creator;
 
     @Captor
     private ArgumentCaptor<NewTopic> topicArgumentCaptor;
 
-    @Test
-    public void topicsShouldBeCreated() {
-        verify(kafkaAdmin, times(2)).createOrModifyTopics(topicArgumentCaptor.capture());
+    @Before
+    public void initializeCreator() {
+        creator = new ReplicationTopicCreator(mockedServiceHolder, mockedKafkaAdmin);
+    }
 
-        final Set<NewTopic> actualCreatedTopics = new HashSet<>(topicArgumentCaptor.getAllValues());
-        final Set<NewTopic> expectedCreatedTopics = Set.of(
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void topicsShouldBeCreated() {
+        final List givenServices = List.of(new FirstTestCRUDService(), new SecondTestCRUDService());
+        when(mockedServiceHolder.getServices()).thenReturn(givenServices);
+
+        creator.createTopics();
+
+        verify(mockedKafkaAdmin, times(2)).createOrModifyTopics(topicArgumentCaptor.capture());
+
+        final List<NewTopic> actualCreatedTopics = topicArgumentCaptor.getAllValues();
+        final List<NewTopic> expectedCreatedTopics = List.of(
                 new NewTopic("first-topic", 1, (short) 1),
                 new NewTopic("second-topic", 2, (short) 2)
         );
