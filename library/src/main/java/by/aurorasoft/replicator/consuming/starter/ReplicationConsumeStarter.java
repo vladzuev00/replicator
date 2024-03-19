@@ -11,16 +11,16 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationConsumeStarter {
-    private final List<ReplicationConsumePipeline<?, ?>> pipelineConfigs;
+    private final List<ReplicationConsumePipeline<?, ?>> pipelines;
     private final ReplicationConsumePipelineStarter pipelineStarter;
     private final StreamsBuilder streamsBuilder;
 
     @PostConstruct
     public void start() {
-        pipelineConfigs.forEach(this::startPipeline);
+        pipelines.forEach(this::start);
     }
 
-    private void startPipeline(final ReplicationConsumePipeline<?, ?> config) {
-        pipelineStarter.start(config, streamsBuilder);
+    private void start(final ReplicationConsumePipeline<?, ?> pipeline) {
+        pipelineStarter.start(pipeline, streamsBuilder);
     }
 }
