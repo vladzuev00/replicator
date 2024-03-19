@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 import static org.apache.kafka.streams.kstream.Consumed.with;
 
 @Component
-public final class ReplicationConsumingPipelineStarter {
+public final class ReplicationConsumePipelineStarter {
 
-    public <ID, E extends AbstractEntity<ID>> void start(final ReplicationConsumePipeline<ID, E> config,
+    public <ID, E extends AbstractEntity<ID>> void start(final ReplicationConsumePipeline<ID, E> pipeline,
                                                          final StreamsBuilder streamsBuilder) {
         streamsBuilder
-                .stream(config.getTopic(), with(config.getIdSerde(), config.getReplicationSerde()))
-                .foreach((id, replication) -> replication.execute(config.getRepository()));
+                .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()))
+                .foreach((id, replication) -> replication.execute(pipeline.getRepository()));
     }
 }

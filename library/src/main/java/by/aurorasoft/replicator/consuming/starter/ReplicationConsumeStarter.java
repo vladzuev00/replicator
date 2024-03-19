@@ -10,9 +10,9 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public final class ReplicationConsumingStarter {
+public final class ReplicationConsumeStarter {
     private final List<ReplicationConsumePipeline<?, ?>> pipelineConfigs;
-    private final ReplicationConsumingPipelineStarter pipelineStarter;
+    private final ReplicationConsumePipelineStarter pipelineStarter;
     private final StreamsBuilder streamsBuilder;
 
     @PostConstruct
