@@ -26,8 +26,8 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     private static final Class<?> RUD_SERVICE = AbsServiceRUD.class;
 
     @Override
-    public boolean process(final Set<? extends TypeElement> handledAnnotations, final RoundEnvironment env) {
-        handledAnnotations.stream()
+    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
+        annotations.stream()
                 .flatMap(annotation -> getAnnotatedElements(annotation, env))
                 .filter(element -> !isRUDService(element))
                 .forEach(this::alertWrongAnnotating);

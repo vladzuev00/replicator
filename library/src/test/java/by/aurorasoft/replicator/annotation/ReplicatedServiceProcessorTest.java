@@ -5,7 +5,11 @@ import org.joor.Reflect;
 import org.joor.ReflectException;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 public final class ReplicatedServiceProcessorTest {
+    private static final String WRONG_ANNOTATING_MESSAGE = "Annotation '@ReplicatedService' can be applied only for "
+            + "subclasses of 'class by.nhorushko.crudgeneric.v2.service.AbsServiceRUD'";
 
     @Test
     public void replicatedRUDServiceShouldBeCompiled() {
@@ -21,7 +25,7 @@ public final class ReplicatedServiceProcessorTest {
                         import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
                         import org.apache.kafka.common.serialization.LongSerializer;
                         import org.springframework.data.jpa.repository.JpaRepository;
-                        
+                                                
                         import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                         import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
                                                 
@@ -72,9 +76,9 @@ public final class ReplicatedServiceProcessorTest {
         );
     }
 
-    @Test(expected = ReflectException.class)
+    @Test
     public void replicatedReadServiceShouldNotBeCompiled() {
-        compile(
+        compileExpectingAnnotatingException(
                 "by.aurorasoft.replicator.TestRService",
                 """
                         package by.aurorasoft.replicator;
@@ -105,16 +109,16 @@ public final class ReplicatedServiceProcessorTest {
         );
     }
 
-    @Test(expected = ReflectException.class)
+    @Test
     public void notCorrespondingServiceShouldNotBeCompiled() {
-        compile(
+        compileExpectingAnnotatingException(
                 "by.aurorasoft.replicator.TestService",
                 """
                         package by.aurorasoft.replicator;
                                                 
                         import by.aurorasoft.replicator.annotation.ReplicatedService;
                         import org.apache.kafka.common.serialization.LongSerializer;
-                        
+                                                
                         import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                         import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
                                                 
@@ -130,6 +134,14 @@ public final class ReplicatedServiceProcessorTest {
 
     private static void compile(final String className, final String sourceCode) {
         Reflect.compile(className, sourceCode, getCompileOptions());
+    }
+
+    private static void compileExpectingAnnotatingException(final String className, final String sourceCode) {
+        try {
+            compile(className, sourceCode);
+        } catch (final ReflectException exception) {
+            assertTrue(exception.getMessage().contains(WRONG_ANNOTATING_MESSAGE));
+        }
     }
 
     private static CompileOptions getCompileOptions() {
