@@ -23,3 +23,5 @@ kafka:
   topic:
     sync-person:
       name: sync-person
+    sync-address:
+      name: sync-address

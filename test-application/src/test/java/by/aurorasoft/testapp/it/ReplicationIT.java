@@ -1,77 +1,117 @@
 package by.aurorasoft.testapp.it;
 
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
+import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.dto.Person;
+import by.aurorasoft.testapp.crud.entity.ReplicatedAddressEntity;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
+import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
+import by.aurorasoft.testapp.crud.service.AddressService;
 import by.aurorasoft.testapp.crud.service.PersonService;
 import by.aurorasoft.testapp.model.PersonName;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil.checkEquals;
 import static by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil.checkEquals;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
+@DirtiesContext
 @Transactional(propagation = NOT_SUPPORTED)
 public class ReplicationIT extends AbstractSpringBootTest {
     private static final long WAIT_REPLICATING_SECONDS = 5;
 
     @Autowired
+    private AddressService addressService;
+
+    @Autowired
     private PersonService personService;
+
+    @Autowired
+    private ReplicatedAddressRepository replicatedAddressRepository;
 
     @Autowired
     private ReplicatedPersonRepository replicatedPersonRepository;
 
+    //TODO: run tests many times
     @Test
-    public void personAndReplicatedPersonShouldBeSaved() {
-        final String givenName = "Vlad";
-        final String givenSurname = "Zuev";
-        final String givenPatronymic = "Sergeevich";
-        final LocalDate givenBirthDate = LocalDate.of(2000, 2, 18);
-        final Person givenPerson = Person.builder()
-                .name(givenName)
-                .surname(givenSurname)
-                .patronymic(givenPatronymic)
-                .birthDate(givenBirthDate)
-                .build();
+    public void personAndAddressShouldBeSavedWithReplication() {
+        final String givenAddressCountry = "Belarus";
+        final String givenAddressCity = "Minsk";
 
+        final String givenPersonName = "Vlad";
+        final String givenPersonSurname = "Zuev";
+        final String givenPersonPatronymic = "Sergeevich";
+        final LocalDate givenPersonBirthDate = LocalDate.of(2000, 2, 18);
+
+        final Address givenAddress = Address.builder()
+                .country(givenAddressCountry)
+                .city(givenAddressCity)
+                .build();
+        final Address actualSavedAddress = addressService.save(givenAddress);
+
+        final Person givenPerson = Person.builder()
+                .name(givenPersonName)
+                .surname(givenPersonSurname)
+                .patronymic(givenPersonPatronymic)
+                .birthDate(givenPersonBirthDate)
+                .address(actualSavedAddress)
+                .build();
         final Person actualSavedPerson = personService.save(givenPerson);
+
         waitReplicating();
+
+        final Long expectedSavedAddressId = 1L;
+        final Address expectedSavedAddress = new Address(expectedSavedAddressId, givenAddressCountry, givenAddressCity);
+        assertEquals(expectedSavedAddress, actualSavedAddress);
 
         final Long expectedSavedPersonId = 1L;
         final Person expectedSavedPerson = Person.builder()
                 .id(expectedSavedPersonId)
-                .name(givenName)
-                .surname(givenSurname)
-                .patronymic(givenPatronymic)
-                .birthDate(givenBirthDate)
+                .name(givenPersonName)
+                .surname(givenPersonSurname)
+                .patronymic(givenPersonPatronymic)
+                .birthDate(givenPersonBirthDate)
+                .address(expectedSavedAddress)
                 .build();
         assertEquals(expectedSavedPerson, actualSavedPerson);
+
+        //TODO: do method verifyReplication()
+        final var optionalActualReplicatedAddress = replicatedAddressRepository.findById(expectedSavedAddressId);
+        assertTrue(optionalActualReplicatedAddress.isPresent());
+        final ReplicatedAddressEntity actualReplicatedAddress = optionalActualReplicatedAddress.get();
+        final ReplicatedAddressEntity expectedReplicatedAddress = ReplicatedAddressEntity.builder()
+                .id(expectedSavedAddressId)
+                .country(givenAddressCountry)
+                .city(givenAddressCity)
+                .build();
+        checkEquals(expectedReplicatedAddress, actualReplicatedAddress);
 
         final var optionalActualReplicatedPerson = replicatedPersonRepository.findById(expectedSavedPersonId);
         assertTrue(optionalActualReplicatedPerson.isPresent());
         final ReplicatedPersonEntity actualReplicatedPerson = optionalActualReplicatedPerson.get();
         final ReplicatedPersonEntity expectedReplicatedPerson = ReplicatedPersonEntity.builder()
                 .id(expectedSavedPersonId)
-                .name(givenName)
-                .surname(givenSurname)
-                .birthDate(givenBirthDate)
+                .name(givenPersonName)
+                .surname(givenPersonSurname)
+                .birthDate(givenPersonBirthDate)
+                .address(expectedReplicatedAddress)
                 .build();
         checkEquals(expectedReplicatedPerson, actualReplicatedPerson);
     }
 
     @Test
-    @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personsAndReplicatedPersonsShouldBeSaved() {
         final String givenFirstPersonName = "Vlad";
         final String givenFirstPersonSurname = "Zuev";
@@ -146,7 +186,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @Test
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
-    @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personAndReplicatedPersonShouldBeUpdated() {
         final Long givenId = 255L;
         final String givenNewName = "Ivan";
@@ -180,7 +219,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @Test
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
-    @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personAndReplicatedPersonShouldBeUpdatedPartially() {
         final Long givenId = 255L;
 
@@ -216,7 +254,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @Test
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
-    @Sql(value = "classpath:sql-scripts/replication/it/delete-person.sql", executionPhase = AFTER_TEST_METHOD)
     public void personAndReplicatedPersonShouldBeDeleted() {
         final Long givenId = 255L;
 
