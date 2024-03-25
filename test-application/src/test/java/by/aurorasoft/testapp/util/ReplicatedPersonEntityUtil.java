@@ -16,7 +16,7 @@ public final class ReplicatedPersonEntityUtil {
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getSurname(), actual.getSurname());
         assertEquals(expected.getBirthDate(), actual.getBirthDate());
-        assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getAddress().getId(), actual.getAddress().getId());
     }
 
     public static void checkEquals(final List<ReplicatedPersonEntity> expected,

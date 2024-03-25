@@ -3,6 +3,7 @@ package by.aurorasoft.testapp.it;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.dto.Person;
+import by.aurorasoft.testapp.crud.entity.AbstractEntity;
 import by.aurorasoft.testapp.crud.entity.ReplicatedAddressEntity;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
@@ -10,16 +11,20 @@ import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.crud.service.AddressService;
 import by.aurorasoft.testapp.crud.service.PersonService;
 import by.aurorasoft.testapp.model.PersonName;
+import by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil;
+import by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 
-import static by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil.checkEquals;
 import static by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil.checkEquals;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -44,7 +49,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Autowired
     private ReplicatedPersonRepository replicatedPersonRepository;
 
-    //TODO: run tests many times
+    //TODO: run tests many times, replicated person can save before replicated address
     @Test
     public void personAndAddressShouldBeSavedWithReplication() {
         final String givenAddressCountry = "Belarus";
@@ -87,20 +92,13 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
         assertEquals(expectedSavedPerson, actualSavedPerson);
 
-        //TODO: do method verifyReplication()
-        final var optionalActualReplicatedAddress = replicatedAddressRepository.findById(expectedSavedAddressId);
-        assertTrue(optionalActualReplicatedAddress.isPresent());
-        final ReplicatedAddressEntity actualReplicatedAddress = optionalActualReplicatedAddress.get();
         final ReplicatedAddressEntity expectedReplicatedAddress = ReplicatedAddressEntity.builder()
                 .id(expectedSavedAddressId)
                 .country(givenAddressCountry)
                 .city(givenAddressCity)
                 .build();
-        checkEquals(expectedReplicatedAddress, actualReplicatedAddress);
+        verifyAddressSaveReplication(expectedReplicatedAddress);
 
-        final var optionalActualReplicatedPerson = replicatedPersonRepository.findById(expectedSavedPersonId);
-        assertTrue(optionalActualReplicatedPerson.isPresent());
-        final ReplicatedPersonEntity actualReplicatedPerson = optionalActualReplicatedPerson.get();
         final ReplicatedPersonEntity expectedReplicatedPerson = ReplicatedPersonEntity.builder()
                 .id(expectedSavedPersonId)
                 .name(givenPersonName)
@@ -108,7 +106,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .birthDate(givenPersonBirthDate)
                 .address(expectedReplicatedAddress)
                 .build();
-        checkEquals(expectedReplicatedPerson, actualReplicatedPerson);
+        verifyPersonSaveReplication(expectedReplicatedPerson);
     }
 
     @Test
@@ -272,5 +270,25 @@ public class ReplicationIT extends AbstractSpringBootTest {
         } catch (final InterruptedException cause) {
             currentThread().interrupt();
         }
+    }
+
+    //TODO: use everywhere
+    private void verifyAddressSaveReplication(final ReplicatedAddressEntity expected) {
+        verifySaveReplication(expected, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
+    }
+
+    //TODO: use everywhere
+    private void verifyPersonSaveReplication(final ReplicatedPersonEntity expected) {
+        verifySaveReplication(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
+    }
+
+    private static <ID, E extends AbstractEntity<ID>> void verifySaveReplication(final E expected,
+                                                                                 final JpaRepository<E, ID> repository,
+                                                                                 final BiConsumer<E, E> equalChecker) {
+        final ID id = expected.getId();
+        final Optional<E> optionalActual = repository.findById(id);
+        assertTrue(optionalActual.isPresent());
+        final E actual = optionalActual.get();
+        equalChecker.accept(expected, actual);
     }
 }
