@@ -74,11 +74,11 @@ public class ProducingReplicationAspect {
 
     private ReplicationProducer<?> getProducer(final JoinPoint joinPoint) {
         final AbsServiceRUD<?, ?, ?, ?, ?> service = (AbsServiceRUD<?, ?, ?, ?, ?>) joinPoint.getTarget();
-        return producerHolder.findByService(service).orElseThrow(() -> throwNoProducerException(joinPoint));
+        return producerHolder.findByService(service).orElseThrow(() -> createNoProducerException(joinPoint));
     }
 
-    private NoReplicationProducerException throwNoProducerException(final JoinPoint joinPoint) {
-        throw new NoReplicationProducerException("There is no replication producer for '%s'".formatted(joinPoint));
+    private NoReplicationProducerException createNoProducerException(final JoinPoint joinPoint) {
+        return new NoReplicationProducerException("There is no replication producer for '%s'".formatted(joinPoint));
     }
 
     @Pointcut("replicatedCrudService() && create()")
