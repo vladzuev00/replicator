@@ -38,37 +38,4 @@ public final class ReplicationProducerHolderFactory {
                 .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerHolder::new));
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private ReplicationProducer<?> createProducer(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        final ProducerConfig producerConfig = getProducerConfig(service);
-        final TopicConfig topicConfig = getTopicConfig(service);
-        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
-        final ProducerFactory producerFactory = new DefaultKafkaProducerFactory(configsByKeys);
-        final KafkaTemplate kafkaTemplate = new KafkaTemplate(producerFactory);
-        return new ReplicationProducer<>(topicConfig.name(), kafkaTemplate);
-    }
-
-    private static ProducerConfig getProducerConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        return getReplicatedServiceAnnotation(service).producerConfig();
-    }
-
-    private static TopicConfig getTopicConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        return getReplicatedServiceAnnotation(service).topicConfig();
-    }
-
-    private static ReplicatedService getReplicatedServiceAnnotation(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        return service.getClass().getAnnotation(ReplicatedService.class);
-    }
-
-    private Map<String, Object> createProducerConfigsByKeys(final ProducerConfig config) {
-        return Map.of(
-                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
-                KEY_SERIALIZER_CLASS_CONFIG, config.idSerializer(),
-                VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
-                BATCH_SIZE_CONFIG, config.batchSize(),
-                LINGER_MS_CONFIG, config.lingerMs(),
-                DELIVERY_TIMEOUT_MS_CONFIG, config.deliveryTimeoutMs(),
-                ENABLE_IDEMPOTENCE_CONFIG, true
-        );
-    }
 }
