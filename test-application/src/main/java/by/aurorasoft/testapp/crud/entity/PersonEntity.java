@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @NoArgsConstructor
@@ -33,4 +34,9 @@ public class PersonEntity extends AbstractEntity<Long> {
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "address_id")
+    @ToString.Exclude
+    private AddressEntity address;
 }
