@@ -1,5 +1,6 @@
 package by.aurorasoft.testapp.crud.mapper;
 
+import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.PersonEntity;
 import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
@@ -22,7 +23,12 @@ public final class PersonMapper extends AbsMapperEntityDto<PersonEntity, Person>
                 entity.getName(),
                 entity.getSurname(),
                 entity.getPatronymic(),
-                entity.getBirthDate()
+                entity.getBirthDate(),
+                mapAddress(entity)
         );
+    }
+
+    private Address mapAddress(final PersonEntity entity) {
+        return map(entity.getAddress(), Address.class);
     }
 }
