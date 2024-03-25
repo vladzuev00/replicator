@@ -25,7 +25,7 @@ public final class ReplicationProducerFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    private <ID> ReplicationProducer<ID> create(final AbsServiceRUD<ID, ?, ?, ?, ?> service) {
+    public <ID> ReplicationProducer<ID> create(final AbsServiceRUD<ID, ?, ?, ?, ?> service) {
         final String topicName = getTopicName(service);
         final KafkaTemplate<ID, ProducedReplication<ID>> kafkaTemplate = createKafkaTemplate(service);
         return new ReplicationProducer<>(topicName, kafkaTemplate);
