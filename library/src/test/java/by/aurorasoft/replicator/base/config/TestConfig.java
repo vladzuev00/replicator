@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 
 @Configuration
 @Import(ReplicationConfig.class)
-public class TestConfiguration {
+public class TestConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -26,6 +26,6 @@ public class TestConfiguration {
 
     @Bean
     public StreamsBuilder streamsBuilder() {
-        return mock(StreamsBuilder.class);
+        return new StreamsBuilder();
     }
 }
