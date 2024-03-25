@@ -67,7 +67,8 @@ public final class ReplicationProducerHolderFactory {
                 VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
                 BATCH_SIZE_CONFIG, config.batchSize(),
                 LINGER_MS_CONFIG, config.lingerMs(),
-                DELIVERY_TIMEOUT_MS_CONFIG, config.deliveryTimeoutMs()
+                DELIVERY_TIMEOUT_MS_CONFIG, config.deliveryTimeoutMs(),
+                ENABLE_IDEMPOTENCE_CONFIG, true
         );
     }
 }
