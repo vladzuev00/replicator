@@ -5,7 +5,9 @@ import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.stereotype.Component;
 
+@Component
 public final class ReplicationTopicFactory {
 
     public NewTopic create(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
