@@ -1,12 +1,11 @@
 package by.aurorasoft.testapp.crud.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +29,9 @@ public class ReplicatedPersonEntity extends AbstractEntity<Long> {
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "address_id")
+    @ToString.Exclude
+    private ReplicatedAddressEntity address;
 }
