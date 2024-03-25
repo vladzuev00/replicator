@@ -42,7 +42,7 @@ public final class ReplicationConsumePipelineStarterTest {
     private JpaRepository<TestEntity, Long> mockedRepository;
 
     @Captor
-    private ArgumentCaptor<Consumed<?, ?>> consumedArgumentCaptor;
+    private ArgumentCaptor<Consumed<Long, ConsumedReplication<Long, TestEntity>>> consumedArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<ForeachAction<Long, ConsumedReplication<Long, TestEntity>>> foreachActionArgumentCaptor;
@@ -75,7 +75,7 @@ public final class ReplicationConsumePipelineStarterTest {
     private void verifyConsumed(final Class<?> idSerdeType, final Class<?> valueSerdeType) {
         verify(mockedStreamsBuilder, times(1))
                 .stream(same(GIVEN_TOPIC), consumedArgumentCaptor.capture());
-        final Consumed<?, ?> actual = consumedArgumentCaptor.getValue();
+        final Consumed<Long, ConsumedReplication<Long, TestEntity>> actual = consumedArgumentCaptor.getValue();
         assertSame(idSerdeType, getKeySerdeType(actual));
         assertSame(valueSerdeType, getValueSerdeType(actual));
     }
