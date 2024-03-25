@@ -17,10 +17,10 @@ public final class ReplicatedServiceHolder {
     private final List<? extends AbsServiceRUD<?, ?, ?, ?, ?>> services;
 
     public ReplicatedServiceHolder(final List<AbsServiceRUD<?, ?, ?, ?, ?>> services) {
-        this.services = findReplicatedUnProxying(services);
+        this.services = unProxyReplicated(services);
     }
 
-    private static List<? extends AbsServiceRUD<?, ?, ?, ?, ?>> findReplicatedUnProxying(
+    private static List<? extends AbsServiceRUD<?, ?, ?, ?, ?>> unProxyReplicated(
             final List<AbsServiceRUD<?, ?, ?, ?, ?>> services
     ) {
         return services.stream()
