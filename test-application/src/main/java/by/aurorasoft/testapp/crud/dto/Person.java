@@ -16,4 +16,5 @@ public class Person implements AbstractDto<Long> {
     String surname;
     String patronymic;
     LocalDate birthDate;
+    Address address;
 }
