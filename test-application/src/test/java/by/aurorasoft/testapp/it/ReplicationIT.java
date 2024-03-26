@@ -290,10 +290,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         waitReplicating();
 
-        final boolean personDeleted = !personService.isExist(givenId);
-        final boolean replicatedPersonDeleted = !replicatedPersonRepository.existsById(givenId);
-        final boolean successDeleting = personDeleted && replicatedPersonDeleted;
-        assertTrue(successDeleting);
+        assertTrue(isPersonDeletedWithReplication(givenId));
     }
 
     private static void waitReplicating() {
@@ -341,5 +338,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
                                                                   final BiConsumer<E, E> equalChecker) {
         assertEquals(expected.size(), actual.size());
         range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
+    }
+
+    private boolean isPersonDeletedWithReplication(final Long id) {
+        return !personService.isExist(id) && !replicatedPersonRepository.existsById(id);
     }
 }
