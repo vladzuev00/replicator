@@ -12,6 +12,7 @@ import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.St
 import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_CLIENT;
 
 //TODO: refactor, possible receive ReplicationConsumeException, do only for replication consuming
+//TODO: when retrying it not receive relation but only main entity
 @Component
 public final class ReplicationConsumeExceptionHandler implements StreamsUncaughtExceptionHandler {
     private static final String INVALID_FOREIGN_KEY_SQL_STATE = "23503";
