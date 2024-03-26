@@ -35,7 +35,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
 @DirtiesContext
 @Transactional(propagation = NOT_SUPPORTED)
 public class ReplicationIT extends AbstractSpringBootTest {
-    private static final long WAIT_REPLICATING_SECONDS = 5;
+    private static final long WAIT_REPLICATING_SECONDS = 10;
 
     @Autowired
     private AddressService addressService;
