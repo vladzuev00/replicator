@@ -9,6 +9,7 @@ import org.springframework.kafka.config.KafkaStreamsConfiguration;
 import java.util.Map;
 
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 import static org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME;
 
@@ -26,7 +27,8 @@ public class KafkaConfig {
     public KafkaStreamsConfiguration streamsConfiguration() {
         final Map<String, Object> configsByNames = Map.of(
                 APPLICATION_ID_CONFIG, applicationId,
-                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress
+                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
+                ENABLE_AUTO_COMMIT_CONFIG, false
         );
         return new KafkaStreamsConfiguration(configsByNames);
     }

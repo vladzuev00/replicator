@@ -19,7 +19,7 @@ public final class ReplicationConsumeExceptionHandler implements StreamsUncaught
 
     //TODO: remove
     public ReplicationConsumeExceptionHandler(StreamsBuilderFactoryBean streamBuilderFactoryBean) {
-        streamBuilderFactoryBean.setStreamsUncaughtExceptionHandler(this);
+//        streamBuilderFactoryBean.setStreamsUncaughtExceptionHandler(this);
     }
 
     @Override
