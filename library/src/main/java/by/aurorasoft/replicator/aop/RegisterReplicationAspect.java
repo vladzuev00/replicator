@@ -25,7 +25,7 @@ import static org.springframework.transaction.support.TransactionSynchronization
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class ProducingReplicationAspect {
+public class RegisterReplicationAspect {
     private final ReplicationProducerHolder producerHolder;
 
     @SuppressWarnings("rawtypes")
