@@ -99,6 +99,6 @@ public final class ReplicationConsumePipelineStarterTest {
         final Long givenId = 255L;
         final ConsumedReplication<Long, TestEntity> givenReplication = mock(ConsumedReplication.class);
         actual.apply(givenId, givenReplication);
-        verify(givenReplication, times(1)).execute(same(mockedRepository));
+        verify(givenReplication, times(1)).executeInternal(same(mockedRepository));
     }
 }

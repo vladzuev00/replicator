@@ -17,7 +17,7 @@ public final class DeleteConsumedReplicationTest {
 
         final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
-        givenReplication.execute(givenRepository);
+        givenReplication.executeInternal(givenRepository);
 
         verify(givenRepository, times(1)).deleteById(same(givenEntityId));
     }

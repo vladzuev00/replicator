@@ -11,9 +11,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
 
 @Getter
-@EqualsAndHashCode
-@ToString
-public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> extends ConsumedReplication<ID, E> {
     private final E entity;
 
     @JsonCreator
@@ -22,7 +22,7 @@ public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> imp
     }
 
     @Override
-    public void execute(final JpaRepository<E, ID> repository) {
+    protected void executeInternal(final JpaRepository<E, ID> repository) {
         repository.save(entity);
     }
 }

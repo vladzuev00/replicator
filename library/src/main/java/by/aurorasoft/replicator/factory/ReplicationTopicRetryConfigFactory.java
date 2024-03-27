@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import static org.springframework.kafka.retrytopic.RetryTopicConfigurationBuilder.newInstance;
 
+//TODO: refactor and tests
 @Component
 public final class ReplicationTopicRetryConfigFactory {
 
