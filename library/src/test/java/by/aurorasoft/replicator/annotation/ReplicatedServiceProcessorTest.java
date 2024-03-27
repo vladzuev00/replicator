@@ -8,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 public final class ReplicatedServiceProcessorTest {
-    private static final String WRONG_ANNOTATING_MESSAGE = "Annotation '@ReplicatedService' can be applied only for "
+    private static final String WRONG_ANNOTATING_MESSAGE = "'@ReplicatedService' can be applied only for "
             + "subclasses of 'class by.nhorushko.crudgeneric.v2.service.AbsServiceRUD'";
 
     @Test
@@ -78,7 +78,7 @@ public final class ReplicatedServiceProcessorTest {
 
     @Test
     public void replicatedReadServiceShouldNotBeCompiled() {
-        compileExpectingAnnotatingException(
+        compileExpectingAnnotatingError(
                 "by.aurorasoft.replicator.TestRService",
                 """
                         package by.aurorasoft.replicator;
@@ -111,7 +111,7 @@ public final class ReplicatedServiceProcessorTest {
 
     @Test
     public void notCorrespondingServiceShouldNotBeCompiled() {
-        compileExpectingAnnotatingException(
+        compileExpectingAnnotatingError(
                 "by.aurorasoft.replicator.TestService",
                 """
                         package by.aurorasoft.replicator;
@@ -136,12 +136,16 @@ public final class ReplicatedServiceProcessorTest {
         Reflect.compile(className, sourceCode, getCompileOptions());
     }
 
-    private static void compileExpectingAnnotatingException(final String className, final String sourceCode) {
+    private static void compileExpectingAnnotatingError(final String className, final String sourceCode) {
         try {
             compile(className, sourceCode);
         } catch (final ReflectException exception) {
-            assertTrue(exception.getMessage().contains(WRONG_ANNOTATING_MESSAGE));
+            assertTrue(isWrongAnnotatingError(exception));
         }
+    }
+
+    private static boolean isWrongAnnotatingError(final ReflectException exception) {
+        return exception.getMessage().contains(WRONG_ANNOTATING_MESSAGE);
     }
 
     private static CompileOptions getCompileOptions() {

@@ -66,10 +66,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     }
 
     private String getWrongAnnotatingMessage() {
-        return "Annotation '@%s' can be applied only for subclasses of '%s'".formatted(
-                ANNOTATION.getSimpleName(),
-                RUD_SERVICE
-        );
+        return "'@%s' can be applied only for subclasses of '%s'".formatted(ANNOTATION.getSimpleName(), RUD_SERVICE);
     }
 
     private Types getTypeUtils() {
