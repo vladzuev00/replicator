@@ -33,14 +33,14 @@ public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> imp
         try {
             repository.save(entity);
         } catch (final Exception exception) {
-            handleFailedExecution(exception);
+            throw wrapFailedExecutionException(exception);
         }
     }
 
-    private static void handleFailedExecution(final Exception exception) {
-        if (isPerhapsRelationNotDeliveredYet(exception)) {
-            throw new PerhapsRelationNotDeliveredYetException(exception);
-        }
+    private static RuntimeException wrapFailedExecutionException(final Exception cause) {
+        return isPerhapsRelationNotDeliveredYet(cause)
+                ? new PerhapsRelationNotDeliveredYetException(cause)
+                : new SaveReplicationExecutionException(cause);
     }
 
     private static boolean isPerhapsRelationNotDeliveredYet(final Exception exception) {
@@ -49,5 +49,27 @@ public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> imp
 
     private static boolean isInvalidForeignKey(final SQLException exception) {
         return Objects.equals(INVALID_FOREIGN_KEY_SQL_STATE, exception.getSQLState());
+    }
+
+    static final class SaveReplicationExecutionException extends RuntimeException {
+
+        @SuppressWarnings("unused")
+        public SaveReplicationExecutionException() {
+
+        }
+
+        @SuppressWarnings("unused")
+        public SaveReplicationExecutionException(final String description) {
+            super(description);
+        }
+
+        public SaveReplicationExecutionException(final Exception cause) {
+            super(cause);
+        }
+
+        @SuppressWarnings("unused")
+        public SaveReplicationExecutionException(final String description, final Exception cause) {
+            super(description, cause);
+        }
     }
 }
