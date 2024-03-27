@@ -10,6 +10,16 @@ public final class ReplicationProducer<ID> extends KafkaProducerAbstractSimple<I
         super(topicName, kafkaTemplate);
     }
 
+    //TODO: test
+    public KafkaTemplate<ID, ProducedReplication<ID>> getKafkaTemplate() {
+        return kafkaTemplate;
+    }
+
+    //TODO: test
+    public String getTopicName() {
+        return topicName;
+    }
+
     @Override
     public void send(final ProducedReplication<ID> replication) {
         sendModel(replication.getEntityId(), replication);
