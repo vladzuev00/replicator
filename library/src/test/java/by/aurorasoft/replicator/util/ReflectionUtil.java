@@ -15,7 +15,7 @@ public final class ReflectionUtil {
         final Field field = getField(target, fieldName);
         field.setAccessible(true);
         try {
-            final Object value = ReflectionUtils.getField(field, target);
+            final Object value = getFieldValue(field, target);
             return valueType.cast(value);
         } finally {
             field.setAccessible(false);
@@ -24,5 +24,9 @@ public final class ReflectionUtil {
 
     private static Field getField(final Object target, final String fieldName) {
         return requireNonNull(findField(target.getClass(), fieldName));
+    }
+
+    private static Object getFieldValue(final Field field, final Object target) {
+        return ReflectionUtils.getField(field, target);
     }
 }
