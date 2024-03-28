@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -37,19 +38,17 @@ public final class ReplicationProducerHolderFactoryTest {
     }
 
     @Test
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public void holderShouldBeCreated() {
         final AbsServiceRUD<?, ?, ?, ?, ?> firstGivenService = mock(AbsServiceRUD.class);
         final AbsServiceRUD<?, ?, ?, ?, ?> secondGivenService = mock(AbsServiceRUD.class);
 
-        final List givenServices = List.of(firstGivenService, secondGivenService);
-        when(mockedServiceHolder.getServices()).thenReturn(givenServices);
+        bindServicesToHolder(firstGivenService, secondGivenService);
 
-        final ReplicationProducer firstGivenProducer = mock(ReplicationProducer.class);
-        when(mockedProducerFactory.create(same(firstGivenService))).thenReturn(firstGivenProducer);
+        final ReplicationProducer<?> firstGivenProducer = mock(ReplicationProducer.class);
+        bindProducerToService(firstGivenProducer, firstGivenService);
 
-        final ReplicationProducer secondGivenProducer = mock(ReplicationProducer.class);
-        when(mockedProducerFactory.create(same(secondGivenService))).thenReturn(secondGivenProducer);
+        final ReplicationProducer<?> secondGivenProducer = mock(ReplicationProducer.class);
+        bindProducerToService(secondGivenProducer, secondGivenService);
 
         final ReplicationProducerHolder actual = factory.create();
         final var actualProducersByServices = findProducersByServices(actual);
@@ -58,6 +57,17 @@ public final class ReplicationProducerHolderFactoryTest {
                 secondGivenService, secondGivenProducer
         );
         assertEquals(expectedProducersByServices, actualProducersByServices);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void bindServicesToHolder(final AbsServiceRUD<?, ?, ?, ?, ?>... services) {
+        final List givenServices = asList(services);
+        when(mockedServiceHolder.getServices()).thenReturn(givenServices);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void bindProducerToService(final ReplicationProducer producer, final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        when(mockedProducerFactory.create(same(service))).thenReturn(producer);
     }
 
     @SuppressWarnings("unchecked")
