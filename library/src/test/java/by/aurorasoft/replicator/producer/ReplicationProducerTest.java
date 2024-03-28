@@ -41,14 +41,17 @@ public final class ReplicationProducerTest {
 
         producer.send(givenReplication);
 
-        verify(mockedKafkaTemplate).send(recordArgumentCaptor.capture());
+        verifyProduceReplication(givenReplication);
+    }
 
-        final ProducerRecord<Long, ProducedReplication<Long>> actualSentRecord = recordArgumentCaptor.getValue();
-        final ProducerRecord<Long, ProducedReplication<Long>> expectedSentRecord = new ProducerRecord<>(
-                GIVEN_TOPIC_NAME,
-                givenId,
-                givenReplication
-        );
-        assertEquals(expectedSentRecord, actualSentRecord);
+    private void verifyProduceReplication(final ProducedReplication<Long> replication) {
+        verify(mockedKafkaTemplate).send(recordArgumentCaptor.capture());
+        final ProducerRecord<Long, ProducedReplication<Long>> actual = recordArgumentCaptor.getValue();
+        final ProducerRecord<Long, ProducedReplication<Long>> expected = createRecord(replication);
+        assertEquals(expected, actual);
+    }
+
+    private static ProducerRecord<Long, ProducedReplication<Long>> createRecord(final ProducedReplication<Long> replication) {
+        return new ProducerRecord<>(GIVEN_TOPIC_NAME, replication.getEntityId(), replication);
     }
 }
