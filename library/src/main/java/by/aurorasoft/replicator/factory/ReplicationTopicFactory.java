@@ -4,14 +4,15 @@ import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.stereotype.Component;
+
+import static org.springframework.kafka.config.TopicBuilder.name;
 
 @Component
 public final class ReplicationTopicFactory {
 
     public NewTopic create(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
-        return TopicBuilder.name(getTopicName(service))
+        return name(getTopicName(service))
                 .partitions(getTopicPartitionCount(service))
                 .replicas(getTopicReplicationFactor(service))
                 .build();
