@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.event.ReplicationTopicsCreated;
+import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
@@ -23,11 +23,16 @@ public final class ReplicationTopicCreator {
     @EventListener(ContextRefreshedEvent.class)
     public void createTopics() {
         serviceHolder.getServices().forEach(this::createTopic);
-        eventPublisher.publishEvent(new ReplicationTopicsCreated(this));
+        publishEvent();
     }
 
     private void createTopic(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
         final NewTopic topic = topicFactory.create(service);
         kafkaAdmin.createOrModifyTopics(topic);
+    }
+
+    private void publishEvent() {
+        final ReplicationTopicsCreatedEvent event = new ReplicationTopicsCreatedEvent(this);
+        eventPublisher.publishEvent(event);
     }
 }
