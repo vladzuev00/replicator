@@ -26,6 +26,8 @@ public class ReplicationConsumingConfig {
             final ReplicatedPersonRepository repository
     ) {
         return ReplicationConsumePipeline.<Long, ReplicatedPersonEntity>builder()
+                //TODO: put in properties
+                .id("person-replication-pipeline")
                 .topic(personTopic)
                 .idSerde(Long())
                 .replicationTypeReference(new TypeReference<>() {
@@ -39,6 +41,8 @@ public class ReplicationConsumingConfig {
             final ReplicatedAddressRepository repository
     ) {
         return ReplicationConsumePipeline.<Long, ReplicatedAddressEntity>builder()
+                //TODO: put in properties
+                .id("address-replication-pipeline")
                 .topic(addressTopic)
                 .idSerde(Long())
                 .replicationTypeReference(new TypeReference<>() {

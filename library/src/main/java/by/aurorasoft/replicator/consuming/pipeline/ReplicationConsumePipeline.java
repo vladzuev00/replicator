@@ -11,16 +11,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Getter
 public final class ReplicationConsumePipeline<ID, E extends AbstractEntity<ID>> {
+    private final String id;
     private final String topic;
     private final Serde<ID> idSerde;
     private final Serde<ConsumedReplication<ID, E>> replicationSerde;
     private final JpaRepository<E, ID> repository;
 
     @Builder
-    public ReplicationConsumePipeline(final String topic,
+    public ReplicationConsumePipeline(final String id,
+                                      final String topic,
                                       final Serde<ID> idSerde,
                                       final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference,
                                       final JpaRepository<E, ID> repository) {
+        this.id = id;
         this.topic = topic;
         this.idSerde = idSerde;
         replicationSerde = new ReplicationSerde<>(replicationTypeReference);

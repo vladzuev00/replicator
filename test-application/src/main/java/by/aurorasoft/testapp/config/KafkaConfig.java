@@ -13,7 +13,7 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 import static org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME;
 
 @Configuration
-@EnableKafkaStreams
+//@EnableKafkaStreams
 public class KafkaConfig {
 
     @Value("${spring.kafka.app-id}")
@@ -22,12 +22,13 @@ public class KafkaConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
-    @Bean(name = DEFAULT_STREAMS_CONFIG_BEAN_NAME)
-    public KafkaStreamsConfiguration streamsConfiguration() {
-        final Map<String, Object> configsByNames = Map.of(
-                APPLICATION_ID_CONFIG, applicationId,
-                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress
-        );
-        return new KafkaStreamsConfiguration(configsByNames);
-    }
+//    @Bean(name = DEFAULT_STREAMS_CONFIG_BEAN_NAME)
+//    public KafkaStreamsConfiguration streamsConfiguration() {
+//        final Map<String, Object> configsByNames = Map.of(
+//                APPLICATION_ID_CONFIG, applicationId,
+//                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
+//                "num.stream.threads", 1
+//        );
+//        return new KafkaStreamsConfiguration(configsByNames);
+//    }
 }
