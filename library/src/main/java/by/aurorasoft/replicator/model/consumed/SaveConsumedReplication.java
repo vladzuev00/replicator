@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
 
-//TODO: refactor tests
 @Getter
 @EqualsAndHashCode
 @ToString
