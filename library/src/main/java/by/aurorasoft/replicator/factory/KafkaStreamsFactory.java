@@ -32,29 +32,29 @@ public final class KafkaStreamsFactory {
     }
 
     public <ID, E extends AbstractEntity<ID>> KafkaStreams create(final ReplicationConsumePipeline<ID, E> pipeline) {
-        final StreamsConfig config = createStreamsConfig(pipeline.getId());
+        final StreamsConfig config = createStreamsConfig(pipeline);
         final StreamsBuilder builder = new StreamsBuilder();
         builder
                 .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()))
                 .foreach((id, replication) -> replication.execute(pipeline.getRepository()));
         final Topology topology = builder.build();
-        final KafkaStreams streams = new KafkaStreams(topology, config);
-        configure(streams);
-        return streams;
+        return create(topology, config);
     }
 
-    private StreamsConfig createStreamsConfig(final String applicationId) {
+    private StreamsConfig createStreamsConfig(final ReplicationConsumePipeline<?, ?> pipeline) {
         final Map<String, Object> configsByNames = Map.of(
-                APPLICATION_ID_CONFIG, applicationId,
+                APPLICATION_ID_CONFIG, pipeline.getId(),
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress
         );
         return new StreamsConfig(configsByNames);
     }
 
-    private void configure(final KafkaStreams streams) {
+    private KafkaStreams create(final Topology topology, final StreamsConfig config) {
+        final KafkaStreams streams = new KafkaStreams(topology, config);
         try {
             streams.setUncaughtExceptionHandler(exceptionHandler);
             streamsHolder.add(streams);
+            return streams;
         } catch (final Exception exception) {
             streams.close();
             throw exception;
