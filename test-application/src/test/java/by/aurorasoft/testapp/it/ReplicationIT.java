@@ -32,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
+//TODO: do test with a lot of operations
 @DirtiesContext
 @Transactional(propagation = NOT_SUPPORTED)
 public class ReplicationIT extends AbstractSpringBootTest {
