@@ -11,7 +11,7 @@ import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.St
 import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_APPLICATION;
 
 @Component
-public final class ConsumeExceptionHandler implements StreamsUncaughtExceptionHandler {
+public final class ReplicationConsumeExceptionHandler implements StreamsUncaughtExceptionHandler {
     private static final String INVALID_FOREIGN_KEY_SQL_STATE = "23503";
 
     @Override
