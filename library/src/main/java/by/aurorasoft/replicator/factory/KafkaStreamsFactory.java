@@ -1,7 +1,9 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.exceptionhandler.ReplicationConsumeExceptionHandler;
+import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.holder.KafkaStreamsHolder;
+import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -13,26 +15,28 @@ import java.util.Map;
 
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
+import static org.apache.kafka.streams.kstream.Consumed.with;
 
 @Component
 public final class KafkaStreamsFactory {
-    private final StreamsBuilder builder;
     private final ReplicationConsumeExceptionHandler exceptionHandler;
     private final KafkaStreamsHolder streamsHolder;
     private final String bootstrapAddress;
 
-    public KafkaStreamsFactory(final StreamsBuilder builder,
-                               final ReplicationConsumeExceptionHandler exceptionHandler,
+    public KafkaStreamsFactory(final ReplicationConsumeExceptionHandler exceptionHandler,
                                final KafkaStreamsHolder streamsHolder,
                                @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
-        this.builder = builder;
         this.exceptionHandler = exceptionHandler;
         this.streamsHolder = streamsHolder;
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public KafkaStreams create(final String applicationId) {
-        final StreamsConfig config = createStreamsConfig(applicationId);
+    public <ID, E extends AbstractEntity<ID>> KafkaStreams create(final ReplicationConsumePipeline<ID, E> pipeline) {
+        final StreamsConfig config = createStreamsConfig(pipeline.getId());
+        final StreamsBuilder builder = new StreamsBuilder();
+        builder
+                .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()))
+                .foreach((id, replication) -> replication.execute(pipeline.getRepository()));
         final Topology topology = builder.build();
         final KafkaStreams streams = new KafkaStreams(topology, config);
         configure(streams);

@@ -1,7 +1,8 @@
 package by.aurorasoft.replicator.holder;
 
-import jakarta.annotation.PreDestroy;
 import org.apache.kafka.streams.KafkaStreams;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public final class KafkaStreamsHolder {
         elements.add(element);
     }
 
-    @PreDestroy
+    @EventListener(ContextClosedEvent.class)
     public void closeStreams() {
         elements.forEach(KafkaStreams::close);
     }

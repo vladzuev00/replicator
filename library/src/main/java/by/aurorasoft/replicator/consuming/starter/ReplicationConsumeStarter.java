@@ -1,8 +1,9 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import jakarta.annotation.PostConstruct;
+import by.aurorasoft.replicator.event.ReplicationTopicsCreated;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public final class ReplicationConsumeStarter {
     private final List<ReplicationConsumePipeline<?, ?>> pipelines;
     private final ReplicationConsumePipelineStarter pipelineStarter;
 
-    @PostConstruct
+    @EventListener(ReplicationTopicsCreated.class)
     public void start() {
         pipelines.forEach(pipelineStarter::start);
     }

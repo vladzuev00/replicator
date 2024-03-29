@@ -12,6 +12,6 @@ public final class ReplicationConsumePipelineStarter {
     private final KafkaStreamsFactory streamsFactory;
 
     public <ID, E extends AbstractEntity<ID>> void start(final ReplicationConsumePipeline<ID, E> pipeline) {
-        streamsFactory.create(pipeline.getId()).start();
+        streamsFactory.create(pipeline).start();
     }
 }

@@ -1,11 +1,14 @@
 package by.aurorasoft.replicator.topiccreator;
 
+import by.aurorasoft.replicator.event.ReplicationTopicsCreated;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +18,12 @@ public final class ReplicationTopicCreator {
     private final ReplicatedServiceHolder serviceHolder;
     private final ReplicationTopicFactory topicFactory;
     private final KafkaAdmin kafkaAdmin;
+    private final ApplicationEventPublisher eventPublisher;
 
-    @PostConstruct
+    @EventListener(ContextRefreshedEvent.class)
     public void createTopics() {
         serviceHolder.getServices().forEach(this::createTopic);
+        eventPublisher.publishEvent(new ReplicationTopicsCreated(this));
     }
 
     private void createTopic(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
