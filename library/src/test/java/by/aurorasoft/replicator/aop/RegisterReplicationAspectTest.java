@@ -61,7 +61,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         final TestDto givenDto = new TestDto(255L);
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
-        bindProducerForService(givenProducer);
+        bindProducerWithService(givenProducer);
 
         final TestDto actual = service.save(givenDto);
         assertSame(givenDto, actual);
@@ -73,7 +73,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     public void createShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final TestDto givenDto = new TestDto(255L);
 
-        bindProducerForService(null);
+        bindProducerWithService(null);
 
         service.save(givenDto);
     }
@@ -87,7 +87,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
 
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
-        bindProducerForService(givenProducer);
+        bindProducerWithService(givenProducer);
 
         final List<TestDto> actual = service.saveAll(givenDtos);
         assertEquals(givenDtos, actual);
@@ -99,7 +99,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     public void createAllShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final List<TestDto> givenDtos = List.of(new TestDto(255L), new TestDto(256L));
 
-        bindProducerForService(null);
+        bindProducerWithService(null);
 
         service.saveAll(givenDtos);
     }
@@ -110,7 +110,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         final TestDto givenDto = new TestDto(255L);
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
-        bindProducerForService(givenProducer);
+        bindProducerWithService(givenProducer);
 
         final TestDto actual = service.update(givenDto);
         assertSame(givenDto, actual);
@@ -122,7 +122,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     public void updateShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final TestDto givenDto = new TestDto(255L);
 
-        bindProducerForService(null);
+        bindProducerWithService(null);
 
         service.update(givenDto);
     }
@@ -136,7 +136,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         final Object givenPartial = new Object();
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
-        bindProducerForService(givenProducer);
+        bindProducerWithService(givenProducer);
 
         final TestDto actual = service.updatePartial(givenId, givenPartial);
         assertEquals(givenDto, actual);
@@ -149,7 +149,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         final Long givenId = 255L;
         final Object givenPartial = new Object();
 
-        bindProducerForService(null);
+        bindProducerWithService(null);
 
         service.updatePartial(givenId, givenPartial);
     }
@@ -160,7 +160,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         final Long givenId = 255L;
         final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
 
-        bindProducerForService(givenProducer);
+        bindProducerWithService(givenProducer);
 
         service.delete(givenId);
 
@@ -171,7 +171,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     public void deleteByIdShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final Long givenId = 255L;
 
-        bindProducerForService(null);
+        bindProducerWithService(null);
 
         service.delete(givenId);
     }
@@ -188,7 +188,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         verify(givenProducer, times(1)).send(same(givenReplication));
     }
 
-    private void bindProducerForService(final ReplicationProducer<Long> producer) {
+    private void bindProducerWithService(final ReplicationProducer<Long> producer) {
         when(mockedProducerHolder.findByService(same(unProxyService()))).thenReturn(ofNullable(producer));
     }
 
