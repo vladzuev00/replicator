@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.exceptionhandler.ReplicationConsumeExceptionHandler;
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.replicator.holder.KafkaStreamsHolder;
+import by.aurorasoft.replicator.manager.KafkaStreamsLifecycleManager;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -20,14 +20,14 @@ import static org.apache.kafka.streams.kstream.Consumed.with;
 @Component
 public final class KafkaStreamsFactory {
     private final ReplicationConsumeExceptionHandler exceptionHandler;
-    private final KafkaStreamsHolder streamsHolder;
+    private final KafkaStreamsLifecycleManager streamsLifecycleManager;
     private final String bootstrapAddress;
 
     public KafkaStreamsFactory(final ReplicationConsumeExceptionHandler exceptionHandler,
-                               final KafkaStreamsHolder streamsHolder,
+                               final KafkaStreamsLifecycleManager streamsLifecycleManager,
                                @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
         this.exceptionHandler = exceptionHandler;
-        this.streamsHolder = streamsHolder;
+        this.streamsLifecycleManager = streamsLifecycleManager;
         this.bootstrapAddress = bootstrapAddress;
     }
 
@@ -53,7 +53,7 @@ public final class KafkaStreamsFactory {
         final KafkaStreams streams = new KafkaStreams(topology, config);
         try {
             streams.setUncaughtExceptionHandler(exceptionHandler);
-            streamsHolder.add(streams);
+            streamsLifecycleManager.register(streams);
             return streams;
         } catch (final Exception exception) {
             streams.close();

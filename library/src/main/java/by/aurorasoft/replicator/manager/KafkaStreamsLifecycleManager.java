@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.holder;
+package by.aurorasoft.replicator.manager;
 
 import org.apache.kafka.streams.KafkaStreams;
 import org.springframework.context.event.ContextClosedEvent;
@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public final class KafkaStreamsHolder {
+public final class KafkaStreamsLifecycleManager {
     private final List<KafkaStreams> elements = new ArrayList<>();
 
-    public void add(final KafkaStreams element) {
+    public void register(final KafkaStreams element) {
         elements.add(element);
     }
 
     @EventListener(ContextClosedEvent.class)
-    public void closeStreams() {
+    public void closeAll() {
         elements.forEach(KafkaStreams::close);
     }
 }
