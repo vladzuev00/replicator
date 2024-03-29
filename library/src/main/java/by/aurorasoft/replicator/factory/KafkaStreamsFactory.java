@@ -16,19 +16,22 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 
 @Component
 public final class KafkaStreamsFactory {
+    private final StreamsBuilder builder;
     private final ReplicationConsumeExceptionHandler exceptionHandler;
     private final KafkaStreamsHolder streamsHolder;
     private final String bootstrapAddress;
 
-    public KafkaStreamsFactory(final ReplicationConsumeExceptionHandler exceptionHandler,
+    public KafkaStreamsFactory(final StreamsBuilder builder,
+                               final ReplicationConsumeExceptionHandler exceptionHandler,
                                final KafkaStreamsHolder streamsHolder,
                                @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
+        this.builder = builder;
         this.exceptionHandler = exceptionHandler;
         this.streamsHolder = streamsHolder;
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public KafkaStreams create(final StreamsBuilder builder, final String applicationId) {
+    public KafkaStreams create(final String applicationId) {
         final StreamsConfig config = createStreamsConfig(applicationId);
         final Topology topology = builder.build();
         final KafkaStreams streams = new KafkaStreams(topology, config);
