@@ -8,6 +8,10 @@ CREATE TABLE addresses
     city    VARCHAR(256) NOT NULL
 );
 
+ALTER TABLE addresses
+    ADD CONSTRAINT address_names_should_be_unique
+        UNIQUE (country, city);
+
 CREATE TABLE persons
 (
     id         SERIAL PRIMARY KEY,
