@@ -18,16 +18,21 @@ public class ReplicationConsumingConfig {
     @Value("${kafka.topic.sync-person.name}")
     private String personTopic;
 
+    @Value("${replication.consume-pipeline.id.person}")
+    private String personPipelineId;
+
     @Value("${kafka.topic.sync-address.name}")
     private String addressTopic;
+
+    @Value("${replication.consume-pipeline.id.address}")
+    private String addressPipelineId;
 
     @Bean
     public ReplicationConsumePipeline<Long, ReplicatedPersonEntity> personPipeline(
             final ReplicatedPersonRepository repository
     ) {
         return ReplicationConsumePipeline.<Long, ReplicatedPersonEntity>builder()
-                //TODO: put in properties
-                .id("person-replication-pipeline")
+                .id(personPipelineId)
                 .topic(personTopic)
                 .idSerde(Long())
                 .replicationTypeReference(new TypeReference<>() {
@@ -41,8 +46,7 @@ public class ReplicationConsumingConfig {
             final ReplicatedAddressRepository repository
     ) {
         return ReplicationConsumePipeline.<Long, ReplicatedAddressEntity>builder()
-                //TODO: put in properties
-                .id("address-replication-pipeline")
+                .id(addressPipelineId)
                 .topic(addressTopic)
                 .idSerde(Long())
                 .replicationTypeReference(new TypeReference<>() {

@@ -25,3 +25,11 @@ kafka:
       name: sync-person
     sync-address:
       name: sync-address
+
+replication:
+  consume-pipeline:
+    id:
+      person: person-replication-consume-pipeline
+      address: address-replication-consume-pipeline
+
+
