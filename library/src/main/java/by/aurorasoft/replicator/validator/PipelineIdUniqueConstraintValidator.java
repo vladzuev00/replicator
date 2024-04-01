@@ -8,13 +8,14 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import static java.lang.String.join;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public final class PipelineIdUniqueConstraintValidator {
 
     @EventListener(ContextRefreshedEvent.class)
     public void validate() {
-        final Set<String> duplicatedIds = findDuplicatedIds();
+        final List<String> duplicatedIds = findDuplicatedIds();
         if (duplicatedIds.isEmpty()) {
             publishSuccessEvent();
         } else {
@@ -35,27 +36,27 @@ public final class PipelineIdUniqueConstraintValidator {
         }
     }
 
-    private Set<String> findDuplicatedIds() {
+    private List<String> findDuplicatedIds() {
         return pipelines.stream()
                 .map(ReplicationConsumePipeline::getId)
-                .collect(groupingBy(identity(), counting()))
+                .collect(groupingBy(identity(), LinkedHashMap::new, counting()))
                 .entrySet()
                 .stream()
                 .filter(frequencyById -> frequencyById.getValue() > 1)
                 .map(Entry::getKey)
-                .collect(toUnmodifiableSet());
+                .toList();
     }
 
     private void publishSuccessEvent() {
         eventPublisher.publishEvent(new UniquenessPipelineIdCheckedEvent(this));
     }
 
-    private void throwConstraintViolationException(final Set<String> duplicatedIds) {
+    private void throwConstraintViolationException(final List<String> duplicatedIds) {
         final String message = createConstraintViolationMessage(duplicatedIds);
         throw new PipelineIdUniqueConstraintViolationException(message);
     }
 
-    private String createConstraintViolationMessage(final Set<String> duplicatedIds) {
+    private String createConstraintViolationMessage(final List<String> duplicatedIds) {
         return VIOLATION_MESSAGE_TEMPLATE.formatted(join(VIOLATION_MESSAGE_IDS_DELIMITER, duplicatedIds));
     }
 
