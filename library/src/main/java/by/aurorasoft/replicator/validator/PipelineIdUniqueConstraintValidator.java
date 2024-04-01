@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.*;
 
 @Component
 @RequiredArgsConstructor
-public final class UniquePipelineIdValidator {
+public final class PipelineIdUniqueConstraintValidator {
     private static final String VIOLATION_MESSAGE_TEMPLATE = "Duplicated replication pipeline's ids were found: %s";
     private static final String VIOLATION_MESSAGE_IDS_DELIMITER = ", ";
 
