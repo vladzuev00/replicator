@@ -4,9 +4,9 @@ package by.aurorasoft.replicator.event;
 import by.aurorasoft.replicator.validator.UniquePipelineIdValidator;
 import org.springframework.context.ApplicationEvent;
 
-public final class PipelineIdUniqueConstraintCheckedEvent extends ApplicationEvent {
+public final class UniquenessPipelineIdCheckedEvent extends ApplicationEvent {
 
-    public PipelineIdUniqueConstraintCheckedEvent(final UniquePipelineIdValidator source) {
+    public UniquenessPipelineIdCheckedEvent(final UniquePipelineIdValidator source) {
         super(source);
     }
 }

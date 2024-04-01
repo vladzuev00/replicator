@@ -1,13 +1,13 @@
 package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
+import by.aurorasoft.replicator.event.UniquenessPipelineIdCheckedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public final class ReplicationTopicCreator {
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
-    @EventListener(ContextRefreshedEvent.class)
+    @EventListener(UniquenessPipelineIdCheckedEvent.class)
     public void createTopics() {
         serviceHolder.getServices().forEach(this::createTopic);
         publishEvent();
@@ -32,7 +32,6 @@ public final class ReplicationTopicCreator {
     }
 
     private void publishEvent() {
-        final ReplicationTopicsCreatedEvent event = new ReplicationTopicsCreatedEvent(this);
-        eventPublisher.publishEvent(event);
+        eventPublisher.publishEvent(new ReplicationTopicsCreatedEvent(this));
     }
 }
