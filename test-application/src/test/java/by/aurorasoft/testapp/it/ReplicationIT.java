@@ -10,6 +10,7 @@ import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.crud.service.AddressService;
 import by.aurorasoft.testapp.crud.service.PersonService;
+import by.aurorasoft.testapp.model.AddressName;
 import by.aurorasoft.testapp.model.PersonName;
 import by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil;
@@ -23,9 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static java.lang.Long.MAX_VALUE;
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -115,7 +118,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void addressShouldNotBeSavedBecauseOfViolationUniqueConstraint() {
         final Address givenAddress = Address.builder()
                 .country("Belarus")
@@ -124,7 +127,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         saveExpectingUniqueConstraintViolation(givenAddress);
         waitReplicating();
-        verifyReplicatedAddressesCount(1);
+        verifyReplicatedAddressesCount(2);
     }
 
     //TODO: run tests many times, replicated person can save before replicated address
@@ -222,7 +225,26 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
+    public void addressesShouldNotBeSavedBecauseOfViolationUniqueConstraint() {
+        final List<Address> givenAddresses = List.of(
+                Address.builder()
+                        .country("Russia")
+                        .city("Moscow")
+                        .build(),
+                Address.builder()
+                        .country("Belarus")
+                        .city("Minsk")
+                        .build()
+        );
+
+        saveAllExpectingUniqueConstraintViolation(givenAddresses);
+        waitReplicating();
+        verifyReplicatedAddressesCount(1);
+    }
+
+    @Test
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void personShouldBeUpdated() {
         final Long givenId = 255L;
         final String givenNewName = "Ivan";
@@ -260,7 +282,23 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
+    public void addressShouldNotBeUpdatedBecauseOfViolationUniqueConstraint() {
+        final Address givenAddress = Address.builder()
+                .id(256L)
+                .country("Belarus")
+                .city("Minsk")
+                .build();
+
+        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddresses();
+        updateExpectingUniqueConstraintViolation(givenAddress);
+        waitReplicating();
+        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddresses();
+        checkEquals(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
+    }
+
+    @Test
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void personShouldBeUpdatedPartially() {
         final Long givenId = 255L;
 
@@ -300,7 +338,20 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
+    public void addressShouldNotBeUpdatedPartiallyBecauseOfViolationUniqueConstraint() {
+        final Long givenId = 256L;
+        final AddressName givenAddressName = new AddressName("Belarus", "Minsk");
+
+        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddresses();
+        updateAddressPartialExpectingUniqueConstraintViolation(givenId, givenAddressName);
+        waitReplicating();
+        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddresses();
+        checkEquals(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
+    }
+
+    @Test
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void personShouldBeDelete() {
         final Long givenId = 255L;
 
@@ -309,6 +360,14 @@ public class ReplicationIT extends AbstractSpringBootTest {
         waitReplicating();
 
         assertTrue(isPersonDeleted(givenId));
+    }
+
+    @Test
+    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
+    public void personShouldNotBeDeletedByNotExistId() {
+        personService.delete(MAX_VALUE);
+        waitReplicating();
+        verifyReplicatedPersonsCount(1);
     }
 
     private static void waitReplicating() {
@@ -358,6 +417,11 @@ public class ReplicationIT extends AbstractSpringBootTest {
         range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
     }
 
+    private static void checkEquals(final List<ReplicatedAddressEntity> expected,
+                                    final List<ReplicatedAddressEntity> actual) {
+        checkEquals(expected, actual, ReplicatedAddressEntityUtil::checkEquals);
+    }
+
     private boolean isPersonDeleted(final Long id) {
         return !personService.isExist(id) && !replicatedPersonRepository.existsById(id);
     }
@@ -371,9 +435,25 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     private void saveExpectingUniqueConstraintViolation(final Address address) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.save(address));
+    }
+
+    private void saveAllExpectingUniqueConstraintViolation(final Collection<Address> addresses) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.saveAll(addresses));
+    }
+
+    private void updateExpectingUniqueConstraintViolation(final Address address) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.update(address));
+    }
+
+    private void updateAddressPartialExpectingUniqueConstraintViolation(final Long id, final Object partial) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.updatePartial(id, partial));
+    }
+
+    private static void executeExpectingUniqueConstraintViolation(final Runnable task) {
         boolean exceptionArisen;
         try {
-            addressService.save(address);
+            task.run();
             exceptionArisen = false;
         } catch (final DataIntegrityViolationException exception) {
             exceptionArisen = true;
@@ -386,8 +466,22 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expected, countReplicatedAddresses());
     }
 
+    private void verifyReplicatedPersonsCount(final long expected) {
+        assertEquals(expected, countReplicatedPersons());
+    }
+
     private long countReplicatedAddresses() {
         return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedAddressEntity e", Long.class)
                 .getSingleResult();
+    }
+
+    private long countReplicatedPersons() {
+        return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedPersonEntity e", Long.class)
+                .getSingleResult();
+    }
+
+    private List<ReplicatedAddressEntity> findReplicatedAddresses() {
+        return entityManager.createQuery("SELECT e FROM ReplicatedAddressEntity e", ReplicatedAddressEntity.class)
+                .getResultList();
     }
 }
