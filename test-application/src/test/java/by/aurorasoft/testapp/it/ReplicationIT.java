@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
@@ -57,7 +56,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Autowired
     private ReplicatedPersonRepository replicatedPersonRepository;
 
-    //TODO: run tests many times, replicated person can save before replicated address
     @Test
     public void personAndAddressShouldBeSaved() {
         final String givenAddressCountry = "Belarus";
@@ -68,19 +66,16 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String givenPersonPatronymic = "Sergeevich";
         final LocalDate givenPersonBirthDate = LocalDate.of(2000, 2, 18);
 
-        final Address givenAddress = Address.builder()
-                .country(givenAddressCountry)
-                .city(givenAddressCity)
-                .build();
+        final Address givenAddress = createAddress(givenAddressCountry, givenAddressCity);
         final Address actualSavedAddress = addressService.save(givenAddress);
 
-        final Person givenPerson = Person.builder()
-                .name(givenPersonName)
-                .surname(givenPersonSurname)
-                .patronymic(givenPersonPatronymic)
-                .birthDate(givenPersonBirthDate)
-                .address(actualSavedAddress)
-                .build();
+        final Person givenPerson = createPerson(
+                givenPersonName,
+                givenPersonSurname,
+                givenPersonPatronymic,
+                givenPersonBirthDate,
+                actualSavedAddress
+        );
         final Person actualSavedPerson = personService.save(givenPerson);
 
         waitReplicating();
@@ -90,47 +85,42 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expectedSavedAddress, actualSavedAddress);
 
         final Long expectedSavedPersonId = 1L;
-        final Person expectedSavedPerson = Person.builder()
-                .id(expectedSavedPersonId)
-                .name(givenPersonName)
-                .surname(givenPersonSurname)
-                .patronymic(givenPersonPatronymic)
-                .birthDate(givenPersonBirthDate)
-                .address(expectedSavedAddress)
-                .build();
+        final Person expectedSavedPerson = new Person(
+                expectedSavedPersonId,
+                givenPersonName,
+                givenPersonSurname,
+                givenPersonPatronymic,
+                givenPersonBirthDate,
+                expectedSavedAddress
+        );
         assertEquals(expectedSavedPerson, actualSavedPerson);
 
-        final ReplicatedAddressEntity expectedReplicatedAddress = ReplicatedAddressEntity.builder()
-                .id(expectedSavedAddressId)
-                .country(givenAddressCountry)
-                .city(givenAddressCity)
-                .build();
+        final ReplicatedAddressEntity expectedReplicatedAddress = new ReplicatedAddressEntity(
+                expectedSavedAddressId,
+                givenAddressCountry,
+                givenAddressCity
+        );
         verifySave(expectedReplicatedAddress);
 
-        final ReplicatedPersonEntity expectedReplicatedPerson = ReplicatedPersonEntity.builder()
-                .id(expectedSavedPersonId)
-                .name(givenPersonName)
-                .surname(givenPersonSurname)
-                .birthDate(givenPersonBirthDate)
-                .address(expectedReplicatedAddress)
-                .build();
+        final ReplicatedPersonEntity expectedReplicatedPerson = new ReplicatedPersonEntity(
+                expectedSavedPersonId,
+                givenPersonName,
+                givenPersonSurname,
+                givenPersonBirthDate,
+                expectedReplicatedAddress
+        );
         verifySave(expectedReplicatedPerson);
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void addressShouldNotBeSavedBecauseOfViolationUniqueConstraint() {
-        final Address givenAddress = Address.builder()
-                .country("Belarus")
-                .city("Minsk")
-                .build();
+        final Address givenAddress = createAddress("Russia", "Moscow");
 
         saveExpectingUniqueConstraintViolation(givenAddress);
         waitReplicating();
-        verifyReplicatedAddressesCount(2);
+        verifyReplicatedAddressesCount(8);
     }
 
-    //TODO: run tests many times, replicated person can save before replicated address
     @Test
     public void personsAndAddressShouldBeSaved() {
         final String givenAddressCountry = "Belarus";
@@ -146,20 +136,17 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String givenSecondPersonPatronymic = "Ivanovich";
         final LocalDate givenSecondPersonBirthDate = LocalDate.of(2001, 3, 19);
 
-        final Address givenAddress = Address.builder()
-                .country(givenAddressCountry)
-                .city(givenAddressCity)
-                .build();
+        final Address givenAddress = createAddress(givenAddressCountry, givenAddressCity);
         final Address actualSavedAddress = addressService.save(givenAddress);
 
         final List<Person> givenPersons = List.of(
-                Person.builder()
-                        .name(givenFirstPersonName)
-                        .surname(givenFirstPersonSurname)
-                        .patronymic(givenFirstPersonPatronymic)
-                        .birthDate(givenFirstPersonBirthDate)
-                        .address(actualSavedAddress)
-                        .build(),
+                createPerson(
+                        givenFirstPersonName,
+                        givenFirstPersonSurname,
+                        givenFirstPersonPatronymic,
+                        givenFirstPersonBirthDate,
+                        actualSavedAddress
+                ),
                 Person.builder()
                         .name(givenSecondPersonName)
                         .surname(givenSecondPersonSurname)
@@ -225,7 +212,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void addressesShouldNotBeSavedBecauseOfViolationUniqueConstraint() {
         final List<Address> givenAddresses = List.of(
                 Address.builder()
@@ -240,11 +226,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         saveAllExpectingUniqueConstraintViolation(givenAddresses);
         waitReplicating();
-        verifyReplicatedAddressesCount(1);
+        verifyReplicatedAddressesCount(8);
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void personShouldBeUpdated() {
         final Long givenId = 255L;
         final String givenNewName = "Ivan";
@@ -253,7 +238,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final LocalDate givenNewBirthDate = LocalDate.of(2000, 2, 19);
 
         final Long givenAddressId = 255L;
-        final Address givenAddress = new Address(givenAddressId, "Belarus", "Minsk");
+        final Address givenAddress = new Address(givenAddressId, "Russia", "Moscow");
 
         final Person givenNewPerson = Person.builder()
                 .id(givenId)
@@ -282,23 +267,21 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void addressShouldNotBeUpdatedBecauseOfViolationUniqueConstraint() {
         final Address givenAddress = Address.builder()
                 .id(256L)
-                .country("Belarus")
-                .city("Minsk")
+                .country("Russia")
+                .city("Moscow")
                 .build();
 
-        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddresses();
+        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddressesOrderedById();
         updateExpectingUniqueConstraintViolation(givenAddress);
         waitReplicating();
-        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddresses();
-        checkEquals(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
+        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddressesOrderedById();
+        checkEqualsReplicatedAddresses(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void personShouldBeUpdatedPartially() {
         final Long givenId = 255L;
 
@@ -314,7 +297,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final LocalDate expectedBirthDate = LocalDate.of(2000, 2, 18);
 
         final Long expectedAddressId = 255L;
-        final Address expectedAddress = new Address(expectedAddressId, "Belarus", "Minsk");
+        final Address expectedAddress = new Address(expectedAddressId, "Russia", "Moscow");
 
         final Person expectedUpdatedPerson = Person.builder()
                 .id(givenId)
@@ -338,36 +321,94 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void addressShouldNotBeUpdatedPartiallyBecauseOfViolationUniqueConstraint() {
         final Long givenId = 256L;
-        final AddressName givenAddressName = new AddressName("Belarus", "Minsk");
+        final AddressName givenAddressName = new AddressName("Russia", "Moscow");
 
-        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddresses();
+        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddressesOrderedById();
         updateAddressPartialExpectingUniqueConstraintViolation(givenId, givenAddressName);
         waitReplicating();
-        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddresses();
-        checkEquals(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
+        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddressesOrderedById();
+        checkEqualsReplicatedAddresses(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
-    public void personShouldBeDelete() {
+    public void personShouldBeDeleted() {
         final Long givenId = 255L;
 
         personService.delete(givenId);
-
         waitReplicating();
-
         assertTrue(isPersonDeleted(givenId));
     }
 
     @Test
-    @Sql("classpath:sql-scripts/replication/it/insert-person-and-addresses.sql")
     public void personShouldNotBeDeletedByNotExistId() {
         personService.delete(MAX_VALUE);
         waitReplicating();
-        verifyReplicatedPersonsCount(1);
+        verifyReplicatedPersonsCount(5);
+    }
+
+    @Test
+    public void operationsShouldBeExecuted() {
+        final List<Runnable> givenOperations = List.of(
+                () -> addressService.saveAll(
+                        List.of(
+                                createAddress("China", "Hong Kong"),
+                                createAddress("China", "Anqing"),
+                                createAddress("China", "Bozhou")
+                        )
+                ),
+                () -> personService.saveAll(
+                        List.of(
+                                createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 1L),
+                                createPerson("Vitenka", "Kozar", "Vadimovich", LocalDate.of(1996, 6, 1), 2L),
+                                createPerson("Yury", "Sitnikov", "Stepanovich", LocalDate.of(1997, 8, 3), 3L)
+                        )
+                ),
+                () -> addressService.save(createAddress("China", "Huainan")),
+                () -> saveExpectingUniqueConstraintViolation(createAddress("China", "Huainan")),
+                () -> saveExpectingUniqueConstraintViolation(createAddress("Russia", "Moscow")),
+                () -> addressService.updatePartial(4L, new AddressName("Belarus", "Gomel")),
+                () -> personService.updatePartial(2L, new PersonName("Ivan", "Zuev", "Ivanovich")),
+                () -> personService.delete(259L),
+                () -> addressService.delete(257L),
+                () -> personService.update(createPerson(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L))
+        );
+
+        givenOperations.forEach(Runnable::run);
+
+        waitReplicating();
+
+        //TODO: check main tables
+
+        final List<ReplicatedAddressEntity> actualReplicatedAddresses = findReplicatedAddressesOrderedById();
+        final List<ReplicatedAddressEntity> expectedReplicatedAddresses = List.of(
+                new ReplicatedAddressEntity(1L, "China", "Hong Kong"),
+                new ReplicatedAddressEntity(2L, "China", "Anqing"),
+                new ReplicatedAddressEntity(3L, "China", "Bozhou"),
+                new ReplicatedAddressEntity(4L, "Belarus", "Gomel"),
+                new ReplicatedAddressEntity(255L, "Russia", "Moscow"),
+                new ReplicatedAddressEntity(256L, "America", "Chicago"),
+                new ReplicatedAddressEntity(258L, "Austria", "Styria"),
+                new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
+                new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
+                new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
+                new ReplicatedAddressEntity(262L, "Estonia", "Narva")
+        );
+        checkEqualsReplicatedAddresses(expectedReplicatedAddresses, actualReplicatedAddresses);
+
+        final List<ReplicatedPersonEntity> actual = findReplicatedPersonsOrderedById();
+        final List<ReplicatedPersonEntity> expected = List.of(
+                createReplicatedPerson(1L, "Avdifaks", "Kuznetsov", LocalDate.of(1995, 7, 2), 1L),
+                createReplicatedPerson(2L, "Ivan", "Zuev", LocalDate.of(1996, 6, 1), 2L),
+                createReplicatedPerson(3L, "Yury", "Sitnikov", LocalDate.of(1997, 8, 3), 3L),
+
+                createReplicatedPerson(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
+                createReplicatedPerson(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
+                createReplicatedPerson(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
+                createReplicatedPerson(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L)
+        );
+        checkEqualsReplicatedPersons(expected, actual);
     }
 
     private static void waitReplicating() {
@@ -417,9 +458,14 @@ public class ReplicationIT extends AbstractSpringBootTest {
         range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
     }
 
-    private static void checkEquals(final List<ReplicatedAddressEntity> expected,
-                                    final List<ReplicatedAddressEntity> actual) {
+    private static void checkEqualsReplicatedAddresses(final List<ReplicatedAddressEntity> expected,
+                                                       final List<ReplicatedAddressEntity> actual) {
         checkEquals(expected, actual, ReplicatedAddressEntityUtil::checkEquals);
+    }
+
+    private static void checkEqualsReplicatedPersons(final List<ReplicatedPersonEntity> expected,
+                                                     final List<ReplicatedPersonEntity> actual) {
+        checkEquals(expected, actual, ReplicatedPersonEntityUtil::checkEquals);
     }
 
     private boolean isPersonDeleted(final Long id) {
@@ -470,18 +516,105 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expected, countReplicatedPersons());
     }
 
+    //TODO: refactor
     private long countReplicatedAddresses() {
         return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedAddressEntity e", Long.class)
                 .getSingleResult();
     }
 
+    //TODO: refactor
     private long countReplicatedPersons() {
         return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedPersonEntity e", Long.class)
                 .getSingleResult();
     }
 
-    private List<ReplicatedAddressEntity> findReplicatedAddresses() {
-        return entityManager.createQuery("SELECT e FROM ReplicatedAddressEntity e", ReplicatedAddressEntity.class)
-                .getResultList();
+    private List<ReplicatedAddressEntity> findReplicatedAddressesOrderedById() {
+        return findEntities("SELECT e FROM ReplicatedAddressEntity e ORDER BY e.id", ReplicatedAddressEntity.class);
+    }
+
+    private List<ReplicatedPersonEntity> findReplicatedPersonsOrderedById() {
+        return findEntities("SELECT e FROM ReplicatedPersonEntity e ORDER BY e.id", ReplicatedPersonEntity.class);
+    }
+
+    private <E extends AbstractEntity<?>> List<E> findEntities(final String hqlQuery, final Class<E> entityType) {
+        return entityManager.createQuery(hqlQuery, entityType).getResultList();
+    }
+
+    private static Address createAddress(final String country, final String city) {
+        return Address.builder()
+                .country(country)
+                .city(city)
+                .build();
+    }
+
+    private static Address createAddress(final Long id) {
+        return Address.builder()
+                .id(id)
+                .build();
+    }
+
+    //TODO: refactor
+    private static Person createPerson(final String name,
+                                       final String surname,
+                                       final String patronymic,
+                                       final LocalDate birthDate,
+                                       final Long addressId) {
+        return Person.builder()
+                .name(name)
+                .surname(surname)
+                .patronymic(patronymic)
+                .birthDate(birthDate)
+                .address(createAddress(addressId))
+                .build();
+    }
+
+    private static Person createPerson(final String name,
+                                       final String surname,
+                                       final String patronymic,
+                                       final LocalDate birthDate,
+                                       final Address address) {
+        return Person.builder()
+                .name(name)
+                .surname(surname)
+                .patronymic(patronymic)
+                .birthDate(birthDate)
+                .address(address)
+                .build();
+    }
+
+    private static Person createPerson(final Long id,
+                                       final String name,
+                                       final String surname,
+                                       final String patronymic,
+                                       final LocalDate birthDate,
+                                       final Long addressId) {
+        return Person.builder()
+                .id(id)
+                .name(name)
+                .surname(surname)
+                .patronymic(patronymic)
+                .birthDate(birthDate)
+                .address(createAddress(addressId))
+                .build();
+    }
+
+    private static ReplicatedAddressEntity createReplicatedAddress(final Long id) {
+        return ReplicatedAddressEntity.builder()
+                .id(id)
+                .build();
+    }
+
+    private static ReplicatedPersonEntity createReplicatedPerson(final Long id,
+                                                                 final String name,
+                                                                 final String surname,
+                                                                 final LocalDate birthDate,
+                                                                 final Long addressId) {
+        return ReplicatedPersonEntity.builder()
+                .id(id)
+                .name(name)
+                .surname(surname)
+                .birthDate(birthDate)
+                .address(createReplicatedAddress(addressId))
+                .build();
     }
 }

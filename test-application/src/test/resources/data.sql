@@ -17,13 +17,13 @@ INSERT INTO replicated_addresses(id, country, city) VALUES(261, 'Estonia', 'Tart
 INSERT INTO replicated_addresses(id, country, city) VALUES(262, 'Estonia', 'Narva');
 
 INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(255, 'Vlad', 'Zuev', 'Sergeevich', '2000-02-18', 255);
-INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(256, 'Vasilii', 'Borisovich', 'Dolzhikov', '1980-03-15', 255);
-INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(257, 'Fedya', 'Yemelyanovich', 'Amelin', '1990-04-15', 255);
-INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(258, 'Pashenka', 'Filippovich', 'Kornev', '1995-04-23', 256);
-INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(259, 'Sasha', 'Gennadiyevich', 'Kuzmin', '1996-02-21', 257);
+INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(256, 'Vasilii', 'Dolzhikov', 'Borisovich', '1980-03-15', 255);
+INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(257, 'Fedya', 'Amelin', 'Yemelyanovich', '1990-04-15', 255);
+INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(258, 'Pashenka', 'Kornev', 'Filippovich', '1995-04-23', 256);
+INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(259, 'Sasha', 'Kuzmin', 'Gennadiyevich', '1996-02-21', 257);
 
 INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(255, 'Vlad', 'Zuev', '2000-02-18', 255);
-INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(256, 'Vasilii', 'Borisovich', '1980-03-15', 255);
-INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(257, 'Fedya', 'Yemelyanovich', '1990-04-15', 255);
-INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(258, 'Pashenka', 'Filippovich', '1995-04-23', 256);
+INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(256, 'Vasilii', 'Dolzhikov', '1980-03-15', 255);
+INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(257, 'Fedya', 'Amelin', '1990-04-15', 255);
+INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(258, 'Pashenka', 'Kornev', '1995-04-23', 256);
 INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(259, 'Sasha', 'Gennadiyevich', '1996-02-21', 257);
