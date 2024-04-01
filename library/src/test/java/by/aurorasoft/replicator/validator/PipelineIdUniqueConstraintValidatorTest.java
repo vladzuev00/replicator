@@ -80,8 +80,8 @@ public final class PipelineIdUniqueConstraintValidatorTest {
             validator.validate();
             exceptionArisen = false;
         } catch (final PipelineIdUniqueConstraintViolationException exception) {
-            assertEquals(expectedMessage, exception.getMessage());
             exceptionArisen = true;
+            assertEquals(expectedMessage, exception.getMessage());
         }
         assertTrue(exceptionArisen);
     }

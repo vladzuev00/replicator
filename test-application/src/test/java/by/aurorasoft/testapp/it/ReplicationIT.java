@@ -15,11 +15,13 @@ import by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -28,6 +30,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
@@ -37,6 +40,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
 @Transactional(propagation = NOT_SUPPORTED)
 public class ReplicationIT extends AbstractSpringBootTest {
     private static final long WAIT_REPLICATING_SECONDS = 10;
+    private static final String VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE = "23505";
 
     @Autowired
     private AddressService addressService;
@@ -52,7 +56,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     //TODO: run tests many times, replicated person can save before replicated address
     @Test
-    public void personAndAddressShouldBeSavedWithReplication() {
+    public void personAndAddressShouldBeSaved() {
         final String givenAddressCountry = "Belarus";
         final String givenAddressCity = "Minsk";
 
@@ -98,7 +102,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .country(givenAddressCountry)
                 .city(givenAddressCity)
                 .build();
-        verifyAddressSaveReplication(expectedReplicatedAddress);
+        verifySave(expectedReplicatedAddress);
 
         final ReplicatedPersonEntity expectedReplicatedPerson = ReplicatedPersonEntity.builder()
                 .id(expectedSavedPersonId)
@@ -107,12 +111,25 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .birthDate(givenPersonBirthDate)
                 .address(expectedReplicatedAddress)
                 .build();
-        verifyPersonSaveReplication(expectedReplicatedPerson);
+        verifySave(expectedReplicatedPerson);
+    }
+
+    @Test
+    @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
+    public void addressShouldNotBeSavedBecauseOfViolationUniqueConstraint() {
+        final Address givenAddress = Address.builder()
+                .country("Belarus")
+                .city("Minsk")
+                .build();
+
+        saveExpectingUniqueConstraintViolation(givenAddress);
+        waitReplicating();
+        verifyReplicatedAddressesCount(1);
     }
 
     //TODO: run tests many times, replicated person can save before replicated address
     @Test
-    public void personsAndAddressShouldBeSavedWithReplication() {
+    public void personsAndAddressShouldBeSaved() {
         final String givenAddressCountry = "Belarus";
         final String givenAddressCity = "Minsk";
 
@@ -183,7 +200,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .country(givenAddressCountry)
                 .city(givenAddressCity)
                 .build();
-        verifyAddressSaveReplication(expectedReplicatedAddress);
+        verifySave(expectedReplicatedAddress);
 
         final List<ReplicatedPersonEntity> expectedReplicatedPersons = List.of(
                 ReplicatedPersonEntity.builder()
@@ -201,12 +218,12 @@ public class ReplicationIT extends AbstractSpringBootTest {
                         .address(expectedReplicatedAddress)
                         .build()
         );
-        verifyPersonSaveReplications(expectedReplicatedPersons);
+        verifySave(expectedReplicatedPersons);
     }
 
     @Test
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
-    public void personShouldBeUpdatedWithReplication() {
+    public void personShouldBeUpdated() {
         final Long givenId = 255L;
         final String givenNewName = "Ivan";
         final String givenNewSurname = "Ivanov";
@@ -239,12 +256,12 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .birthDate(givenNewBirthDate)
                 .address(expectedReplicatedAddress)
                 .build();
-        verifyPersonSaveReplication(expectedReplicatedPerson);
+        verifySave(expectedReplicatedPerson);
     }
 
     @Test
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
-    public void personShouldBeUpdatedPartiallyWithReplication() {
+    public void personShouldBeUpdatedPartially() {
         final Long givenId = 255L;
 
         final String givenNewName = "Ivan";
@@ -279,19 +296,19 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .birthDate(expectedBirthDate)
                 .address(expectedReplicatedAddress)
                 .build();
-        verifyPersonSaveReplication(expectedReplicatedPerson);
+        verifySave(expectedReplicatedPerson);
     }
 
     @Test
     @Sql("classpath:sql-scripts/replication/it/insert-person.sql")
-    public void personShouldBeDeleteWithReplication() {
+    public void personShouldBeDelete() {
         final Long givenId = 255L;
 
         personService.delete(givenId);
 
         waitReplicating();
 
-        assertTrue(isPersonDeletedWithReplication(givenId));
+        assertTrue(isPersonDeleted(givenId));
     }
 
     private static void waitReplicating() {
@@ -302,27 +319,27 @@ public class ReplicationIT extends AbstractSpringBootTest {
         }
     }
 
-    private void verifyAddressSaveReplication(final ReplicatedAddressEntity expected) {
-        verifySaveReplication(expected, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
+    private void verifySave(final ReplicatedAddressEntity expected) {
+        verifySave(expected, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
     }
 
-    private void verifyPersonSaveReplication(final ReplicatedPersonEntity expected) {
-        verifySaveReplication(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
+    private void verifySave(final ReplicatedPersonEntity expected) {
+        verifySave(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
     }
 
-    private void verifyPersonSaveReplications(final List<ReplicatedPersonEntity> expected) {
-        verifySaveReplications(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
+    private void verifySave(final List<ReplicatedPersonEntity> expected) {
+        verifySave(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
     }
 
-    private static <ID, E extends AbstractEntity<ID>> void verifySaveReplication(final E expected,
-                                                                                 final JpaRepository<E, ID> repository,
-                                                                                 final BiConsumer<E, E> equalChecker) {
-        verifySaveReplications(singletonList(expected), repository, equalChecker);
+    private static <ID, E extends AbstractEntity<ID>> void verifySave(final E expected,
+                                                                      final JpaRepository<E, ID> repository,
+                                                                      final BiConsumer<E, E> equalChecker) {
+        verifySave(singletonList(expected), repository, equalChecker);
     }
 
-    private static <ID, E extends AbstractEntity<ID>> void verifySaveReplications(final List<E> expected,
-                                                                                  final JpaRepository<E, ID> repository,
-                                                                                  final BiConsumer<E, E> equalChecker) {
+    private static <ID, E extends AbstractEntity<ID>> void verifySave(final List<E> expected,
+                                                                      final JpaRepository<E, ID> repository,
+                                                                      final BiConsumer<E, E> equalChecker) {
         final List<ID> ids = mapToIds(expected);
         final List<E> actual = repository.findAllById(ids);
         checkEquals(expected, actual, equalChecker);
@@ -341,7 +358,36 @@ public class ReplicationIT extends AbstractSpringBootTest {
         range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
     }
 
-    private boolean isPersonDeletedWithReplication(final Long id) {
+    private boolean isPersonDeleted(final Long id) {
         return !personService.isExist(id) && !replicatedPersonRepository.existsById(id);
+    }
+
+    private static void verifyUniqueConstraintViolation(final DataIntegrityViolationException exception) {
+        assertEquals(VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE, getSqlState(exception));
+    }
+
+    private static String getSqlState(final DataIntegrityViolationException exception) {
+        return ((SQLException) getRootCause(exception)).getSQLState();
+    }
+
+    private void saveExpectingUniqueConstraintViolation(final Address address) {
+        boolean exceptionArisen;
+        try {
+            addressService.save(address);
+            exceptionArisen = false;
+        } catch (final DataIntegrityViolationException exception) {
+            exceptionArisen = true;
+            verifyUniqueConstraintViolation(exception);
+        }
+        assertTrue(exceptionArisen);
+    }
+
+    private void verifyReplicatedAddressesCount(final long expected) {
+        assertEquals(expected, countReplicatedAddresses());
+    }
+
+    private long countReplicatedAddresses() {
+        return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedAddressEntity e", Long.class)
+                .getSingleResult();
     }
 }
