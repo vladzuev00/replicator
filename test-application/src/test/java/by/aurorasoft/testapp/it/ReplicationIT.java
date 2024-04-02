@@ -44,7 +44,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
 @Transactional(propagation = NOT_SUPPORTED)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
-    private static final long WAIT_REPLICATING_SECONDS = 100;
+    private static final long WAIT_REPLICATING_SECONDS = 10;
     private static final String VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE = "23505";
 
     @Autowired
