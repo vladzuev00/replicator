@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS persons;
+DROP TABLE IF EXISTS addresses;
 DROP TABLE IF EXISTS replicated_persons;
+DROP TABLE IF EXISTS replicated_addresses;
 
 CREATE TABLE addresses
 (

@@ -14,6 +14,8 @@ import by.aurorasoft.testapp.util.AddressEntityUtil;
 import by.aurorasoft.testapp.util.PersonEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil;
+import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
+import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,24 +25,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.Thread.currentThread;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 //TODO: do test with a lot of operations
-@DirtiesContext
 @Transactional(propagation = NOT_SUPPORTED)
+@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
     private static final long WAIT_REPLICATING_SECONDS = 2;
     private static final String VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE = "23505";
@@ -445,17 +449,21 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifySave(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
     }
 
-    private static <ID, E extends AbstractEntity<ID>> void verifySave(final E expected,
-                                                                      final JpaRepository<E, ID> repository,
-                                                                      final BiConsumer<E, E> equalChecker) {
+    private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> void verifySave(
+            final E expected,
+            final JpaRepository<E, ID> repository,
+            final BiConsumer<E, E> equalChecker
+    ) {
         verifySave(singletonList(expected), repository, equalChecker);
     }
 
-    private static <ID, E extends AbstractEntity<ID>> void verifySave(final List<E> expected,
-                                                                      final JpaRepository<E, ID> repository,
-                                                                      final BiConsumer<E, E> equalChecker) {
+    private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> void verifySave(
+            final List<E> expected,
+            final JpaRepository<E, ID> repository,
+            final BiConsumer<E, E> equalChecker
+    ) {
         final List<ID> ids = mapToIds(expected);
-        final List<E> actual = repository.findAllById(ids);
+        final List<E> actual = findAllByIdOrderById(ids, repository);
         checkEquals(expected, actual, equalChecker);
     }
 
@@ -463,6 +471,15 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return entities.stream()
                 .map(AbstractEntity::getId)
                 .toList();
+    }
+
+    private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> List<E> findAllByIdOrderById(
+            final List<ID> ids,
+            final JpaRepository<E, ID> repository
+    ) {
+        final List<E> entities = repository.findAllById(ids);
+        entities.sort(comparing(AbstractEntity::getId));
+        return entities;
     }
 
     private static <E extends AbstractEntity<?>> void checkEquals(final List<E> expected,
@@ -665,13 +682,16 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
     }
 
-    //TODO: refactor
     private void saveAll(final Address... addresses) {
-        addressService.saveAll(Arrays.asList(addresses));
+        saveAll(addressService, addresses);
     }
 
-    //TODO: refactor
     private void saveAll(final Person... persons) {
-        personService.saveAll(Arrays.asList(persons));
+        saveAll(personService, persons);
+    }
+
+    @SafeVarargs
+    private static <T extends AbstractDto<?>> void saveAll(final AbsServiceCRUD<?, ?, T, ?> service, final T... dtos) {
+        service.saveAll(asList(dtos));
     }
 }
