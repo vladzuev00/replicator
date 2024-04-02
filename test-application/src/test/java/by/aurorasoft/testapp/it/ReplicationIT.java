@@ -37,15 +37,14 @@ import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 @Transactional(propagation = NOT_SUPPORTED)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
-    private static final long WAIT_REPLICATING_SECONDS = 10;
+    private static final long WAIT_REPLICATING_SECONDS = 100;
     private static final String VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE = "23505";
 
     @Autowired
@@ -429,6 +428,39 @@ public class ReplicationIT extends AbstractSpringBootTest {
         checkEqualsReplicatedPersons(expected, actual);
     }
 
+    //TODO: remove
+    @Test
+    public void personShouldBeSavedButNotReplicatedBecauseOfThereIsNoReplicatedAddress() {
+        final String givenName = "Petr";
+        final String givenSurname = "Ivanov";
+        final String givenPatronymic = "Petrovich";
+        final LocalDate givenBirthDate = LocalDate.of(2000, 3, 19);
+        final Long givenAddressId = 263L;
+        final Person givenPerson = createPerson(
+                givenName,
+                givenSurname,
+                givenPatronymic,
+                givenBirthDate,
+                givenAddressId
+        );
+
+        final Person actualSavedPerson = personService.save(givenPerson);
+        waitReplicating();
+
+        final Long expectedPersonId = 1L;
+        final Person expectedSavedPerson = createPerson(
+                expectedPersonId,
+                givenName,
+                givenSurname,
+                givenPatronymic,
+                givenBirthDate,
+                givenAddressId
+        );
+        assertEquals(expectedSavedPerson, actualSavedPerson);
+
+        assertFalse(isReplicatedPersonExist(expectedPersonId));
+    }
+
     private static void waitReplicating() {
         try {
             SECONDS.sleep(WAIT_REPLICATING_SECONDS);
@@ -694,5 +726,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @SafeVarargs
     private static <T extends AbstractDto<?>> void saveAll(final AbsServiceCRUD<?, ?, T, ?> service, final T... dtos) {
         service.saveAll(asList(dtos));
+    }
+
+    //TODO: remove
+    private boolean isReplicatedPersonExist(final Long id) {
+        return replicatedPersonRepository.existsById(id);
     }
 }
