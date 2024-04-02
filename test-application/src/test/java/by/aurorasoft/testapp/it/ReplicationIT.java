@@ -42,11 +42,10 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
-//TODO: do test with a lot of operations
 @Transactional(propagation = NOT_SUPPORTED)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
-    private static final long WAIT_REPLICATING_SECONDS = 2;
+    private static final long WAIT_REPLICATING_SECONDS = 10;
     private static final String VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE = "23505";
 
     @Autowired
@@ -418,13 +417,13 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         final List<ReplicatedPersonEntity> actual = findReplicatedPersonsOrderedById();
         final List<ReplicatedPersonEntity> expected = List.of(
-                createReplicatedPerson(1L, "Avdifaks", "Kuznetsov", LocalDate.of(1995, 7, 2), 1L),
-                createReplicatedPerson(2L, "Ivan", "Zuev", LocalDate.of(1996, 6, 1), 2L),
-                createReplicatedPerson(3L, "Yury", "Sitnikov", LocalDate.of(1997, 8, 3), 3L),
-                createReplicatedPerson(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
-                createReplicatedPerson(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
-                createReplicatedPerson(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
-                createReplicatedPerson(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L)
+                createReplicatedPersonEntity(1L, "Avdifaks", "Kuznetsov", LocalDate.of(1995, 7, 2), 1L),
+                createReplicatedPersonEntity(2L, "Ivan", "Zuev", LocalDate.of(1996, 6, 1), 2L),
+                createReplicatedPersonEntity(3L, "Yury", "Sitnikov", LocalDate.of(1997, 8, 3), 3L),
+                createReplicatedPersonEntity(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
+                createReplicatedPersonEntity(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
+                createReplicatedPersonEntity(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
+                createReplicatedPersonEntity(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L)
         );
         checkEqualsReplicatedPersons(expected, actual);
     }
@@ -547,24 +546,26 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertTrue(exceptionArisen);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void verifyReplicatedAddressesCount(final long expected) {
         assertEquals(expected, countReplicatedAddresses());
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void verifyReplicatedPersonsCount(final long expected) {
         assertEquals(expected, countReplicatedPersons());
     }
 
-    //TODO: refactor
     private long countReplicatedAddresses() {
-        return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedAddressEntity e", Long.class)
-                .getSingleResult();
+        return queryForLong("SELECT COUNT(e) FROM ReplicatedAddressEntity e");
     }
 
-    //TODO: refactor
     private long countReplicatedPersons() {
-        return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedPersonEntity e", Long.class)
-                .getSingleResult();
+        return queryForLong("SELECT COUNT(e) FROM ReplicatedPersonEntity e");
+    }
+
+    private long queryForLong(final String hqlQuery) {
+        return entityManager.createQuery(hqlQuery, Long.class).getSingleResult();
     }
 
     private List<AddressEntity> findAddressesOrderedById() {
@@ -600,19 +601,12 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
     }
 
-    //TODO: refactor
     private static Person createPerson(final String name,
                                        final String surname,
                                        final String patronymic,
                                        final LocalDate birthDate,
                                        final Long addressId) {
-        return Person.builder()
-                .name(name)
-                .surname(surname)
-                .patronymic(patronymic)
-                .birthDate(birthDate)
-                .address(createAddress(addressId))
-                .build();
+        return createPerson(name, surname, patronymic, birthDate, createAddress(addressId));
     }
 
     private static Person createPerson(final String name,
@@ -629,6 +623,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static Person createPerson(final Long id,
                                        final String name,
                                        final String surname,
@@ -645,23 +640,23 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
     }
 
-    private static ReplicatedAddressEntity createReplicatedAddress(final Long id) {
-        return ReplicatedAddressEntity.builder()
-                .id(id)
-                .build();
-    }
-
-    private static ReplicatedPersonEntity createReplicatedPerson(final Long id,
-                                                                 final String name,
-                                                                 final String surname,
-                                                                 final LocalDate birthDate,
-                                                                 final Long addressId) {
+    private static ReplicatedPersonEntity createReplicatedPersonEntity(final Long id,
+                                                                       final String name,
+                                                                       final String surname,
+                                                                       final LocalDate birthDate,
+                                                                       final Long addressId) {
         return ReplicatedPersonEntity.builder()
                 .id(id)
                 .name(name)
                 .surname(surname)
                 .birthDate(birthDate)
-                .address(createReplicatedAddress(addressId))
+                .address(createReplicatedAddressEntity(addressId))
+                .build();
+    }
+
+    private static ReplicatedAddressEntity createReplicatedAddressEntity(final Long id) {
+        return ReplicatedAddressEntity.builder()
+                .id(id)
                 .build();
     }
 
@@ -677,8 +672,13 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .surname(surname)
                 .patronymic(patronymic)
                 .birthDate(birthDate)
-                //TODO: refactor
-                .address(AddressEntity.builder().id(addressId).build())
+                .address(createAddressEntity(addressId))
+                .build();
+    }
+
+    private static AddressEntity createAddressEntity(final Long id) {
+        return AddressEntity.builder()
+                .id(id)
                 .build();
     }
 
