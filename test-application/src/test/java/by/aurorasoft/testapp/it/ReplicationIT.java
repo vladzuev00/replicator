@@ -37,7 +37,8 @@ import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
@@ -693,9 +694,5 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @SafeVarargs
     private static <T extends AbstractDto<?>> void saveAll(final AbsServiceCRUD<?, ?, T, ?> service, final T... dtos) {
         service.saveAll(asList(dtos));
-    }
-
-    private boolean isReplicatedPersonExist(final Long id) {
-        return replicatedPersonRepository.existsById(id);
     }
 }

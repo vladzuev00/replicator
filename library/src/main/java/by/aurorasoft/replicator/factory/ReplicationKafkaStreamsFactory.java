@@ -50,7 +50,7 @@ public final class ReplicationKafkaStreamsFactory {
         final KafkaStreams streams = new KafkaStreams(topology, config);
         try {
             streams.setUncaughtExceptionHandler(exceptionHandler);
-            addClosingShutdownHook(streams);
+            closeOnShutdown(streams);
             return streams;
         } catch (final Exception exception) {
             streams.close();
@@ -58,7 +58,7 @@ public final class ReplicationKafkaStreamsFactory {
         }
     }
 
-    private static void addClosingShutdownHook(final KafkaStreams streams) {
+    private static void closeOnShutdown(final KafkaStreams streams) {
         getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }
