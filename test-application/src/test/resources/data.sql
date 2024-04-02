@@ -6,6 +6,7 @@ INSERT INTO addresses(id, country, city) VALUES(259, 'Austria', 'Tyrol');
 INSERT INTO addresses(id, country, city) VALUES(260, 'Estonia', 'Tallinn');
 INSERT INTO addresses(id, country, city) VALUES(261, 'Estonia', 'Tartu');
 INSERT INTO addresses(id, country, city) VALUES(262, 'Estonia', 'Narva');
+INSERT INTO addresses(id, country, city) VALUES(263, 'Armenia', 'Yerevan');
 
 INSERT INTO replicated_addresses(id, country, city) VALUES(255, 'Russia', 'Moscow');
 INSERT INTO replicated_addresses(id, country, city) VALUES(256, 'America', 'Chicago');

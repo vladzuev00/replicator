@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.exceptionhandler.ReplicationConsumeExceptionHandler;
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.replicator.manager.KafkaStreamsLifecycleManager;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -13,21 +12,19 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import static java.lang.Runtime.getRuntime;
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 import static org.apache.kafka.streams.kstream.Consumed.with;
 
 @Component
-public final class KafkaStreamsFactory {
+public final class ReplicationKafkaStreamsFactory {
     private final ReplicationConsumeExceptionHandler exceptionHandler;
-    private final KafkaStreamsLifecycleManager streamsLifecycleManager;
     private final String bootstrapAddress;
 
-    public KafkaStreamsFactory(final ReplicationConsumeExceptionHandler exceptionHandler,
-                               final KafkaStreamsLifecycleManager streamsLifecycleManager,
-                               @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
+    public ReplicationKafkaStreamsFactory(final ReplicationConsumeExceptionHandler exceptionHandler,
+                                          @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
         this.exceptionHandler = exceptionHandler;
-        this.streamsLifecycleManager = streamsLifecycleManager;
         this.bootstrapAddress = bootstrapAddress;
     }
 
@@ -53,11 +50,15 @@ public final class KafkaStreamsFactory {
         final KafkaStreams streams = new KafkaStreams(topology, config);
         try {
             streams.setUncaughtExceptionHandler(exceptionHandler);
-            streamsLifecycleManager.register(streams);
+            addClosingShutdownHook(streams);
             return streams;
         } catch (final Exception exception) {
             streams.close();
             throw exception;
         }
+    }
+
+    private static void addClosingShutdownHook(final KafkaStreams streams) {
+        getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }

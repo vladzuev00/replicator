@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.replicator.factory.KafkaStreamsFactory;
+import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
 import org.apache.kafka.streams.KafkaStreams;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 public final class ReplicationConsumePipelineStarterTest {
 
     @Mock
-    private KafkaStreamsFactory mockedStreamsFactory;
+    private ReplicationKafkaStreamsFactory mockedStreamsFactory;
 
     private ReplicationConsumePipelineStarter starter;
 
