@@ -3,7 +3,6 @@ package by.aurorasoft.replicator.factory;
 import by.aurorasoft.replicator.consuming.exceptionhandler.ReplicationConsumeExceptionHandler;
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
-import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -42,8 +41,7 @@ public final class ReplicationKafkaStreamsFactory {
     private StreamsConfig createStreamsConfig(final ReplicationConsumePipeline<?, ?> pipeline) {
         final Map<String, Object> configsByNames = Map.of(
                 APPLICATION_ID_CONFIG, pipeline.getId(),
-                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
-                CommonClientConfigs.RETRIES_CONFIG, 3
+                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress
                 //TODO:
 //                StreamsConfig.EXACTLY_ONCE_V2
         );
