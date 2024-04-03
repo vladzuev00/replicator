@@ -33,8 +33,8 @@ replication:
         person: person-replication-consume-pipeline
         address: address-replication-consume-pipeline
     retry:
-      time-lapse-ms: 2000
-      max-attempts: 3
+      time-lapse-ms: 1000
+      max-attempts: 5
 
 
 
