@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.config;
 import by.aurorasoft.replicator.exception.PerhapsRelationNotDeliveredYetException;
 import by.aurorasoft.replicator.factory.ReplicationProducerHolderFactory;
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
-import org.springframework.beans.factory.annotation.Value;
+import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,24 +16,16 @@ import org.springframework.retry.support.RetryTemplateBuilder;
 @ComponentScan("by.aurorasoft.replicator")
 public class ReplicationConfig {
 
-    //TODO: do class with this two fields
-    @Value("${replication.consume.retry.time-lapse-ms}")
-    private long timeLapseMs;
-
-    @Value("${replication.consume.retry.max-attempts}")
-    private int maxAttempts;
-
     @Bean
     public ReplicationProducerHolder replicationProducerHolder(final ReplicationProducerHolderFactory factory) {
         return factory.create();
     }
 
-    //TODO: do class with this two fields
     @Bean("replicationRetryTemplate")
-    public RetryTemplate retryTemplate() {
+    public RetryTemplate retryTemplate(final ReplicationRetryConsumeProperty property) {
         return new RetryTemplateBuilder()
-                .fixedBackoff(timeLapseMs)
-                .maxAttempts(maxAttempts)
+                .fixedBackoff(property.getTimeLapseMs())
+                .maxAttempts(property.getMaxAttempts())
                 .retryOn(PerhapsRelationNotDeliveredYetException.class)
                 .build();
     }
