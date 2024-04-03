@@ -2,28 +2,37 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.exceptionhandler.ReplicationConsumeExceptionHandler;
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.Runtime.getRuntime;
+import static java.util.Optional.empty;
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 import static org.apache.kafka.streams.kstream.Consumed.with;
 
 @Component
 public final class ReplicationKafkaStreamsFactory {
+    private final RetryTemplate retryTemplate;
     private final ReplicationConsumeExceptionHandler exceptionHandler;
     private final String bootstrapAddress;
 
-    public ReplicationKafkaStreamsFactory(final ReplicationConsumeExceptionHandler exceptionHandler,
+    public ReplicationKafkaStreamsFactory(@Qualifier("replicationRetryTemplate") final RetryTemplate retryTemplate,
+                                          final ReplicationConsumeExceptionHandler exceptionHandler,
                                           @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
+        this.retryTemplate = retryTemplate;
         this.exceptionHandler = exceptionHandler;
         this.bootstrapAddress = bootstrapAddress;
     }
@@ -33,9 +42,20 @@ public final class ReplicationKafkaStreamsFactory {
         final StreamsBuilder builder = new StreamsBuilder();
         builder
                 .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()))
-                .foreach((id, replication) -> replication.execute(pipeline.getRepository()));
+                .foreach((id, replication) -> executeReplicationRetrying(replication, pipeline.getRepository()));
         final Topology topology = builder.build();
         return create(topology, config);
+    }
+
+    private <ID, E extends AbstractEntity<ID>> void executeReplicationRetrying(final ConsumedReplication<ID, E> replication,
+                                                                               final JpaRepository<E, ID> repository) {
+        retryTemplate.execute(context -> executeReplication(replication, repository));
+    }
+
+    private <ID, E extends AbstractEntity<ID>> Optional<Void> executeReplication(final ConsumedReplication<ID, E> replication,
+                                                                                 final JpaRepository<E, ID> repository) {
+        replication.execute(repository);
+        return empty();
     }
 
     private StreamsConfig createStreamsConfig(final ReplicationConsumePipeline<?, ?> pipeline) {
