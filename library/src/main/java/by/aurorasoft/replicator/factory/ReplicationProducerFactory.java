@@ -33,7 +33,7 @@ public final class ReplicationProducerFactory {
 
     private <ID> KafkaTemplate<ID, ProducedReplication<ID>> createKafkaTemplate(final AbsServiceRUD<ID, ?, ?, ?, ?> service) {
         final ProducerConfig producerConfig = getProducerConfig(service);
-        final Map<String, Object> configsByKeys = createProducerConfigsByKeys(producerConfig);
+        final Map<String, Object> configsByKeys = createConfigsByKeys(producerConfig);
         final ProducerFactory<ID, ProducedReplication<ID>> factory = new DefaultKafkaProducerFactory<>(configsByKeys);
         return new KafkaTemplate<>(factory);
     }
@@ -54,7 +54,7 @@ public final class ReplicationProducerFactory {
         return service.getClass().getAnnotation(ReplicatedService.class);
     }
 
-    private Map<String, Object> createProducerConfigsByKeys(final ProducerConfig config) {
+    private Map<String, Object> createConfigsByKeys(final ProducerConfig config) {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 KEY_SERIALIZER_CLASS_CONFIG, config.idSerializer(),

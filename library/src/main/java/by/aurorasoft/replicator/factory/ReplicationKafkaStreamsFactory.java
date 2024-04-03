@@ -60,8 +60,6 @@ public final class ReplicationKafkaStreamsFactory {
         final Map<String, Object> configsByNames = Map.of(
                 APPLICATION_ID_CONFIG, pipeline.getId(),
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress
-                //TODO:
-//                StreamsConfig.EXACTLY_ONCE_V2
         );
         return new StreamsConfig(configsByNames);
     }
