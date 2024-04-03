@@ -8,8 +8,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 public final class ReplicatedServiceProcessorTest {
-    private static final String WRONG_ANNOTATING_MESSAGE = "'@ReplicatedService' can be applied only for "
-            + "subclasses of 'class by.nhorushko.crudgeneric.v2.service.AbsServiceRUD'";
+    private static final String WRONG_ANNOTATING_MESSAGE = "'@by.aurorasoft.replicator.annotation.ReplicatedService' "
+            + "can be applied only for subclass of 'by.nhorushko.crudgeneric.v2.service.AbsServiceRUD'";
 
     @Test
     public void replicatedRUDServiceShouldBeCompiled() {

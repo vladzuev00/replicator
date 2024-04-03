@@ -22,7 +22,7 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 
 @AutoService(Processor.class)
 public final class ReplicatedServiceProcessor extends AbstractProcessor {
-    private static final Class<? extends Annotation> ANNOTATION = ReplicatedService.class;
+    private static final Class<? extends Annotation> REPLICATED_SERVICE = ReplicatedService.class;
     private static final Class<?> RUD_SERVICE = AbsServiceRUD.class;
 
     @Override
@@ -36,7 +36,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(ANNOTATION.getName());
+        return Set.of(getReplicatedServiceName());
     }
 
     @Override
@@ -58,7 +58,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     }
 
     private TypeMirror getRUDServiceType() {
-        return getElementUtils().getTypeElement(RUD_SERVICE.getName()).asType();
+        return getElementUtils().getTypeElement(getRUDServiceName()).asType();
     }
 
     private void alertWrongAnnotating(final Element element) {
@@ -66,7 +66,10 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     }
 
     private String getWrongAnnotatingMessage() {
-        return "'@%s' can be applied only for subclasses of '%s'".formatted(ANNOTATION.getSimpleName(), RUD_SERVICE);
+        return "'@%s' can be applied only for subclass of '%s'".formatted(
+                getReplicatedServiceName(),
+                getRUDServiceName()
+        );
     }
 
     private Types getTypeUtils() {
@@ -79,5 +82,13 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     private Messager getMessager() {
         return processingEnv.getMessager();
+    }
+
+    private static String getReplicatedServiceName() {
+        return REPLICATED_SERVICE.getName();
+    }
+
+    private static String getRUDServiceName() {
+        return RUD_SERVICE.getName();
     }
 }
