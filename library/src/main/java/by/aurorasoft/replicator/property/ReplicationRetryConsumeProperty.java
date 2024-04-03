@@ -11,12 +11,8 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode
 @ToString
 public final class ReplicationRetryConsumeProperty {
-
-    @Value("${replication.consume.retry.time-lapse-ms}")
-    private long timeLapseMs;
-
-    @Value("${replication.consume.retry.max-attempts}")
-    private int maxAttempts;
+    private final long timeLapseMs;
+    private final int maxAttempts;
 
     public ReplicationRetryConsumeProperty(@Value("${replication.consume.retry.time-lapse-ms}") final long timeLapseMs,
                                            @Value("${replication.consume.retry.max-attempts}") final int maxAttempts) {
