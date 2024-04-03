@@ -12,7 +12,7 @@ public final class DBContainerInitializer extends ContainerInitializer {
     private static final String PROPERTY_KEY_USERNAME = "spring.datasource.username";
     private static final String PROPERTY_KEY_PASSWORD = "spring.datasource.password";
 
-    private static final String FULL_IMAGE_NAME = "mdillon/postgis:9.5";
+    private static final String FULL_IMAGE_NAME = "mdillon/postgis:latest";
     private static final String OTHER_IMAGE_NAME = "postgres";
     private static final DockerImageName DOCKER_IMAGE_NAME = parse(FULL_IMAGE_NAME)
             .asCompatibleSubstituteFor(OTHER_IMAGE_NAME);

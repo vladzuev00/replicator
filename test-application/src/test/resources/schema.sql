@@ -36,6 +36,10 @@ CREATE TABLE replicated_addresses
     city    VARCHAR(256) NOT NULL
 );
 
+ALTER TABLE replicated_addresses
+    ADD CONSTRAINT replicated_address_names_should_be_unique
+        UNIQUE (country, city);
+
 CREATE TABLE replicated_persons
 (
     id         INTEGER PRIMARY KEY,

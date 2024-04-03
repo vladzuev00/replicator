@@ -59,10 +59,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private PersonService personService;
 
     @Autowired
-    private ReplicatedAddressRepository replicatedAddressRepository;
-
-    @Autowired
     private ReplicationRetryConsumeProperty retryConsumeProperty;
+
+    @SpyBean
+    private ReplicatedAddressRepository replicatedAddressRepository;
 
     @SpyBean
     private ReplicatedPersonRepository replicatedPersonRepository;
@@ -472,7 +472,23 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .save(any(ReplicatedPersonEntity.class));
     }
 
-    //TODO: add test with error with one consuming attempt
+    @Test
+    public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
+        final String givenCountry = "America";
+        final String givenCity = "Houston";
+        final Address givenAddress = createAddress(givenCountry, givenCity);
+
+        final Address actualSavedAddress = addressService.save(givenAddress);
+        waitReplicating();
+
+        final Long expectedAddressId = 1L;
+        final Address expectedSavedAddress = new Address(expectedAddressId, givenCountry, givenCity);
+        assertEquals(expectedSavedAddress, actualSavedAddress);
+
+        assertFalse(isReplicatedAddressExist(expectedAddressId));
+
+        verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
+    }
 
     private static void waitReplicating() {
         try {
@@ -743,5 +759,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     private boolean isReplicatedPersonExist(final Long id) {
         return replicatedPersonRepository.existsById(id);
+    }
+
+    private boolean isReplicatedAddressExist(final Long id) {
+        return replicatedAddressRepository.existsById(id);
     }
 }
