@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
-import by.aurorasoft.replicator.event.UniquenessPipelineIdCheckedEvent;
+import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
 import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
@@ -20,7 +20,7 @@ public final class ReplicationTopicCreator {
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
-    @EventListener(UniquenessPipelineIdCheckedEvent.class)
+    @EventListener(PipelinesValidatedEvent.class)
     public void createTopics() {
         serviceHolder.getServices().forEach(this::createTopic);
         publishEvent();

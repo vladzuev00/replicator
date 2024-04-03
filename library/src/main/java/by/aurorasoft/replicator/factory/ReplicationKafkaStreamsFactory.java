@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.consuming.exceptionhandler.ReplicationConsumeExceptionHandler;
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
@@ -28,14 +27,11 @@ import static org.apache.kafka.streams.kstream.Consumed.with;
 @Component
 public final class ReplicationKafkaStreamsFactory {
     private final RetryTemplate retryTemplate;
-    private final ReplicationConsumeExceptionHandler exceptionHandler;
     private final String bootstrapAddress;
 
     public ReplicationKafkaStreamsFactory(@Qualifier("replicationRetryTemplate") final RetryTemplate retryTemplate,
-                                          final ReplicationConsumeExceptionHandler exceptionHandler,
                                           @Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
         this.retryTemplate = retryTemplate;
-        this.exceptionHandler = exceptionHandler;
         this.bootstrapAddress = bootstrapAddress;
     }
 

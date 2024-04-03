@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.replicator.event.UniquenessPipelineIdCheckedEvent;
+import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Component
 @RequiredArgsConstructor
-public final class PipelineIdUniqueConstraintValidator {
+public final class PipelineValidator {
     private static final String VIOLATION_MESSAGE_TEMPLATE = "Duplicated replication pipeline's ids were found: %s";
     private static final String VIOLATION_MESSAGE_IDS_DELIMITER = ", ";
 
@@ -48,7 +48,7 @@ public final class PipelineIdUniqueConstraintValidator {
     }
 
     private void publishSuccessEvent() {
-        eventPublisher.publishEvent(new UniquenessPipelineIdCheckedEvent(this));
+        eventPublisher.publishEvent(new PipelinesValidatedEvent(this));
     }
 
     private void throwConstraintViolationException(final List<String> duplicatedIds) {

@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.replicator.event.UniquenessPipelineIdCheckedEvent;
-import by.aurorasoft.replicator.validator.PipelineIdUniqueConstraintValidator.PipelineIdUniqueConstraintViolationException;
+import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
+import by.aurorasoft.replicator.validator.PipelineValidator.PipelineIdUniqueConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -29,7 +29,7 @@ public final class PipelineIdUniqueConstraintValidatorTest {
 
     @Test
     public void constraintShouldBeRespected() {
-        final PipelineIdUniqueConstraintValidator givenValidator = createValidator(
+        final PipelineValidator givenValidator = createValidator(
                 createPipeline("first-pipeline"),
                 createPipeline("second-pipeline"),
                 createPipeline("third-pipeline")
@@ -42,7 +42,7 @@ public final class PipelineIdUniqueConstraintValidatorTest {
 
     @Test
     public void constraintShouldNotBeRespected() {
-        final PipelineIdUniqueConstraintValidator givenValidator = createValidator(
+        final PipelineValidator givenValidator = createValidator(
                 createPipeline("first-pipeline"),
                 createPipeline("second-pipeline"),
                 createPipeline("second-pipeline"),
@@ -62,19 +62,19 @@ public final class PipelineIdUniqueConstraintValidatorTest {
                 .build();
     }
 
-    private PipelineIdUniqueConstraintValidator createValidator(final ReplicationConsumePipeline<?, ?>... pipelines) {
-        return new PipelineIdUniqueConstraintValidator(Arrays.asList(pipelines), mockedEventPublisher);
+    private PipelineValidator createValidator(final ReplicationConsumePipeline<?, ?>... pipelines) {
+        return new PipelineValidator(Arrays.asList(pipelines), mockedEventPublisher);
     }
 
-    private void verifySuccessValidation(final PipelineIdUniqueConstraintValidator validator) {
+    private void verifySuccessValidation(final PipelineValidator validator) {
         verify(mockedEventPublisher, times(1)).publishEvent(eventArgumentCaptor.capture());
         final ApplicationEvent capturedEvent = eventArgumentCaptor.getValue();
-        assertTrue(capturedEvent instanceof UniquenessPipelineIdCheckedEvent);
+        assertTrue(capturedEvent instanceof PipelinesValidatedEvent);
         assertSame(validator, capturedEvent.getSource());
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void validateExpectingFail(final PipelineIdUniqueConstraintValidator validator, final String expectedMessage) {
+    private void validateExpectingFail(final PipelineValidator validator, final String expectedMessage) {
         boolean exceptionArisen;
         try {
             validator.validate();
