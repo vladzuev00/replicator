@@ -1,5 +1,6 @@
 package by.aurorasoft.testapp.it;
 
+import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.dto.Person;
@@ -18,9 +19,9 @@ import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.retry.support.RetryTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
@@ -58,6 +62,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private ReplicatedAddressRepository replicatedAddressRepository;
 
     @Autowired
+    private ReplicationRetryConsumeProperty retryConsumeProperty;
+
+    @SpyBean
     private ReplicatedPersonRepository replicatedPersonRepository;
 
     @Test
@@ -430,7 +437,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
         checkEqualsReplicatedPersons(expected, actual);
     }
 
-    //TODO: remove
     @Test
     public void personShouldBeSavedButNotReplicatedBecauseOfThereIsNoReplicatedAddress() {
         final String givenName = "Petr";
@@ -461,7 +467,12 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expectedSavedPerson, actualSavedPerson);
 
         assertFalse(isReplicatedPersonExist(expectedPersonId));
+
+        verify(replicatedPersonRepository, times(retryConsumeProperty.getMaxAttempts()))
+                .save(any(ReplicatedPersonEntity.class));
     }
+
+    //TODO: add test with error with one consuming attempt
 
     private static void waitReplicating() {
         try {
@@ -730,7 +741,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
         service.saveAll(asList(dtos));
     }
 
-    //TODO: remove
     private boolean isReplicatedPersonExist(final Long id) {
         return replicatedPersonRepository.existsById(id);
     }
