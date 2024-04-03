@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.factory.ReplicationProducerHolderFactory;
+import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

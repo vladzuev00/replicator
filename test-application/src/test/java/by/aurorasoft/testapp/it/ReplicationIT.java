@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -361,6 +362,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 () -> personService.updatePartial(2L, new PersonName("Ivan", "Zuev", "Ivanovich")),
                 () -> personService.delete(MAX_VALUE),
                 () -> addressService.delete(MAX_VALUE),
+                () -> updateAddressPartialExpectingUniqueConstraintViolation(256L, new AddressName("Russia", "Moscow")),
                 () -> personService.delete(259L),
                 () -> addressService.delete(257L),
                 () -> personService.update(createPerson(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L))

@@ -27,9 +27,15 @@ kafka:
       name: sync-address
 
 replication:
-  consume-pipeline:
-    id:
-      person: person-replication-consume-pipeline
-      address: address-replication-consume-pipeline
+  consume:
+    pipeline:
+      id:
+        person: person-replication-consume-pipeline
+        address: address-replication-consume-pipeline
+  retry:
+    time-lapse-ms: 2000
+    max-attempts: 3
+
+
 
 
