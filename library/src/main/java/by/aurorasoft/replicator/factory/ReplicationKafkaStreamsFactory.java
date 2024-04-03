@@ -19,7 +19,7 @@ import java.util.Optional;
 import static java.lang.Runtime.getRuntime;
 import static java.util.Optional.empty;
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
-import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.*;
 import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_APPLICATION;
 import static org.apache.kafka.streams.kstream.Consumed.with;
 
@@ -59,7 +59,8 @@ public final class ReplicationKafkaStreamsFactory {
     private StreamsConfig createStreamsConfig(final ReplicationConsumePipeline<?, ?> pipeline) {
         final Map<String, Object> configsByNames = Map.of(
                 APPLICATION_ID_CONFIG, pipeline.getId(),
-                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress
+                BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
+                PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE_V2
         );
         return new StreamsConfig(configsByNames);
     }
