@@ -15,7 +15,6 @@ import java.util.Objects;
 import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 
-//TODO: refactor with tests
 @Getter
 @EqualsAndHashCode
 @ToString
@@ -34,12 +33,14 @@ public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> imp
         try {
             repository.save(entity);
         } catch (final Exception exception) {
-            if (isPerhapsRelationNotDeliveredYet(exception)) {
-                throw new PerhapsRelationNotDeliveredYetException(exception);
-            } else {
-                throw new RuntimeException(exception);
-            }
+            throw wrapToRuntimeExecutionException(exception);
         }
+    }
+
+    private static RuntimeException wrapToRuntimeExecutionException(final Exception exception) {
+        return isPerhapsRelationNotDeliveredYet(exception)
+                ? new PerhapsRelationNotDeliveredYetException(exception)
+                : new SaveReplicationExecutionException(exception);
     }
 
     private static boolean isPerhapsRelationNotDeliveredYet(final Throwable exception) {
@@ -48,5 +49,27 @@ public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> imp
 
     private static boolean isInvalidForeignKey(final SQLException exception) {
         return Objects.equals(INVALID_FOREIGN_KEY_SQL_STATE, exception.getSQLState());
+    }
+
+    static final class SaveReplicationExecutionException extends RuntimeException {
+
+        @SuppressWarnings("unused")
+        public SaveReplicationExecutionException() {
+
+        }
+
+        @SuppressWarnings("unused")
+        public SaveReplicationExecutionException(final String description) {
+            super(description);
+        }
+
+        public SaveReplicationExecutionException(final Exception cause) {
+            super(cause);
+        }
+
+        @SuppressWarnings("unused")
+        public SaveReplicationExecutionException(final String description, final Exception cause) {
+            super(description, cause);
+        }
     }
 }
