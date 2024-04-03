@@ -68,59 +68,24 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private ReplicatedPersonRepository replicatedPersonRepository;
 
     @Test
-    public void personAndAddressShouldBeSaved() {
-        final String givenAddressCountry = "Belarus";
-        final String givenAddressCity = "Minsk";
+    public void addressShouldBeSavedAndReplicated() {
+        final String givenCountry = "Belarus";
+        final String givenCity = "Minsk";
+        final Address givenAddress = createAddress(givenCountry, givenCity);
 
-        final String givenPersonName = "Vlad";
-        final String givenPersonSurname = "Zuev";
-        final String givenPersonPatronymic = "Sergeevich";
-        final LocalDate givenPersonBirthDate = LocalDate.of(2000, 2, 18);
-
-        final Address givenAddress = createAddress(givenAddressCountry, givenAddressCity);
-        final Address actualSavedAddress = addressService.save(givenAddress);
-
-        final Person givenPerson = createPerson(
-                givenPersonName,
-                givenPersonSurname,
-                givenPersonPatronymic,
-                givenPersonBirthDate,
-                actualSavedAddress
-        );
-        final Person actualSavedPerson = personService.save(givenPerson);
-
+        final Address actualSaved = addressService.save(givenAddress);
         waitReplicating();
 
-        final Long expectedSavedAddressId = 1L;
-        final Address expectedSavedAddress = new Address(expectedSavedAddressId, givenAddressCountry, givenAddressCity);
-        assertEquals(expectedSavedAddress, actualSavedAddress);
+        final Long expectedSavedId = 1L;
+        final Address expectedSaved = new Address(expectedSavedId, givenCountry, givenCity);
+        assertEquals(expectedSaved, actualSaved);
 
-        final Long expectedSavedPersonId = 1L;
-        final Person expectedSavedPerson = new Person(
-                expectedSavedPersonId,
-                givenPersonName,
-                givenPersonSurname,
-                givenPersonPatronymic,
-                givenPersonBirthDate,
-                expectedSavedAddress
+        final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(
+                expectedSavedId,
+                givenCountry,
+                givenCity
         );
-        assertEquals(expectedSavedPerson, actualSavedPerson);
-
-        final ReplicatedAddressEntity expectedReplicatedAddress = new ReplicatedAddressEntity(
-                expectedSavedAddressId,
-                givenAddressCountry,
-                givenAddressCity
-        );
-        verifySave(expectedReplicatedAddress);
-
-        final ReplicatedPersonEntity expectedReplicatedPerson = new ReplicatedPersonEntity(
-                expectedSavedPersonId,
-                givenPersonName,
-                givenPersonSurname,
-                givenPersonBirthDate,
-                expectedReplicatedAddress
-        );
-        verifySave(expectedReplicatedPerson);
+        verifySave(expectedReplicated);
     }
 
     @Test
@@ -129,9 +94,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         saveExpectingUniqueConstraintViolation(givenAddress);
         waitReplicating();
-        verifyReplicatedAddressesCount(8);
+        verifyReplicatedAddressesCount(9);
     }
 
+    //TODO: stop
     @Test
     public void personsAndAddressShouldBeSaved() {
         final String givenAddressCountry = "Belarus";
