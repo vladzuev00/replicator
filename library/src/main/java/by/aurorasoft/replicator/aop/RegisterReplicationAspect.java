@@ -81,33 +81,33 @@ public class RegisterReplicationAspect {
         return new NoReplicationProducerException("There is no replication producer for '%s'".formatted(joinPoint));
     }
 
-    @Pointcut("replicatedCrudService() && create()")
+    @Pointcut("replicatedCRUDService() && create()")
     private void replicatedCreate() {
 
     }
 
-    @Pointcut("replicatedCrudService() && createAll()")
+    @Pointcut("replicatedCRUDService() && createAll()")
     private void replicatedCreateAll() {
 
     }
 
-    @Pointcut("replicatedRudService() && (update() || updatePartial())")
+    @Pointcut("replicatedRUDService() && (update() || updatePartial())")
     private void replicatedUpdate() {
 
     }
 
-    @Pointcut("replicatedRudService() && deleteById()")
+    @Pointcut("replicatedRUDService() && deleteById()")
     private void replicatedDeleteById() {
 
     }
 
     @Pointcut("replicatedService() && rudService()")
-    private void replicatedRudService() {
+    private void replicatedRUDService() {
 
     }
 
     @Pointcut("replicatedService() && crudService()")
-    private void replicatedCrudService() {
+    private void replicatedCRUDService() {
 
     }
 
@@ -126,7 +126,12 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto *.save(by.nhorushko.crudgeneric.v2.domain.AbstractDto))")
+    @Pointcut(
+            "execution("
+                    + "public by.nhorushko.crudgeneric.v2.domain.AbstractDto "
+                    + "*.save(by.nhorushko.crudgeneric.v2.domain.AbstractDto)"
+                    + ")"
+    )
     private void create() {
 
     }
@@ -136,7 +141,10 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto *.update(by.nhorushko.crudgeneric.v2.domain.AbstractDto))")
+    @Pointcut("execution("
+            + "public by.nhorushko.crudgeneric.v2.domain.AbstractDto "
+            + "*.update(by.nhorushko.crudgeneric.v2.domain.AbstractDto)"
+            + ")")
     private void update() {
 
     }

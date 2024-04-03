@@ -200,7 +200,8 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         verifyRegistrationReplication(new SaveProducedReplication<>(dto), producer);
     }
 
-    private void verifyRegistrationSaveReplications(final List<TestDto> dtos, final ReplicationProducer<Long> producer) {
+    private void verifyRegistrationSaveReplications(final List<TestDto> dtos,
+                                                    final ReplicationProducer<Long> producer) {
         verifyRegistrationReplications(createSaveReplications(dtos), producer);
     }
 
@@ -216,14 +217,17 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
 
     private void verifyRegistrationReplications(final List<? extends ProducedReplication<Long>> replications,
                                                 final ReplicationProducer<Long> producer) {
-        mockedTransactionManager.verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(replications.size()));
+        mockedTransactionManager
+                .verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(replications.size()));
         final List<ReplicationCallback<Long>> actualCallbacks = callbackArgumentCaptor.getAllValues();
         final List<ReplicationCallback<Long>> expectedCallbacks = createCallbacks(replications, producer);
         checkEquals(expectedCallbacks, actualCallbacks);
     }
 
-    private static List<ReplicationCallback<Long>> createCallbacks(final List<? extends ProducedReplication<Long>> replications,
-                                                                   final ReplicationProducer<Long> producer) {
+    private static List<ReplicationCallback<Long>> createCallbacks(
+            final List<? extends ProducedReplication<Long>> replications,
+            final ReplicationProducer<Long> producer
+    ) {
         return replications.stream()
                 .map(replication -> new ReplicationCallback<>(producer, replication))
                 .toList();
