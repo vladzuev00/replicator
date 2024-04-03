@@ -21,8 +21,10 @@ import static java.lang.Runtime.getRuntime;
 import static java.util.Optional.empty;
 import static org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
+import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_APPLICATION;
 import static org.apache.kafka.streams.kstream.Consumed.with;
 
+//TODO: refactor and test
 @Component
 public final class ReplicationKafkaStreamsFactory {
     private final RetryTemplate retryTemplate;
@@ -71,7 +73,7 @@ public final class ReplicationKafkaStreamsFactory {
     private KafkaStreams create(final Topology topology, final StreamsConfig config) {
         final KafkaStreams streams = new KafkaStreams(topology, config);
         try {
-            streams.setUncaughtExceptionHandler(exceptionHandler);
+            streams.setUncaughtExceptionHandler(exception -> SHUTDOWN_APPLICATION);
             closeOnShutdown(streams);
             return streams;
         } catch (final Exception exception) {
