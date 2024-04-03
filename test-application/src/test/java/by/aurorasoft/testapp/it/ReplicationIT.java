@@ -76,16 +76,16 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final Address actualSaved = addressService.save(givenAddress);
         waitReplicating();
 
-        final Long expectedSavedId = 1L;
-        final Address expectedSaved = new Address(expectedSavedId, givenCountry, givenCity);
+        final Long expectedId = 1L;
+        final Address expectedSaved = new Address(expectedId, givenCountry, givenCity);
         assertEquals(expectedSaved, actualSaved);
 
         final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(
-                expectedSavedId,
+                expectedId,
                 givenCountry,
                 givenCity
         );
-        verifySave(expectedReplicated);
+        verifyReplicatedAddress(expectedReplicated);
     }
 
     @Test
@@ -97,95 +97,32 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyReplicatedAddressesCount(9);
     }
 
-    //TODO: stop
     @Test
-    public void personsAndAddressShouldBeSaved() {
-        final String givenAddressCountry = "Belarus";
-        final String givenAddressCity = "Minsk";
+    public void addressesShouldBeSavedAndReplicated() {
+        final String firstGivenCountry = "China";
+        final String firstGivenCity = "Fuyang";
+        final Address firstGivenAddress = createAddress(firstGivenCountry, firstGivenCity);
 
-        final String givenFirstPersonName = "Vlad";
-        final String givenFirstPersonSurname = "Zuev";
-        final String givenFirstPersonPatronymic = "Sergeevich";
-        final LocalDate givenFirstPersonBirthDate = LocalDate.of(2000, 2, 18);
+        final String secondGivenCountry = "China";
+        final String secondGivenCity = "Hefei";
+        final Address secondGivenAddress = createAddress(secondGivenCountry, secondGivenCity);
 
-        final String givenSecondPersonName = "Ivan";
-        final String givenSecondPersonSurname = "Ivanov";
-        final String givenSecondPersonPatronymic = "Ivanovich";
-        final LocalDate givenSecondPersonBirthDate = LocalDate.of(2001, 3, 19);
-
-        final Address givenAddress = createAddress(givenAddressCountry, givenAddressCity);
-        final Address actualSavedAddress = addressService.save(givenAddress);
-
-        final List<Person> givenPersons = List.of(
-                createPerson(
-                        givenFirstPersonName,
-                        givenFirstPersonSurname,
-                        givenFirstPersonPatronymic,
-                        givenFirstPersonBirthDate,
-                        actualSavedAddress
-                ),
-                createPerson(
-                        givenSecondPersonName,
-                        givenSecondPersonSurname,
-                        givenSecondPersonPatronymic,
-                        givenSecondPersonBirthDate,
-                        actualSavedAddress
-                )
-        );
-        final List<Person> actualSavedPersons = personService.saveAll(givenPersons);
-
+        final List<Address> actualSaved = saveAll(firstGivenAddress, secondGivenAddress);
         waitReplicating();
 
-        final Long expectedSavedAddressId = 1L;
-        final Address expectedSavedAddress = new Address(expectedSavedAddressId, givenAddressCountry, givenAddressCity);
-        assertEquals(expectedSavedAddress, actualSavedAddress);
-
-        final Long expectedFirstSavedPersonId = 1L;
-        final Long expectedSecondSavedPersonId = 2L;
-        final List<Person> expectedSavedPersons = List.of(
-                new Person(
-                        expectedFirstSavedPersonId,
-                        givenFirstPersonName,
-                        givenFirstPersonSurname,
-                        givenFirstPersonPatronymic,
-                        givenFirstPersonBirthDate,
-                        expectedSavedAddress
-                ),
-                new Person(
-                        expectedSecondSavedPersonId,
-                        givenSecondPersonName,
-                        givenSecondPersonSurname,
-                        givenSecondPersonPatronymic,
-                        givenSecondPersonBirthDate,
-                        expectedSavedAddress
-                )
+        final Long firstExpectedId = 1L;
+        final Long secondExpectedId = 2L;
+        final List<Address> expectedSaved = List.of(
+                new Address(firstExpectedId, firstGivenCountry, firstGivenCity),
+                new Address(secondExpectedId, secondGivenCountry, secondGivenCity)
         );
-        assertEquals(expectedSavedPersons, actualSavedPersons);
+        assertEquals(expectedSaved, actualSaved);
 
-        final ReplicatedAddressEntity expectedReplicatedAddress = new ReplicatedAddressEntity(
-                expectedSavedAddressId,
-                givenAddressCountry,
-                givenAddressCity
+        final List<ReplicatedAddressEntity> expectedReplicated = List.of(
+                new ReplicatedAddressEntity(firstExpectedId, firstGivenCountry, firstGivenCity),
+                new ReplicatedAddressEntity(secondExpectedId, secondGivenCountry, secondGivenCity)
         );
-        verifySave(expectedReplicatedAddress);
-
-        final List<ReplicatedPersonEntity> expectedReplicatedPersons = List.of(
-                new ReplicatedPersonEntity(
-                        expectedFirstSavedPersonId,
-                        givenFirstPersonName,
-                        givenFirstPersonSurname,
-                        givenFirstPersonBirthDate,
-                        expectedReplicatedAddress
-                ),
-                new ReplicatedPersonEntity(
-                        expectedSecondSavedPersonId,
-                        givenSecondPersonName,
-                        givenSecondPersonSurname,
-                        givenSecondPersonBirthDate,
-                        expectedReplicatedAddress
-                )
-        );
-        verifySave(expectedReplicatedPersons);
+        verifyReplicatedAddresses(expectedReplicated);
     }
 
     @Test
@@ -197,9 +134,26 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         saveAllExpectingUniqueConstraintViolation(givenAddresses);
         waitReplicating();
-        verifyReplicatedAddressesCount(8);
+        verifyReplicatedAddressesCount(9);
     }
 
+    @Test
+    public void addressShouldBeUpdated() {
+        final Long givenId = 255L;
+        final String givenNewCountry = "Belarus";
+        final String givenNewCity = "Minsk";
+        final Address givenAddress = new Address(givenId, givenNewCountry, givenNewCity);
+
+        final Address actualUpdated = addressService.update(givenAddress);
+        waitReplicating();
+
+        assertEquals(givenAddress, actualUpdated);
+
+        final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(null);
+        verifyReplicatedAddress();
+    }
+
+    //TODO: stop
     @Test
     public void personShouldBeUpdated() {
         final Long givenId = 255L;
@@ -464,7 +418,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         }
     }
 
-    private void verifySave(final ReplicatedAddressEntity expected) {
+    private void verifyReplicatedAddress(final ReplicatedAddressEntity expected) {
         verifySave(expected, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
     }
 
@@ -474,6 +428,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     private void verifySave(final List<ReplicatedPersonEntity> expected) {
         verifySave(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
+    }
+
+    private void verifyReplicatedAddresses(final List<ReplicatedAddressEntity> addresses) {
+        verifySave(addresses, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
     }
 
     private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> void verifySave(
@@ -710,8 +668,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
     }
 
-    private void saveAll(final Address... addresses) {
-        saveAll(addressService, addresses);
+    private List<Address> saveAll(final Address... addresses) {
+        return saveAll(addressService, addresses);
     }
 
     private void saveAll(final Person... persons) {
@@ -719,8 +677,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @SafeVarargs
-    private static <T extends AbstractDto<?>> void saveAll(final AbsServiceCRUD<?, ?, T, ?> service, final T... dtos) {
-        service.saveAll(asList(dtos));
+    private static <T extends AbstractDto<?>> List<T> saveAll(final AbsServiceCRUD<?, ?, T, ?> service, final T... dtos) {
+        return service.saveAll(asList(dtos));
     }
 
     private boolean isReplicatedPersonExist(final Long id) {
