@@ -18,13 +18,13 @@ public class ReplicationConsumingConfig {
     @Value("${kafka.topic.sync-person.name}")
     private String personTopic;
 
-    @Value("${replication.consume-pipeline.id.person}")
+    @Value("${replication.consume.pipeline.id.person}")
     private String personPipelineId;
 
     @Value("${kafka.topic.sync-address.name}")
     private String addressTopic;
 
-    @Value("${replication.consume-pipeline.id.address}")
+    @Value("${replication.consume.pipeline.id.address}")
     private String addressPipelineId;
 
     @Bean
