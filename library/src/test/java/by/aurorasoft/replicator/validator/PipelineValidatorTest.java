@@ -19,7 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public final class PipelineIdUniqueConstraintValidatorTest {
+public final class PipelineValidatorTest {
 
     @Mock
     private ApplicationEventPublisher mockedEventPublisher;
@@ -52,7 +52,10 @@ public final class PipelineIdUniqueConstraintValidatorTest {
                 createPipeline("fourth-pipeline")
         );
 
-        validateExpectingFail(givenValidator, "Duplicated replication pipeline's ids were found: second-pipeline, third-pipeline");
+        validateExpectingFail(
+                givenValidator,
+                "Duplicated replication pipeline's ids were found: second-pipeline, third-pipeline"
+        );
     }
 
     @SuppressWarnings("unchecked")
