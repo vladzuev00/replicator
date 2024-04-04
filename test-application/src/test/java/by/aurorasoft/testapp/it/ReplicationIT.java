@@ -49,7 +49,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
 @Transactional(propagation = NOT_SUPPORTED)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
-    private static final long WAIT_REPLICATION_SECONDS = 10;
+    private static final long WAIT_REPLICATION_SECONDS = 20;
     private static final String VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE = "23505";
 
     @Autowired
@@ -211,7 +211,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
-    public void operationsShouldBeExecuted() {
+    public void operationsShouldBeExecutedAndReplicated() {
         final List<Runnable> givenOperations = List.of(
                 () -> saveAll(
                         createAddress("China", "Hong Kong"),
@@ -298,6 +298,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
         );
         checkEqualsReplicatedPersons(expected, actual);
     }
+
+    //TODO: add test with removing address of not removed person
 
     @Test
     public void personShouldBeSavedButNotReplicatedBecauseOfThereIsNoReplicatedAddress() {

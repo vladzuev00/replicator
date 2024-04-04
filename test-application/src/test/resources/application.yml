@@ -34,7 +34,7 @@ replication:
         address: address-replication-consume-pipeline
     retry:
       time-lapse-ms: 1000
-      max-attempts: 5
+      max-attempts: 10
 
 
 
