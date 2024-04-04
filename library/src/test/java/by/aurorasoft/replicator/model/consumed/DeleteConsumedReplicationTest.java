@@ -11,7 +11,7 @@ public final class DeleteConsumedReplicationTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void replicationShouldBeExecuted() {
+    public void replicationShouldBeExecutedInternally() {
         final Long givenEntityId = 255L;
         final var givenReplication = new DeleteConsumedReplication<Long, TestEntity>(givenEntityId);
 
