@@ -5,6 +5,8 @@ import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.SQLException;
@@ -21,6 +23,8 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
                 @Type(value = DeleteConsumedReplication.class, name = DELETE)
         }
 )
+@EqualsAndHashCode
+@ToString
 public abstract class ConsumedReplication<ID, E extends AbstractEntity<ID>> {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
 
