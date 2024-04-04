@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.exception.PerhapsRelationNotDeliveredYetException;
+import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
 import by.aurorasoft.replicator.factory.ReplicationProducerHolderFactory;
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
@@ -26,7 +26,7 @@ public class ReplicationConfig {
         return new RetryTemplateBuilder()
                 .fixedBackoff(property.getTimeLapseMs())
                 .maxAttempts(property.getMaxAttempts())
-                .retryOn(PerhapsRelationNotDeliveredYetException.class)
+                .retryOn(RelationReplicationNotDeliveredException.class)
                 .build();
     }
 }

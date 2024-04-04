@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.model.consumed;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.exception.PerhapsRelationNotDeliveredYetException;
+import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.consumed.SaveConsumedReplication.SaveReplicationExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 public final class SaveConsumedReplicationTest {
     private static final String GIVEN_SQL_EXCEPTION_REASON = "reason";
 
-    private static final String INVALID_FOREIGN_KEY_SQL_STATE = "23503";
+    private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
     @Test
@@ -51,7 +51,7 @@ public final class SaveConsumedReplicationTest {
 
     private static Stream<Arguments> provideCauseAndExpectedExceptionType() {
         return Stream.of(
-                Arguments.of(createSqlException(INVALID_FOREIGN_KEY_SQL_STATE), PerhapsRelationNotDeliveredYetException.class),
+                Arguments.of(createSqlException(FOREIGN_KEY_VIOLATION_SQL_STATE), RelationReplicationNotDeliveredException.class),
                 Arguments.of(createSqlException(UNIQUE_VIOLATION_SQL_STATE), SaveReplicationExecutionException.class),
                 Arguments.of(new RuntimeException(), SaveReplicationExecutionException.class)
         );

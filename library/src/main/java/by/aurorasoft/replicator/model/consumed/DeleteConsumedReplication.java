@@ -11,9 +11,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import static by.aurorasoft.replicator.util.TransportNameUtil.ENTITY_ID_NAME;
 
 @Getter
-@EqualsAndHashCode
-@ToString
-public final class DeleteConsumedReplication<ID, E extends AbstractEntity<ID>> implements ConsumedReplication<ID, E> {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public final class DeleteConsumedReplication<ID, E extends AbstractEntity<ID>> extends ConsumedReplication<ID, E> {
     private final ID entityId;
 
     @JsonCreator
@@ -22,7 +22,7 @@ public final class DeleteConsumedReplication<ID, E extends AbstractEntity<ID>> i
     }
 
     @Override
-    public void execute(final JpaRepository<E, ID> repository) {
+    protected void executeInternal(final JpaRepository<E, ID> repository) {
         repository.deleteById(entityId);
     }
 }
