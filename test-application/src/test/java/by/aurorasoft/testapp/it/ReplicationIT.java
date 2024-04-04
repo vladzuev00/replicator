@@ -29,7 +29,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -185,9 +184,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Test
     public void addressShouldNotBeUpdatedPartiallyBecauseOfViolationUniqueConstraint() {
         final Long givenId = 256L;
-        final AddressName givenAddressName = new AddressName("Russia", "Moscow");
+        final AddressName givenNewName = new AddressName("Russia", "Moscow");
 
-        executeReplicatedOperation(() -> updateAddressPartialExpectingUniqueConstraintViolation(givenId, givenAddressName));
+        executeReplicatedOperation(() -> updateAddressPartialExpectingUniqueConstraintViolation(givenId, givenNewName));
 
         verifyNoInteractions(replicatedAddressRepository);
     }
@@ -252,7 +251,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 new AddressEntity(260L, "Estonia", "Tallinn"),
                 new AddressEntity(261L, "Estonia", "Tartu"),
                 new AddressEntity(262L, "Estonia", "Narva"),
-                new AddressEntity(263L, "Armenia", "Yerevan")
+                new AddressEntity(263L, "Armenia", "Yerevan"),
+                new AddressEntity(264L, "America", "New York")
         );
         checkEqualsAddresses(expectedAddresses, actualAddresses);
 
@@ -281,7 +281,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
                 new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
                 new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
-                new ReplicatedAddressEntity(263L, "America", "Houston")
+                new ReplicatedAddressEntity(263L, "Armenia", "Yerevan"),
+                new ReplicatedAddressEntity(265L, "Japan", "Tokyo")
         );
         checkEqualsReplicatedAddresses(expectedReplicatedAddresses, actualReplicatedAddresses);
 
@@ -446,41 +447,32 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return ((SQLException) getRootCause(exception)).getSQLState();
     }
 
-    private Address saveExpectingUniqueConstraintViolation(final Address address) {
-        return executeExpectingUniqueConstraintViolation(() -> addressService.save(address));
+    private void saveExpectingUniqueConstraintViolation(final Address address) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.save(address));
     }
 
-    private List<Address> saveAllExpectingUniqueConstraintViolation(final Collection<Address> addresses) {
-        return executeExpectingUniqueConstraintViolation(() -> addressService.saveAll(addresses));
+    private void saveAllExpectingUniqueConstraintViolation(final Collection<Address> addresses) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.saveAll(addresses));
     }
 
-    private Address updateExpectingUniqueConstraintViolation(final Address address) {
-        return executeExpectingUniqueConstraintViolation(() -> addressService.update(address));
+    private void updateExpectingUniqueConstraintViolation(final Address address) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.update(address));
     }
 
-    private Address updateAddressPartialExpectingUniqueConstraintViolation(final Long id, final Object partial) {
-        return executeExpectingUniqueConstraintViolation(() -> addressService.updatePartial(id, partial));
+    private void updateAddressPartialExpectingUniqueConstraintViolation(final Long id, final Object partial) {
+        executeExpectingUniqueConstraintViolation(() -> addressService.updatePartial(id, partial));
     }
 
-    private static <R> R executeExpectingUniqueConstraintViolation(final Callable<R> task) {
-        R result = null;
-        boolean dataIntegrityViolationExceptionArisen;
+    private static void executeExpectingUniqueConstraintViolation(final Runnable task) {
+        boolean exceptionArisen;
         try {
-            result = task.call();
-            dataIntegrityViolationExceptionArisen = false;
+            task.run();
+            exceptionArisen = false;
         } catch (final DataIntegrityViolationException exception) {
-            dataIntegrityViolationExceptionArisen = true;
+            exceptionArisen = true;
             verifyUniqueConstraintViolation(exception);
-        } catch (final Exception cause) {
-            throw new RuntimeException(cause);
         }
-        assertTrue(dataIntegrityViolationExceptionArisen);
-        return result;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private void verifyReplicatedAddressesCount(final long expected) {
-        assertEquals(expected, countReplicatedAddresses());
+        assertTrue(exceptionArisen);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -488,16 +480,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expected, countReplicatedPersons());
     }
 
-    private long countReplicatedAddresses() {
-        return queryForLong("SELECT COUNT(e) FROM ReplicatedAddressEntity e");
-    }
-
     private long countReplicatedPersons() {
-        return queryForLong("SELECT COUNT(e) FROM ReplicatedPersonEntity e");
-    }
-
-    private long queryForLong(final String hqlQuery) {
-        return entityManager.createQuery(hqlQuery, Long.class).getSingleResult();
+        return entityManager.createQuery("SELECT COUNT(e) FROM ReplicatedPersonEntity e", Long.class).getSingleResult();
     }
 
     private List<AddressEntity> findAddressesOrderedById() {
@@ -538,9 +522,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
                                        final String patronymic,
                                        final LocalDate birthDate,
                                        final Long addressId) {
-        return createPerson(name, surname, patronymic, birthDate, createAddress(addressId));
+        return createPerson(null, name, surname, patronymic, birthDate, addressId);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static Person createPerson(final String name,
                                        final String surname,
                                        final String patronymic,
@@ -555,21 +540,13 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .build();
     }
 
-    @SuppressWarnings("SameParameterValue")
     private static Person createPerson(final Long id,
                                        final String name,
                                        final String surname,
                                        final String patronymic,
                                        final LocalDate birthDate,
                                        final Long addressId) {
-        return Person.builder()
-                .id(id)
-                .name(name)
-                .surname(surname)
-                .patronymic(patronymic)
-                .birthDate(birthDate)
-                .address(createAddress(addressId))
-                .build();
+        return new Person(id, name, surname, patronymic, birthDate, createAddress(addressId));
     }
 
     private static ReplicatedPersonEntity createReplicatedPersonEntity(final Long id,
@@ -577,13 +554,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                                                                        final String surname,
                                                                        final LocalDate birthDate,
                                                                        final Long addressId) {
-        return ReplicatedPersonEntity.builder()
-                .id(id)
-                .name(name)
-                .surname(surname)
-                .birthDate(birthDate)
-                .address(createReplicatedAddressEntity(addressId))
-                .build();
+        return new ReplicatedPersonEntity(id, name, surname, birthDate, createReplicatedAddressEntity(addressId));
     }
 
     private static ReplicatedAddressEntity createReplicatedAddressEntity(final Long id) {
@@ -598,14 +569,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                                                    final String patronymic,
                                                    final LocalDate birthDate,
                                                    final Long addressId) {
-        return PersonEntity.builder()
-                .id(id)
-                .name(name)
-                .surname(surname)
-                .patronymic(patronymic)
-                .birthDate(birthDate)
-                .address(createAddressEntity(addressId))
-                .build();
+        return new PersonEntity(id, name, surname, patronymic, birthDate, createAddressEntity(addressId));
     }
 
     private static AddressEntity createAddressEntity(final Long id) {
@@ -625,13 +589,5 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @SafeVarargs
     private static <T extends AbstractDto<?>> List<T> saveAll(final AbsServiceCRUD<?, ?, T, ?> service, final T... dtos) {
         return service.saveAll(asList(dtos));
-    }
-
-    private boolean isReplicatedPersonExist(final Long id) {
-        return replicatedPersonRepository.existsById(id);
-    }
-
-    private boolean isReplicatedAddressExist(final Long id) {
-        return replicatedAddressRepository.existsById(id);
     }
 }
