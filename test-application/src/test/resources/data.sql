@@ -7,6 +7,7 @@ INSERT INTO addresses(id, country, city) VALUES(260, 'Estonia', 'Tallinn');
 INSERT INTO addresses(id, country, city) VALUES(261, 'Estonia', 'Tartu');
 INSERT INTO addresses(id, country, city) VALUES(262, 'Estonia', 'Narva');
 INSERT INTO addresses(id, country, city) VALUES(263, 'Armenia', 'Yerevan');
+INSERT INTO addresses(id, country, city) VALUES(264, 'America', 'New York');
 
 INSERT INTO replicated_addresses(id, country, city) VALUES(255, 'Russia', 'Moscow');
 INSERT INTO replicated_addresses(id, country, city) VALUES(256, 'America', 'Chicago');
@@ -16,7 +17,8 @@ INSERT INTO replicated_addresses(id, country, city) VALUES(259, 'Austria', 'Tyro
 INSERT INTO replicated_addresses(id, country, city) VALUES(260, 'Estonia', 'Tallinn');
 INSERT INTO replicated_addresses(id, country, city) VALUES(261, 'Estonia', 'Tartu');
 INSERT INTO replicated_addresses(id, country, city) VALUES(262, 'Estonia', 'Narva');
-INSERT INTO replicated_addresses(id, country, city) VALUES(263, 'America', 'Houston');
+INSERT INTO replicated_addresses(id, country, city) VALUES(263, 'Armenia', 'Yerevan');
+INSERT INTO replicated_addresses(id, country, city) VALUES(265, 'Japan', 'Tokyo');
 
 INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(255, 'Vlad', 'Zuev', 'Sergeevich', '2000-02-18', 255);
 INSERT INTO persons(id, name, surname, patronymic, birth_date, address_id) VALUES(256, 'Vasilii', 'Dolzhikov', 'Borisovich', '1980-03-15', 255);

@@ -29,7 +29,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.Thread.currentThread;
@@ -41,15 +43,14 @@ import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 @Transactional(propagation = NOT_SUPPORTED)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
-    private static final long WAIT_REPLICATING_SECONDS = 10;
+    private static final long WAIT_REPLICATION_SECONDS = 10;
     private static final String VIOLATION_UNIQUE_CONSTRAINT_SQL_STATE = "23505";
 
     @Autowired
@@ -73,8 +74,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String givenCity = "Minsk";
         final Address givenAddress = createAddress(givenCountry, givenCity);
 
-        final Address actualSaved = addressService.save(givenAddress);
-        waitReplicating();
+        final Address actualSaved = executeReplicatedOperation(() -> addressService.save(givenAddress));
 
         final Long expectedId = 1L;
         final Address expectedSaved = new Address(expectedId, givenCountry, givenCity);
@@ -92,9 +92,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
     public void addressShouldNotBeSavedBecauseOfViolationUniqueConstraint() {
         final Address givenAddress = createAddress("Russia", "Moscow");
 
-        saveExpectingUniqueConstraintViolation(givenAddress);
-        waitReplicating();
-        verifyReplicatedAddressesCount(9);
+        executeReplicatedOperation(() -> saveExpectingUniqueConstraintViolation(givenAddress));
+
+        verifyNoInteractions(replicatedAddressRepository);
     }
 
     @Test
@@ -107,8 +107,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String secondGivenCity = "Hefei";
         final Address secondGivenAddress = createAddress(secondGivenCountry, secondGivenCity);
 
-        final List<Address> actualSaved = saveAll(firstGivenAddress, secondGivenAddress);
-        waitReplicating();
+        final List<Address> actualSaved = executeReplicatedOperation(() -> saveAll(firstGivenAddress, secondGivenAddress));
 
         final Long firstExpectedId = 1L;
         final Long secondExpectedId = 2L;
@@ -132,9 +131,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 createAddress("Belarus", "Minsk")
         );
 
-        saveAllExpectingUniqueConstraintViolation(givenAddresses);
-        waitReplicating();
-        verifyReplicatedAddressesCount(9);
+        executeReplicatedOperation(() -> saveAllExpectingUniqueConstraintViolation(givenAddresses));
+
+        verifyNoInteractions(replicatedAddressRepository);
     }
 
     @Test
@@ -144,101 +143,43 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String givenNewCity = "Minsk";
         final Address givenAddress = new Address(givenId, givenNewCountry, givenNewCity);
 
-        final Address actualUpdated = addressService.update(givenAddress);
-        waitReplicating();
-
+        final Address actualUpdated = executeReplicatedOperation(() -> addressService.update(givenAddress));
         assertEquals(givenAddress, actualUpdated);
 
-        final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(null);
-        verifyReplicatedAddress();
-    }
-
-    //TODO: stop
-    @Test
-    public void personShouldBeUpdated() {
-        final Long givenId = 255L;
-        final String givenNewName = "Ivan";
-        final String givenNewSurname = "Ivanov";
-        final String givenNewPatronymic = "Ivanovich";
-        final LocalDate givenNewBirthDate = LocalDate.of(2000, 2, 19);
-
-        final Long givenAddressId = 255L;
-        final Address givenAddress = new Address(givenAddressId, "Russia", "Moscow");
-
-        final Person givenNewPerson = new Person(
+        final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(
                 givenId,
-                givenNewName,
-                givenNewSurname,
-                givenNewPatronymic,
-                givenNewBirthDate,
-                givenAddress
+                givenNewCountry,
+                givenNewCity
         );
-
-        final Person actualUpdatedPerson = personService.update(givenNewPerson);
-
-        waitReplicating();
-
-        assertEquals(givenNewPerson, actualUpdatedPerson);
-
-        final var expectedReplicatedAddress = entityManager.getReference(ReplicatedAddressEntity.class, givenAddressId);
-        final ReplicatedPersonEntity expectedReplicatedPerson = new ReplicatedPersonEntity(
-                givenId,
-                givenNewName,
-                givenNewSurname,
-                givenNewBirthDate,
-                expectedReplicatedAddress
-        );
-        verifySave(expectedReplicatedPerson);
+        verifyReplicatedAddress(expectedReplicated);
     }
 
     @Test
     public void addressShouldNotBeUpdatedBecauseOfViolationUniqueConstraint() {
         final Address givenAddress = new Address(256L, "Russia", "Moscow");
 
-        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddressesOrderedById();
-        updateExpectingUniqueConstraintViolation(givenAddress);
-        waitReplicating();
-        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddressesOrderedById();
-        checkEqualsReplicatedAddresses(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
+        executeReplicatedOperation(() -> updateExpectingUniqueConstraintViolation(givenAddress));
+
+        verifyNoInteractions(replicatedAddressRepository);
     }
 
     @Test
-    public void personShouldBeUpdatedPartially() {
+    public void addressShouldBeUpdatedPartially() {
         final Long givenId = 255L;
+        final String givenNewCountry = "Belarus";
+        final String givenNewCity = "Minsk";
+        final AddressName givenNewName = new AddressName(givenNewCountry, givenNewCity);
 
-        final String givenNewName = "Ivan";
-        final String givenNewSurname = "Ivanov";
-        final String givenNewPatronymic = "Ivanovich";
-        final PersonName givenPartial = new PersonName(givenNewName, givenNewSurname, givenNewPatronymic);
+        final Address actualUpdated = executeReplicatedOperation(() -> addressService.updatePartial(givenId, givenNewName));
+        final Address expectedUpdated = new Address(givenId, givenNewCountry, givenNewCity);
+        assertEquals(expectedUpdated, actualUpdated);
 
-        final Person actualUpdatedPerson = personService.updatePartial(givenId, givenPartial);
-
-        waitReplicating();
-
-        final LocalDate expectedBirthDate = LocalDate.of(2000, 2, 18);
-
-        final Long expectedAddressId = 255L;
-        final Address expectedAddress = new Address(expectedAddressId, "Russia", "Moscow");
-
-        final Person expectedUpdatedPerson = new Person(
+        final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(
                 givenId,
-                givenNewName,
-                givenNewSurname,
-                givenNewPatronymic,
-                expectedBirthDate,
-                expectedAddress
+                givenNewCountry,
+                givenNewCity
         );
-        assertEquals(expectedUpdatedPerson, actualUpdatedPerson);
-
-        final var expectedReplicatedAddress = entityManager.getReference(ReplicatedAddressEntity.class, expectedAddressId);
-        final ReplicatedPersonEntity expectedReplicatedPerson = new ReplicatedPersonEntity(
-                givenId,
-                givenNewName,
-                givenNewSurname,
-                expectedBirthDate,
-                expectedReplicatedAddress
-        );
-        verifySave(expectedReplicatedPerson);
+        verifyReplicatedAddress(expectedReplicated);
     }
 
     @Test
@@ -246,26 +187,27 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final Long givenId = 256L;
         final AddressName givenAddressName = new AddressName("Russia", "Moscow");
 
-        final List<ReplicatedAddressEntity> replicatedAddressesBeforeUpdate = findReplicatedAddressesOrderedById();
-        updateAddressPartialExpectingUniqueConstraintViolation(givenId, givenAddressName);
-        waitReplicating();
-        final List<ReplicatedAddressEntity> replicatedAddressesAfterUpdate = findReplicatedAddressesOrderedById();
-        checkEqualsReplicatedAddresses(replicatedAddressesBeforeUpdate, replicatedAddressesAfterUpdate);
+        executeReplicatedOperation(() -> updateAddressPartialExpectingUniqueConstraintViolation(givenId, givenAddressName));
+
+        verifyNoInteractions(replicatedAddressRepository);
     }
 
     @Test
-    public void personShouldBeDeleted() {
-        final Long givenId = 255L;
+    public void addressShouldBeDeleted() {
+        final Long givenId = 262L;
 
-        personService.delete(givenId);
-        waitReplicating();
-        assertTrue(isPersonDeleted(givenId));
+        executeReplicatedOperation(() -> addressService.delete(givenId));
+
+        assertTrue(isAddressDeletedWithReplication(givenId));
     }
 
     @Test
-    public void personShouldNotBeDeletedByNotExistId() {
-        personService.delete(MAX_VALUE);
-        waitReplicating();
+    public void addressShouldNotBeDeletedByNotExistId() {
+        final Long givenId = MAX_VALUE;
+
+        executeReplicatedOperation(() -> addressService.delete(givenId));
+
+        verify(replicatedAddressRepository, times(1)).deleteById(eq(givenId));
         verifyReplicatedPersonsCount(5);
     }
 
@@ -295,9 +237,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 () -> personService.update(createPerson(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L))
         );
 
-        givenOperations.forEach(Runnable::run);
-
-        waitReplicating();
+        executeReplicatedOperation(() -> givenOperations.forEach(Runnable::run));
 
         final List<AddressEntity> actualAddresses = findAddressesOrderedById();
         final List<AddressEntity> expectedAddresses = List.of(
@@ -340,7 +280,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
                 new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
                 new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
-                new ReplicatedAddressEntity(262L, "Estonia", "Narva")
+                new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
+                new ReplicatedAddressEntity(263L, "America", "Houston")
         );
         checkEqualsReplicatedAddresses(expectedReplicatedAddresses, actualReplicatedAddresses);
 
@@ -363,30 +304,29 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String givenSurname = "Ivanov";
         final String givenPatronymic = "Petrovich";
         final LocalDate givenBirthDate = LocalDate.of(2000, 3, 19);
-        final Long givenAddressId = 263L;
+        final Address givenAddress = createAddress(264L);
         final Person givenPerson = createPerson(
                 givenName,
                 givenSurname,
                 givenPatronymic,
                 givenBirthDate,
-                givenAddressId
+                givenAddress
         );
 
-        final Person actualSavedPerson = personService.save(givenPerson);
-        waitReplicating();
+        final Person actualSaved = executeReplicatedOperation(() -> personService.save(givenPerson));
 
-        final Long expectedPersonId = 1L;
-        final Person expectedSavedPerson = createPerson(
-                expectedPersonId,
+        final Long expectedId = 1L;
+        final Person expectedSaved = new Person(
+                expectedId,
                 givenName,
                 givenSurname,
                 givenPatronymic,
                 givenBirthDate,
-                givenAddressId
+                givenAddress
         );
-        assertEquals(expectedSavedPerson, actualSavedPerson);
+        assertEquals(expectedSaved, actualSaved);
 
-        assertFalse(isReplicatedPersonExist(expectedPersonId));
+        assertFalse(replicatedPersonRepository.existsById(expectedId));
 
         verify(replicatedPersonRepository, times(retryConsumeProperty.getMaxAttempts()))
                 .save(any(ReplicatedPersonEntity.class));
@@ -394,55 +334,57 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @Test
     public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
-        final String givenCountry = "America";
-        final String givenCity = "Houston";
+        final String givenCountry = "Japan";
+        final String givenCity = "Tokyo";
         final Address givenAddress = createAddress(givenCountry, givenCity);
 
-        final Address actualSavedAddress = addressService.save(givenAddress);
-        waitReplicating();
+        final Address actualSaved = executeReplicatedOperation(() -> addressService.save(givenAddress));
 
-        final Long expectedAddressId = 1L;
-        final Address expectedSavedAddress = new Address(expectedAddressId, givenCountry, givenCity);
-        assertEquals(expectedSavedAddress, actualSavedAddress);
+        final Long expectedId = 1L;
+        final Address expectedSaved = new Address(expectedId, givenCountry, givenCity);
+        assertEquals(expectedSaved, actualSaved);
 
-        assertFalse(isReplicatedAddressExist(expectedAddressId));
+        assertFalse(replicatedAddressRepository.existsById(expectedId));
 
         verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
     }
 
-    private static void waitReplicating() {
+    private static <R> R executeReplicatedOperation(final Supplier<R> operation) {
+        final R result = operation.get();
+        waitReplication();
+        return result;
+    }
+
+    private static void executeReplicatedOperation(final Runnable task) {
+        task.run();
+        waitReplication();
+    }
+
+    private static void waitReplication() {
         try {
-            SECONDS.sleep(WAIT_REPLICATING_SECONDS);
+            SECONDS.sleep(WAIT_REPLICATION_SECONDS);
         } catch (final InterruptedException cause) {
             currentThread().interrupt();
         }
     }
 
     private void verifyReplicatedAddress(final ReplicatedAddressEntity expected) {
-        verifySave(expected, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
+        verifyEntity(expected, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
     }
 
-    private void verifySave(final ReplicatedPersonEntity expected) {
-        verifySave(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
+    private void verifyReplicatedAddresses(final List<ReplicatedAddressEntity> expected) {
+        verifyEntities(expected, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
     }
 
-    private void verifySave(final List<ReplicatedPersonEntity> expected) {
-        verifySave(expected, replicatedPersonRepository, ReplicatedPersonEntityUtil::checkEquals);
-    }
-
-    private void verifyReplicatedAddresses(final List<ReplicatedAddressEntity> addresses) {
-        verifySave(addresses, replicatedAddressRepository, ReplicatedAddressEntityUtil::checkEquals);
-    }
-
-    private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> void verifySave(
+    private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> void verifyEntity(
             final E expected,
             final JpaRepository<E, ID> repository,
             final BiConsumer<E, E> equalChecker
     ) {
-        verifySave(singletonList(expected), repository, equalChecker);
+        verifyEntities(singletonList(expected), repository, equalChecker);
     }
 
-    private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> void verifySave(
+    private static <ID extends Comparable<ID>, E extends AbstractEntity<ID>> void verifyEntities(
             final List<E> expected,
             final JpaRepository<E, ID> repository,
             final BiConsumer<E, E> equalChecker
@@ -492,8 +434,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
         checkEquals(expected, actual, ReplicatedPersonEntityUtil::checkEquals);
     }
 
-    private boolean isPersonDeleted(final Long id) {
-        return !personService.isExist(id) && !replicatedPersonRepository.existsById(id);
+    private boolean isAddressDeletedWithReplication(final Long id) {
+        return !addressService.isExist(id) && !replicatedAddressRepository.existsById(id);
     }
 
     private static void verifyUniqueConstraintViolation(final DataIntegrityViolationException exception) {
@@ -504,32 +446,36 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return ((SQLException) getRootCause(exception)).getSQLState();
     }
 
-    private void saveExpectingUniqueConstraintViolation(final Address address) {
-        executeExpectingUniqueConstraintViolation(() -> addressService.save(address));
+    private Address saveExpectingUniqueConstraintViolation(final Address address) {
+        return executeExpectingUniqueConstraintViolation(() -> addressService.save(address));
     }
 
-    private void saveAllExpectingUniqueConstraintViolation(final Collection<Address> addresses) {
-        executeExpectingUniqueConstraintViolation(() -> addressService.saveAll(addresses));
+    private List<Address> saveAllExpectingUniqueConstraintViolation(final Collection<Address> addresses) {
+        return executeExpectingUniqueConstraintViolation(() -> addressService.saveAll(addresses));
     }
 
-    private void updateExpectingUniqueConstraintViolation(final Address address) {
-        executeExpectingUniqueConstraintViolation(() -> addressService.update(address));
+    private Address updateExpectingUniqueConstraintViolation(final Address address) {
+        return executeExpectingUniqueConstraintViolation(() -> addressService.update(address));
     }
 
-    private void updateAddressPartialExpectingUniqueConstraintViolation(final Long id, final Object partial) {
-        executeExpectingUniqueConstraintViolation(() -> addressService.updatePartial(id, partial));
+    private Address updateAddressPartialExpectingUniqueConstraintViolation(final Long id, final Object partial) {
+        return executeExpectingUniqueConstraintViolation(() -> addressService.updatePartial(id, partial));
     }
 
-    private static void executeExpectingUniqueConstraintViolation(final Runnable task) {
-        boolean exceptionArisen;
+    private static <R> R executeExpectingUniqueConstraintViolation(final Callable<R> task) {
+        R result = null;
+        boolean dataIntegrityViolationExceptionArisen;
         try {
-            task.run();
-            exceptionArisen = false;
+            result = task.call();
+            dataIntegrityViolationExceptionArisen = false;
         } catch (final DataIntegrityViolationException exception) {
-            exceptionArisen = true;
+            dataIntegrityViolationExceptionArisen = true;
             verifyUniqueConstraintViolation(exception);
+        } catch (final Exception cause) {
+            throw new RuntimeException(cause);
         }
-        assertTrue(exceptionArisen);
+        assertTrue(dataIntegrityViolationExceptionArisen);
+        return result;
     }
 
     @SuppressWarnings("SameParameterValue")
