@@ -31,3 +31,4 @@ INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES
 INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(257, 'Fedya', 'Amelin', '1990-04-15', 255);
 INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(258, 'Pashenka', 'Kornev', '1995-04-23', 256);
 INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(259, 'Sasha', 'Gennadiyevich', '1996-02-21', 257);
+INSERT INTO replicated_persons(id, name, surname, birth_date, address_id) VALUES(260, 'Nikolay', 'Radoman', '2000-02-20', 258);

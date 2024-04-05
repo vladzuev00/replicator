@@ -87,7 +87,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final Address expectedSaved = new Address(1L, givenAddress.getCountry(), givenAddress.getCity());
         assertEquals(expectedSaved, actualSaved);
 
-        verifyReplicatedAddressExistance(actualSaved);
+        verifyReplicatedAddressExistence(actualSaved);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         executeExpectingNoReplication(() -> saveExpectingUniqueViolation(givenAddress));
 
-        verifyNoAddressQuery();
+        verifyNoReplicatedAddressQuery();
     }
 
     @Test
@@ -123,7 +123,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         executeExpectingNoReplication(() -> saveAllExpectingUniqueViolation(givenAddresses));
 
-        verifyNoAddressQuery();
+        verifyNoReplicatedAddressQuery();
     }
 
     @Test
@@ -133,7 +133,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final Address actualUpdated = execute(() -> addressService.update(givenAddress), 1, 0);
         assertEquals(givenAddress, actualUpdated);
 
-        verifyReplicatedAddressExistance(actualUpdated);
+        verifyReplicatedAddressExistence(actualUpdated);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         executeExpectingNoReplication(() -> updateExpectingUniqueViolation(givenAddress));
 
-        verifyNoAddressQuery();
+        verifyNoReplicatedAddressQuery();
     }
 
     @Test
@@ -154,7 +154,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final Address expectedUpdated = new Address(givenId, givenNewName.getCountry(), givenNewName.getCity());
         assertEquals(expectedUpdated, actualUpdated);
 
-        verifyReplicatedAddressExistance(actualUpdated);
+        verifyReplicatedAddressExistence(actualUpdated);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         executeExpectingNoReplication(() -> updateAddressPartialExpectingUniqueViolation(givenId, givenNewName));
 
-        verifyNoAddressQuery();
+        verifyNoReplicatedAddressQuery();
     }
 
     @Test
@@ -173,7 +173,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         execute(() -> deleteAddress(givenId), 1, 0);
 
-        verifyAddressDeleted(givenId);
+        verifyAddressDeletedWithReplication(givenId);
     }
 
     @Test
@@ -182,16 +182,14 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         execute(() -> deleteAddress(givenId), 1, 0);
 
-        verifyDeleteAddressQuery(givenId);
+        verifyDeleteReplicatedAddressQuery(givenId);
     }
 
     @Test
     public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
-        final Long givenId = 255L;
+        executeExpectingNoReplication(() -> deleteAddressExpectingForeignKeyViolation(255L));
 
-        executeExpectingNoReplication(() -> deleteAddressExpectingForeignKeyViolation(givenId));
-
-        verifyNoAddressQuery();
+        verifyNoReplicatedAddressQuery();
     }
 
     @Test
@@ -270,15 +268,25 @@ public class ReplicationIT extends AbstractSpringBootTest {
                         createReplicatedPerson(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
                         createReplicatedPerson(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
                         createReplicatedPerson(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
-                        createReplicatedPerson(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L)
+                        createReplicatedPerson(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L),
+                        createReplicatedPerson(260L, "Nikolay", "Radoman", LocalDate.of(2000, 2, 20), 258L)
                 )
         );
     }
 
-    //TODO: add test with removing replicated address of not replicated removed person
+    @Test
+    public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
+        final Long givenId = 258L;
+
+        execute(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0);
+
+        verifyAddressAbsence(givenId);
+        verifyReplicatedAddressExistence(givenId);
+        verifyDeleteReplicatedAddressQueryCount(givenId, retryConsumeProperty.getMaxAttempts());
+    }
 
     @Test
-    public void personShouldBeSavedButNotReplicatedBecauseOfThereIsNoReplicatedAddress() {
+    public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
         final String givenName = "Petr";
         final String givenSurname = "Ivanov";
         final String givenPatronymic = "Petrovich";
@@ -635,9 +643,13 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return empty();
     }
 
-    private void verifyReplicatedAddressExistance(final Address address) {
+    private void verifyReplicatedAddressExistence(final Address address) {
         final ReplicatedAddressEntity expected = mapToReplicatedAddress(address);
         verifyExistanceReplicatedAddress(expected);
+    }
+
+    private void verifyReplicatedAddressExistence(final Long id) {
+        assertTrue(replicatedAddressRepository.existsById(id));
     }
 
     private void verifyReplicatedAddressesExistance(final List<Address> addresses) {
@@ -645,7 +657,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyExistanceReplicatedAddresses(expected);
     }
 
-    private void verifyNoAddressQuery() {
+    private void verifyNoReplicatedAddressQuery() {
         verifyNoInteractions(replicatedAddressRepository);
     }
 
@@ -659,12 +671,17 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 .toList();
     }
 
-    private void verifyAddressDeleted(final Long id) {
+    private void verifyAddressDeletedWithReplication(final Long id) {
         assertTrue(isAddressDeleted(id));
     }
 
-    private void verifyDeleteAddressQuery(final Long id) {
+    //TODO: remove
+    private void verifyDeleteReplicatedAddressQuery(final Long id) {
         verify(replicatedAddressRepository, times(1)).deleteById(eq(id));
+    }
+
+    private void verifyDeleteReplicatedAddressQueryCount(final Long id, final int times) {
+        verify(replicatedAddressRepository, times(times)).deleteById(eq(id));
     }
 
     private void verifyDatabase(final List<AddressEntity> expectedAddresses,
@@ -695,6 +712,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private void verifyReplicatedPersons(final List<ReplicatedPersonEntity> expected) {
         final List<ReplicatedPersonEntity> actual = findReplicatedPersonsOrderedById();
         checkEqualsReplicatedPersons(expected, actual);
+    }
+
+    private void verifyAddressAbsence(final Long id) {
+        assertFalse(addressService.isExist(id));
     }
 
     @Aspect
@@ -732,9 +753,11 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         private static Object onReplication(final ProceedingJoinPoint joinPoint, final CountDownLatch latch)
                 throws Throwable {
-            final Object result = joinPoint.proceed();
-            latch.countDown();
-            return result;
+            try {
+                return joinPoint.proceed();
+            } finally {
+                latch.countDown();
+            }
         }
 
         @Pointcut("target(by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository)")
