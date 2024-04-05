@@ -56,7 +56,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
 
 @Transactional(propagation = NOT_SUPPORTED)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-@Import(ReplicationIT.ReplicationInterceptor.class)
+@Import(ReplicationIT.ReplicatedRepositoryBarrier.class)
 public class ReplicationIT extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
@@ -71,7 +71,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private ReplicationRetryConsumeProperty retryConsumeProperty;
 
     @Autowired
-    private ReplicationInterceptor replicationInterceptor;
+    private ReplicatedRepositoryBarrier replicatedRepositoryMethodInterceptor;
 
     @SpyBean
     private ReplicatedAddressRepository replicatedAddressRepository;
@@ -325,9 +325,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private <R> R execute(final Supplier<R> operation,
                           final int expectedAddressReplicationCount,
                           final int expectedPersonReplicationCount) {
-        replicationInterceptor.expect(expectedAddressReplicationCount, expectedPersonReplicationCount);
+        replicatedRepositoryMethodInterceptor.expect(expectedAddressReplicationCount, expectedPersonReplicationCount);
         final R result = operation.get();
-        replicationInterceptor.await();
+        replicatedRepositoryMethodInterceptor.await();
         return result;
     }
 
@@ -336,15 +336,15 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     private <R> R executeAddressOperation(final Function<AddressService, R> operation, final int expectedReplicationCount) {
-        replicationInterceptor.expect(expectedReplicationCount, 0);
+        replicatedRepositoryMethodInterceptor.expect(expectedReplicationCount, 0);
         final R result = operation.apply(addressService);
-        replicationInterceptor.await();
+        replicatedRepositoryMethodInterceptor.await();
         return result;
     }
 
     private void executeReplicatedOperation(final Runnable task) {
         task.run();
-        replicationInterceptor.await();
+        replicatedRepositoryMethodInterceptor.await();
     }
 
     private void verifyExistanceReplicatedAddress(final ReplicatedAddressEntity expected) {
@@ -714,26 +714,25 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @Aspect
     @Component
-    public static class ReplicationInterceptor {
-        //TODO: check if volatile is needed
+    public static class ReplicatedRepositoryBarrier {
         private volatile CountDownLatch addressLatch;
         private volatile CountDownLatch personLatch;
 
-        public final void expect(final int addressReplicationCount, final int personReplicationCount) {
-            addressLatch = new CountDownLatch(addressReplicationCount);
-            personLatch = new CountDownLatch(personReplicationCount);
+        public final void expect(final int addressCallCount, final int personCallCount) {
+            addressLatch = new CountDownLatch(addressCallCount);
+            personLatch = new CountDownLatch(personCallCount);
         }
 
         @Around("replicatedAddressRepository()")
-        public Object onAddressReplication(final ProceedingJoinPoint joinPoint)
+        public Object onAddressMethodCall(final ProceedingJoinPoint joinPoint)
                 throws Throwable {
-            return onReplication(joinPoint, addressLatch);
+            return onMethodCall(joinPoint, addressLatch);
         }
 
         @Around("replicatedPersonRepository()")
-        public Object onPersonReplication(final ProceedingJoinPoint joinPoint)
+        public Object onPersonMethodCall(final ProceedingJoinPoint joinPoint)
                 throws Throwable {
-            return onReplication(joinPoint, personLatch);
+            return onMethodCall(joinPoint, personLatch);
         }
 
         public final void await() {
@@ -745,7 +744,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
             }
         }
 
-        private static Object onReplication(final ProceedingJoinPoint joinPoint, final CountDownLatch latch)
+        private static Object onMethodCall(final ProceedingJoinPoint joinPoint, final CountDownLatch latch)
                 throws Throwable {
             try {
                 return joinPoint.proceed();
