@@ -287,38 +287,24 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @Test
     public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
-        final String givenName = "Petr";
-        final String givenSurname = "Ivanov";
-        final String givenPatronymic = "Petrovich";
-        final LocalDate givenBirthDate = LocalDate.of(2000, 3, 19);
-        final Address givenAddress = createAddress(264L);
-        final Person givenPerson = createPerson(
-                givenName,
-                givenSurname,
-                givenPatronymic,
-                givenBirthDate,
-                givenAddress
-        );
+        final Person givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
 
-        final Person actualSaved = executeExpectingNoReplication(() -> personService.save(givenPerson));
-
-        final Long expectedId = 1L;
+        final Person actualSaved = execute(() -> personService.save(givenPerson), 0, retryConsumeProperty.getMaxAttempts());
         final Person expectedSaved = new Person(
-                expectedId,
-                givenName,
-                givenSurname,
-                givenPatronymic,
-                givenBirthDate,
-                givenAddress
+                1L,
+                givenPerson.getName(),
+                givenPerson.getSurname(),
+                givenPerson.getPatronymic(),
+                givenPerson.getBirthDate(),
+                givenPerson.getAddress()
         );
         assertEquals(expectedSaved, actualSaved);
 
-        assertFalse(replicatedPersonRepository.existsById(expectedId));
-
-        verify(replicatedPersonRepository, times(retryConsumeProperty.getMaxAttempts()))
-                .save(any(ReplicatedPersonEntity.class));
+        verifyReplicationAbsence(actualSaved);
+        verifySaveReplicatedPersonQueryCount(retryConsumeProperty.getMaxAttempts());
     }
 
+    //TODO: stop
     @Test
     public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
         final String givenCountry = "Japan";
@@ -684,6 +670,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verify(replicatedAddressRepository, times(times)).deleteById(eq(id));
     }
 
+    private void verifySaveReplicatedPersonQueryCount(final int times) {
+        verify(replicatedPersonRepository, times(times)).save(any(ReplicatedPersonEntity.class));
+    }
+
     private void verifyDatabase(final List<AddressEntity> expectedAddresses,
                                 final List<PersonEntity> expectedPersons,
                                 final List<ReplicatedAddressEntity> expectedReplicatedAddresses,
@@ -716,6 +706,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     private void verifyAddressAbsence(final Long id) {
         assertFalse(addressService.isExist(id));
+    }
+
+    private void verifyReplicationAbsence(final Person person) {
+        assertFalse(replicatedPersonRepository.existsById(person.getId()));
     }
 
     @Aspect
