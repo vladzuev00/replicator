@@ -83,47 +83,35 @@ public class ReplicationIT extends AbstractSpringBootTest {
     public void addressShouldBeSaved() {
         final Address givenAddress = createAddress("Belarus", "Minsk");
 
-        final Address actualSaved = executeOperation(() -> addressService.save(givenAddress), 1, 0);
+        final Address actualSaved = execute(() -> addressService.save(givenAddress), 1, 0);
         final Address expectedSaved = new Address(1L, givenAddress.getCountry(), givenAddress.getCity());
         assertEquals(expectedSaved, actualSaved);
 
-        verifyAddressReplicated(actualSaved);
+        verifyReplicatedAddressExistance(actualSaved);
     }
 
     @Test
     public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
         final Address givenAddress = createAddress("Russia", "Moscow");
 
-        executeOperationExpectingNoReplication(() -> saveExpectingUniqueViolation(givenAddress));
+        executeExpectingNoReplication(() -> saveExpectingUniqueViolation(givenAddress));
 
-        verifyNoInteractions(replicatedAddressRepository);
+        verifyNoAddressQuery();
     }
 
     @Test
     public void addressesShouldBeSaved() {
-        final String firstGivenCountry = "China";
-        final String firstGivenCity = "Fuyang";
-        final Address firstGivenAddress = createAddress(firstGivenCountry, firstGivenCity);
+        final Address firstGivenAddress = createAddress("China", "Fuyang");
+        final Address secondGivenAddress = createAddress("China", "Hefei");
 
-        final String secondGivenCountry = "China";
-        final String secondGivenCity = "Hefei";
-        final Address secondGivenAddress = createAddress(secondGivenCountry, secondGivenCity);
-
-        final List<Address> actualSaved = executeOperation(() -> saveAll(firstGivenAddress, secondGivenAddress), 2, 0);
-
-        final Long firstExpectedId = 1L;
-        final Long secondExpectedId = 2L;
+        final List<Address> actualSaved = execute(() -> saveAll(firstGivenAddress, secondGivenAddress), 2, 0);
         final List<Address> expectedSaved = List.of(
-                new Address(firstExpectedId, firstGivenCountry, firstGivenCity),
-                new Address(secondExpectedId, secondGivenCountry, secondGivenCity)
+                new Address(1L, firstGivenAddress.getCountry(), firstGivenAddress.getCity()),
+                new Address(2L, secondGivenAddress.getCountry(), secondGivenAddress.getCity())
         );
         assertEquals(expectedSaved, actualSaved);
 
-        final List<ReplicatedAddressEntity> expectedReplicated = List.of(
-                new ReplicatedAddressEntity(firstExpectedId, firstGivenCountry, firstGivenCity),
-                new ReplicatedAddressEntity(secondExpectedId, secondGivenCountry, secondGivenCity)
-        );
-        verifyExistanceReplicatedAddresses(expectedReplicated);
+        verifyReplicatedAddressesExistance(actualSaved);
     }
 
     @Test
@@ -133,55 +121,40 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 createAddress("Russia", "Moscow")
         );
 
-        executeOperationExpectingNoReplication(() -> saveAllExpectingUniqueViolation(givenAddresses));
+        executeExpectingNoReplication(() -> saveAllExpectingUniqueViolation(givenAddresses));
 
-        verifyNoInteractions(replicatedAddressRepository);
+        verifyNoAddressQuery();
     }
 
     @Test
     public void addressShouldBeUpdated() {
-        final Long givenId = 255L;
-        final String givenNewCountry = "Belarus";
-        final String givenNewCity = "Minsk";
-        final Address givenAddress = new Address(givenId, givenNewCountry, givenNewCity);
+        final Address givenAddress = new Address(255L, "Belarus", "Minsk");
 
-        final Address actualUpdated = executeOperation(() -> addressService.update(givenAddress), 1, 0);
+        final Address actualUpdated = execute(() -> addressService.update(givenAddress), 1, 0);
         assertEquals(givenAddress, actualUpdated);
 
-        final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(
-                givenId,
-                givenNewCountry,
-                givenNewCity
-        );
-        verifyExistanceReplicatedAddress(expectedReplicated);
+        verifyReplicatedAddressExistance(actualUpdated);
     }
 
     @Test
     public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
         final Address givenAddress = new Address(256L, "Russia", "Moscow");
 
-        executeOperationExpectingNoReplication(() -> updateExpectingUniqueViolation(givenAddress));
+        executeExpectingNoReplication(() -> updateExpectingUniqueViolation(givenAddress));
 
-        verifyNoInteractions(replicatedAddressRepository);
+        verifyNoAddressQuery();
     }
 
     @Test
     public void addressShouldBeUpdatedPartially() {
         final Long givenId = 255L;
-        final String givenNewCountry = "Belarus";
-        final String givenNewCity = "Minsk";
-        final AddressName givenNewName = new AddressName(givenNewCountry, givenNewCity);
+        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
 
-        final Address actualUpdated = executeOperation(() -> addressService.updatePartial(givenId, givenNewName), 1, 0);
-        final Address expectedUpdated = new Address(givenId, givenNewCountry, givenNewCity);
+        final Address actualUpdated = execute(() -> addressService.updatePartial(givenId, givenNewName), 1, 0);
+        final Address expectedUpdated = new Address(givenId, givenNewName.getCountry(), givenNewName.getCity());
         assertEquals(expectedUpdated, actualUpdated);
 
-        final ReplicatedAddressEntity expectedReplicated = new ReplicatedAddressEntity(
-                givenId,
-                givenNewCountry,
-                givenNewCity
-        );
-        verifyExistanceReplicatedAddress(expectedReplicated);
+        verifyReplicatedAddressExistance(actualUpdated);
     }
 
     @Test
@@ -189,41 +162,41 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final Long givenId = 256L;
         final AddressName givenNewName = new AddressName("Russia", "Moscow");
 
-        executeOperationExpectingNoReplication(() -> updateAddressPartialExpectingUniqueViolation(givenId, givenNewName));
+        executeExpectingNoReplication(() -> updateAddressPartialExpectingUniqueViolation(givenId, givenNewName));
 
-        verifyNoInteractions(replicatedAddressRepository);
+        verifyNoAddressQuery();
     }
 
     @Test
     public void addressShouldBeDeleted() {
         final Long givenId = 262L;
 
-        executeOperation(() -> deleteAddress(givenId), 1, 0);
+        execute(() -> deleteAddress(givenId), 1, 0);
 
-        assertTrue(isAddressDeleted(givenId));
+        verifyAddressDeleted(givenId);
     }
 
     @Test
     public void addressShouldNotBeDeletedByNotExistId() {
         final Long givenId = MAX_VALUE;
 
-        executeOperation(() -> deleteAddress(givenId), 1, 0);
+        execute(() -> deleteAddress(givenId), 1, 0);
 
-        verify(replicatedAddressRepository, times(1)).deleteById(eq(givenId));
+        verifyDeleteAddressQuery(givenId);
     }
 
     @Test
     public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
         final Long givenId = 255L;
 
-        executeOperationExpectingNoReplication(() -> deleteAddressExpectingForeignKeyViolation(givenId));
+        executeExpectingNoReplication(() -> deleteAddressExpectingForeignKeyViolation(givenId));
 
-        verifyNoInteractions(replicatedAddressRepository);
+        verifyNoAddressQuery();
     }
 
     @Test
-    public void operationShouldBeExecuted() {
-        final Supplier<Optional<Void>> givenOperation = () -> {
+    public void operationsShouldBeExecuted() {
+        final Supplier<Optional<Void>> givenCompositeOperation = () -> {
             saveAll(
                     createAddress("China", "Hong Kong"),
                     createAddress("China", "Anqing"),
@@ -248,67 +221,58 @@ public class ReplicationIT extends AbstractSpringBootTest {
             return empty();
         };
 
-        executeOperation(givenOperation, 7, 7);
+        execute(givenCompositeOperation, 7, 7);
 
-        final List<AddressEntity> actualAddresses = findAddressesOrderedById();
-        final List<AddressEntity> expectedAddresses = List.of(
-                new AddressEntity(1L, "China", "Hong Kong"),
-                new AddressEntity(2L, "China", "Anqing"),
-                new AddressEntity(3L, "China", "Bozhou"),
-                new AddressEntity(4L, "Belarus", "Gomel"),
-                new AddressEntity(255L, "Russia", "Moscow"),
-                new AddressEntity(256L, "America", "Chicago"),
-                new AddressEntity(258L, "Austria", "Styria"),
-                new AddressEntity(259L, "Austria", "Tyrol"),
-                new AddressEntity(260L, "Estonia", "Tallinn"),
-                new AddressEntity(261L, "Estonia", "Tartu"),
-                new AddressEntity(262L, "Estonia", "Narva"),
-                new AddressEntity(263L, "Armenia", "Yerevan"),
-                new AddressEntity(264L, "America", "New York")
+        verifyDatabase(
+                List.of(
+                        new AddressEntity(1L, "China", "Hong Kong"),
+                        new AddressEntity(2L, "China", "Anqing"),
+                        new AddressEntity(3L, "China", "Bozhou"),
+                        new AddressEntity(4L, "Belarus", "Gomel"),
+                        new AddressEntity(255L, "Russia", "Moscow"),
+                        new AddressEntity(256L, "America", "Chicago"),
+                        new AddressEntity(258L, "Austria", "Styria"),
+                        new AddressEntity(259L, "Austria", "Tyrol"),
+                        new AddressEntity(260L, "Estonia", "Tallinn"),
+                        new AddressEntity(261L, "Estonia", "Tartu"),
+                        new AddressEntity(262L, "Estonia", "Narva"),
+                        new AddressEntity(263L, "Armenia", "Yerevan"),
+                        new AddressEntity(264L, "America", "New York")
+                ),
+                List.of(
+                        createPersonEntity(1L, "Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 1L),
+                        createPersonEntity(2L, "Ivan", "Zuev", "Ivanovich", LocalDate.of(1996, 6, 1), 2L),
+                        createPersonEntity(3L, "Yury", "Sitnikov", "Stepanovich", LocalDate.of(1997, 8, 3), 3L),
+                        createPersonEntity(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 255L),
+                        createPersonEntity(256L, "Vasilii", "Dolzhikov", "Borisovich", LocalDate.of(1980, 3, 15), 255L),
+                        createPersonEntity(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L),
+                        createPersonEntity(258L, "Pashenka", "Kornev", "Filippovich", LocalDate.of(1995, 4, 23), 256L)
+                ),
+                List.of(
+                        new ReplicatedAddressEntity(1L, "China", "Hong Kong"),
+                        new ReplicatedAddressEntity(2L, "China", "Anqing"),
+                        new ReplicatedAddressEntity(3L, "China", "Bozhou"),
+                        new ReplicatedAddressEntity(4L, "Belarus", "Gomel"),
+                        new ReplicatedAddressEntity(255L, "Russia", "Moscow"),
+                        new ReplicatedAddressEntity(256L, "America", "Chicago"),
+                        new ReplicatedAddressEntity(258L, "Austria", "Styria"),
+                        new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
+                        new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
+                        new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
+                        new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
+                        new ReplicatedAddressEntity(263L, "Armenia", "Yerevan"),
+                        new ReplicatedAddressEntity(265L, "Japan", "Tokyo")
+                ),
+                List.of(
+                        createReplicatedPerson(1L, "Avdifaks", "Kuznetsov", LocalDate.of(1995, 7, 2), 1L),
+                        createReplicatedPerson(2L, "Ivan", "Zuev", LocalDate.of(1996, 6, 1), 2L),
+                        createReplicatedPerson(3L, "Yury", "Sitnikov", LocalDate.of(1997, 8, 3), 3L),
+                        createReplicatedPerson(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
+                        createReplicatedPerson(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
+                        createReplicatedPerson(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
+                        createReplicatedPerson(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L)
+                )
         );
-        checkEqualsAddresses(expectedAddresses, actualAddresses);
-
-        final List<PersonEntity> actualPersons = findPersonsOrderedById();
-        final List<PersonEntity> expectedPersons = List.of(
-                createPersonEntity(1L, "Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 1L),
-                createPersonEntity(2L, "Ivan", "Zuev", "Ivanovich", LocalDate.of(1996, 6, 1), 2L),
-                createPersonEntity(3L, "Yury", "Sitnikov", "Stepanovich", LocalDate.of(1997, 8, 3), 3L),
-                createPersonEntity(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 255L),
-                createPersonEntity(256L, "Vasilii", "Dolzhikov", "Borisovich", LocalDate.of(1980, 3, 15), 255L),
-                createPersonEntity(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L),
-                createPersonEntity(258L, "Pashenka", "Kornev", "Filippovich", LocalDate.of(1995, 4, 23), 256L)
-        );
-        checkEqualsPersons(expectedPersons, actualPersons);
-
-        final List<ReplicatedAddressEntity> actualReplicatedAddresses = findReplicatedAddressesOrderedById();
-        final List<ReplicatedAddressEntity> expectedReplicatedAddresses = List.of(
-                new ReplicatedAddressEntity(1L, "China", "Hong Kong"),
-                new ReplicatedAddressEntity(2L, "China", "Anqing"),
-                new ReplicatedAddressEntity(3L, "China", "Bozhou"),
-                new ReplicatedAddressEntity(4L, "Belarus", "Gomel"),
-                new ReplicatedAddressEntity(255L, "Russia", "Moscow"),
-                new ReplicatedAddressEntity(256L, "America", "Chicago"),
-                new ReplicatedAddressEntity(258L, "Austria", "Styria"),
-                new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
-                new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
-                new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
-                new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
-                new ReplicatedAddressEntity(263L, "Armenia", "Yerevan"),
-                new ReplicatedAddressEntity(265L, "Japan", "Tokyo")
-        );
-        checkEqualsReplicatedAddresses(expectedReplicatedAddresses, actualReplicatedAddresses);
-
-        final List<ReplicatedPersonEntity> actual = findReplicatedPersonsOrderedById();
-        final List<ReplicatedPersonEntity> expected = List.of(
-                createReplicatedPersonEntity(1L, "Avdifaks", "Kuznetsov", LocalDate.of(1995, 7, 2), 1L),
-                createReplicatedPersonEntity(2L, "Ivan", "Zuev", LocalDate.of(1996, 6, 1), 2L),
-                createReplicatedPersonEntity(3L, "Yury", "Sitnikov", LocalDate.of(1997, 8, 3), 3L),
-                createReplicatedPersonEntity(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
-                createReplicatedPersonEntity(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
-                createReplicatedPersonEntity(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
-                createReplicatedPersonEntity(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L)
-        );
-        checkEqualsReplicatedPersons(expected, actual);
     }
 
     //TODO: add test with removing replicated address of not replicated removed person
@@ -328,7 +292,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 givenAddress
         );
 
-        final Person actualSaved = executeOperationExpectingNoReplication(() -> personService.save(givenPerson));
+        final Person actualSaved = executeExpectingNoReplication(() -> personService.save(givenPerson));
 
         final Long expectedId = 1L;
         final Person expectedSaved = new Person(
@@ -353,7 +317,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         final String givenCity = "Tokyo";
         final Address givenAddress = createAddress(givenCountry, givenCity);
 
-        final Address actualSaved = executeOperationExpectingNoReplication(() -> addressService.save(givenAddress));
+        final Address actualSaved = executeExpectingNoReplication(() -> addressService.save(givenAddress));
 
         final Long expectedId = 1L;
         final Address expectedSaved = new Address(expectedId, givenCountry, givenCity);
@@ -364,17 +328,17 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
     }
 
-    private <R> R executeOperation(final Supplier<R> operation,
-                                   final int expectedAddressReplicationCount,
-                                   final int expectedPersonReplicationCount) {
+    private <R> R execute(final Supplier<R> operation,
+                          final int expectedAddressReplicationCount,
+                          final int expectedPersonReplicationCount) {
         replicationInterceptor.expect(expectedAddressReplicationCount, expectedPersonReplicationCount);
         final R result = operation.get();
         replicationInterceptor.await();
         return result;
     }
 
-    private <R> R executeOperationExpectingNoReplication(final Supplier<R> operation) {
-        return executeOperation(operation, 0, 0);
+    private <R> R executeExpectingNoReplication(final Supplier<R> operation) {
+        return execute(operation, 0, 0);
     }
 
     private <R> R executeAddressOperation(final Function<AddressService, R> operation, final int expectedReplicationCount) {
@@ -620,11 +584,11 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return new Person(id, name, surname, patronymic, birthDate, createAddress(addressId));
     }
 
-    private static ReplicatedPersonEntity createReplicatedPersonEntity(final Long id,
-                                                                       final String name,
-                                                                       final String surname,
-                                                                       final LocalDate birthDate,
-                                                                       final Long addressId) {
+    private static ReplicatedPersonEntity createReplicatedPerson(final Long id,
+                                                                 final String name,
+                                                                 final String surname,
+                                                                 final LocalDate birthDate,
+                                                                 final Long addressId) {
         return new ReplicatedPersonEntity(id, name, surname, birthDate, createReplicatedAddressEntity(addressId));
     }
 
@@ -671,13 +635,66 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return empty();
     }
 
-    private void verifyAddressReplicated(final Address address) {
-        final ReplicatedAddressEntity expected = createReplicatedAddress(address);
+    private void verifyReplicatedAddressExistance(final Address address) {
+        final ReplicatedAddressEntity expected = mapToReplicatedAddress(address);
         verifyExistanceReplicatedAddress(expected);
     }
 
-    private ReplicatedAddressEntity createReplicatedAddress(final Address address) {
+    private void verifyReplicatedAddressesExistance(final List<Address> addresses) {
+        final List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
+        verifyExistanceReplicatedAddresses(expected);
+    }
+
+    private void verifyNoAddressQuery() {
+        verifyNoInteractions(replicatedAddressRepository);
+    }
+
+    private static ReplicatedAddressEntity mapToReplicatedAddress(final Address address) {
         return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
+    }
+
+    private static List<ReplicatedAddressEntity> mapToReplicatedAddresses(final List<Address> addresses) {
+        return addresses.stream()
+                .map(ReplicationIT::mapToReplicatedAddress)
+                .toList();
+    }
+
+    private void verifyAddressDeleted(final Long id) {
+        assertTrue(isAddressDeleted(id));
+    }
+
+    private void verifyDeleteAddressQuery(final Long id) {
+        verify(replicatedAddressRepository, times(1)).deleteById(eq(id));
+    }
+
+    private void verifyDatabase(final List<AddressEntity> expectedAddresses,
+                                final List<PersonEntity> expectedPersons,
+                                final List<ReplicatedAddressEntity> expectedReplicatedAddresses,
+                                final List<ReplicatedPersonEntity> expectedReplicatedPersons) {
+        verifyAddresses(expectedAddresses);
+        verifyPersons(expectedPersons);
+        verifyReplicatedAddresses(expectedReplicatedAddresses);
+        verifyReplicatedPersons(expectedReplicatedPersons);
+    }
+
+    private void verifyAddresses(final List<AddressEntity> expected) {
+        final List<AddressEntity> actual = findAddressesOrderedById();
+        checkEqualsAddresses(expected, actual);
+    }
+
+    private void verifyPersons(final List<PersonEntity> expected) {
+        final List<PersonEntity> actual = findPersonsOrderedById();
+        checkEqualsPersons(expected, actual);
+    }
+
+    private void verifyReplicatedAddresses(final List<ReplicatedAddressEntity> expected) {
+        final List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById();
+        checkEqualsReplicatedAddresses(expected, actual);
+    }
+
+    private void verifyReplicatedPersons(final List<ReplicatedPersonEntity> expected) {
+        final List<ReplicatedPersonEntity> actual = findReplicatedPersonsOrderedById();
+        checkEqualsReplicatedPersons(expected, actual);
     }
 
     @Aspect
