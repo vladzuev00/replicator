@@ -189,7 +189,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
 
-        verifyAddressDeletedWithReplication(givenId);
+        assertTrue(isAddressDeletedWithReplication(givenId));
     }
 
     @Test
@@ -198,7 +198,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
 
-        verifyReplicatedAddressDeleteMethodCall(givenId);
+        verifyAttemptDeleteReplicatedAddress(givenId);
     }
 
     @Test
@@ -307,8 +307,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
         executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, false);
 
         verifyAddressDeleted(givenId);
-        verifyReplicatedAddressExist(givenId);
-        verifyReplicatedAddressDeleteMethodCall(givenId, retryConsumeProperty.getMaxAttempts());
+        assertTrue(replicatedAddressRepository.existsById(givenId));
+        verifyMaxAttemptDeleteReplicatedAddress(givenId);
     }
 
     @Test
@@ -465,22 +465,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return entityManager.createQuery(hqlQuery, entityType).getResultList();
     }
 
-    //TODO: stop refactor
-    private void verifyAddressDeletedWithReplication(final Long id) {
-        assertTrue(isAddressDeletedWithReplication(id));
-    }
-
     private boolean isAddressDeletedWithReplication(final Long id) {
         return !addressService.isExist(id) && !replicatedAddressRepository.existsById(id);
-    }
-
-    private Optional<Void> deleteAddress(final Long id) {
-        addressService.delete(id);
-        return empty();
-    }
-
-    private void verifyReplicatedAddressExist(final Long id) {
-        assertTrue(replicatedAddressRepository.existsById(id));
     }
 
     private void verifyNoReplicatedRepositoryMethodCall() {
@@ -488,18 +474,15 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoInteractions(replicatedPersonRepository);
     }
 
-    private void verifyReplicatedAddressDeleteMethodCall(final Long id) {
-        verifyDeleteReplicatedAddressMethodCalls(id, 1);
+    private void verifyAttemptDeleteReplicatedAddress(final Long id) {
+        verify(replicatedAddressRepository, times(1)).deleteById(eq(id));
     }
 
-    private void verifyDeleteReplicatedAddressMethodCalls(final Long id, final int times) {
-        verify(replicatedAddressRepository, times(times)).deleteById(eq(id));
+    private void verifyMaxAttemptDeleteReplicatedAddress(final Long id) {
+        verify(replicatedAddressRepository, times(retryConsumeProperty.getMaxAttempts())).deleteById(eq(id));
     }
 
-    private void verifyReplicatedAddressDeleteMethodCall(final Long id, final int times) {
-        verify(replicatedAddressRepository, times(times)).deleteById(eq(id));
-    }
-
+    //TODO: stop refactor
     private void verifyReplicatedPersonSaveMethodCall(final int times) {
         verify(replicatedPersonRepository, times(times)).save(any(ReplicatedPersonEntity.class));
     }
@@ -518,6 +501,11 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     private void verifyReplicationAbsence(final Address address) {
         assertFalse(replicatedAddressRepository.existsById(address.getId()));
+    }
+
+    private Optional<Void> deleteAddress(final Long id) {
+        addressService.delete(id);
+        return empty();
     }
 
     private static AddressEntity createAddressEntity(final Long id) {
