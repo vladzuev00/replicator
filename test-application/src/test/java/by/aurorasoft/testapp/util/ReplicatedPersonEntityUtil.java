@@ -3,6 +3,8 @@ package by.aurorasoft.testapp.util;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 @UtilityClass
@@ -14,5 +16,10 @@ public final class ReplicatedPersonEntityUtil {
         assertEquals(expected.getSurname(), actual.getSurname());
         assertEquals(expected.getBirthDate(), actual.getBirthDate());
         assertEquals(expected.getAddress().getId(), actual.getAddress().getId());
+    }
+
+    public static void checkEquals(final List<ReplicatedPersonEntity> expected,
+                                   final List<ReplicatedPersonEntity> actual) {
+        EntityUtil.checkEquals(expected, actual, ReplicatedPersonEntityUtil::checkEquals);
     }
 }
