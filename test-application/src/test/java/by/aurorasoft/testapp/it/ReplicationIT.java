@@ -15,6 +15,7 @@ import by.aurorasoft.testapp.util.AddressEntityUtil;
 import by.aurorasoft.testapp.util.PersonEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil;
+import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -146,7 +148,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     public void addressShouldBeUpdated() {
         final Address givenAddress = new Address(255L, "Belarus", "Minsk");
 
-        final Address actual = executeWaitingReplication(() -> addressService.update(givenAddress), 1, 0, true);
+        final Address actual = executeWaitingReplication(() -> addressService.update(givenAddress), 1, 0, false);
         assertEquals(givenAddress, actual);
 
         verifyAddressReplication(actual);
@@ -306,7 +308,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
         executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, false);
 
-        verifyAddressDeleted(givenId);
+        assertFalse(addressService.isExist(givenId));
         assertTrue(replicatedAddressRepository.existsById(givenId));
         verifyMaxAttemptDeleteReplicatedAddress(givenId);
     }
@@ -327,7 +329,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expected, actual);
 
         verifyReplicationAbsence(actual);
-        verifyReplicatedPersonSaveMethodCall(retryConsumeProperty.getMaxAttempts());
+        verifySaveReplicatedPersonMethodCalls(retryConsumeProperty.getMaxAttempts());
     }
 
     @Test
@@ -339,7 +341,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expected, actual);
 
         verifyReplicationAbsence(actual);
-        verifyReplicatedAddressSaveMethodCall(1);
+        verifySaveReplicatedAddressMethodCall(1);
     }
 
     //TODO: add test with transaction rollback
@@ -482,25 +484,26 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verify(replicatedAddressRepository, times(retryConsumeProperty.getMaxAttempts())).deleteById(eq(id));
     }
 
-    //TODO: stop refactor
-    private void verifyReplicatedPersonSaveMethodCall(final int times) {
+    private void verifySaveReplicatedPersonMethodCalls(final int times) {
         verify(replicatedPersonRepository, times(times)).save(any(ReplicatedPersonEntity.class));
     }
 
-    private void verifyReplicatedAddressSaveMethodCall(final int times) {
+    @SuppressWarnings("SameParameterValue")
+    private void verifySaveReplicatedAddressMethodCall(final int times) {
         verify(replicatedAddressRepository, times(times)).save(any(ReplicatedAddressEntity.class));
     }
 
-    private void verifyAddressDeleted(final Long id) {
-        assertFalse(addressService.isExist(id));
-    }
-
     private void verifyReplicationAbsence(final Person person) {
-        assertFalse(replicatedPersonRepository.existsById(person.getId()));
+        verifyReplicationAbsence(person, replicatedPersonRepository);
     }
 
     private void verifyReplicationAbsence(final Address address) {
-        assertFalse(replicatedAddressRepository.existsById(address.getId()));
+        verifyReplicationAbsence(address, replicatedAddressRepository);
+    }
+
+    private <ID> void verifyReplicationAbsence(final AbstractDto<ID> dto,
+                                               final JpaRepository<?, ID> replicationRepository) {
+        assertFalse(replicationRepository.existsById(dto.getId()));
     }
 
     private Optional<Void> deleteAddress(final Long id) {
