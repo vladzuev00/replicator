@@ -10,12 +10,14 @@ import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.crud.service.AddressService;
 import by.aurorasoft.testapp.crud.service.PersonService;
 import by.aurorasoft.testapp.model.AddressName;
+import by.aurorasoft.testapp.model.PersonAddress;
 import by.aurorasoft.testapp.model.PersonName;
 import by.aurorasoft.testapp.util.AddressEntityUtil;
 import by.aurorasoft.testapp.util.PersonEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.util.ReplicatedPersonEntityUtil;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,7 +26,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
@@ -33,9 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static by.aurorasoft.testapp.util.EntityUtil.checkEquals;
@@ -164,11 +167,20 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
+    public void personShouldNotBeUpdatedBecauseOfNoSuchAddress() {
+        final Person givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
+
+        executeExpectingNoSuchEntityException(() -> personService.update(givenPerson));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+    @Test
     public void addressShouldBeUpdatedPartially() {
         final Long givenId = 255L;
         final AddressName givenNewName = new AddressName("Belarus", "Minsk");
 
-        final Address actual = executeWaitingReplication(() -> addressService.updatePartial(givenId, givenNewName), 1, 0, true);
+        final Address actual = executeWaitingReplication(() -> addressService.updatePartial(givenId, givenNewName), 1, 0, false);
         final Address expected = new Address(givenId, givenNewName.getCountry(), givenNewName.getCity());
         assertEquals(expected, actual);
 
@@ -186,10 +198,20 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     @Test
+    public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
+        final Long givenId = 255L;
+        final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
+
+        executeExpectingNoSuchEntityException(() -> personService.updatePartial(givenId, givenNewAddress));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+    @Test
     public void addressShouldBeDeleted() {
         final Long givenId = 262L;
 
-        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
+        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, false);
 
         assertTrue(isAddressDeletedWithReplication(givenId));
     }
@@ -393,19 +415,26 @@ public class ReplicationIT extends AbstractSpringBootTest {
     }
 
     private static void executeExpectingConstraintViolation(final Runnable task, final String expectedSqlState) {
+        executeExpectingMatchingException(task, exception -> Objects.equals(expectedSqlState, getSqlState(exception)));
+    }
+
+    private static void executeExpectingNoSuchEntityException(final Runnable task) {
+        executeExpectingMatchingException(task, exception -> getRootCause(exception).getClass() == EntityNotFoundException.class);
+    }
+
+    private static void executeExpectingMatchingException(final Runnable task, final Predicate<Throwable> predicate) {
         boolean exceptionArisen;
         try {
             task.run();
             exceptionArisen = false;
-        } catch (final DataIntegrityViolationException exception) {
+        } catch (final Throwable exception) {
             exceptionArisen = true;
-            final String actualSqlState = getSqlState(exception);
-            assertEquals(expectedSqlState, actualSqlState);
+            assertTrue(predicate.test(exception));
         }
         assertTrue(exceptionArisen);
     }
 
-    private static String getSqlState(final DataIntegrityViolationException exception) {
+    private static String getSqlState(final Throwable exception) {
         return ((SQLException) getRootCause(exception)).getSQLState();
     }
 
