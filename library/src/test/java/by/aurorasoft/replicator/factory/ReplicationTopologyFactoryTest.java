@@ -32,8 +32,8 @@ import static org.mockito.Mockito.*;
 public final class ReplicationTopologyFactoryTest {
     private static final String GIVEN_TOPIC = "test-topic";
 
-    private static final String TOPOLOGY_TEST_DRIVER_APPLICATION_ID = "test-application";
-    private static final String TOPOLOGY_TEST_DRIVER_BOOTSTRAP_ADDRESS = "127.0.0.1:9092";
+    private static final String DRIVER_APPLICATION_ID = "test-application";
+    private static final String DRIVER_BOOTSTRAP_ADDRESS = "127.0.0.1:9092";
 
     @Mock
     private RetryTemplate mockedRetryTemplate;
@@ -41,7 +41,7 @@ public final class ReplicationTopologyFactoryTest {
     private ReplicationTopologyFactory topologyFactory;
 
     @Captor
-    private ArgumentCaptor<RetryCallback<ConsumedReplication<Long, TestEntity>, RuntimeException>> callbackArgumentCaptor;
+    private ArgumentCaptor<RetryCallback<?, RuntimeException>> callbackArgumentCaptor;
 
     @Before
     public void initializeFactory() {
@@ -53,24 +53,21 @@ public final class ReplicationTopologyFactoryTest {
     public void topologyShouldBeCreatedAndReplicationShouldBeExecuted() {
         final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
         final ReplicationConsumePipeline<Long, TestEntity> givenPipeline = createPipeline(givenRepository);
+
         final TestEntity givenEntity = new TestEntity(255L);
         final ConsumedReplication<Long, TestEntity> givenReplication = new SaveConsumedReplication<>(givenEntity);
 
-        try (final TopologyTestDriver topologyTestDriver = createTopologyTestDriver(givenPipeline)) {
-            final var topic = createTopic(topologyTestDriver);
+        try (final TopologyTestDriver driver = createDriver(givenPipeline)) {
+            final TestInputTopic<Long, ConsumedReplication<Long, TestEntity>> topic = createTopic(driver);
             topic.pipeInput(givenReplication);
 
-            verify(mockedRetryTemplate, times(1)).execute(callbackArgumentCaptor.capture());
-
-            final var capturedCallback = callbackArgumentCaptor.getValue();
-            capturedCallback.doWithRetry(null);
-            verify(givenRepository, times(1)).save(eq(givenEntity));
+            verifySaveEntity(givenRepository, givenEntity);
         }
     }
 
     private ReplicationConsumePipeline<Long, TestEntity> createPipeline(final JpaRepository<TestEntity, Long> repository) {
         return new ReplicationConsumePipeline<>(
-                TOPOLOGY_TEST_DRIVER_APPLICATION_ID,
+                DRIVER_APPLICATION_ID,
                 GIVEN_TOPIC,
                 Long(),
                 new TypeReference<>() {
@@ -79,20 +76,27 @@ public final class ReplicationTopologyFactoryTest {
         );
     }
 
-    private TopologyTestDriver createTopologyTestDriver(final ReplicationConsumePipeline<Long, TestEntity> pipeline) {
+    private TopologyTestDriver createDriver(final ReplicationConsumePipeline<Long, TestEntity> pipeline) {
         final Topology topology = topologyFactory.create(pipeline);
-        final Properties properties = createTopologyTestDriverProperties();
+        final Properties properties = createDriverProperties();
         return new TopologyTestDriver(topology, properties);
     }
 
-    private static Properties createTopologyTestDriverProperties() {
+    private static Properties createDriverProperties() {
         final Properties properties = new Properties();
-        properties.put(APPLICATION_ID_CONFIG, TOPOLOGY_TEST_DRIVER_APPLICATION_ID);
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, TOPOLOGY_TEST_DRIVER_BOOTSTRAP_ADDRESS);
+        properties.put(APPLICATION_ID_CONFIG, DRIVER_APPLICATION_ID);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, DRIVER_BOOTSTRAP_ADDRESS);
         return properties;
     }
 
     private static TestInputTopic<Long, ConsumedReplication<Long, TestEntity>> createTopic(final TopologyTestDriver driver) {
         return driver.createInputTopic(GIVEN_TOPIC, new LongSerializer(), new JsonSerializer<>());
+    }
+
+    private void verifySaveEntity(final JpaRepository<TestEntity, Long> repository, final TestEntity entity) {
+        verify(mockedRetryTemplate, times(1)).execute(callbackArgumentCaptor.capture());
+        final RetryCallback<?, RuntimeException> capturedCallback = callbackArgumentCaptor.getValue();
+        capturedCallback.doWithRetry(null);
+        verify(repository, times(1)).save(eq(entity));
     }
 }
