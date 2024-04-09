@@ -2,13 +2,10 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.replicator.consuming.serde.ReplicationSerde;
 import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.consumed.SaveConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongSerializer;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.Serdes.LongSerde;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyTestDriver;
@@ -27,8 +24,9 @@ import org.springframework.retry.support.RetryTemplate;
 import java.util.Properties;
 
 import static org.apache.kafka.common.serialization.Serdes.Long;
-import static org.apache.kafka.streams.StreamsConfig.*;
-import static org.mockito.Mockito.mock;
+import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public final class ReplicationTopologyFactoryTest {
@@ -43,7 +41,7 @@ public final class ReplicationTopologyFactoryTest {
     private ReplicationTopologyFactory topologyFactory;
 
     @Captor
-    private ArgumentCaptor<RetryCallback<?, ?>> retryCallbackArgumentCaptor;
+    private ArgumentCaptor<RetryCallback<ConsumedReplication<Long, TestEntity>, RuntimeException>> callbackArgumentCaptor;
 
     @Before
     public void initializeFactory() {
@@ -53,16 +51,21 @@ public final class ReplicationTopologyFactoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void topologyShouldBeCreatedAndReplicationShouldBeExecuted() {
-//        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
-//        final ReplicationConsumePipeline<Long, TestEntity> givenPipeline = createPipeline(givenRepository);
-//        final TestEntity givenEntity = new TestEntity(255L);
-//        final ConsumedReplication<Long, TestEntity> givenReplication = new SaveConsumedReplication<>(givenEntity);
-//
-//        final Topology topology = topologyFactory.create(givenPipeline);
-//        final TopologyTestDriver topologyTestDriver = createTopologyTestDriver(topology);
-//
-//        TestInputTopic<Long, ConsumedReplication<Long, TestEntity>> inputTopic = topologyTestDriver.createInputTopic(GIVEN_TOPIC, new LongSerializer(), new JsonSerializer<>());
-        throw new RuntimeException();
+        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+        final ReplicationConsumePipeline<Long, TestEntity> givenPipeline = createPipeline(givenRepository);
+        final TestEntity givenEntity = new TestEntity(255L);
+        final ConsumedReplication<Long, TestEntity> givenReplication = new SaveConsumedReplication<>(givenEntity);
+
+        try (final TopologyTestDriver topologyTestDriver = createTopologyTestDriver(givenPipeline)) {
+            final var topic = createTopic(topologyTestDriver);
+            topic.pipeInput(givenReplication);
+
+            verify(mockedRetryTemplate, times(1)).execute(callbackArgumentCaptor.capture());
+
+            final var capturedCallback = callbackArgumentCaptor.getValue();
+            capturedCallback.doWithRetry(null);
+            verify(givenRepository, times(1)).save(eq(givenEntity));
+        }
     }
 
     private ReplicationConsumePipeline<Long, TestEntity> createPipeline(final JpaRepository<TestEntity, Long> repository) {
@@ -76,7 +79,8 @@ public final class ReplicationTopologyFactoryTest {
         );
     }
 
-    private static TopologyTestDriver createTopologyTestDriver(final Topology topology) {
+    private TopologyTestDriver createTopologyTestDriver(final ReplicationConsumePipeline<Long, TestEntity> pipeline) {
+        final Topology topology = topologyFactory.create(pipeline);
         final Properties properties = createTopologyTestDriverProperties();
         return new TopologyTestDriver(topology, properties);
     }
@@ -86,5 +90,9 @@ public final class ReplicationTopologyFactoryTest {
         properties.put(APPLICATION_ID_CONFIG, TOPOLOGY_TEST_DRIVER_APPLICATION_ID);
         properties.put(BOOTSTRAP_SERVERS_CONFIG, TOPOLOGY_TEST_DRIVER_BOOTSTRAP_ADDRESS);
         return properties;
+    }
+
+    private static TestInputTopic<Long, ConsumedReplication<Long, TestEntity>> createTopic(final TopologyTestDriver driver) {
+        return driver.createInputTopic(GIVEN_TOPIC, new LongSerializer(), new JsonSerializer<>());
     }
 }
