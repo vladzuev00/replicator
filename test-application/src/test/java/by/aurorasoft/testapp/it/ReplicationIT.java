@@ -23,6 +23,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
@@ -30,6 +31,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -77,6 +79,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @SpyBean
     private ReplicatedPersonRepository replicatedPersonRepository;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     @Test
     public void addressShouldBeSaved() {
@@ -234,7 +239,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    //TODO: sometimes fails
     @Test
     public void operationsShouldBeExecuted() {
         executeWaitingReplication(
@@ -268,7 +272,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 },
                 7,
                 7,
-                true
+                false
         );
 
         verifyDatabase(
@@ -324,22 +328,22 @@ public class ReplicationIT extends AbstractSpringBootTest {
         );
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
         final Long givenId = 258L;
 
-        executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, false);
+        executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, true);
 
         assertFalse(addressService.isExist(givenId));
         assertTrue(replicatedAddressRepository.existsById(givenId));
         verifyMaxAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
         final Person givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
 
-        final Person actual = executeWaitingReplication(() -> personService.save(givenPerson), 0, retryConsumeProperty.getMaxAttempts(), false);
+        final Person actual = executeWaitingReplication(() -> personService.save(givenPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
         final Person expected = new Person(
                 1L,
                 givenPerson.getName(),
@@ -351,22 +355,49 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertEquals(expected, actual);
 
         verifyReplicationAbsence(actual);
-        verifySaveReplicatedPersonMethodCalls(retryConsumeProperty.getMaxAttempts());
+        verifyMaxAttemptSaveReplicatedPerson();
     }
 
-    @Test
+    @RepeatedTest(10)
+    public void personShouldBeUpdatedButReplicatedPersonShouldNotBecauseOfForeignKeyViolation() {
+        final Address givenNewAddress = new Address(264L, "America", "New York");
+        final Person givenNewPerson = new Person(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), givenNewAddress);
+
+        final Person actual = executeWaitingReplication(() -> personService.update(givenNewPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
+        final Person expected = new Person(
+                givenNewPerson.getId(),
+                givenNewPerson.getName(),
+                givenNewPerson.getSurname(),
+                givenNewPerson.getPatronymic(),
+                givenNewPerson.getBirthDate(),
+                givenNewAddress
+        );
+        assertEquals(expected, actual);
+
+        verifyReplicationAbsence(actual);
+        verifyMaxAttemptSaveReplicatedPerson();
+    }
+
+    @RepeatedTest(10)
     public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
         final Address givenAddress = createAddress("Japan", "Tokyo");
 
-        final Address actual = executeWaitingReplication(() -> addressService.save(givenAddress), 1, 0, false);
+        final Address actual = executeWaitingReplication(() -> addressService.save(givenAddress), 1, 0, true);
         final Address expected = new Address(1L, givenAddress.getCountry(), givenAddress.getCity());
         assertEquals(expected, actual);
 
         verifyReplicationAbsence(actual);
-        verifySaveReplicatedAddressMethodCall(1);
+        verifyAttemptSaveReplicatedAddress();
     }
 
-    //TODO: add test with transaction rollback
+    @RepeatedTest(10)
+    public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
+        final Long givenId = 262L;
+
+        deleteAddressInRollBackedTransaction(givenId);
+
+        assertTrue(isAddressExistWithReplication(givenId));
+    }
 
     private <R> R executeWaitingReplication(final Supplier<R> operation,
                                             final int addressCalls,
@@ -500,6 +531,10 @@ public class ReplicationIT extends AbstractSpringBootTest {
         return !addressService.isExist(id) && !replicatedAddressRepository.existsById(id);
     }
 
+    private boolean isAddressExistWithReplication(final Long id) {
+        return addressService.isExist(id) && replicatedAddressRepository.existsById(id);
+    }
+
     private void verifyNoReplicatedRepositoryMethodCall() {
         verifyNoInteractions(replicatedAddressRepository);
         verifyNoInteractions(replicatedPersonRepository);
@@ -513,21 +548,21 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verify(replicatedAddressRepository, times(retryConsumeProperty.getMaxAttempts())).deleteById(eq(id));
     }
 
-    private void verifySaveReplicatedPersonMethodCalls(final int times) {
-        verify(replicatedPersonRepository, times(times)).save(any(ReplicatedPersonEntity.class));
+    private void verifyMaxAttemptSaveReplicatedPerson() {
+        verify(replicatedPersonRepository, times(retryConsumeProperty.getMaxAttempts()))
+                .save(any(ReplicatedPersonEntity.class));
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private void verifySaveReplicatedAddressMethodCall(final int times) {
-        verify(replicatedAddressRepository, times(times)).save(any(ReplicatedAddressEntity.class));
-    }
-
-    private void verifyReplicationAbsence(final Person person) {
-        verifyReplicationAbsence(person, replicatedPersonRepository);
+    private void verifyAttemptSaveReplicatedAddress() {
+        verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
     }
 
     private void verifyReplicationAbsence(final Address address) {
         verifyReplicationAbsence(address, replicatedAddressRepository);
+    }
+
+    private void verifyReplicationAbsence(final Person person) {
+        verifyReplicationAbsence(person, replicatedPersonRepository);
     }
 
     private <ID> void verifyReplicationAbsence(final AbstractDto<ID> dto,
@@ -538,6 +573,15 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private Optional<Void> deleteAddress(final Long id) {
         addressService.delete(id);
         return empty();
+    }
+
+    private void deleteAddressInRollBackedTransaction(final Long id) {
+        transactionTemplate.execute(
+                status -> {
+                    status.setRollbackOnly();
+                    return deleteAddress(id);
+                }
+        );
     }
 
     private static AddressEntity createAddressEntity(final Long id) {
@@ -602,8 +646,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Aspect
     @Component
     public static class ReplicationBarrier {
-        private volatile CountDownLatch addressLatch;
-        private volatile CountDownLatch personLatch;
+        private volatile CountDownLatch addressLatch = new CountDownLatch(0);
+        private volatile CountDownLatch personLatch = new CountDownLatch(0);
         private volatile boolean failedCallsCounted;
 
         public final void expect(final int addressCalls, final int personCalls, final boolean failedCallsCounted) {
