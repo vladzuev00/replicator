@@ -6,6 +6,7 @@ import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+//TODO: refactor + refactor tests
 @Component
 @RequiredArgsConstructor
 public final class ReplicationConsumePipelineStarter {
