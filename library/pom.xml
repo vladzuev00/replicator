@@ -21,6 +21,7 @@
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <java.version>17</java.version>
         <joor.version>0.9.15</joor.version>
+        <kafka-streams-test-utils.version>3.7.0</kafka-streams-test-utils.version>
     </properties>
 
     <repositories>
@@ -122,6 +123,29 @@
             <groupId>org.jooq</groupId>
             <artifactId>joor</artifactId>
             <version>${joor.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams-test-utils</artifactId>
+            <version>${kafka-streams-test-utils.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>${kafka-streams-test-utils.version}</version>
+            <classifier>test</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-streams-test-utils.version}</version>
+            <classifier>test</classifier>
             <scope>test</scope>
         </dependency>
 
