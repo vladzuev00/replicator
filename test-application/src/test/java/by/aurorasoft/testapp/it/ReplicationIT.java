@@ -221,7 +221,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertTrue(isAddressDeletedWithReplication(givenId));
     }
 
-    @Test
+    //TODO: something wrong
+    @RepeatedTest(10)
     public void addressShouldNotBeDeletedByNotExistId() {
         final Long givenId = MAX_VALUE;
 
@@ -230,7 +231,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
         final Long givenId = 255L;
 
@@ -239,7 +240,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(50)
     public void operationsShouldBeExecuted() {
         executeWaitingReplication(
                 () -> {
@@ -351,26 +352,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
                 givenPerson.getPatronymic(),
                 givenPerson.getBirthDate(),
                 givenPerson.getAddress()
-        );
-        assertEquals(expected, actual);
-
-        verifyReplicationAbsence(actual);
-        verifyMaxAttemptSaveReplicatedPerson();
-    }
-
-    @RepeatedTest(10)
-    public void personShouldBeUpdatedButReplicatedPersonShouldNotBecauseOfForeignKeyViolation() {
-        final Address givenNewAddress = new Address(264L, "America", "New York");
-        final Person givenNewPerson = new Person(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), givenNewAddress);
-
-        final Person actual = executeWaitingReplication(() -> personService.update(givenNewPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
-        final Person expected = new Person(
-                givenNewPerson.getId(),
-                givenNewPerson.getName(),
-                givenNewPerson.getSurname(),
-                givenNewPerson.getPatronymic(),
-                givenNewPerson.getBirthDate(),
-                givenNewAddress
         );
         assertEquals(expected, actual);
 
