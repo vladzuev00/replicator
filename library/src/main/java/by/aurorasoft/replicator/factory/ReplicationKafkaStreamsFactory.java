@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
@@ -17,7 +16,7 @@ public final class ReplicationKafkaStreamsFactory {
     private final ReplicationTopologyFactory topologyFactory;
     private final ReplicationStreamsConfigFactory configFactory;
 
-    public <ID, E extends AbstractEntity<ID>> KafkaStreams create(final ReplicationConsumePipeline<ID, E> pipeline) {
+    public KafkaStreams create(final ReplicationConsumePipeline<?, ?> pipeline) {
         final Topology topology = topologyFactory.create(pipeline);
         final StreamsConfig config = configFactory.create(pipeline);
         return create(topology, config);
