@@ -221,7 +221,6 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertTrue(isAddressDeletedWithReplication(givenId));
     }
 
-    //TODO: something wrong
     @RepeatedTest(10)
     public void addressShouldNotBeDeletedByNotExistId() {
         final Long givenId = MAX_VALUE;
