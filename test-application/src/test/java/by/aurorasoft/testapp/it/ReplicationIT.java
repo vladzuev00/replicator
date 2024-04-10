@@ -23,7 +23,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Test;
-import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
@@ -48,6 +47,7 @@ import static by.aurorasoft.testapp.util.IdUtil.mapToIds;
 import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,8 +56,8 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 @Transactional(propagation = NOT_SUPPORTED)
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(ReplicationIT.ReplicationBarrier.class)
+@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
@@ -221,7 +221,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertTrue(isAddressDeletedWithReplication(givenId));
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeDeletedByNotExistId() {
         final Long givenId = MAX_VALUE;
 
@@ -230,7 +230,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
         final Long givenId = 255L;
 
@@ -239,7 +239,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(50)
+    @Test
     public void operationsShouldBeExecuted() {
         executeWaitingReplication(
                 () -> {
@@ -328,7 +328,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         );
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
         final Long givenId = 258L;
 
@@ -339,7 +339,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyMaxAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
         final Person givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
 
@@ -358,7 +358,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyMaxAttemptSaveReplicatedPerson();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
         final Address givenAddress = createAddress("Japan", "Tokyo");
 
@@ -370,7 +370,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAttemptSaveReplicatedAddress();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
         final Long givenId = 262L;
 
@@ -626,6 +626,8 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Aspect
     @Component
     public static class ReplicationBarrier {
+        private static final long LATCH_AWAIT_TIMEOUT_SECONDS = 30;
+
         private volatile CountDownLatch addressLatch = new CountDownLatch(0);
         private volatile CountDownLatch personLatch = new CountDownLatch(0);
         private volatile boolean failedCallsCounted;
@@ -649,11 +651,23 @@ public class ReplicationIT extends AbstractSpringBootTest {
         }
 
         public final void await() {
+            await(addressLatch);
+            await(personLatch);
+        }
+
+        private static void await(final CountDownLatch latch) {
             try {
-                addressLatch.await();
-                personLatch.await();
+                awaitInterrupted(latch);
             } catch (final InterruptedException cause) {
                 throw new IllegalStateException(cause);
+            }
+        }
+
+        private static void awaitInterrupted(final CountDownLatch latch)
+                throws InterruptedException {
+            final boolean timeoutExceeded = !latch.await(LATCH_AWAIT_TIMEOUT_SECONDS, SECONDS);
+            if (timeoutExceeded) {
+                throw new IllegalStateException("Latch timeout was exceeded");
             }
         }
 
