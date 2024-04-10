@@ -44,14 +44,11 @@ public final class ReplicationProducerHolderFactoryTest {
 
         bindServicesToHolder(firstGivenService, secondGivenService);
 
-        final ReplicationProducer<?> firstGivenProducer = mock(ReplicationProducer.class);
-        bindProducerToService(firstGivenProducer, firstGivenService);
-
-        final ReplicationProducer<?> secondGivenProducer = mock(ReplicationProducer.class);
-        bindProducerToService(secondGivenProducer, secondGivenService);
+        final ReplicationProducer<?> firstGivenProducer = createProducerBoundedWithService(firstGivenService);
+        final ReplicationProducer<?> secondGivenProducer = createProducerBoundedWithService(secondGivenService);
 
         final ReplicationProducerHolder actual = factory.create();
-        final var actualProducersByServices = findProducersByServices(actual);
+        final var actualProducersByServices = getProducersByServices(actual);
         final var expectedProducersByServices = Map.of(
                 firstGivenService, firstGivenProducer,
                 secondGivenService, secondGivenProducer
@@ -66,12 +63,14 @@ public final class ReplicationProducerHolderFactoryTest {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void bindProducerToService(final ReplicationProducer producer, final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private ReplicationProducer<?> createProducerBoundedWithService(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        final ReplicationProducer producer = mock(ReplicationProducer.class);
         when(mockedProducerFactory.create(same(service))).thenReturn(producer);
+        return producer;
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?>> findProducersByServices(
+    private static Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?>> getProducersByServices(
             final ReplicationProducerHolder holder
     ) {
         return getFieldValue(holder, FIELD_NAME_HOLDER_PRODUCERS_BY_SERVICES, Map.class);
