@@ -62,15 +62,12 @@ public final class ReplicationTopicCreatorTest {
 
         bindServicesWithHolder(firstGivenService, secondGivenService);
 
-        final NewTopic firstGivenTopic = new NewTopic("first-topic", 1, (short) 1);
-        bindServiceWithTopic(firstGivenService, firstGivenTopic);
-
-        final NewTopic secondGivenTopic = new NewTopic("second-topic", 2, (short) 2);
-        bindServiceWithTopic(secondGivenService, secondGivenTopic);
+        final NewTopic firstGivenTopic = createTopicBoundedToService("first-topic", 1, 1, firstGivenService);
+        final NewTopic secondGivenTopic = createTopicBoundedToService("second-topic", 2, 2, secondGivenService);
 
         creator.createTopics();
 
-        verifyTopicCreating(firstGivenTopic, secondGivenTopic);
+        verifyCreation(firstGivenTopic, secondGivenTopic);
         verifyEventPublishing();
     }
 
@@ -80,11 +77,16 @@ public final class ReplicationTopicCreatorTest {
         when(mockedServiceHolder.getServices()).thenReturn(givenServices);
     }
 
-    private void bindServiceWithTopic(final AbsServiceRUD<?, ?, ?, ?, ?> service, final NewTopic topic) {
+    private NewTopic createTopicBoundedToService(final String topicName,
+                                                 final int numPartitions,
+                                                 final int replicationFactor,
+                                                 final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+        final NewTopic topic = new NewTopic(topicName, numPartitions, (short) replicationFactor);
         when(mockedTopicFactory.create(same(service))).thenReturn(topic);
+        return topic;
     }
 
-    private void verifyTopicCreating(final NewTopic... topics) {
+    private void verifyCreation(final NewTopic... topics) {
         final List<NewTopic> expected = asList(topics);
         verify(mockedKafkaAdmin, times(expected.size())).createOrModifyTopics(topicArgumentCaptor.capture());
         final List<NewTopic> actual = topicArgumentCaptor.getAllValues();
