@@ -7,9 +7,6 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.springframework.stereotype.Component;
 
-import static java.lang.Runtime.getRuntime;
-import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_APPLICATION;
-
 @Component
 @RequiredArgsConstructor
 public final class ReplicationKafkaStreamsFactory {
