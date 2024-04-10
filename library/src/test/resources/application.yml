@@ -1,7 +1,7 @@
 replication:
   consume:
     retry:
-      time-lapse-ms: 2000
+      time-lapse-ms: 3000
       max-attempts: 3
 
 
