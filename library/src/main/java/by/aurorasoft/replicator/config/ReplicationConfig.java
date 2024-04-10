@@ -21,8 +21,8 @@ public class ReplicationConfig {
         return factory.create();
     }
 
-    @Bean("replicationRetryTemplate")
-    public RetryTemplate retryTemplate(final ReplicationRetryConsumeProperty property) {
+    @Bean
+    public RetryTemplate replicationRetryTemplate(final ReplicationRetryConsumeProperty property) {
         return new RetryTemplateBuilder()
                 .fixedBackoff(property.getTimeLapseMs())
                 .maxAttempts(property.getMaxAttempts())

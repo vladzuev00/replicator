@@ -33,7 +33,7 @@ public final class ReplicationConfigTest {
         final RetryTemplate givenTemplate = mock(RetryTemplate.class);
 
         try (final MockedConstruction<RetryTemplateBuilder> mockedBuilderConstruction = mockConstruction(RetryTemplateBuilder.class, (builder, context) -> configureBuilder(builder, givenTemplate))) {
-            config.retryTemplate(givenProperty);
+            config.replicationRetryTemplate(givenProperty);
 
             verifyConstruction(mockedBuilderConstruction);
             final RetryTemplateBuilder builder = getConstructedObject(mockedBuilderConstruction);
