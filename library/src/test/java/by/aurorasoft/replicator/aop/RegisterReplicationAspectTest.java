@@ -56,17 +56,14 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void createShouldBeReplicated() {
         final TestDto givenDto = new TestDto(255L);
-        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
-
-        bindProducerWithService(givenProducer);
+        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
 
         final TestDto actual = service.save(givenDto);
         assertSame(givenDto, actual);
 
-        verifyRegistrationSaveReplication(givenDto, givenProducer);
+        verifyRegistrationSaveReplication(actual, givenProducer);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -79,20 +76,17 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void createAllShouldBeReplicated() {
         final TestDto firstGivenDto = new TestDto(255L);
         final TestDto secondGivenDto = new TestDto(256L);
         final List<TestDto> givenDtos = List.of(firstGivenDto, secondGivenDto);
 
-        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
-
-        bindProducerWithService(givenProducer);
+        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
 
         final List<TestDto> actual = service.saveAll(givenDtos);
         assertEquals(givenDtos, actual);
 
-        verifyRegistrationSaveReplications(givenDtos, givenProducer);
+        verifyRegistrationSaveReplications(actual, givenProducer);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -105,17 +99,14 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void updateShouldBeReplicated() {
         final TestDto givenDto = new TestDto(255L);
-        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
-
-        bindProducerWithService(givenProducer);
+        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
 
         final TestDto actual = service.update(givenDto);
         assertSame(givenDto, actual);
 
-        verifyRegistrationSaveReplication(givenDto, givenProducer);
+        verifyRegistrationSaveReplication(actual, givenProducer);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -128,20 +119,16 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void partialUpdateShouldBeReplicated() {
         final Long givenId = 255L;
-        final TestDto givenDto = new TestDto(givenId);
-
         final Object givenPartial = new Object();
-        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
-
-        bindProducerWithService(givenProducer);
+        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
 
         final TestDto actual = service.updatePartial(givenId, givenPartial);
-        assertEquals(givenDto, actual);
+        final TestDto expected = new TestDto(givenId);
+        assertEquals(expected, actual);
 
-        verifyRegistrationSaveReplication(givenDto, givenProducer);
+        verifyRegistrationSaveReplication(actual, givenProducer);
     }
 
     @Test(expected = NoReplicationProducerException.class)
@@ -155,12 +142,9 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void deleteByIdShouldBeReplicated() {
         final Long givenId = 255L;
-        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
-
-        bindProducerWithService(givenProducer);
+        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
 
         service.delete(givenId);
 
@@ -186,6 +170,13 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         givenCallback.afterCommit();
 
         verify(givenProducer, times(1)).send(same(givenReplication));
+    }
+
+    @SuppressWarnings("unchecked")
+    private ReplicationProducer<Long> createProducerBoundedWithService() {
+        final ReplicationProducer<Long> producer = mock(ReplicationProducer.class);
+        bindProducerWithService(producer);
+        return producer;
     }
 
     private void bindProducerWithService(final ReplicationProducer<Long> producer) {
