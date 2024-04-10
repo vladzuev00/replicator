@@ -39,7 +39,7 @@ public final class ReplicationKafkaStreamsFactoryTest {
     }
 
     @Test
-    public void kafkaStreamsShouldBeCreated() {
+    public void streamsShouldBeCreated() {
         final ReplicationConsumePipeline<?, ?> givenPipeline = mock(ReplicationConsumePipeline.class);
 
         final Topology givenTopology = mock(Topology.class);
