@@ -13,9 +13,10 @@ import org.mockito.*;
 import org.mockito.MockedConstruction.Context;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.function.Consumer;
+
 import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_APPLICATION;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,16 +65,37 @@ public final class KafkaStreamsFactoryTest {
 
     @Test
     public void streamsShouldNotBeCreatedBecauseOfFailedSettingExceptionHandler() {
-        try (final MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class, KafkaStreamsFactoryTest::throwExceptionWhenSettingHandler)) {
+        try (final MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class, KafkaStreamsFactoryTest::throwExceptionOnSettingHandler)) {
             final Topology givenTopology = mock(Topology.class);
             final StreamsConfig givenConfig = mock(StreamsConfig.class);
 
             createStreamsVerifyingException(givenTopology, givenConfig);
 
             verifyStreamsConstruction(mockedConstruction);
-            verifySettingExceptionHandler(mockedConstruction.constructed().get(0));
-            verifyCloseConstructedStreams(mockedConstruction);
-            verifyNoShutdownHook();
+            final KafkaStreams constructedStreams = getConstructedStreams(mockedConstruction);
+
+            verifySettingExceptionHandler(constructedStreams);
+            verifyClosed(constructedStreams);
+            verifyNoAddsShutdownHook();
+        }
+    }
+
+    @Test
+    public void streamsShouldNotBeCreatedBecauseOfFailedAddingShutdownHook() {
+        try (final MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class)) {
+            final Topology givenTopology = mock(Topology.class);
+            final StreamsConfig givenConfig = mock(StreamsConfig.class);
+
+            throwExceptionOnAddingShutdownHook();
+
+            createStreamsVerifyingException(givenTopology, givenConfig);
+
+            verifyStreamsConstruction(mockedConstruction);
+            final KafkaStreams constructedStreams = getConstructedStreams(mockedConstruction);
+
+            verifySettingExceptionHandler(constructedStreams);
+            verifyClosed(constructedStreams);
+            verifyAddShutdownHook();
         }
     }
 
@@ -105,36 +127,45 @@ public final class KafkaStreamsFactoryTest {
     }
 
     private void verifyClosingShutdownHook(final KafkaStreams streams) {
-        verify(mockedRuntime, times(1)).addShutdownHook(threadArgumentCaptor.capture());
+        verifyAddShutdownHook();
         final Runnable capturedThread = threadArgumentCaptor.getValue();
         capturedThread.run();
         verifyClosed(streams);
     }
 
-
-    private void verifyNoShutdownHook() {
-        verify(mockedRuntime, times(0)).addShutdownHook(any(Thread.class));
+    private static void throwExceptionOnSettingHandler(final KafkaStreams streams, final Context ignored) {
+        throwExceptionOnOperation(streams, s -> s.setUncaughtExceptionHandler(any(StreamsUncaughtExceptionHandler.class)));
     }
 
-    private static void throwExceptionWhenSettingHandler(final KafkaStreams streams, final Context ignored) {
-        doThrow(TestException.class)
-                .when(streams)
-                .setUncaughtExceptionHandler(any(StreamsUncaughtExceptionHandler.class));
+    private void throwExceptionOnAddingShutdownHook() {
+        throwExceptionOnOperation(mockedRuntime, r -> r.addShutdownHook(any(Thread.class)));
+    }
+
+    private static <T> void throwExceptionOnOperation(final T object, final Consumer<T> operation) {
+        operation.accept(doThrow(TestException.class).when(object));
     }
 
     private void createStreamsVerifyingException(final Topology topology, final StreamsConfig config) {
-//        boolean exceptionArisen;
-//        try {
-//            createStreamsVerifyingConstruction(topology, config);
-//            exceptionArisen = false;
-//        } catch (final TestException cause) {
-//            exceptionArisen = true;
-//        }
-//        assertTrue(exceptionArisen);
+        boolean exceptionArisen;
+        try {
+            factory.create(topology, config);
+            exceptionArisen = false;
+        } catch (final TestException cause) {
+            exceptionArisen = true;
+        }
+        assertTrue(exceptionArisen);
     }
 
-    private void verifyCloseConstructedStreams(final MockedConstruction<KafkaStreams> mockedConstruction) {
-        verify(getConstructedStreams(mockedConstruction), times(1)).close();
+    private void verifyNoAddsShutdownHook() {
+        verifyCallingAddShutdownHook(0);
+    }
+
+    private void verifyAddShutdownHook() {
+        verifyCallingAddShutdownHook(1);
+    }
+
+    private void verifyCallingAddShutdownHook(final int times) {
+        verify(mockedRuntime, times(times)).addShutdownHook(threadArgumentCaptor.capture());
     }
 
     private static final class TestException extends RuntimeException {
