@@ -50,7 +50,7 @@ public final class ReplicationTopologyFactoryTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void topologyShouldBeCreatedAndReplicationShouldBeExecuted() {
+    public void topologyShouldBeCreatedAndReplicationShouldBeProducedAndConsumed() {
         final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
         final ReplicationConsumePipeline<Long, TestEntity> givenPipeline = createPipeline(givenRepository);
 
@@ -61,7 +61,7 @@ public final class ReplicationTopologyFactoryTest {
             final TestInputTopic<Long, ConsumedReplication<Long, TestEntity>> topic = createTopic(driver);
             topic.pipeInput(givenReplication);
 
-            verifySaveEntity(givenRepository, givenEntity);
+            verifySave(givenRepository, givenEntity);
         }
     }
 
@@ -93,7 +93,7 @@ public final class ReplicationTopologyFactoryTest {
         return driver.createInputTopic(GIVEN_TOPIC, new LongSerializer(), new JsonSerializer<>());
     }
 
-    private void verifySaveEntity(final JpaRepository<TestEntity, Long> repository, final TestEntity entity) {
+    private void verifySave(final JpaRepository<TestEntity, Long> repository, final TestEntity entity) {
         verify(mockedRetryTemplate, times(1)).execute(callbackArgumentCaptor.capture());
         final RetryCallback<?, RuntimeException> capturedCallback = callbackArgumentCaptor.getValue();
         capturedCallback.doWithRetry(null);
