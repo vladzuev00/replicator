@@ -32,44 +32,44 @@ public abstract class ConsumedReplication<ID, E extends AbstractEntity<ID>> {
         try {
             executeInternal(repository);
         } catch (final Exception exception) {
-            throw wrapToRuntimeExecutionException(exception);
+            throw wrapToExecutionException(exception);
         }
     }
 
     protected abstract void executeInternal(final JpaRepository<E, ID> repository);
 
-    private static RuntimeException wrapToRuntimeExecutionException(final Exception exception) {
+    private static RuntimeException wrapToExecutionException(final Exception exception) {
         return isRelationReplicationNotDelivered(exception)
                 ? new RelationReplicationNotDeliveredException(exception)
-                : new ReplicationConsumingException(exception);
+                : new ReplicationExecutionException(exception);
     }
 
     private static boolean isRelationReplicationNotDelivered(final Throwable exception) {
-        return (getRootCause(exception) instanceof final SQLException rootCause) && isForeignKeyViolation(rootCause);
+        return (getRootCause(exception) instanceof final SQLException cause) && isForeignKeyViolation(cause);
     }
 
     private static boolean isForeignKeyViolation(final SQLException exception) {
         return Objects.equals(FOREIGN_KEY_VIOLATION_SQL_STATE, exception.getSQLState());
     }
 
-    static final class ReplicationConsumingException extends RuntimeException {
+    static final class ReplicationExecutionException extends RuntimeException {
 
         @SuppressWarnings("unused")
-        public ReplicationConsumingException() {
+        public ReplicationExecutionException() {
 
         }
 
         @SuppressWarnings("unused")
-        public ReplicationConsumingException(final String description) {
+        public ReplicationExecutionException(final String description) {
             super(description);
         }
 
-        public ReplicationConsumingException(final Exception cause) {
+        public ReplicationExecutionException(final Exception cause) {
             super(cause);
         }
 
         @SuppressWarnings("unused")
-        public ReplicationConsumingException(final String description, final Exception cause) {
+        public ReplicationExecutionException(final String description, final Exception cause) {
             super(description, cause);
         }
     }

@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.model.replication.consumed;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
 import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
-import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationConsumingException;
+import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -121,11 +121,11 @@ public final class ConsumedReplicationTest {
                 ),
                 Arguments.of(
                         createSqlException(UNIQUE_VIOLATION_SQL_STATE),
-                        ReplicationConsumingException.class
+                        ReplicationExecutionException.class
                 ),
                 Arguments.of(
                         new RuntimeException(),
-                        ReplicationConsumingException.class
+                        ReplicationExecutionException.class
                 )
         );
     }
