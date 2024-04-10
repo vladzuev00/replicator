@@ -53,8 +53,8 @@ public final class KafkaStreamsFactoryTest {
             final StreamsConfig givenConfig = mock(StreamsConfig.class);
 
             final KafkaStreams actual = factory.create(givenTopology, givenConfig);
-            verifyStreamsConstruction(mockedConstruction);
-            final KafkaStreams expected = getConstructedStreams(mockedConstruction);
+            verifyConstruction(mockedConstruction);
+            final KafkaStreams expected = getConstructedObject(mockedConstruction);
             assertSame(expected, actual);
 
             verifySettingExceptionHandler(actual);
@@ -71,8 +71,8 @@ public final class KafkaStreamsFactoryTest {
 
             createStreamsVerifyingException(givenTopology, givenConfig);
 
-            verifyStreamsConstruction(mockedConstruction);
-            final KafkaStreams constructedStreams = getConstructedStreams(mockedConstruction);
+            verifyConstruction(mockedConstruction);
+            final KafkaStreams constructedStreams = getConstructedObject(mockedConstruction);
 
             verifySettingExceptionHandler(constructedStreams);
             verifyClosed(constructedStreams);
@@ -90,8 +90,8 @@ public final class KafkaStreamsFactoryTest {
 
             createStreamsVerifyingException(givenTopology, givenConfig);
 
-            verifyStreamsConstruction(mockedConstruction);
-            final KafkaStreams constructedStreams = getConstructedStreams(mockedConstruction);
+            verifyConstruction(mockedConstruction);
+            final KafkaStreams constructedStreams = getConstructedObject(mockedConstruction);
 
             verifySettingExceptionHandler(constructedStreams);
             verifyClosed(constructedStreams);
@@ -99,11 +99,11 @@ public final class KafkaStreamsFactoryTest {
         }
     }
 
-    private void verifyStreamsConstruction(final MockedConstruction<KafkaStreams> mockedConstruction) {
+    private void verifyConstruction(final MockedConstruction<?> mockedConstruction) {
         assertEquals(1, mockedConstruction.constructed().size());
     }
 
-    private KafkaStreams getConstructedStreams(final MockedConstruction<KafkaStreams> mockedConstruction) {
+    private <T> T getConstructedObject(final MockedConstruction<T> mockedConstruction) {
         return mockedConstruction.constructed().get(0);
     }
 
