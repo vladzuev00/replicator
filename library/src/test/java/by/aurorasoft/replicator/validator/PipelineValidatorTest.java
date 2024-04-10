@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
-import by.aurorasoft.replicator.validator.PipelineValidator.PipelineIdUniqueConstraintViolationException;
+import by.aurorasoft.replicator.validator.PipelineValidator.PipelineConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -52,10 +52,7 @@ public final class PipelineValidatorTest {
                 createPipeline("fourth-pipeline")
         );
 
-        validateExpectingFail(
-                givenValidator,
-                "Duplicated replication pipeline's ids were found: second-pipeline, third-pipeline"
-        );
+        validateExpectingFail(givenValidator, "Duplicated replication pipeline's ids were found: second-pipeline, third-pipeline");
     }
 
     @SuppressWarnings("unchecked")
@@ -82,7 +79,7 @@ public final class PipelineValidatorTest {
         try {
             validator.validate();
             exceptionArisen = false;
-        } catch (final PipelineIdUniqueConstraintViolationException exception) {
+        } catch (final PipelineConstraintViolationException exception) {
             exceptionArisen = true;
             assertEquals(expectedMessage, exception.getMessage());
         }

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.ENTITY_ID_NAME;
+import static by.aurorasoft.replicator.util.TransportNameUtil.ENTITY_ID;
 
 @RequiredArgsConstructor
 @Getter
@@ -14,6 +14,6 @@ import static by.aurorasoft.replicator.util.TransportNameUtil.ENTITY_ID_NAME;
 @ToString
 public final class DeleteProducedReplication<ID> implements ProducedReplication<ID> {
 
-    @JsonProperty(ENTITY_ID_NAME)
+    @JsonProperty(ENTITY_ID)
     private final ID entityId;
 }

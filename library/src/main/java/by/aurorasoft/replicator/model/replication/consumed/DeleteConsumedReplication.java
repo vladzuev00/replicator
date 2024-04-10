@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.ENTITY_ID_NAME;
+import static by.aurorasoft.replicator.util.TransportNameUtil.ENTITY_ID;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -17,7 +17,7 @@ public final class DeleteConsumedReplication<ID, E extends AbstractEntity<ID>> e
     private final ID entityId;
 
     @JsonCreator
-    public DeleteConsumedReplication(@JsonProperty(ENTITY_ID_NAME) final ID entityId) {
+    public DeleteConsumedReplication(@JsonProperty(ENTITY_ID) final ID entityId) {
         this.entityId = entityId;
     }
 

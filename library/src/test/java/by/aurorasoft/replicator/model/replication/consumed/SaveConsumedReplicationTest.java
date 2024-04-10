@@ -4,7 +4,6 @@ import by.aurorasoft.replicator.base.entity.TestEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 public final class SaveConsumedReplicationTest {

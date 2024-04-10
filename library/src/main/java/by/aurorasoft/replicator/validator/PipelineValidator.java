@@ -53,31 +53,31 @@ public final class PipelineValidator {
 
     private void throwConstraintViolationException(final List<String> duplicatedIds) {
         final String message = createConstraintViolationMessage(duplicatedIds);
-        throw new PipelineIdUniqueConstraintViolationException(message);
+        throw new PipelineConstraintViolationException(message);
     }
 
     private String createConstraintViolationMessage(final List<String> duplicatedIds) {
         return VIOLATION_MESSAGE_TEMPLATE.formatted(join(VIOLATION_MESSAGE_IDS_DELIMITER, duplicatedIds));
     }
 
-    static final class PipelineIdUniqueConstraintViolationException extends RuntimeException {
+    static final class PipelineConstraintViolationException extends RuntimeException {
 
         @SuppressWarnings("unused")
-        public PipelineIdUniqueConstraintViolationException() {
+        public PipelineConstraintViolationException() {
 
         }
 
-        public PipelineIdUniqueConstraintViolationException(final String description) {
+        public PipelineConstraintViolationException(final String description) {
             super(description);
         }
 
         @SuppressWarnings("unused")
-        public PipelineIdUniqueConstraintViolationException(final Exception cause) {
+        public PipelineConstraintViolationException(final Exception cause) {
             super(cause);
         }
 
         @SuppressWarnings("unused")
-        public PipelineIdUniqueConstraintViolationException(final String description, final Exception cause) {
+        public PipelineConstraintViolationException(final String description, final Exception cause) {
             super(description, cause);
         }
     }

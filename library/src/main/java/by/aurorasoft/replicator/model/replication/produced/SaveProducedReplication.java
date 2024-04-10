@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
+import static by.aurorasoft.replicator.util.TransportNameUtil.BODY;
 
 @RequiredArgsConstructor
 @Getter
@@ -16,7 +16,7 @@ import static by.aurorasoft.replicator.util.TransportNameUtil.BODY_NAME;
 @ToString
 public final class SaveProducedReplication<ID, DTO extends AbstractDto<ID>> implements ProducedReplication<ID> {
 
-    @JsonProperty(BODY_NAME)
+    @JsonProperty(BODY)
     private final DTO dto;
 
     @Override

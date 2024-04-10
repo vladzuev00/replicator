@@ -16,7 +16,7 @@ import static by.aurorasoft.replicator.util.TransportNameUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 
-@JsonTypeInfo(use = NAME, property = TYPE_PROPERTY)
+@JsonTypeInfo(use = NAME, property = TYPE)
 @JsonSubTypes(
         {
                 @Type(value = SaveConsumedReplication.class, name = SAVE),
