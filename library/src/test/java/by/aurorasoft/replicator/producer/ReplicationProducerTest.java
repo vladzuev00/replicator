@@ -35,16 +35,14 @@ public final class ReplicationProducerTest {
 
     @Test
     public void replicationShouldBeSent() {
-        final Long givenId = 255L;
-        final TestDto givenDto = new TestDto(givenId);
-        final ProducedReplication<Long> givenReplication = new SaveProducedReplication<>(givenDto);
+        final ProducedReplication<Long> givenReplication = new SaveProducedReplication<>(new TestDto(255L));
 
         producer.send(givenReplication);
 
-        verifyProduceReplication(givenReplication);
+        verifyProduce(givenReplication);
     }
 
-    private void verifyProduceReplication(final ProducedReplication<Long> replication) {
+    private void verifyProduce(final ProducedReplication<Long> replication) {
         verify(mockedKafkaTemplate).send(recordArgumentCaptor.capture());
         final ProducerRecord<Long, ProducedReplication<Long>> actual = recordArgumentCaptor.getValue();
         final ProducerRecord<Long, ProducedReplication<Long>> expected = createRecord(replication);
