@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.consumed;
+package by.aurorasoft.replicator.model.replication.consumed;
 
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonCreator;

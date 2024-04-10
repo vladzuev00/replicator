@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

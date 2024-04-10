@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.produced;
+package by.aurorasoft.replicator.model.replication.produced;
 
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;

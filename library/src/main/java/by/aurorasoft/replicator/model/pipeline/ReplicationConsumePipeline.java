@@ -1,7 +1,7 @@
-package by.aurorasoft.replicator.consuming.pipeline;
+package by.aurorasoft.replicator.model.pipeline;
 
 import by.aurorasoft.replicator.consuming.serde.ReplicationSerde;
-import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Builder;

@@ -1,9 +1,9 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
-import by.aurorasoft.replicator.model.consumed.SaveConsumedReplication;
+import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.streams.TestInputTopic;

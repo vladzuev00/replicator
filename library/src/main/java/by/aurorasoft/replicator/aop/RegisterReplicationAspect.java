@@ -1,9 +1,9 @@
 package by.aurorasoft.replicator.aop;
 
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
-import by.aurorasoft.replicator.model.produced.DeleteProducedReplication;
-import by.aurorasoft.replicator.model.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;

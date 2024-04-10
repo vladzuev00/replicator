@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.produced;
+package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.base.dto.TestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;

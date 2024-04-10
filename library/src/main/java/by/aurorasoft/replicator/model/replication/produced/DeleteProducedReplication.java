@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.produced;
+package by.aurorasoft.replicator.model.replication.produced;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;

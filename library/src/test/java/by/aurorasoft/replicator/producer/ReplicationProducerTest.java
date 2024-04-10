@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.replicator.base.dto.TestDto;
-import by.aurorasoft.replicator.model.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.produced.SaveProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.Before;
 import org.junit.Test;

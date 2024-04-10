@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.serde;
 
-import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;

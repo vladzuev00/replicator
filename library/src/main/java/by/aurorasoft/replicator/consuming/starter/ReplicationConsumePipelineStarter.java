@@ -1,8 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
-import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
+import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 public final class ReplicationConsumePipelineStarter {
     private final ReplicationKafkaStreamsFactory streamsFactory;
 
-    public <ID, E extends AbstractEntity<ID>> void start(final ReplicationConsumePipeline<ID, E> pipeline) {
+    public void start(final ReplicationConsumePipeline<?, ?> pipeline) {
         streamsFactory.create(pipeline).start();
     }
 }

@@ -1,9 +1,9 @@
 package by.aurorasoft.replicator.consuming.serde;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
-import by.aurorasoft.replicator.model.consumed.ConsumedReplication;
-import by.aurorasoft.replicator.model.consumed.DeleteConsumedReplication;
-import by.aurorasoft.replicator.model.consumed.SaveConsumedReplication;
+import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.model.replication.consumed.DeleteConsumedReplication;
+import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;

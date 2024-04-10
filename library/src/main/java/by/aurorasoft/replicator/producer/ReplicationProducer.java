@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.kafka.producer.KafkaProducerAbstractSimple;
-import by.aurorasoft.replicator.model.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import org.springframework.kafka.core.KafkaTemplate;
 
 public final class ReplicationProducer<ID> extends KafkaProducerAbstractSimple<ID, ProducedReplication<ID>> {

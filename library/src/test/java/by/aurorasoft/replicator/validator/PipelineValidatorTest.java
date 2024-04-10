@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.validator;
 
-import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.validator.PipelineValidator.PipelineIdUniqueConstraintViolationException;
 import org.junit.Test;

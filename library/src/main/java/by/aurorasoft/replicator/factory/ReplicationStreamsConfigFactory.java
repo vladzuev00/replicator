@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.consuming.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import org.apache.kafka.streams.StreamsConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.factory;
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-import by.aurorasoft.replicator.model.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.consumed;
+package by.aurorasoft.replicator.model.replication.consumed;
 
 import by.aurorasoft.replicator.base.entity.TestEntity;
 import org.junit.jupiter.api.Test;
