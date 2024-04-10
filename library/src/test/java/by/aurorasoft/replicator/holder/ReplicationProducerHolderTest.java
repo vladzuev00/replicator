@@ -20,11 +20,7 @@ public final class ReplicationProducerHolderTest {
     public void producerShouldBeFoundByService() {
         final AbsServiceRUD<?, ?, ?, ?, ?> givenService = mock(AbsServiceRUD.class);
         final ReplicationProducer<?> givenProducer = mock(ReplicationProducer.class);
-        final Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?>> givenProducersByServices = Map.of(
-                givenService,
-                givenProducer
-        );
-        final ReplicationProducerHolder givenHolder = new ReplicationProducerHolder(givenProducersByServices);
+        final ReplicationProducerHolder givenHolder = createHolder(givenService, givenProducer);
 
         final Optional<ReplicationProducer<?>> optionalActual = givenHolder.findByService(givenService);
         assertTrue(optionalActual.isPresent());
@@ -37,13 +33,14 @@ public final class ReplicationProducerHolderTest {
         final AbsServiceRUD<?, ?, ?, ?, ?> firstGivenService = mock(AbsServiceRUD.class);
         final AbsServiceRUD<?, ?, ?, ?, ?> secondGivenService = mock(AbsServiceRUD.class);
         final ReplicationProducer<?> givenProducer = mock(ReplicationProducer.class);
-        final Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?>> givenProducersByServices = Map.of(
-                firstGivenService,
-                givenProducer
-        );
-        final ReplicationProducerHolder givenHolder = new ReplicationProducerHolder(givenProducersByServices);
+        final ReplicationProducerHolder givenHolder = createHolder(firstGivenService, givenProducer);
 
         final Optional<ReplicationProducer<?>> optionalActual = givenHolder.findByService(secondGivenService);
         assertTrue(optionalActual.isEmpty());
+    }
+
+    private static ReplicationProducerHolder createHolder(final AbsServiceRUD<?, ?, ?, ?, ?> service,
+                                                          final ReplicationProducer<?> producer) {
+        return new ReplicationProducerHolder(Map.of(service, producer));
     }
 }
