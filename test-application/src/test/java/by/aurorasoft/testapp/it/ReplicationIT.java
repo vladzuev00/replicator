@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@Import(ReplicationIT.ReplicationLatch.class)
+@Import(ReplicationIT.ReplicationBarrier.class)
 public final class ReplicationIT extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
@@ -66,7 +66,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     private ReplicationRetryConsumeProperty retryConsumeProperty;
 
     @Autowired
-    private ReplicationLatch replicationLatch;
+    private ReplicationBarrier replicationBarrier;
 
     @SpyBean
     private ReplicatedAddressRepository replicatedAddressRepository;
@@ -377,9 +377,9 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                                             final int addressCalls,
                                             final int personCalls,
                                             final boolean failedCallsCounted) {
-        replicationLatch.expect(addressCalls, personCalls, failedCallsCounted);
+        replicationBarrier.expect(addressCalls, personCalls, failedCallsCounted);
         final R result = operation.get();
-        replicationLatch.await();
+        replicationBarrier.await();
         return result;
     }
 
@@ -619,17 +619,17 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 
     @Aspect
     @Component
-    public static class ReplicationLatch {
-        private static final long LATCH_AWAIT_TIMEOUT_DELTA_MS = 20000;
+    public static class ReplicationBarrier {
+        private static final long TIMEOUT_DELTA_MS = 20000;
         private static final CountDownLatch DEFAULT_LATCH = new CountDownLatch(0);
 
-        private final long latchAwaitTimeout;
+        private final long timeout;
         private volatile CountDownLatch addressLatch;
         private volatile CountDownLatch personLatch;
         private volatile boolean failedCallsCounted;
 
-        public ReplicationLatch(final ReplicationRetryConsumeProperty retryProperty) {
-            latchAwaitTimeout = findLatchAwaitTimeout(retryProperty);
+        public ReplicationBarrier(final ReplicationRetryConsumeProperty retryProperty) {
+            timeout = findTimeout(retryProperty);
             addressLatch = DEFAULT_LATCH;
             personLatch = DEFAULT_LATCH;
         }
@@ -657,8 +657,8 @@ public final class ReplicationIT extends AbstractSpringBootTest {
             await(personLatch);
         }
 
-        private static long findLatchAwaitTimeout(final ReplicationRetryConsumeProperty retryProperty) {
-            return retryProperty.getTimeLapseMs() * retryProperty.getMaxAttempts() + LATCH_AWAIT_TIMEOUT_DELTA_MS;
+        private static long findTimeout(final ReplicationRetryConsumeProperty retryProperty) {
+            return retryProperty.getTimeLapseMs() * retryProperty.getMaxAttempts() + TIMEOUT_DELTA_MS;
         }
 
         private void await(final CountDownLatch latch) {
@@ -671,7 +671,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 
         private void awaitInterrupted(final CountDownLatch latch)
                 throws InterruptedException {
-            final boolean timeoutExceeded = !latch.await(latchAwaitTimeout, MILLISECONDS);
+            final boolean timeoutExceeded = !latch.await(timeout, MILLISECONDS);
             if (timeoutExceeded) {
                 throw new IllegalStateException("Latch timeout was exceeded");
             }
