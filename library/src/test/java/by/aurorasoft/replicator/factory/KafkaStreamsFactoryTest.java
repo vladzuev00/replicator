@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.function.Consumer;
 
-import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_APPLICATION;
+import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_CLIENT;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -111,7 +111,7 @@ public final class KafkaStreamsFactoryTest {
         verify(streams, times(1)).setUncaughtExceptionHandler(exceptionHandlerArgumentCaptor.capture());
         final StreamsUncaughtExceptionHandler capturedHandler = exceptionHandlerArgumentCaptor.getValue();
         final StreamThreadExceptionResponse actualResponse = capturedHandler.handle(null);
-        assertSame(SHUTDOWN_APPLICATION, actualResponse);
+        assertSame(SHUTDOWN_CLIENT, actualResponse);
     }
 
     private void verifyNotClosed(final KafkaStreams streams) {

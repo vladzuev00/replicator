@@ -6,7 +6,7 @@ import org.apache.kafka.streams.Topology;
 import org.springframework.stereotype.Component;
 
 import static java.lang.Runtime.getRuntime;
-import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_APPLICATION;
+import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_CLIENT;
 
 @Component
 public final class KafkaStreamsFactory {
@@ -14,7 +14,7 @@ public final class KafkaStreamsFactory {
     public KafkaStreams create(final Topology topology, final StreamsConfig config) {
         final KafkaStreams streams = new KafkaStreams(topology, config);
         try {
-            streams.setUncaughtExceptionHandler(exception -> SHUTDOWN_APPLICATION);
+            streams.setUncaughtExceptionHandler(exception -> SHUTDOWN_CLIENT);
             closeOnShutdown(streams);
             return streams;
         } catch (final Exception exception) {
