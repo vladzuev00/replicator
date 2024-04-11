@@ -1,13 +1,17 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.Test;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Map;
 
 import static org.apache.kafka.streams.StreamsConfig.*;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public final class ReplicationStreamsConfigFactoryTest {
     private static final String GIVEN_BOOTSTRAP_ADDRESS = "127.0.0.1:9092";
@@ -28,6 +32,11 @@ public final class ReplicationStreamsConfigFactoryTest {
     private static ReplicationConsumePipeline<?, ?> createPipeline(final String id) {
         return ReplicationConsumePipeline.builder()
                 .id(id)
+                .topic("test-topic")
+                .idSerde(mock(Serde.class))
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(mock(JpaRepository.class))
                 .build();
     }
 
