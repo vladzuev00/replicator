@@ -56,7 +56,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 @Transactional(propagation = NOT_SUPPORTED)
-@Import(ReplicationIT.ReplicationBarrier.class)
+@Import(ReplicationIT.ReplicationLatch.class)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class ReplicationIT extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
@@ -72,7 +72,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     private ReplicationRetryConsumeProperty retryConsumeProperty;
 
     @Autowired
-    private ReplicationBarrier replicationBarrier;
+    private ReplicationLatch replicationLatch;
 
     @SpyBean
     private ReplicatedAddressRepository replicatedAddressRepository;
@@ -383,9 +383,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
                                             final int addressCalls,
                                             final int personCalls,
                                             final boolean failedCallsCounted) {
-        replicationBarrier.expect(addressCalls, personCalls, failedCallsCounted);
+        replicationLatch.expect(addressCalls, personCalls, failedCallsCounted);
         final R result = operation.get();
-        replicationBarrier.await();
+        replicationLatch.await();
         return result;
     }
 
@@ -625,7 +625,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
 
     @Aspect
     @Component
-    public static class ReplicationBarrier {
+    public static class ReplicationLatch {
         private static final long LATCH_AWAIT_TIMEOUT_SECONDS = 30;
 
         private volatile CountDownLatch addressLatch = new CountDownLatch(0);

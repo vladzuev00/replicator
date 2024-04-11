@@ -28,7 +28,7 @@ public final class DBContainerInitializer extends ContainerInitializer {
             .withPassword(PASSWORD);
 
     static {
-        POSTGRE_SQL_CONTAINER.start();
+        startContainer(POSTGRE_SQL_CONTAINER);
     }
 
     @Override
