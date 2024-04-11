@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
@@ -49,16 +48,14 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
-@Transactional(propagation = NOT_SUPPORTED)
 @Import(ReplicationIT.ReplicationLatch.class)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-public class ReplicationIT extends AbstractSpringBootTest {
+public final class ReplicationIT extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
@@ -626,7 +623,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Aspect
     @Component
     public static class ReplicationLatch {
-        private static final long LATCH_AWAIT_DELTA_MS = 20000;
+        private static final long LATCH_AWAIT_TIMEOUT_DELTA_MS = 20000;
         private static final CountDownLatch DEFAULT_LATCH = new CountDownLatch(0);
 
         private final long latchAwaitTimeout;
@@ -664,7 +661,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         }
 
         private static long findLatchAwaitTimeout(final ReplicationRetryConsumeProperty retryProperty) {
-            return retryProperty.getMaxAttempts() * retryProperty.getTimeLapseMs() + LATCH_AWAIT_DELTA_MS;
+            return retryProperty.getTimeLapseMs() * retryProperty.getMaxAttempts() + LATCH_AWAIT_TIMEOUT_DELTA_MS;
         }
 
         private void await(final CountDownLatch latch) {
