@@ -22,21 +22,21 @@ public final class DBContainerInitializer extends ContainerInitializer {
     private static final String PASSWORD = "sa";
 
     @SuppressWarnings("resource")
-    private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>(DOCKER_IMAGE_NAME)
+    private static final PostgreSQLContainer<?> CONTAINER = new PostgreSQLContainer<>(DOCKER_IMAGE_NAME)
             .withDatabaseName(DATA_BASE_NAME)
             .withUsername(USERNAME)
             .withPassword(PASSWORD);
 
     static {
-        start(POSTGRE_SQL_CONTAINER);
+        start(CONTAINER);
     }
 
     @Override
     protected Stream<TestProperty> getProperties() {
         return Stream.of(
-                new TestProperty(PROPERTY_KEY_DATASOURCE_URL, POSTGRE_SQL_CONTAINER.getJdbcUrl()),
-                new TestProperty(PROPERTY_KEY_USERNAME, POSTGRE_SQL_CONTAINER.getUsername()),
-                new TestProperty(PROPERTY_KEY_PASSWORD, POSTGRE_SQL_CONTAINER.getPassword())
+                new TestProperty(PROPERTY_KEY_DATASOURCE_URL, CONTAINER.getJdbcUrl()),
+                new TestProperty(PROPERTY_KEY_USERNAME, CONTAINER.getUsername()),
+                new TestProperty(PROPERTY_KEY_PASSWORD, CONTAINER.getPassword())
         );
     }
 }
