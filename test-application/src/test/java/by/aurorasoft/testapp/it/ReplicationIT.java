@@ -623,13 +623,13 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         private static final long TIMEOUT_DELTA_MS = 20000;
         private static final CountDownLatch DEFAULT_LATCH = new CountDownLatch(0);
 
-        private final long timeout;
+        private final long timeoutMs;
         private volatile CountDownLatch addressLatch;
         private volatile CountDownLatch personLatch;
         private volatile boolean failedCallsCounted;
 
         public ReplicationBarrier(final ReplicationRetryConsumeProperty retryProperty) {
-            timeout = findTimeout(retryProperty);
+            timeoutMs = findTimeoutMs(retryProperty);
             addressLatch = DEFAULT_LATCH;
             personLatch = DEFAULT_LATCH;
         }
@@ -657,7 +657,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
             await(personLatch);
         }
 
-        private static long findTimeout(final ReplicationRetryConsumeProperty retryProperty) {
+        private static long findTimeoutMs(final ReplicationRetryConsumeProperty retryProperty) {
             return retryProperty.getTimeLapseMs() * retryProperty.getMaxAttempts() + TIMEOUT_DELTA_MS;
         }
 
@@ -671,7 +671,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 
         private void awaitInterrupted(final CountDownLatch latch)
                 throws InterruptedException {
-            final boolean timeoutExceeded = !latch.await(timeout, MILLISECONDS);
+            final boolean timeoutExceeded = !latch.await(timeoutMs, MILLISECONDS);
             if (timeoutExceeded) {
                 throw new IllegalStateException("Latch timeout was exceeded");
             }
