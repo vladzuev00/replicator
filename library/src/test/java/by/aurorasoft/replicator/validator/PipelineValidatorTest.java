@@ -1,8 +1,10 @@
 package by.aurorasoft.replicator.validator;
 
-import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
+import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.validator.PipelineValidator.PipelineConstraintViolationException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.kafka.common.serialization.Serde;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -11,12 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public final class PipelineValidatorTest {
@@ -59,6 +61,11 @@ public final class PipelineValidatorTest {
     private static ReplicationConsumePipeline<?, ?> createPipeline(final String id) {
         return ReplicationConsumePipeline.builder()
                 .id(id)
+                .topic("test-topic")
+                .idSerde(mock(Serde.class))
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(mock(JpaRepository.class))
                 .build();
     }
 
