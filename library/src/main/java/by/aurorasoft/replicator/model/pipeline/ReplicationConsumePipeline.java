@@ -9,6 +9,8 @@ import lombok.Getter;
 import org.apache.kafka.common.serialization.Serde;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Objects;
+
 @Getter
 public final class ReplicationConsumePipeline<ID, E extends AbstractEntity<ID>> {
     private final String id;
@@ -23,10 +25,14 @@ public final class ReplicationConsumePipeline<ID, E extends AbstractEntity<ID>> 
                                       final Serde<ID> idSerde,
                                       final TypeReference<ConsumedReplication<ID, E>> replicationTypeReference,
                                       final JpaRepository<E, ID> repository) {
-        this.id = id;
-        this.topic = topic;
-        this.idSerde = idSerde;
-        replicationSerde = new ReplicationSerde<>(replicationTypeReference);
-        this.repository = repository;
+        this.id = requireNonNull(id);
+        this.topic = requireNonNull(topic);
+        this.idSerde = requireNonNull(idSerde);
+        replicationSerde = new ReplicationSerde<>(requireNonNull(replicationTypeReference));
+        this.repository = requireNonNull(repository);
+    }
+
+    private static <T> T requireNonNull(final T object) {
+        return Objects.requireNonNull(object, "All properties of pipeline should be defined");
     }
 }

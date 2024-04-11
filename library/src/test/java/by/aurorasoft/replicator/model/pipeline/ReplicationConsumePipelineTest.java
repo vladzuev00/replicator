@@ -17,8 +17,8 @@ public final class ReplicationConsumePipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void pipelineShouldBeCreated() {
-        final String givenId = "dto-replication-pipeline";
-        final String givenTopic = "topic";
+        final String givenId = "test-pipeline";
+        final String givenTopic = "test-topic";
         final Serde<Long> givenIdSerde = mock(Serde.class);
         final TypeReference<ConsumedReplication<Long, TestEntity>> givenReplicationTypeReference = new TypeReference<>() {
         };
@@ -37,6 +37,65 @@ public final class ReplicationConsumePipelineTest {
         assertSame(givenIdSerde, actual.getIdSerde());
         assertSame(givenRepository, actual.getRepository());
         assertSame(givenReplicationTypeReference, getReplicationTypeReference(actual));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = NullPointerException.class)
+    public void pipelineShouldNotBeCreatedBecauseOfIdIsNull() {
+        ReplicationConsumePipeline.builder()
+                .topic("test-topic")
+                .idSerde(mock(Serde.class))
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(mock(JpaRepository.class))
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = NullPointerException.class)
+    public void pipelineShouldBeCreatedBecauseOfTopicIsNull() {
+        ReplicationConsumePipeline.builder()
+                .id("test-pipeline")
+                .idSerde(mock(Serde.class))
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(mock(JpaRepository.class))
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = NullPointerException.class)
+    public void pipelineShouldBeCreatedBecauseOfIdSerdeIsNull() {
+        ReplicationConsumePipeline.builder()
+                .id("test-pipeline")
+                .topic("test-topic")
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(mock(JpaRepository.class))
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = NullPointerException.class)
+    public void pipelineShouldBeCreatedBecauseOfReplicationTypeReferenceIsNull() {
+        ReplicationConsumePipeline.builder()
+                .id("test-pipeline")
+                .topic("test-topic")
+                .idSerde(mock(Serde.class))
+                .repository(mock(JpaRepository.class))
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = NullPointerException.class)
+    public void pipelineShouldBeCreatedBecauseOfRepositoryIsNull() {
+        ReplicationConsumePipeline.builder()
+                .id("test-pipeline")
+                .topic("test-topic")
+                .idSerde(mock(Serde.class))
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .build();
     }
 
     @SuppressWarnings("unchecked")

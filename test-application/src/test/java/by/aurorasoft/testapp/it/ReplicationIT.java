@@ -23,6 +23,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
@@ -83,7 +84,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldBeSaved() {
         final Address givenAddress = createAddress("Belarus", "Minsk");
 
@@ -94,7 +95,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplication(actual);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
         final Address givenAddress = createAddress("Russia", "Moscow");
 
@@ -103,7 +104,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
         final Person givenPerson = createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L);
 
@@ -112,13 +113,13 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressesShouldBeSaved() {
         final Address firstGivenAddress = createAddress("China", "Fuyang");
         final Address secondGivenAddress = createAddress("China", "Hefei");
         final List<Address> givenAddresses = List.of(firstGivenAddress, secondGivenAddress);
 
-        final List<Address> actual = executeWaitingReplication(() -> addressService.saveAll(givenAddresses), 2, 0, false);
+        final List<Address> actual = executeWaitingReplication(() -> addressService.saveAll(givenAddresses), givenAddresses.size(), 0, false);
         final List<Address> expected = List.of(
                 new Address(1L, firstGivenAddress.getCountry(), firstGivenAddress.getCity()),
                 new Address(2L, secondGivenAddress.getCountry(), secondGivenAddress.getCity())
@@ -128,7 +129,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplications(actual);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
         final List<Address> givenAddresses = List.of(
                 createAddress("Belarus", "Minsk"),
@@ -140,7 +141,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
         final List<Person> givenPersons = List.of(
                 createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 255L),
@@ -152,7 +153,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldBeUpdated() {
         final Address givenAddress = new Address(255L, "Belarus", "Minsk");
 
@@ -162,7 +163,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplication(actual);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
         final Address givenAddress = new Address(256L, "Russia", "Moscow");
 
@@ -171,7 +172,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void personShouldNotBeUpdatedBecauseOfNoSuchAddress() {
         final Person givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
 
