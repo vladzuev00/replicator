@@ -17,7 +17,6 @@ import static java.util.TimeZone.setDefault;
 public abstract class AbstractSpringBootTest {
 
     @PersistenceContext
-    @SuppressWarnings("unused")
     protected EntityManager entityManager;
 
     @BeforeClass
