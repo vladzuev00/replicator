@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public final class AddressMapper extends AbsMapperEntityDto<AddressEntity, Address> {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public AddressMapper(final ModelMapper modelMapper, final EntityManager entityManager) {
         super(modelMapper, entityManager, AddressEntity.class, Address.class);
     }
