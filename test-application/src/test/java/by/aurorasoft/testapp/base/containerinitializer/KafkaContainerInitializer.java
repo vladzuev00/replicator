@@ -15,7 +15,7 @@ public final class KafkaContainerInitializer extends ContainerInitializer {
     private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(DOCKER_IMAGE_NAME);
 
     static {
-        startContainer(KAFKA_CONTAINER);
+        start(KAFKA_CONTAINER);
     }
 
     @Override

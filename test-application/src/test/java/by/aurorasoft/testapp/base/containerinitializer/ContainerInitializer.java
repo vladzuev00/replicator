@@ -21,7 +21,7 @@ public abstract class ContainerInitializer implements ApplicationContextInitiali
 
     protected abstract Stream<TestProperty> getProperties();
 
-    protected static void startContainer(final Startable container) {
+    protected static void start(final Startable container) {
         container.start();
         getRuntime().addShutdownHook(new Thread(container::close));
     }
