@@ -22,7 +22,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.junit.Test;
 import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -48,7 +47,7 @@ import static by.aurorasoft.testapp.util.IdUtil.mapToIds;
 import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -181,7 +180,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldBeUpdatedPartially() {
         final Long givenId = 255L;
         final AddressName givenNewName = new AddressName("Belarus", "Minsk");
@@ -193,7 +192,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplication(actual);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
         final Long givenId = 256L;
         final AddressName givenNewName = new AddressName("Russia", "Moscow");
@@ -203,7 +202,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
         final Long givenId = 255L;
         final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
@@ -213,7 +212,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldBeDeleted() {
         final Long givenId = 262L;
 
@@ -222,7 +221,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         assertTrue(isAddressDeletedWithReplication(givenId));
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldNotBeDeletedByNotExistId() {
         final Long givenId = MAX_VALUE;
 
@@ -231,7 +230,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
         final Long givenId = 255L;
 
@@ -240,7 +239,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
+    @RepeatedTest(50)
     public void operationsShouldBeExecuted() {
         executeWaitingReplication(
                 () -> {
@@ -329,7 +328,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         );
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
         final Long givenId = 258L;
 
@@ -340,7 +339,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyMaxAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @Test
+    @RepeatedTest(10)
     public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
         final Person givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
 
@@ -359,7 +358,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyMaxAttemptSaveReplicatedPerson();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
         final Address givenAddress = createAddress("Japan", "Tokyo");
 
@@ -371,7 +370,7 @@ public class ReplicationIT extends AbstractSpringBootTest {
         verifyAttemptSaveReplicatedAddress();
     }
 
-    @Test
+    @RepeatedTest(10)
     public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
         final Long givenId = 262L;
 
@@ -627,11 +626,19 @@ public class ReplicationIT extends AbstractSpringBootTest {
     @Aspect
     @Component
     public static class ReplicationLatch {
-        private static final long LATCH_AWAIT_TIMEOUT_SECONDS = 30;
+        private static final long LATCH_AWAIT_DELTA_MS = 20000;
+        private static final CountDownLatch DEFAULT_LATCH = new CountDownLatch(0);
 
-        private volatile CountDownLatch addressLatch = new CountDownLatch(0);
-        private volatile CountDownLatch personLatch = new CountDownLatch(0);
+        private final long latchAwaitTimeout;
+        private volatile CountDownLatch addressLatch;
+        private volatile CountDownLatch personLatch;
         private volatile boolean failedCallsCounted;
+
+        public ReplicationLatch(final ReplicationRetryConsumeProperty retryProperty) {
+            latchAwaitTimeout = findLatchAwaitTimeout(retryProperty);
+            addressLatch = DEFAULT_LATCH;
+            personLatch = DEFAULT_LATCH;
+        }
 
         public final void expect(final int addressCalls, final int personCalls, final boolean failedCallsCounted) {
             addressLatch = new CountDownLatch(addressCalls);
@@ -656,7 +663,11 @@ public class ReplicationIT extends AbstractSpringBootTest {
             await(personLatch);
         }
 
-        private static void await(final CountDownLatch latch) {
+        private static long findLatchAwaitTimeout(final ReplicationRetryConsumeProperty retryProperty) {
+            return retryProperty.getMaxAttempts() * retryProperty.getTimeLapseMs() + LATCH_AWAIT_DELTA_MS;
+        }
+
+        private void await(final CountDownLatch latch) {
             try {
                 awaitInterrupted(latch);
             } catch (final InterruptedException cause) {
@@ -664,9 +675,9 @@ public class ReplicationIT extends AbstractSpringBootTest {
             }
         }
 
-        private static void awaitInterrupted(final CountDownLatch latch)
+        private void awaitInterrupted(final CountDownLatch latch)
                 throws InterruptedException {
-            final boolean timeoutExceeded = !latch.await(LATCH_AWAIT_TIMEOUT_SECONDS, SECONDS);
+            final boolean timeoutExceeded = !latch.await(latchAwaitTimeout, MILLISECONDS);
             if (timeoutExceeded) {
                 throw new IllegalStateException("Latch timeout was exceeded");
             }
