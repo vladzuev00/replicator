@@ -10,7 +10,7 @@ public final class DataBaseContainerInitializer extends ContainerInitializer<Pos
     private static final String KEY_USERNAME = "spring.datasource.username";
     private static final String KEY_PASSWORD = "spring.datasource.password";
 
-    private static final String IMAGE_NAME = "mdillon/postgis:latest";
+    private static final String IMAGE_NAME = "postgres:latest";
 
     private static final String DATA_BASE_NAME = "integration-tests-db";
     private static final String USERNAME = "sa";
