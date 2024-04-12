@@ -22,7 +22,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
@@ -47,7 +47,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -77,7 +77,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeSaved() {
         final Address givenAddress = createAddress("Belarus", "Minsk");
 
@@ -88,7 +88,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplication(actual);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
         final Address givenAddress = createAddress("Russia", "Moscow");
 
@@ -97,7 +97,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
         final Person givenPerson = createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L);
 
@@ -106,7 +106,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressesShouldBeSaved() {
         final Address firstGivenAddress = createAddress("China", "Fuyang");
         final Address secondGivenAddress = createAddress("China", "Hefei");
@@ -122,7 +122,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplications(actual);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
         final List<Address> givenAddresses = List.of(
                 createAddress("Belarus", "Minsk"),
@@ -134,7 +134,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
         final List<Person> givenPersons = List.of(
                 createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 255L),
@@ -146,7 +146,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeUpdated() {
         final Address givenAddress = new Address(255L, "Belarus", "Minsk");
 
@@ -156,7 +156,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplication(actual);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
         final Address givenAddress = new Address(256L, "Russia", "Moscow");
 
@@ -165,7 +165,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void personShouldNotBeUpdatedBecauseOfNoSuchAddress() {
         final Person givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
 
@@ -174,7 +174,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeUpdatedPartially() {
         final Long givenId = 255L;
         final AddressName givenNewName = new AddressName("Belarus", "Minsk");
@@ -186,7 +186,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyAddressReplication(actual);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
         final Long givenId = 256L;
         final AddressName givenNewName = new AddressName("Russia", "Moscow");
@@ -196,7 +196,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
         final Long givenId = 255L;
         final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
@@ -206,7 +206,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeDeleted() {
         final Long givenId = 262L;
 
@@ -215,7 +215,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         assertTrue(isAddressDeletedWithReplication(givenId));
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeDeletedByNotExistId() {
         final Long givenId = MAX_VALUE;
 
@@ -224,7 +224,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
         final Long givenId = 255L;
 
@@ -233,7 +233,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @RepeatedTest(50)
+    @Test
     public void operationsShouldBeExecuted() {
         executeWaitingReplication(
                 () -> {
@@ -322,7 +322,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         );
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
         final Long givenId = 258L;
 
@@ -333,7 +333,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyMaxAttemptDeleteReplicatedAddress(givenId);
     }
 
-    @RepeatedTest(10)
+    @Test
     public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
         final Person givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
 
@@ -352,7 +352,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyMaxAttemptSaveReplicatedPerson();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
         final Address givenAddress = createAddress("Japan", "Tokyo");
 
@@ -364,7 +364,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyAttemptSaveReplicatedAddress();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
         final Long givenId = 262L;
 
