@@ -11,6 +11,7 @@ import org.testcontainers.lifecycle.Startable;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.testcontainers.utility.DockerImageName.parse;
 
@@ -24,6 +25,8 @@ public abstract class ContainerInitializer<C extends Startable> implements Appli
     }
 
     protected abstract String getImageName();
+
+    protected abstract Optional<String> getOtherImageName();
 
     protected abstract C createContainer(final DockerImageName imageName);
 
@@ -46,7 +49,9 @@ public abstract class ContainerInitializer<C extends Startable> implements Appli
     }
 
     private DockerImageName parseImageName() {
-        return parse(getImageName());
+        final DockerImageName imageName = parse(getImageName());
+        getOtherImageName().ifPresent(imageName::asCompatibleSubstituteFor);
+        return imageName;
     }
 
     private void closeOnContextClosed(final C container, final ConfigurableApplicationContext context) {

@@ -4,6 +4,9 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Optional.empty;
 
 public final class KafkaContainerInitializer extends ContainerInitializer<KafkaContainer> {
     private static final String KEY_BOOTSTRAP_SERVERS = "spring.kafka.bootstrap-servers";
@@ -13,6 +16,11 @@ public final class KafkaContainerInitializer extends ContainerInitializer<KafkaC
     @Override
     protected String getImageName() {
         return IMAGE_NAME;
+    }
+
+    @Override
+    protected Optional<String> getOtherImageName() {
+        return empty();
     }
 
     @Override

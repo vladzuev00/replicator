@@ -4,6 +4,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Optional.empty;
 
 public final class DataBaseContainerInitializer extends ContainerInitializer<PostgreSQLContainer<?>> {
     private static final String KEY_DATASOURCE_URL = "spring.datasource.url";
@@ -19,6 +22,11 @@ public final class DataBaseContainerInitializer extends ContainerInitializer<Pos
     @Override
     protected String getImageName() {
         return IMAGE_NAME;
+    }
+
+    @Override
+    protected Optional<String> getOtherImageName() {
+        return empty();
     }
 
     @Override
