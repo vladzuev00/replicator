@@ -8,8 +8,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.testcontainers.lifecycle.Startable;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
+
+import static org.testcontainers.utility.DockerImageName.parse;
 
 @RequiredArgsConstructor
 public abstract class ContainerInitializer<C extends Startable> implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -20,14 +23,17 @@ public abstract class ContainerInitializer<C extends Startable> implements Appli
         overrideAppProperties(container, context);
     }
 
-    protected abstract C createContainer();
+    protected abstract String getImageName();
+
+    protected abstract C createContainer(final DockerImageName imageName);
 
     protected abstract void configure(final C container);
 
     protected abstract Map<String, String> getPropertiesByKeys(final C container);
 
     private C startContainer(final ConfigurableApplicationContext context) {
-        final C container = createContainer();
+        final DockerImageName imageName = parseImageName();
+        final C container = createContainer(imageName);
         try {
             configure(container);
             container.start();
@@ -37,6 +43,10 @@ public abstract class ContainerInitializer<C extends Startable> implements Appli
             container.close();
             throw exception;
         }
+    }
+
+    private DockerImageName parseImageName() {
+        return parse(getImageName());
     }
 
     private void closeOnContextClosed(final C container, final ConfigurableApplicationContext context) {
