@@ -50,8 +50,9 @@ public abstract class ContainerInitializer<C extends Startable> implements Appli
 
     private DockerImageName parseImageName() {
         final DockerImageName imageName = parse(getImageName());
-        getOtherImageName().ifPresent(imageName::asCompatibleSubstituteFor);
-        return imageName;
+        return getOtherImageName()
+                .map(imageName::asCompatibleSubstituteFor)
+                .orElse(imageName);
     }
 
     private void closeOnContextClosed(final C container, final ConfigurableApplicationContext context) {
