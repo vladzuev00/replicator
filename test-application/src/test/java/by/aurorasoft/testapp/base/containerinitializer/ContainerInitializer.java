@@ -1,38 +1,49 @@
 package by.aurorasoft.testapp.base.containerinitializer;
 
-import lombok.Value;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.ContextClosedEvent;
 import org.testcontainers.lifecycle.Startable;
 
 import java.util.Map;
-import java.util.stream.Stream;
 
-import static java.lang.Runtime.getRuntime;
-import static java.util.stream.Collectors.toMap;
-
-public abstract class ContainerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+@RequiredArgsConstructor
+public abstract class ContainerInitializer<C extends Startable> implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
-    public final void initialize(final ConfigurableApplicationContext context) {
-        TestPropertyValues.of(getPropertyValuesByKeys()).applyTo(context.getEnvironment());
+    public final void initialize(@NotNull final ConfigurableApplicationContext context) {
+        final C container = startContainer(context);
+        overrideAppProperties(container, context);
     }
 
-    protected abstract Stream<TestProperty> getProperties();
+    protected abstract C createContainer();
 
-    protected static void start(final Startable container) {
-        container.start();
-        getRuntime().addShutdownHook(new Thread(container::close));
+    protected abstract void configure(final C container);
+
+    protected abstract Map<String, String> getPropertiesByKeys(final C container);
+
+    private C startContainer(final ConfigurableApplicationContext context) {
+        final C container = createContainer();
+        try {
+            configure(container);
+            container.start();
+            closeOnContextClosed(container, context);
+            return container;
+        } catch (final Throwable exception) {
+            container.close();
+            throw exception;
+        }
     }
 
-    private Map<String, String> getPropertyValuesByKeys() {
-        return getProperties().collect(toMap(TestProperty::getKey, TestProperty::getValue));
+    private void closeOnContextClosed(final C container, final ConfigurableApplicationContext context) {
+        context.addApplicationListener((ApplicationListener<ContextClosedEvent>) event -> container.close());
     }
 
-    @Value
-    protected static class TestProperty {
-        String key;
-        String value;
+    private void overrideAppProperties(final C container, final ConfigurableApplicationContext context) {
+        TestPropertyValues.of(getPropertiesByKeys(container)).applyTo(context.getEnvironment());
     }
 }

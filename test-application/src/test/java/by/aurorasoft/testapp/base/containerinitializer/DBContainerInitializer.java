@@ -3,11 +3,11 @@ package by.aurorasoft.testapp.base.containerinitializer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.stream.Stream;
+import java.util.Map;
 
 import static org.testcontainers.utility.DockerImageName.parse;
 
-public final class DBContainerInitializer extends ContainerInitializer {
+public final class DBContainerInitializer extends ContainerInitializer<PostgreSQLContainer<?>> {
     private static final String PROPERTY_KEY_DATASOURCE_URL = "spring.datasource.url";
     private static final String PROPERTY_KEY_USERNAME = "spring.datasource.username";
     private static final String PROPERTY_KEY_PASSWORD = "spring.datasource.password";
@@ -21,22 +21,24 @@ public final class DBContainerInitializer extends ContainerInitializer {
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "sa";
 
-    @SuppressWarnings("resource")
-    private static final PostgreSQLContainer<?> CONTAINER = new PostgreSQLContainer<>(DOCKER_IMAGE_NAME)
-            .withDatabaseName(DATA_BASE_NAME)
-            .withUsername(USERNAME)
-            .withPassword(PASSWORD);
-
-    static {
-        start(CONTAINER);
+    @Override
+    protected PostgreSQLContainer<?> createContainer() {
+        return new PostgreSQLContainer<>(DOCKER_IMAGE_NAME);
     }
 
     @Override
-    protected Stream<TestProperty> getProperties() {
-        return Stream.of(
-                new TestProperty(PROPERTY_KEY_DATASOURCE_URL, CONTAINER.getJdbcUrl()),
-                new TestProperty(PROPERTY_KEY_USERNAME, CONTAINER.getUsername()),
-                new TestProperty(PROPERTY_KEY_PASSWORD, CONTAINER.getPassword())
+    protected void configure(final PostgreSQLContainer<?> container) {
+        container.withDatabaseName(DATA_BASE_NAME);
+        container.withUsername(USERNAME);
+        container.withPassword(PASSWORD);
+    }
+
+    @Override
+    protected Map<String, String> getPropertiesByKeys(final PostgreSQLContainer<?> container) {
+        return Map.of(
+                PROPERTY_KEY_DATASOURCE_URL, container.getJdbcUrl(),
+                PROPERTY_KEY_USERNAME, container.getUsername(),
+                PROPERTY_KEY_PASSWORD, container.getPassword()
         );
     }
 }
