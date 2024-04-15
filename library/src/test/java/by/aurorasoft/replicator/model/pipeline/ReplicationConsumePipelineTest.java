@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.pipeline;
 
-import by.aurorasoft.replicator.base.entity.TestEntity;
+import by.aurorasoft.replicator.base.v2.entity.TestEntity;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;

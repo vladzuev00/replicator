@@ -1,9 +1,9 @@
 package by.aurorasoft.replicator.holder;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.base.service.FirstTestCRUDService;
-import by.aurorasoft.replicator.base.service.SecondTestCRUDService;
-import by.aurorasoft.replicator.base.service.ThirdTestCRUDService;
+import by.aurorasoft.replicator.base.v2.service.FirstTestCRUDService;
+import by.aurorasoft.replicator.base.v2.service.SecondTestCRUDService;
+import by.aurorasoft.replicator.base.v2.service.ThirdTestCRUDService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

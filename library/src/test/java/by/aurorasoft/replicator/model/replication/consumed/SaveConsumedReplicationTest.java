@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
-import by.aurorasoft.replicator.base.entity.TestEntity;
+import by.aurorasoft.replicator.base.v2.entity.TestEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 

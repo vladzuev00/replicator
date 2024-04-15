@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
-import by.aurorasoft.replicator.base.entity.TestEntity;
+import by.aurorasoft.replicator.base.v2.entity.TestEntity;
 import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.annotation;
 
+import by.nhorushko.crudgeneric.service.RudGenericService;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.google.auto.service.AutoService;
 
@@ -14,16 +15,21 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toCollection;
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @AutoService(Processor.class)
 public final class ReplicatedServiceProcessor extends AbstractProcessor {
     private static final Class<? extends Annotation> REPLICATED_SERVICE = ReplicatedService.class;
-    private static final Class<?> RUD_SERVICE = AbsServiceRUD.class;
+
+    @SuppressWarnings("deprecation")
+    private static final Set<String> RUD_SERVICE_NAMES = getNames(AbsServiceRUD.class, RudGenericService.class);
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
@@ -44,21 +50,35 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
         return latestSupported();
     }
 
+    private static Set<String> getNames(final Class<?>... classes) {
+        return stream(classes)
+                .map(Class::getName)
+                .collect(toCollection(LinkedHashSet::new));
+    }
+
     private static Stream<? extends Element> getAnnotatedElements(final TypeElement annotation,
                                                                   final RoundEnvironment env) {
         return env.getElementsAnnotatedWith(annotation).stream();
     }
 
     private boolean isRUDService(final Element element) {
-        return getTypeUtils().isAssignable(element.asType(), getRawRUDServiceType());
+        return RUD_SERVICE_NAMES.stream()
+                .map(this::getRawType)
+                .anyMatch(rawServiceType -> isInstanceOf(element, rawServiceType));
     }
 
-    private TypeMirror getRawRUDServiceType() {
-        return getTypeUtils().erasure(getRUDServiceType());
+    private TypeMirror getRawType(final String name) {
+        return getTypeUtils().erasure(getType(name));
     }
 
-    private TypeMirror getRUDServiceType() {
-        return getElementUtils().getTypeElement(getRUDServiceName()).asType();
+    private TypeMirror getType(final String name) {
+        return getElementUtils()
+                .getTypeElement(name)
+                .asType();
+    }
+
+    private boolean isInstanceOf(final Element element, final TypeMirror type) {
+        return getTypeUtils().isAssignable(element.asType(), type);
     }
 
     private void alertWrongAnnotating(final Element element) {
@@ -66,9 +86,9 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     }
 
     private String getWrongAnnotatingMessage() {
-        return "'@%s' can be applied only for subclass of '%s'".formatted(
+        return "'@%s' can be applied only for subclass one of '%s'".formatted(
                 getReplicatedServiceName(),
-                getRUDServiceName()
+                RUD_SERVICE_NAMES
         );
     }
 
@@ -86,9 +106,5 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     private static String getReplicatedServiceName() {
         return REPLICATED_SERVICE.getName();
-    }
-
-    private static String getRUDServiceName() {
-        return RUD_SERVICE.getName();
     }
 }

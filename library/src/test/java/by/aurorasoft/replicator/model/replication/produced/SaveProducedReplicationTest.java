@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import by.aurorasoft.replicator.base.dto.TestDto;
+import by.aurorasoft.replicator.base.v2.dto.TestDto;
 import org.junit.Test;
 
 import static org.junit.Assert.assertSame;
