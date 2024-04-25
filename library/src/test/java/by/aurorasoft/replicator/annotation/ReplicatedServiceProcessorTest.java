@@ -28,120 +28,130 @@ public final class ReplicatedServiceProcessorTest {
         compileExpectingAnnotatingError(givenClassName, givenSourceCode);
     }
 
+    private static void compile(final String className, final String sourceCode) {
+        Reflect.compile(className, sourceCode, getCompileOptions());
+    }
+
+    private static void compileExpectingAnnotatingError(final String className, final String sourceCode) {
+        try {
+            compile(className, sourceCode);
+        } catch (final ReflectException exception) {
+            assertTrue(isWrongAnnotatingError(exception));
+        }
+    }
+
+    private static boolean isWrongAnnotatingError(final ReflectException exception) {
+        return exception.getMessage().contains(WRONG_ANNOTATING_MESSAGE);
+    }
+
+    private static CompileOptions getCompileOptions() {
+        return new CompileOptions().processors(new ReplicatedServiceProcessor());
+    }
+
     private static Stream<Arguments> provideClassNameAndCompiledSourceCode() {
         return Stream.of(
                 Arguments.of(
-                        "by.aurorasoft.replicator.TestRUDService",
+                        "by.aurorasoft.replicator.TestV1RUDService",
                         """
                                 package by.aurorasoft.replicator;
-                                                        
+                                                                
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v1.dto.TestDto;
-                                import by.aurorasoft.replicator.base.v1.entity.TestEntity;
+                                import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
+                                import by.aurorasoft.replicator.base.v1.entity.TestV1Entity;
                                 import by.nhorushko.crudgeneric.mapper.AbstractMapper;
                                 import by.nhorushko.crudgeneric.service.RudGenericService;
                                 import org.apache.kafka.common.serialization.LongSerializer;
                                 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
-                                                        
+                                                                
                                 @SuppressWarnings("deprecation")
                                 @ReplicatedService(
                                         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
                                         topicConfig = @TopicConfig(name = "sync-dto")
                                 )
-                                public class TestRUDService extends RudGenericService<TestDto, TestEntity, JpaRepositoryImplementation<TestEntity, Long>, AbstractMapper<TestEntity, TestDto>> {
-                                   
-                                    public TestRUDService(final JpaRepositoryImplementation<TestEntity, Long> repository,
-                                                          final AbstractMapper<TestEntity, TestDto> mapper) {
-                                        super(repository, mapper, TestDto.class, TestEntity.class);
+                                public class TestV1RUDService extends RudGenericService<TestV1Dto, TestV1Entity, JpaRepositoryImplementation<TestV1Entity, Long>, AbstractMapper<TestV1Entity, TestV1Dto>> {
+                                                                
+                                    public TestV1RUDService() {
+                                        super(null, null, TestV1Dto.class, TestV1Entity.class);
                                     }
-                                }
-                                """
+                                }"""
                 ),
                 Arguments.of(
-                        "by.aurorasoft.replicator.TestRUDService",
+                        "by.aurorasoft.replicator.TestV2RUDService",
                         """
                                 package by.aurorasoft.replicator;
-                                                        
+                                                                
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
-                                import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-                                import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
+                                import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
+                                import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
                                 import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
                                 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
                                 import org.apache.kafka.common.serialization.LongSerializer;
                                 import org.springframework.data.jpa.repository.JpaRepository;
-                                                        
-                                import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-                                import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                                        
+                                                                
                                 @ReplicatedService(
                                         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                        topicConfig = @TopicConfig(name = "sync-person")
+                                        topicConfig = @TopicConfig(name = "sync-dto")
                                 )
-                                public class TestRUDService extends AbsServiceRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
-                                                        
-                                    public TestRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
-                                                          final JpaRepository<AbstractEntity<Object>, Object> repository) {
-                                        super(mapper, repository);
+                                public class TestV2RUDService extends AbsServiceRUD<Long, TestV2Entity, TestV2Dto, AbsMapperEntityDto<TestV2Entity, TestV2Dto>, JpaRepository<TestV2Entity, Long>> {
+                                                                
+                                    public TestV2RUDService() {
+                                        super(null, null);
                                     }
-                                }
-                                """
+                                }"""
                 ),
                 Arguments.of(
-                        "by.aurorasoft.replicator.TestCRUDService",
+                        "by.aurorasoft.replicator.TestV1CRUDService",
                         """
                                 package by.aurorasoft.replicator;
-                                                        
+                                                                
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v1.dto.TestDto;
-                                import by.aurorasoft.replicator.base.v1.entity.TestEntity;
+                                import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
+                                import by.aurorasoft.replicator.base.v1.entity.TestV1Entity;
                                 import by.nhorushko.crudgeneric.mapper.AbstractMapper;
                                 import by.nhorushko.crudgeneric.service.CrudGenericService;
                                 import org.apache.kafka.common.serialization.LongSerializer;
                                 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
-                                                        
+                                                                
                                 @SuppressWarnings("deprecation")
                                 @ReplicatedService(
                                         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
                                         topicConfig = @TopicConfig(name = "sync-dto")
                                 )
-                                public class TestCRUDService extends CrudGenericService<TestDto, TestEntity, JpaRepositoryImplementation<TestEntity, Long>, AbstractMapper<TestEntity, TestDto>> {
-                                                        
-                                    public TestCRUDService(final JpaRepositoryImplementation<TestEntity, Long> repository,
-                                                           final AbstractMapper<TestEntity, TestDto> mapper) {
-                                        super(repository, mapper, TestDto.class, TestEntity.class);
+                                public class TestV1CRUDService extends CrudGenericService<TestV1Dto, TestV1Entity, JpaRepositoryImplementation<TestV1Entity, Long>, AbstractMapper<TestV1Entity, TestV1Dto>> {
+                                                                
+                                    public TestV1CRUDService() {
+                                        super(null, null, TestV1Dto.class, TestV1Entity.class);
                                     }
-                                }
-                                """
+                                }"""
                 ),
                 Arguments.of(
-                        "by.aurorasoft.replicator.TestCRUDService",
+                        "by.aurorasoft.replicator.TestV2CRUDService",
                         """
                                 package by.aurorasoft.replicator;
-
+                                                                
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
-                                import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-                                import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
-                                import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
+                                import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
+                                import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
                                 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
                                 import org.apache.kafka.common.serialization.LongSerializer;
                                 import org.springframework.data.jpa.repository.JpaRepository;
-
-                                import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-                                import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-
+                                                                
                                 @ReplicatedService(
                                         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                        topicConfig = @TopicConfig(name = "sync-person")
+                                        topicConfig = @TopicConfig(name = "sync-dto")
                                 )
-                                public class TestCRUDService extends AbsServiceCRUD<Object, AbstractEntity<Object>, AbstractDto<Object>, JpaRepository<AbstractEntity<Object>, Object>> {
-
-                                    public TestCRUDService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
-                                                           final JpaRepository<AbstractEntity<Object>, Object> repository) {
-                                        super(mapper, repository);
+                                public class TestV2CRUDService extends AbsServiceCRUD<Long, TestV2Entity, TestV2Dto, JpaRepository<TestV2Entity, Long>> {
+                                                                
+                                    public TestV2CRUDService() {
+                                        super(null, null);
                                     }
                                 }"""
                 )
@@ -151,84 +161,57 @@ public final class ReplicatedServiceProcessorTest {
     private static Stream<Arguments> provideClassNameAndNotCompiledSourceCode() {
         return Stream.of(
                 Arguments.of(
-                        "by.aurorasoft.replicator.TestRService",
-                        """
-                                package by.aurorasoft.replicator;
-                                                        
-                                import by.aurorasoft.replicator.annotation.ReplicatedService;
-                                import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-                                import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
-                                import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
-                                import by.nhorushko.crudgeneric.v2.service.AbsServiceR;
-                                import org.apache.kafka.common.serialization.LongSerializer;
-                                import org.springframework.data.jpa.repository.JpaRepository;
-                                                       
-                                import static by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-                                import static by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                                        
-                                @ReplicatedService(
-                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                        topicConfig = @TopicConfig(name = "sync-person")
-                                )
-                                public class TestRService extends AbsServiceR<Object, AbstractEntity<Object>, AbstractDto<Object>, AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>>, JpaRepository<AbstractEntity<Object>, Object>> {
-                                                        
-                                    public TestRService(final AbsMapperEntityDto<AbstractEntity<Object>, AbstractDto<Object>> mapper,
-                                                        final JpaRepository<AbstractEntity<Object>, Object> repository) {
-                                        super(mapper, repository);
-                                    }
-                                }
-                                """
-                ),
-                Arguments.of(
-                        "by.aurorasoft.replicator.TestRService",
+                        "by.aurorasoft.replicator.TestV1ReadService",
                         """
                                 package by.aurorasoft.replicator;
                                                                 
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v1.dto.TestDto;
-                                import by.nhorushko.crudgeneric.service.ImmutableGenericServiceI;
+                                import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
+                                import by.aurorasoft.replicator.base.v1.entity.TestV1Entity;
+                                import by.nhorushko.crudgeneric.mapper.AbstractMapper;
+                                import by.nhorushko.crudgeneric.service.ImmutableGenericService;
                                 import org.apache.kafka.common.serialization.LongSerializer;
-                                                                
-                                import java.util.Collection;
-                                import java.util.List;
-                                                                
-                                import static java.util.Collections.emptyList;
+                                import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
                                                                 
                                 @SuppressWarnings("deprecation")
                                 @ReplicatedService(
                                         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                        topicConfig = @TopicConfig(name = "sync-person")
                                 )
-                                public class TestRService implements ImmutableGenericServiceI<TestDto> {
-                                                                
-                                    @Override
-                                    public List<TestDto> list() {
-                                        return emptyList();
+                                public class TestV1ReadService extends ImmutableGenericService<TestV1Dto, TestV1Entity, JpaRepositoryImplementation<TestV1Entity, Long>, AbstractMapper<TestV1Entity, TestV1Dto>> {
+
+                                    public TestV1ReadService() {
+                                        super(null, null, TestV1Dto.class, TestV1Entity.class);
                                     }
+                                }"""
+                ),
+                Arguments.of(
+                        "by.aurorasoft.replicator.TestV2ReadService",
+                        """
+                                package by.aurorasoft.replicator;
                                                                 
-                                    @Override
-                                    public TestDto getById(final Long id) {
-                                        return null;
-                                    }
+                                import by.aurorasoft.replicator.annotation.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
+                                import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
+                                import by.nhorushko.crudgeneric.v2.mapper.AbsMapperDto;
+                                import by.nhorushko.crudgeneric.v2.service.AbsServiceR;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                import org.springframework.data.jpa.repository.JpaRepository;
                                                                 
-                                    @Override
-                                    public List<TestDto> getById(final Collection<Long> collection) {
-                                        return emptyList();
-                                    }
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-person")
+                                )
+                                public class TestV2ReadService extends AbsServiceR<Long, TestV2Entity, TestV2Dto, AbsMapperDto<TestV2Entity, TestV2Dto>, JpaRepository<TestV2Entity, Long>> {
                                                                 
-                                    @Override
-                                    public boolean existById(final Long id) {
-                                        return false;
+                                    public TestV2ReadService() {
+                                        super(null, null);
                                     }
-                                                                
-                                    @Override
-                                    public long count() {
-                                        return 0;
-                                    }
-                                }
-                                """
+                                }"""
                 ),
                 Arguments.of(
                         "by.aurorasoft.replicator.TestService",
@@ -250,25 +233,5 @@ public final class ReplicatedServiceProcessorTest {
                                 }"""
                 )
         );
-    }
-
-    private static void compile(final String className, final String sourceCode) {
-        Reflect.compile(className, sourceCode, getCompileOptions());
-    }
-
-    private static void compileExpectingAnnotatingError(final String className, final String sourceCode) {
-        try {
-            compile(className, sourceCode);
-        } catch (final ReflectException exception) {
-            assertTrue(isWrongAnnotatingError(exception));
-        }
-    }
-
-    private static boolean isWrongAnnotatingError(final ReflectException exception) {
-        return exception.getMessage().contains(WRONG_ANNOTATING_MESSAGE);
-    }
-
-    private static CompileOptions getCompileOptions() {
-        return new CompileOptions().processors(new ReplicatedServiceProcessor());
     }
 }

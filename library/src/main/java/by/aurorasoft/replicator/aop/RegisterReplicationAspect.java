@@ -138,12 +138,7 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut(
-            "execution("
-                    + "public by.nhorushko.crudgeneric.v2.domain.AbstractDto "
-                    + "*.save(by.nhorushko.crudgeneric.v2.domain.AbstractDto)"
-                    + ")"
-    )
+    @Pointcut("execution(public Object+ *.save(Object+))")
     private void create() {
 
     }
