@@ -10,9 +10,10 @@ public final class SaveProducedReplicationTest {
     @Test
     public void entityIdShouldBeGot() {
         final Long givenId = 255L;
-        final SaveProducedReplication givenReplication = new SaveProducedReplication(new TestDto(givenId));
+        final Object givenBody = new TestDto(givenId);
+        final SaveProducedReplication givenReplication = new SaveProducedReplication(null);
 
-        final Object actual = givenReplication.getEntityId();
+        final Object actual = givenReplication.getEntityId(givenBody);
         assertSame(givenId, actual);
     }
 }
