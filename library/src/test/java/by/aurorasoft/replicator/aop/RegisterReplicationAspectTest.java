@@ -189,32 +189,50 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
 
     @Test
     public void partialUpdateByV1ServiceShouldBeReplicated() {
-        throw new RuntimeException();
+        final Long givenId = 255L;
+        final Object givenPartial = new Object();
+        final ReplicationProducer givenProducer = createProducerForService(v1Service);
+
+        final TestV1Dto actual = v1Service.updatePartial(givenId, givenPartial);
+        final TestV1Dto expected = new TestV1Dto(givenId);
+        assertEquals(expected, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
     }
 
-//    @Test
-//    public void partialUpdateShouldBeReplicated() {
-//        final Long givenId = 255L;
-//        final Object givenPartial = new Object();
-//        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
-//
-//        final TestDto actual = v2Service.updatePartial(givenId, givenPartial);
-//        final TestDto expected = new TestDto(givenId);
-//        assertEquals(expected, actual);
-//
-//        verifyRegistrationSaveReplication(actual, givenProducer);
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void partialUpdateShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final Long givenId = 255L;
-//        final Object givenPartial = new Object();
-//
-//        bindProducerWithService(null);
-//
-//        v2Service.updatePartial(givenId, givenPartial);
-//    }
-//
+    @Test
+    public void partialUpdateByV2ServiceShouldBeReplicated() {
+        final Long givenId = 255L;
+        final Object givenPartial = new Object();
+        final ReplicationProducer givenProducer = createProducerForService(v2Service);
+
+        final TestV2Dto actual = v2Service.updatePartial(givenId, givenPartial);
+        final TestV2Dto expected = new TestV2Dto(givenId);
+        assertEquals(expected, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void partialUpdateByV1ServiceNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final Long givenId = 255L;
+        final Object givenPartial = new Object();
+
+        leaveServiceWithoutProducer(v1Service);
+
+        v1Service.updatePartial(givenId, givenPartial);
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void partialUpdateByV2ServiceNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final Long givenId = 255L;
+        final Object givenPartial = new Object();
+
+        leaveServiceWithoutProducer(v2Service);
+
+        v2Service.updatePartial(givenId, givenPartial);
+    }
+
 //    @Test
 //    public void deleteByIdShouldBeReplicated() {
 //        final Long givenId = 255L;

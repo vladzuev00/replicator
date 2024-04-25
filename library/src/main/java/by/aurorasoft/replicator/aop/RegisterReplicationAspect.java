@@ -153,12 +153,12 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("execution(public by.nhorushko.crudgeneric.v2.domain.AbstractDto *.updatePartial(Object, Object))")
+    @Pointcut("execution(public Object+ *.updatePartial(Object+, Object))")
     private void updatePartial() {
 
     }
 
-    @Pointcut("execution(public void *.delete(Object))")
+    @Pointcut("execution(public void *.delete(Object+))")
     private void deleteById() {
 
     }
