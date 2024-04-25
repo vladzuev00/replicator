@@ -4,14 +4,14 @@ import by.aurorasoft.kafka.producer.KafkaProducerAbstractSimple;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import org.springframework.kafka.core.KafkaTemplate;
 
-public final class ReplicationProducer<ID> extends KafkaProducerAbstractSimple<ID, ProducedReplication<ID>> {
+public final class ReplicationProducer extends KafkaProducerAbstractSimple<Object, ProducedReplication> {
 
-    public ReplicationProducer(final String topicName, final KafkaTemplate<ID, ProducedReplication<ID>> kafkaTemplate) {
+    public ReplicationProducer(final String topicName, final KafkaTemplate<Object, ProducedReplication> kafkaTemplate) {
         super(topicName, kafkaTemplate);
     }
 
     @Override
-    public void send(final ProducedReplication<ID> replication) {
+    public void send(final ProducedReplication replication) {
         sendModel(replication.getEntityId(), replication);
     }
 }

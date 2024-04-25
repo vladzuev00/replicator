@@ -16,9 +16,10 @@ public final class ReplicationProducerHolderFactory {
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerHolder create() {
-        return serviceHolder.getServices()
-                .stream()
-                .collect(collectingAndThen(toMap(identity(), producerFactory::create), ReplicationProducerHolder::new));
+//        return serviceHolder.getServices()
+//                .stream()
+//                .collect(collectingAndThen(toMap(identity(), producerFactory::create), ReplicationProducerHolder::new));
+        return null;
     }
 
 }

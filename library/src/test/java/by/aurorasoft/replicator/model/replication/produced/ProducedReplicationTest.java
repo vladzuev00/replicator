@@ -15,8 +15,7 @@ public final class ProducedReplicationTest {
 
     @ParameterizedTest
     @MethodSource("provideReplicationAndExpectedJson")
-    public void replicationShouldBeSerializedToJson(final ProducedReplication<Long> givenReplication,
-                                                    final String expected)
+    public void replicationShouldBeSerializedToJson(final ProducedReplication givenReplication, final String expected)
             throws Exception {
         final String actual = objectMapper.writeValueAsString(givenReplication);
         assertEquals(expected, actual, true);
@@ -25,7 +24,7 @@ public final class ProducedReplicationTest {
     private static Stream<Arguments> provideReplicationAndExpectedJson() {
         return Stream.of(
                 Arguments.of(
-                        new SaveProducedReplication<>(new TestDto(255L)),
+                        new SaveProducedReplication(new TestDto(255L)),
                         """
                                 {
                                   "type": "save",
@@ -35,11 +34,11 @@ public final class ProducedReplicationTest {
                                 }"""
                 ),
                 Arguments.of(
-                        new DeleteProducedReplication<>(255L),
+                        new DeleteProducedReplication(255L),
                         """
                                 {
                                   "type": "delete",
-                                  "entityId": 255
+                                  "body": 255
                                 }"""
                 )
         );
