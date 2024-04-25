@@ -143,7 +143,7 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("execution(public java.util.List *.saveAll(java.util.Collection))")
+    @Pointcut("execution(public java.util.List *.saveAll(java.util.Collection+))")
     private void createAll() {
 
     }

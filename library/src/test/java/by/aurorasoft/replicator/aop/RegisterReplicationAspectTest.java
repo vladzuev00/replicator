@@ -1,9 +1,11 @@
 package by.aurorasoft.replicator.aop;
 
+import by.aurorasoft.replicator.aop.RegisterReplicationAspect.NoReplicationProducerException;
 import by.aurorasoft.replicator.aop.RegisterReplicationAspect.ReplicationCallback;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
 import by.aurorasoft.replicator.base.v1.service.FirstTestV1CRUDService;
+import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
 import by.aurorasoft.replicator.base.v2.service.FirstTestV2CRUDService;
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
@@ -21,7 +23,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.util.List;
 
-import static java.util.Collections.singletonList;
+import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.IntStream.range;
@@ -60,68 +62,113 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     @Test
     public void createByV1ServiceShouldBeReplicated() {
         final TestV1Dto givenDto = new TestV1Dto(255L);
-        final ReplicationProducer givenProducer = createProducerBoundedWithService(v1Service);
+        final ReplicationProducer givenProducer = createProducerForService(v1Service);
 
         final TestV1Dto actual = v1Service.save(givenDto);
         assertSame(givenDto, actual);
 
-        verifyRegistrationSaveReplication(actual, givenProducer);
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
     }
 
-//    @Test
-//    public void createShouldBeReplicated() {
-//        final TestDto givenDto = new TestDto(255L);
-//        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
-//
-//        final TestDto actual = v2Service.save(givenDto);
-//        assertSame(givenDto, actual);
-//
-//        verifyRegistrationSaveReplication(actual, givenProducer);
-//    }
+    @Test
+    public void createByV2ServiceShouldBeReplicated() {
+        final TestV2Dto givenDto = new TestV2Dto(255L);
+        final ReplicationProducer givenProducer = createProducerForService(v2Service);
 
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void createShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final TestDto givenDto = new TestDto(255L);
-//
-//        bindProducerWithService(null);
-//
-//        v2Service.save(givenDto);
-//    }
-//
-//    @Test
-//    public void createAllShouldBeReplicated() {
-//        final TestDto firstGivenDto = new TestDto(255L);
-//        final TestDto secondGivenDto = new TestDto(256L);
-//        final List<TestDto> givenDtos = List.of(firstGivenDto, secondGivenDto);
-//
-//        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
-//
-//        final List<TestDto> actual = v2Service.saveAll(givenDtos);
-//        assertEquals(givenDtos, actual);
-//
-//        verifyRegistrationSaveReplications(actual, givenProducer);
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void createAllShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final List<TestDto> givenDtos = List.of(new TestDto(255L), new TestDto(256L));
-//
-//        bindProducerWithService(null);
-//
-//        v2Service.saveAll(givenDtos);
-//    }
-//
-//    @Test
-//    public void updateShouldBeReplicated() {
-//        final TestDto givenDto = new TestDto(255L);
-//        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
-//
-//        final TestDto actual = v2Service.update(givenDto);
-//        assertSame(givenDto, actual);
-//
-//        verifyRegistrationSaveReplication(actual, givenProducer);
-//    }
-//
+        final TestV2Dto actual = v2Service.save(givenDto);
+        assertSame(givenDto, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void createByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final TestV1Dto givenDto = new TestV1Dto(255L);
+
+        leaveServiceWithoutProducer(v1Service);
+
+        v1Service.save(givenDto);
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void createByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final TestV2Dto givenDto = new TestV2Dto(255L);
+
+        leaveServiceWithoutProducer(v2Service);
+
+        v2Service.save(givenDto);
+    }
+
+    @Test
+    public void createAllByV1ServiceShouldBeReplicated() {
+        final List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
+        final ReplicationProducer givenProducer = createProducerForService(v1Service);
+
+        final List<TestV1Dto> actual = v1Service.saveAll(givenDtos);
+        assertEquals(givenDtos, actual);
+
+        verifyReplications(
+                givenProducer,
+                new SaveProducedReplication(actual.get(0)),
+                new SaveProducedReplication(actual.get(1))
+        );
+    }
+
+    @Test
+    public void createAllByV2ServiceShouldBeReplicated() {
+        final List<TestV2Dto> givenDtos = List.of(new TestV2Dto(255L), new TestV2Dto(256L));
+        final ReplicationProducer givenProducer = createProducerForService(v2Service);
+
+        final List<TestV2Dto> actual = v2Service.saveAll(givenDtos);
+        assertEquals(givenDtos, actual);
+
+        verifyReplications(
+                givenProducer,
+                new SaveProducedReplication(actual.get(0)),
+                new SaveProducedReplication(actual.get(1))
+        );
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void createAllByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
+
+        leaveServiceWithoutProducer(v1Service);
+
+        v1Service.saveAll(givenDtos);
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void createAllByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final List<TestV2Dto> givenDtos = List.of(new TestV2Dto(255L), new TestV2Dto(256L));
+
+        leaveServiceWithoutProducer(v2Service);
+
+        v2Service.saveAll(givenDtos);
+    }
+
+    @Test
+    public void updateByV1ServiceShouldBeReplicated() {
+        final TestV1Dto givenDto = new TestV1Dto(255L);
+        final ReplicationProducer givenProducer = createProducerForService(v1Service);
+
+        final TestV1Dto actual = v1Service.update(givenDto);
+        assertSame(givenDto, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
+    }
+
+    @Test
+    public void updateByV2ServiceShouldBeReplicated() {
+        final TestV2Dto givenDto = new TestV2Dto(255L);
+        final ReplicationProducer givenProducer = createProducerForService(v2Service);
+
+        final TestV2Dto actual = v2Service.update(givenDto);
+        assertSame(givenDto, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
+    }
+
 //    @Test(expected = NoReplicationProducerException.class)
 //    public void updateShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
 //        final TestDto givenDto = new TestDto(255L);
@@ -185,7 +232,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
 //        verify(givenProducer, times(1)).send(same(givenReplication));
 //    }
 
-    private ReplicationProducer createProducerBoundedWithService(final Object service) {
+    private ReplicationProducer createProducerForService(final Object service) {
         final ReplicationProducer producer = mock(ReplicationProducer.class);
         bindProducerWithService(producer, service);
         return producer;
@@ -199,36 +246,21 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         return requireNonNullElse(getSingletonTarget(object), object);
     }
 
-    private void verifyRegistrationSaveReplication(final Object dto, final ReplicationProducer producer) {
-        verifyRegistrationReplication(new SaveProducedReplication(dto), producer);
+    private void leaveServiceWithoutProducer(final Object service) {
+        bindProducerWithService(null, service);
     }
 
-    //    private void verifyRegistrationSaveReplications(final List<TestDto> dtos,
-//                                                    final ReplicationProducer<Long> producer) {
-//        verifyRegistrationReplications(createSaveReplications(dtos), producer);
-//    }
-//
-//    private void verifyRegistrationDeleteReplication(final Long entityId, final ReplicationProducer<Long> producer) {
-//        verifyRegistrationReplication(new DeleteProducedReplication<>(entityId), producer);
-//    }
-//
-    private void verifyRegistrationReplication(final ProducedReplication replication, final ReplicationProducer producer) {
-        final List<ProducedReplication> replications = singletonList(replication);
-        verifyRegistrationReplications(replications, producer);
-    }
-
-    private void verifyRegistrationReplications(final List<? extends ProducedReplication> replications,
-                                                final ReplicationProducer producer) {
+    private void verifyReplications(final ReplicationProducer producer, final ProducedReplication... replications) {
         mockedTransactionManager
-                .verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(replications.size()));
-        final List<ReplicationCallback> actualCallbacks = callbackArgumentCaptor.getAllValues();
-        final List<ReplicationCallback> expectedCallbacks = createCallbacks(replications, producer);
-        checkEquals(expectedCallbacks, actualCallbacks);
+                .verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(replications.length));
+        final List<ReplicationCallback> actual = callbackArgumentCaptor.getAllValues();
+        final List<ReplicationCallback> expected = createCallbacks(producer, replications);
+        checkEquals(expected, actual);
     }
 
-    private static List<ReplicationCallback> createCallbacks(final List<? extends ProducedReplication> replications,
-                                                             final ReplicationProducer producer) {
-        return replications.stream()
+    private static List<ReplicationCallback> createCallbacks(final ReplicationProducer producer,
+                                                             final ProducedReplication... replications) {
+        return stream(replications)
                 .map(replication -> new ReplicationCallback(producer, replication))
                 .toList();
     }
@@ -242,10 +274,4 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         assertSame(expected.getProducer(), actual.getProducer());
         assertEquals(expected.getReplication(), actual.getReplication());
     }
-//
-//    private static List<SaveProducedReplication<Long, TestDto>> createSaveReplications(final List<TestDto> dtos) {
-//        return dtos.stream()
-//                .map(SaveProducedReplication::new)
-//                .toList();
-//    }
 }

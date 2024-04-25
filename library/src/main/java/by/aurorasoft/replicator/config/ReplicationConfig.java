@@ -12,8 +12,8 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.retry.support.RetryTemplateBuilder;
 
 @Configuration
-@EnableAspectJAutoProxy
 @ComponentScan("by.aurorasoft.replicator")
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ReplicationConfig {
 
     @Bean
