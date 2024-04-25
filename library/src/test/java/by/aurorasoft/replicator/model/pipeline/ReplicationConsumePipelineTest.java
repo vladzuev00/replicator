@@ -20,7 +20,7 @@ public final class ReplicationConsumePipelineTest {
         final String givenId = "test-pipeline";
         final String givenTopic = "test-topic";
         final Serde<Long> givenIdSerde = mock(Serde.class);
-        final TypeReference<ConsumedReplication<Long, TestEntity>> givenReplicationTypeReference = new TypeReference<>() {
+        final TypeReference<ConsumedReplication<TestEntity, Long>> givenReplicationTypeReference = new TypeReference<>() {
         };
         final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
@@ -99,9 +99,13 @@ public final class ReplicationConsumePipelineTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static TypeReference<ConsumedReplication<Long, TestEntity>> getReplicationTypeReference(
-            final ReplicationConsumePipeline<Long, TestEntity> pipeline
+    private static TypeReference<ConsumedReplication<TestEntity, Long>> getReplicationTypeReference(
+            final ReplicationConsumePipeline<TestEntity, Long> pipeline
     ) {
-        return getFieldValue(pipeline.getReplicationSerde(), REPLICATION_TYPE_REFERENCE_FIELD_NAME, TypeReference.class);
+        return getFieldValue(
+                pipeline.getReplicationSerde(),
+                REPLICATION_TYPE_REFERENCE_FIELD_NAME,
+                TypeReference.class
+        );
     }
 }

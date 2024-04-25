@@ -26,8 +26,8 @@ public final class ReplicationTopologyFactory {
     public <ID, E extends AbstractEntity<ID>> Topology create(final ReplicationConsumePipeline<ID, E> pipeline) {
         final StreamsBuilder builder = new StreamsBuilder();
         builder
-                .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()))
-                .foreach((id, replication) -> executeRetrying(replication, pipeline.getRepository()));
+                .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()));
+//                .foreach((id, replication) -> executeRetrying(replication, pipeline.getRepository()));
         return builder.build();
     }
 
