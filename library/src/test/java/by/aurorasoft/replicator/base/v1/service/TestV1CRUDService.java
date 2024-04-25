@@ -10,7 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public abstract class TestV1CRUDService extends CrudGenericService<TestV1Dto, TestV1Entity, JpaRepositoryImplementation<TestV1Entity, Long>, AbstractMapper<TestV1Entity, TestV1Dto>> {
+public abstract class TestV1CRUDService extends CrudGenericService<
+        TestV1Dto,
+        TestV1Entity,
+        JpaRepositoryImplementation<TestV1Entity, Long>,
+        AbstractMapper<TestV1Entity, TestV1Dto>
+        > {
+
     public TestV1CRUDService() {
         super(null, null, TestV1Dto.class, TestV1Entity.class);
     }
