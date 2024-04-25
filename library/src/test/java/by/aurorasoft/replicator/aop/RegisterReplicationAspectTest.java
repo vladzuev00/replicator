@@ -8,6 +8,7 @@ import by.aurorasoft.replicator.base.v1.service.FirstTestV1CRUDService;
 import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
 import by.aurorasoft.replicator.base.v2.service.FirstTestV2CRUDService;
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
@@ -214,7 +215,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     }
 
     @Test(expected = NoReplicationProducerException.class)
-    public void partialUpdateByV1ServiceNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+    public void partialUpdateByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final Long givenId = 255L;
         final Object givenPartial = new Object();
 
@@ -224,7 +225,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     }
 
     @Test(expected = NoReplicationProducerException.class)
-    public void partialUpdateByV2ServiceNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+    public void partialUpdateByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
         final Long givenId = 255L;
         final Object givenPartial = new Object();
 
@@ -233,36 +234,43 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         v2Service.updatePartial(givenId, givenPartial);
     }
 
-//    @Test
-//    public void deleteByIdShouldBeReplicated() {
-//        final Long givenId = 255L;
-//        final ReplicationProducer<Long> givenProducer = createProducerBoundedWithService();
-//
-//        v2Service.delete(givenId);
-//
-//        verifyRegistrationDeleteReplication(givenId, givenProducer);
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void deleteByIdShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final Long givenId = 255L;
-//
-//        bindProducerWithService(null);
-//
-//        v2Service.delete(givenId);
-//    }
-//
-//    @Test
-//    @SuppressWarnings("unchecked")
-//    public void replicationShouldBeSent() {
-//        final ReplicationProducer<Long> givenProducer = mock(ReplicationProducer.class);
-//        final ProducedReplication<Long> givenReplication = mock(ProducedReplication.class);
-//        final ReplicationCallback<Long> givenCallback = new ReplicationCallback<>(givenProducer, givenReplication);
-//
-//        givenCallback.afterCommit();
-//
-//        verify(givenProducer, times(1)).send(same(givenReplication));
-//    }
+    @Test
+    public void deleteByIdByV1ServiceShouldBeReplicated() {
+        final Long givenId = 255L;
+        final ReplicationProducer givenProducer = createProducerForService(v1Service);
+
+        v1Service.deleteById(givenId);
+
+        verifyReplications(givenProducer, new DeleteProducedReplication(givenId));
+    }
+
+    @Test
+    public void deleteByIdByV2ServiceShouldBeReplicated() {
+        final Long givenId = 255L;
+        final ReplicationProducer givenProducer = createProducerForService(v2Service);
+
+        v2Service.delete(givenId);
+
+        verifyReplications(givenProducer, new DeleteProducedReplication(givenId));
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void deleteByIdByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final Long givenId = 255L;
+
+        leaveServiceWithoutProducer(v1Service);
+
+        v1Service.deleteById(givenId);
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void deleteByIdByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final Long givenId = 255L;
+
+        leaveServiceWithoutProducer(v2Service);
+
+        v2Service.delete(givenId);
+    }
 
     private ReplicationProducer createProducerForService(final Object service) {
         final ReplicationProducer producer = mock(ReplicationProducer.class);

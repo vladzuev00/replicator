@@ -158,8 +158,18 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("execution(public void *.delete(Object+))")
+    @Pointcut("deleteByIdV1() || deleteByIdV2()")
     private void deleteById() {
+
+    }
+
+    @Pointcut("execution(public void *.deleteById(Object+))")
+    private void deleteByIdV1() {
+
+    }
+
+    @Pointcut("execution(public void *.delete(Object+))")
+    private void deleteByIdV2() {
 
     }
 
