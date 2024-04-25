@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
-import static java.util.Objects.requireNonNull;
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 
 public final class SaveProducedReplication extends ProducedReplication {
@@ -15,12 +15,16 @@ public final class SaveProducedReplication extends ProducedReplication {
     @Override
     protected Object getEntityId(final Object body) {
         try {
-            return requireNonNull(getPropertyDescriptor(body.getClass(), FIELD_NAME_ID))
+            return getIdDescriptor(body)
                     .getReadMethod()
                     .invoke(body);
         } catch (final IllegalAccessException | InvocationTargetException cause) {
             throw new EntityIdExtractionException(cause);
         }
+    }
+
+    private PropertyDescriptor getIdDescriptor(final Object body) {
+        return getPropertyDescriptor(body.getClass(), FIELD_NAME_ID);
     }
 
     static final class EntityIdExtractionException extends RuntimeException {
