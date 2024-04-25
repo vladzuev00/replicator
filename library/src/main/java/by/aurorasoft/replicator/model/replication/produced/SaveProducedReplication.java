@@ -1,27 +1,47 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import java.lang.reflect.InvocationTargetException;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.BODY;
+import static java.util.Objects.requireNonNull;
+import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 
-@RequiredArgsConstructor
-@Getter
-@EqualsAndHashCode
-@ToString
-public final class SaveProducedReplication<ID, DTO extends AbstractDto<ID>> implements ProducedReplication<ID> {
+public final class SaveProducedReplication extends ProducedReplication {
+    private static final String FIELD_NAME_ID = "id";
 
-    @JsonProperty(BODY)
-    private final DTO dto;
+    public SaveProducedReplication(final Object entity) {
+        super(entity);
+    }
 
     @Override
-    @JsonIgnore
-    public ID getEntityId() {
-        return dto.getId();
+    protected Object getEntityId(final Object entity) {
+        try {
+            return requireNonNull(getPropertyDescriptor(entity.getClass(), FIELD_NAME_ID))
+                    .getReadMethod()
+                    .invoke(entity);
+        } catch (final IllegalAccessException | InvocationTargetException cause) {
+            throw new EntityIdExtractionException(cause);
+        }
+    }
+
+    static final class EntityIdExtractionException extends RuntimeException {
+
+        @SuppressWarnings("unused")
+        public EntityIdExtractionException() {
+
+        }
+
+        @SuppressWarnings("unused")
+        public EntityIdExtractionException(final String description) {
+            super(description);
+        }
+
+        public EntityIdExtractionException(final Exception cause) {
+            super(cause);
+        }
+
+        @SuppressWarnings("unused")
+        public EntityIdExtractionException(final String description, final Exception cause) {
+            super(description, cause);
+        }
     }
 }

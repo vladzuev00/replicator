@@ -7,7 +7,7 @@ import org.apache.kafka.common.serialization.Serde;
 import org.junit.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 

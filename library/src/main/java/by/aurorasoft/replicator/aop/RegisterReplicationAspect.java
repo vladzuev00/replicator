@@ -66,7 +66,7 @@ public class RegisterReplicationAspect {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void registerReplication(final ProducedReplication<?> replication, final JoinPoint joinPoint) {
+    private void registerReplication(final ProducedReplication replication, final JoinPoint joinPoint) {
         final ReplicationProducer<?> producer = getProducer(joinPoint);
         final ReplicationCallback callback = new ReplicationCallback(producer, replication);
         registerSynchronization(callback);
@@ -163,7 +163,7 @@ public class RegisterReplicationAspect {
     @Getter
     static final class ReplicationCallback<ID> implements TransactionSynchronization {
         private final ReplicationProducer<ID> producer;
-        private final ProducedReplication<ID> replication;
+        private final ProducedReplication replication;
 
         @Override
         public void afterCommit() {

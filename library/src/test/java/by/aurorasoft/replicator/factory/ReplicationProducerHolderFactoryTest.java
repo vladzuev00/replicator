@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.List;
 import java.util.Map;
 
-import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.same;

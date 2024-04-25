@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.util;
+package by.aurorasoft.replicator.testutil;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.util.ReflectionUtils;

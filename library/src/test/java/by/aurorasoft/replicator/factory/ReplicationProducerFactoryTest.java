@@ -10,7 +10,7 @@ import org.apache.kafka.common.serialization.Serializer;
 import org.junit.Test;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 import static org.junit.Assert.assertEquals;
 

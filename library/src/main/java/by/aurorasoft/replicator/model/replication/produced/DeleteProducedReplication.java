@@ -1,19 +1,13 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+public final class DeleteProducedReplication extends ProducedReplication {
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.ENTITY_ID;
+    public DeleteProducedReplication(final Object entityId) {
+        super(entityId);
+    }
 
-@RequiredArgsConstructor
-@Getter
-@EqualsAndHashCode
-@ToString
-public final class DeleteProducedReplication<ID> implements ProducedReplication<ID> {
-
-    @JsonProperty(ENTITY_ID)
-    private final ID entityId;
+    @Override
+    protected Object getEntityId(final Object entityId) {
+        return entityId;
+    }
 }
