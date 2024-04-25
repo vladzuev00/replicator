@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
 import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
-import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -25,8 +24,8 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 )
 @EqualsAndHashCode
 @ToString
-public abstract class ConsumedReplication<ID, E extends AbstractEntity<ID>> {
-    private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
+public abstract class ConsumedReplication<E, ID> {
+    static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
 
     public final void execute(final JpaRepository<E, ID> repository) {
         try {

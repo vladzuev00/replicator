@@ -38,7 +38,7 @@ public final class ReplicationTopologyFactory {
 
     private <ID, E extends AbstractEntity<ID>> Optional<Void> execute(final ConsumedReplication<ID, E> replication,
                                                                       final JpaRepository<E, ID> repository) {
-        replication.execute(repository);
+//        replication.execute(repository);
         return empty();
     }
 }

@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
-import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -13,7 +12,7 @@ import static by.aurorasoft.replicator.util.TransportNameUtil.BODY;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public final class SaveConsumedReplication<ID, E extends AbstractEntity<ID>> extends ConsumedReplication<ID, E> {
+public final class SaveConsumedReplication<E, ID> extends ConsumedReplication<E, ID> {
     private final E entity;
 
     @JsonCreator

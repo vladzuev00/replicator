@@ -16,14 +16,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.sql.SQLException;
 import java.util.stream.Stream;
 
+import static by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.FOREIGN_KEY_VIOLATION_SQL_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public final class ConsumedReplicationTest {
     private static final String GIVEN_SQL_EXCEPTION_REASON = "reason";
-
-    private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -131,7 +130,7 @@ public final class ConsumedReplicationTest {
     }
 
     @RequiredArgsConstructor
-    private static final class TestConsumedReplication extends ConsumedReplication<Long, TestEntity> {
+    private static final class TestConsumedReplication extends ConsumedReplication<TestEntity, Long> {
         private final TestEntity entity;
 
         @Override
