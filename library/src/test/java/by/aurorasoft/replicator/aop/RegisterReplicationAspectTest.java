@@ -169,15 +169,29 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         verifyReplications(givenProducer, new SaveProducedReplication(actual));
     }
 
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void updateShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final TestDto givenDto = new TestDto(255L);
-//
-//        bindProducerWithService(null);
-//
-//        v2Service.update(givenDto);
-//    }
-//
+    @Test(expected = NoReplicationProducerException.class)
+    public void updateByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final TestV1Dto givenDto = new TestV1Dto(255L);
+
+        leaveServiceWithoutProducer(v1Service);
+
+        v1Service.update(givenDto);
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void updateByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final TestV2Dto givenDto = new TestV2Dto(255L);
+
+        leaveServiceWithoutProducer(v2Service);
+
+        v2Service.update(givenDto);
+    }
+
+    @Test
+    public void partialUpdateByV1ServiceShouldBeReplicated() {
+        throw new RuntimeException();
+    }
+
 //    @Test
 //    public void partialUpdateShouldBeReplicated() {
 //        final Long givenId = 255L;

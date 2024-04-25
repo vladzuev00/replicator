@@ -148,10 +148,7 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("execution("
-            + "public by.nhorushko.crudgeneric.v2.domain.AbstractDto "
-            + "*.update(by.nhorushko.crudgeneric.v2.domain.AbstractDto)"
-            + ")")
+    @Pointcut("execution(public Object+ *.update(Object+))")
     private void update() {
 
     }
