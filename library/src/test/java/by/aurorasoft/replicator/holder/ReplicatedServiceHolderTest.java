@@ -1,9 +1,9 @@
 package by.aurorasoft.replicator.holder;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.base.v2.service.FirstTestCRUDService;
-import by.aurorasoft.replicator.base.v2.service.SecondTestCRUDService;
-import by.aurorasoft.replicator.base.v2.service.ThirdTestCRUDService;
+import by.aurorasoft.replicator.base.v2.service.FirstTestV2CRUDService;
+import by.aurorasoft.replicator.base.v2.service.SecondTestV2CRUDService;
+import by.aurorasoft.replicator.base.v2.service.ThirdTestV2CRUDService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,13 +18,13 @@ import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget
 public final class ReplicatedServiceHolderTest extends AbstractSpringBootTest {
 
     @Autowired
-    private FirstTestCRUDService firstService;
+    private FirstTestV2CRUDService firstService;
 
     @Autowired
-    private SecondTestCRUDService secondService;
+    private SecondTestV2CRUDService secondService;
 
     @Autowired
-    private ThirdTestCRUDService thirdService;
+    private ThirdTestV2CRUDService thirdService;
 
     @Test
     public void holderShouldBeCreated() {

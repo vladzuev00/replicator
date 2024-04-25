@@ -9,6 +9,6 @@ import lombok.*;
 @Getter
 @EqualsAndHashCode
 @ToString
-public final class TestEntity implements AbstractEntity<Long> {
+public final class TestV2Entity implements AbstractEntity<Long> {
     private Long id;
 }

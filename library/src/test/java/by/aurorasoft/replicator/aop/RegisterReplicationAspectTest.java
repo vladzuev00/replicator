@@ -4,7 +4,7 @@
 //import by.aurorasoft.replicator.aop.RegisterReplicationAspect.ReplicationCallback;
 //import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 //import by.aurorasoft.replicator.base.v2.dto.TestDto;
-//import by.aurorasoft.replicator.base.v2.service.FirstTestCRUDService;
+//import by.aurorasoft.replicator.base.v2.service.FirstTestV2CRUDService;
 //import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 //import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 //import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
@@ -38,7 +38,7 @@
 //    private ReplicationProducerHolder mockedProducerHolder;
 //
 //    @Autowired
-//    private FirstTestCRUDService service;
+//    private FirstTestV2CRUDService service;
 //
 //    private MockedStatic<TransactionSynchronizationManager> mockedTransactionManager;
 //
@@ -183,8 +183,8 @@
 //        when(mockedProducerHolder.findByService(same(unProxyService()))).thenReturn(ofNullable(producer));
 //    }
 //
-//    private FirstTestCRUDService unProxyService() {
-//        return (FirstTestCRUDService) requireNonNullElse(getSingletonTarget(service), service);
+//    private FirstTestV2CRUDService unProxyService() {
+//        return (FirstTestV2CRUDService) requireNonNullElse(getSingletonTarget(service), service);
 //    }
 //
 //    private void verifyRegistrationSaveReplication(final TestDto dto, final ReplicationProducer<Long> producer) {

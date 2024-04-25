@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
-import by.aurorasoft.replicator.base.v2.entity.TestEntity;
+import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,10 +30,10 @@ public final class ConsumedReplicationTest {
     @Test
     @SuppressWarnings("unchecked")
     public void replicationShouldBeExecuted() {
-        final TestEntity givenEntity = new TestEntity(255L);
+        final TestV2Entity givenEntity = new TestV2Entity(255L);
         final TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
 
-        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+        final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
 
         givenReplication.execute(givenRepository);
 
@@ -43,8 +43,8 @@ public final class ConsumedReplicationTest {
     @ParameterizedTest
     @MethodSource("provideJsonAndExpectedReplication")
     public void replicationShouldBeDeserializedFromJson(final String givenJson,
-                                                        final ConsumedReplication<TestEntity, Long> expected) {
-        final ConsumedReplication<TestEntity, Long> actual = deserialize(givenJson);
+                                                        final ConsumedReplication<TestV2Entity, Long> expected) {
+        final ConsumedReplication<TestV2Entity, Long> actual = deserialize(givenJson);
         assertEquals(expected, actual);
     }
 
@@ -52,17 +52,17 @@ public final class ConsumedReplicationTest {
     @SuppressWarnings("unchecked")
     @MethodSource("provideCauseAndExpectedExceptionType")
     public void replicationShouldNotBeExecuted(final Exception givenCause, final Class<? extends Exception> expected) {
-        final TestEntity givenEntity = new TestEntity(255L);
+        final TestV2Entity givenEntity = new TestV2Entity(255L);
         final TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
 
-        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+        final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
 
         when(givenRepository.save(same(givenEntity))).thenThrow(givenCause);
 
         executeExpectingException(givenReplication, givenRepository, expected);
     }
 
-    private ConsumedReplication<TestEntity, Long> deserialize(final String json) {
+    private ConsumedReplication<TestV2Entity, Long> deserialize(final String json) {
         try {
             return objectMapper.readValue(json, new TypeReference<>() {
             });
@@ -76,7 +76,7 @@ public final class ConsumedReplicationTest {
     }
 
     private void executeExpectingException(final TestConsumedReplication replication,
-                                           final JpaRepository<TestEntity, Long> repository,
+                                           final JpaRepository<TestV2Entity, Long> repository,
                                            final Class<? extends Exception> exceptionType) {
         boolean exceptionArisen;
         try {
@@ -99,7 +99,7 @@ public final class ConsumedReplicationTest {
                                     "id": 255
                                   }
                                 }""",
-                        new SaveConsumedReplication<>(new TestEntity(255L))
+                        new SaveConsumedReplication<>(new TestV2Entity(255L))
                 ),
                 Arguments.of(
                         """
@@ -130,11 +130,11 @@ public final class ConsumedReplicationTest {
     }
 
     @RequiredArgsConstructor
-    private static final class TestConsumedReplication extends ConsumedReplication<TestEntity, Long> {
-        private final TestEntity entity;
+    private static final class TestConsumedReplication extends ConsumedReplication<TestV2Entity, Long> {
+        private final TestV2Entity entity;
 
         @Override
-        protected void executeInternal(final JpaRepository<TestEntity, Long> repository) {
+        protected void executeInternal(final JpaRepository<TestV2Entity, Long> repository) {
             repository.save(entity);
         }
     }

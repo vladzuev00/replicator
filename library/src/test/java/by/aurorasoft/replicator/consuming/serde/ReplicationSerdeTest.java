@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.serde;
 
-import by.aurorasoft.replicator.base.v2.entity.TestEntity;
+import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.DeleteConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 public final class ReplicationSerdeTest {
     private static final String GIVEN_TOPIC_NAME = "topic";
 
-    private final ReplicationSerde<Long, TestEntity> serde = createSerde();
+    private final ReplicationSerde<Long, TestV2Entity> serde = createSerde();
 
     @Test(expected = UnsupportedOperationException.class)
     public void serializerShouldNotBeCreated() {
@@ -27,17 +27,17 @@ public final class ReplicationSerdeTest {
     @ParameterizedTest
     @MethodSource("provideJsonAndExpectedReplication")
     public void replicationShouldBeDeserialized(final String givenJson,
-                                                final ConsumedReplication<Long, TestEntity> expected) {
-        final ConsumedReplication<Long, TestEntity> actual = deserialize(givenJson);
+                                                final ConsumedReplication<Long, TestV2Entity> expected) {
+        final ConsumedReplication<Long, TestV2Entity> actual = deserialize(givenJson);
         assertEquals(expected, actual);
     }
 
-    private static ReplicationSerde<Long, TestEntity> createSerde() {
+    private static ReplicationSerde<Long, TestV2Entity> createSerde() {
         return new ReplicationSerde<>(new TypeReference<>() {
         });
     }
 
-    private ConsumedReplication<Long, TestEntity> deserialize(final String json) {
+    private ConsumedReplication<Long, TestV2Entity> deserialize(final String json) {
         return serde.deserializer().deserialize(GIVEN_TOPIC_NAME, json.getBytes());
     }
 
@@ -51,7 +51,7 @@ public final class ReplicationSerdeTest {
                                     "id": 255
                                   }
                                 }""",
-                        new SaveConsumedReplication<>(new TestEntity(255L))
+                        new SaveConsumedReplication<>(new TestV2Entity(255L))
                 ),
                 Arguments.of(
                         """

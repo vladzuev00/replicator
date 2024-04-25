@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import by.aurorasoft.replicator.base.v2.dto.TestDto;
+import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -24,7 +24,7 @@ public final class ProducedReplicationTest {
     private static Stream<Arguments> provideReplicationAndExpectedJson() {
         return Stream.of(
                 Arguments.of(
-                        new SaveProducedReplication(new TestDto(255L)),
+                        new SaveProducedReplication(new TestV2Dto(255L)),
                         """
                                 {
                                   "type": "save",

@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.pipeline;
 
-import by.aurorasoft.replicator.base.v2.entity.TestEntity;
+import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;
@@ -20,9 +20,9 @@ public final class ReplicationConsumePipelineTest {
         final String givenId = "test-pipeline";
         final String givenTopic = "test-topic";
         final Serde<Long> givenIdSerde = mock(Serde.class);
-        final TypeReference<ConsumedReplication<TestEntity, Long>> givenReplicationTypeReference = new TypeReference<>() {
+        final TypeReference<ConsumedReplication<TestV2Entity, Long>> givenReplicationTypeReference = new TypeReference<>() {
         };
-        final JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+        final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
 
         final var actual = new ReplicationConsumePipeline<>(
                 givenId,
@@ -99,8 +99,8 @@ public final class ReplicationConsumePipelineTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static TypeReference<ConsumedReplication<TestEntity, Long>> getReplicationTypeReference(
-            final ReplicationConsumePipeline<TestEntity, Long> pipeline
+    private static TypeReference<ConsumedReplication<TestV2Entity, Long>> getReplicationTypeReference(
+            final ReplicationConsumePipeline<TestV2Entity, Long> pipeline
     ) {
         return getFieldValue(
                 pipeline.getReplicationSerde(),

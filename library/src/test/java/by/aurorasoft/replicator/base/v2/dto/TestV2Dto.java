@@ -4,6 +4,6 @@ import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import lombok.Value;
 
 @Value
-public class TestDto implements AbstractDto<Long> {
+public class TestV2Dto implements AbstractDto<Long> {
     Long id;
 }

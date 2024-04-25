@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.base.v2.entity.TestEntity;
+import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,10 +20,10 @@ import static org.mockito.Mockito.verify;
 public final class ReplicationConsumeStarterTest {
 
     @Mock
-    private ReplicationConsumePipeline<Long, TestEntity> firstMockedPipeline;
+    private ReplicationConsumePipeline<Long, TestV2Entity> firstMockedPipeline;
 
     @Mock
-    private ReplicationConsumePipeline<Long, TestEntity> secondMockedPipeline;
+    private ReplicationConsumePipeline<Long, TestV2Entity> secondMockedPipeline;
 
     @Mock
     private ReplicationConsumePipelineStarter mockedPipelineStarter;
@@ -31,7 +31,7 @@ public final class ReplicationConsumeStarterTest {
     private ReplicationConsumeStarter starter;
 
     @Captor
-    private ArgumentCaptor<ReplicationConsumePipeline<Long, TestEntity>> pipelineArgumentCaptor;
+    private ArgumentCaptor<ReplicationConsumePipeline<Long, TestV2Entity>> pipelineArgumentCaptor;
 
     @Before
     public void initializeStarter() {
@@ -44,7 +44,7 @@ public final class ReplicationConsumeStarterTest {
 
         final List<ReplicationConsumePipeline<?, ?>> expected = getGivenPipelines();
         verify(mockedPipelineStarter, times(expected.size())).start(pipelineArgumentCaptor.capture());
-        final List<ReplicationConsumePipeline<Long, TestEntity>> actual = pipelineArgumentCaptor.getAllValues();
+        final List<ReplicationConsumePipeline<Long, TestV2Entity>> actual = pipelineArgumentCaptor.getAllValues();
         assertEquals(expected, actual);
     }
 

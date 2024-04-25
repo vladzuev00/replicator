@@ -8,16 +8,16 @@ import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 public final class SaveProducedReplication extends ProducedReplication {
     private static final String FIELD_NAME_ID = "id";
 
-    public SaveProducedReplication(final Object body) {
-        super(body);
+    public SaveProducedReplication(final Object dto) {
+        super(dto);
     }
 
     @Override
-    protected Object getEntityId(final Object body) {
+    protected Object getEntityId(final Object dto) {
         try {
-            return getIdDescriptor(body)
+            return getIdDescriptor(dto)
                     .getReadMethod()
-                    .invoke(body);
+                    .invoke(dto);
         } catch (final IllegalAccessException | InvocationTargetException cause) {
             throw new EntityIdExtractionException(cause);
         }

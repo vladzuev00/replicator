@@ -5,6 +5,6 @@ import lombok.Value;
 
 @Value
 @SuppressWarnings("deprecation")
-public class TestDto implements AbstractDto {
+public class TestV1Dto implements AbstractDto {
     Long id;
 }

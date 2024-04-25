@@ -10,6 +10,6 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 @SuppressWarnings("deprecation")
-public final class TestEntity implements AbstractEntity {
+public final class TestV1Entity implements AbstractEntity {
     private Long id;
 }

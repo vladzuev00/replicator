@@ -7,14 +7,15 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 @RequiredArgsConstructor
 public final class ReplicationProducerHolder {
 //    private final Map<AbsServiceRUD<?, ?, ?, ?, ?>, ReplicationProducer<?>> producersByServices;
 
-    public Optional<ReplicationProducer> findByService(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    public Optional<ReplicationProducer> findByService(final Object service) {
 //        return ofNullable(producersByServices.get(service));
-        return null;
+        return empty();
     }
 }
