@@ -43,8 +43,8 @@ public final class ConsumedReplicationTest {
     @ParameterizedTest
     @MethodSource("provideJsonAndExpectedReplication")
     public void replicationShouldBeDeserializedFromJson(final String givenJson,
-                                                        final ConsumedReplication<Long, TestEntity> expected) {
-        final ConsumedReplication<Long, TestEntity> actual = deserialize(givenJson);
+                                                        final ConsumedReplication<TestEntity, Long> expected) {
+        final ConsumedReplication<TestEntity, Long> actual = deserialize(givenJson);
         assertEquals(expected, actual);
     }
 
@@ -62,7 +62,7 @@ public final class ConsumedReplicationTest {
         executeExpectingException(givenReplication, givenRepository, expected);
     }
 
-    private ConsumedReplication<Long, TestEntity> deserialize(final String json) {
+    private ConsumedReplication<TestEntity, Long> deserialize(final String json) {
         try {
             return objectMapper.readValue(json, new TypeReference<>() {
             });
@@ -105,7 +105,7 @@ public final class ConsumedReplicationTest {
                         """
                                 {
                                   "type": "delete",
-                                  "entityId": 255
+                                  "body": 255
                                 }""",
                         new DeleteConsumedReplication<>(255L)
                 )
