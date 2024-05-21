@@ -88,18 +88,8 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("replicatedCreateV1() || replicatedCreateV2()")
+    @Pointcut("replicatedService() && create() && (crudServiceV1() || crudServiceV2())")
     private void replicatedCreate() {
-
-    }
-
-    @Pointcut("replicatedService() && crudServiceV1() && create()")
-    private void replicatedCreateV1() {
-
-    }
-
-    @Pointcut("replicatedService() && crudServiceV2() && create()")
-    private void replicatedCreateV2() {
 
     }
 
@@ -108,32 +98,25 @@ public class RegisterReplicationAspect {
 
     }
 
-    @Pointcut("replicatedCreateAllV1() || replicatedCreateAllV2()")
+    @Pointcut("replicatedService() && createAll() && (crudServiceV1() || crudServiceV2())")
     private void replicatedCreateAll() {
 
     }
 
-    @Pointcut("replicatedService() && crudServiceV1() && createAllV1()")
-    private void replicatedCreateAllV1() {
+    @Pointcut("execution(public java.util.List *.saveAll(java.util.Collection+))")
+    private void createAll() {
 
     }
 
-    @Pointcut("replicatedService() && crudServiceV2() && createAllV2()")
-    private void replicatedCreateAllV2() {
+    @Pointcut("execution(public Object+ *.update(Object+))")
+    private void update() {
 
     }
 
-    @Pointcut("execution(public java.util.List *.saveAll(java.util.List))")
-    private void createAllV1() {
+    @Pointcut("execution(public Object+ *.updatePartial(Object+, Object))")
+    private void updatePartial() {
 
     }
-
-    @Pointcut("execution(public java.util.List *.saveAll(java.util.Collection))")
-    private void createAllV2() {
-
-    }
-
-
 
 //    @Pointcut("replicatedCRUDService() && create()")
 //    private void replicatedCreate() {
