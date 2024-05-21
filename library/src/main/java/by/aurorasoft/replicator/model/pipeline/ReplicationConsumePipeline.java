@@ -31,7 +31,7 @@ public final class ReplicationConsumePipeline<E, ID> {
         this.repository = requireNonNull(repository);
     }
 
-    private static <T> T requireNonNull(final T object) {
+    private <T> T requireNonNull(final T object) {
         return Objects.requireNonNull(object, "All properties of pipeline should be defined");
     }
 }

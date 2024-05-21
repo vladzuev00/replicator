@@ -98,14 +98,7 @@ public final class ReplicationConsumePipelineTest {
                 .build();
     }
 
-    @SuppressWarnings("unchecked")
-    private static TypeReference<ConsumedReplication<TestV2Entity, Long>> getReplicationTypeReference(
-            final ReplicationConsumePipeline<TestV2Entity, Long> pipeline
-    ) {
-        return getFieldValue(
-                pipeline.getReplicationSerde(),
-                REPLICATION_TYPE_REFERENCE_FIELD_NAME,
-                TypeReference.class
-        );
+    private TypeReference<?> getReplicationTypeReference(final ReplicationConsumePipeline<?, ?> pipeline) {
+        return getFieldValue(pipeline.getReplicationSerde(), REPLICATION_TYPE_REFERENCE_FIELD_NAME, TypeReference.class);
     }
 }
