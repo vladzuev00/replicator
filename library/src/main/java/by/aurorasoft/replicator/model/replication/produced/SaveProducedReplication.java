@@ -23,8 +23,8 @@ public final class SaveProducedReplication extends ProducedReplication {
         }
     }
 
-    private PropertyDescriptor getIdDescriptor(final Object body) {
-        return getPropertyDescriptor(body.getClass(), FIELD_NAME_ID);
+    private PropertyDescriptor getIdDescriptor(final Object dto) {
+        return getPropertyDescriptor(dto.getClass(), FIELD_NAME_ID);
     }
 
     static final class EntityIdExtractionException extends RuntimeException {
