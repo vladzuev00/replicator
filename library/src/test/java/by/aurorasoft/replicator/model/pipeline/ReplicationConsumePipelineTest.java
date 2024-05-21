@@ -20,7 +20,7 @@ public final class ReplicationConsumePipelineTest {
         final String givenId = "test-pipeline";
         final String givenTopic = "test-topic";
         final Serde<Long> givenIdSerde = mock(Serde.class);
-        final TypeReference<ConsumedReplication<TestV2Entity, Long>> givenReplicationTypeReference = new TypeReference<>() {
+        final var givenReplicationTypeReference = new TypeReference<ConsumedReplication<TestV2Entity, Long>>() {
         };
         final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
 
