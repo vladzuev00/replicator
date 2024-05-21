@@ -4,12 +4,18 @@ import lombok.experimental.UtilityClass;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.stream.Stream;
 
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 
 @UtilityClass
 public final class IdUtil {
     private static final String FIELD_NAME_ID = "id";
+
+    public static Stream<Object> getIds(final Collection<Object> objects) {
+        return objects.stream().map(IdUtil::getId);
+    }
 
     public static Object getId(final Object object) {
         try {
