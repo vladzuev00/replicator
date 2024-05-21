@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
-import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
+import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -31,23 +31,23 @@ public abstract class ConsumedReplication<E, ID> {
         try {
             executeInternal(repository);
         } catch (final Exception exception) {
-            throw wrapToExecutionException(exception);
+            throw wrapInRuntimeException(exception);
         }
     }
 
     protected abstract void executeInternal(final JpaRepository<E, ID> repository);
 
-    private static RuntimeException wrapToExecutionException(final Exception exception) {
-        return isRelationReplicationNotDelivered(exception)
-                ? new RelationReplicationNotDeliveredException(exception)
+    private RuntimeException wrapInRuntimeException(final Exception exception) {
+        return isRelatedReplicationNotDelivered(exception)
+                ? new RelatedReplicationNotDeliveredException(exception)
                 : new ReplicationExecutionException(exception);
     }
 
-    private static boolean isRelationReplicationNotDelivered(final Throwable exception) {
+    private boolean isRelatedReplicationNotDelivered(final Throwable exception) {
         return (getRootCause(exception) instanceof final SQLException cause) && isForeignKeyViolation(cause);
     }
 
-    private static boolean isForeignKeyViolation(final SQLException exception) {
+    private boolean isForeignKeyViolation(final SQLException exception) {
         return Objects.equals(FOREIGN_KEY_VIOLATION_SQL_STATE, exception.getSQLState());
     }
 

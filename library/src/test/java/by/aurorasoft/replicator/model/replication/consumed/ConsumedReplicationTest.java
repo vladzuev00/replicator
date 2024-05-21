@@ -1,12 +1,13 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
 import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
-import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
+import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -62,17 +63,10 @@ public final class ConsumedReplicationTest {
         executeExpectingException(givenReplication, givenRepository, expected);
     }
 
+    @SneakyThrows(JsonProcessingException.class)
     private ConsumedReplication<TestV2Entity, Long> deserialize(final String json) {
-        try {
-            return objectMapper.readValue(json, new TypeReference<>() {
-            });
-        } catch (final JsonProcessingException cause) {
-            throw new RuntimeException(cause);
-        }
-    }
-
-    private static RuntimeException createSqlException(final String sqlState) {
-        return new RuntimeException(new SQLException(GIVEN_SQL_EXCEPTION_REASON, sqlState));
+        return objectMapper.readValue(json, new TypeReference<>() {
+        });
     }
 
     private void executeExpectingException(final TestConsumedReplication replication,
@@ -115,11 +109,11 @@ public final class ConsumedReplicationTest {
     private static Stream<Arguments> provideCauseAndExpectedExceptionType() {
         return Stream.of(
                 Arguments.of(
-                        createSqlException(FOREIGN_KEY_VIOLATION_SQL_STATE),
-                        RelationReplicationNotDeliveredException.class
+                        createSqlExceptionWrappedInRuntime(FOREIGN_KEY_VIOLATION_SQL_STATE),
+                        RelatedReplicationNotDeliveredException.class
                 ),
                 Arguments.of(
-                        createSqlException(UNIQUE_VIOLATION_SQL_STATE),
+                        createSqlExceptionWrappedInRuntime(UNIQUE_VIOLATION_SQL_STATE),
                         ReplicationExecutionException.class
                 ),
                 Arguments.of(
@@ -127,6 +121,10 @@ public final class ConsumedReplicationTest {
                         ReplicationExecutionException.class
                 )
         );
+    }
+
+    private static RuntimeException createSqlExceptionWrappedInRuntime(final String sqlState) {
+        return new RuntimeException(new SQLException(GIVEN_SQL_EXCEPTION_REASON, sqlState));
     }
 
     @RequiredArgsConstructor

@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.exception.RelationReplicationNotDeliveredException;
+import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import by.aurorasoft.replicator.factory.ReplicationProducerHolderFactory;
 import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
@@ -43,7 +43,7 @@ public final class ReplicationConfigTest {
 
             verify(builder, times(1)).fixedBackoff(eq(givenProperty.getTimeLapseMs()));
             verify(builder, times(1)).maxAttempts(eq(givenProperty.getMaxAttempts()));
-            verify(builder, times(1)).retryOn(same(RelationReplicationNotDeliveredException.class));
+            verify(builder, times(1)).retryOn(same(RelatedReplicationNotDeliveredException.class));
         }
     }
 
