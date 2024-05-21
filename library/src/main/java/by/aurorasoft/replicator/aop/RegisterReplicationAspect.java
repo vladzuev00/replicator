@@ -41,14 +41,13 @@ public class RegisterReplicationAspect {
         registerSaveReplication(dto, joinPoint);
     }
 
-    @Around("replicatedDeleteById()")
-    public Object registerDeleteById(final ProceedingJoinPoint joinPoint)
-            throws Throwable {
+    @AfterReturning("replicatedDeleteById()")
+    public void registerDeleteById(final JoinPoint joinPoint) {
         final Object entityId = joinPoint.getArgs()[0];
-        final Object result = joinPoint.proceed();
         registerDeleteReplication(entityId, joinPoint);
-        return result;
     }
+
+    //TODO: deleteAll for v1
 
     private void registerSaveReplication(final Object dto, final JoinPoint joinPoint) {
         registerReplication(new SaveProducedReplication(dto), joinPoint);
@@ -75,6 +74,16 @@ public class RegisterReplicationAspect {
 
     @Pointcut("@target(by.aurorasoft.replicator.annotation.ReplicatedService)")
     private void replicatedService() {
+
+    }
+
+    @Pointcut("target(by.nhorushko.crudgeneric.service.RudGenericService)")
+    private void rudServiceV1() {
+
+    }
+
+    @Pointcut("target(by.nhorushko.crudgeneric.v2.service.AbsServiceRUD)")
+    private void rudServiceV2() {
 
     }
 
@@ -108,6 +117,11 @@ public class RegisterReplicationAspect {
 
     }
 
+    @Pointcut("replicatedService() && (update() || updatePartial()) && (rudServiceV1() || rudServiceV2())")
+    private void replicatedUpdate() {
+
+    }
+
     @Pointcut("execution(public Object+ *.update(Object+))")
     private void update() {
 
@@ -118,100 +132,40 @@ public class RegisterReplicationAspect {
 
     }
 
-//    @Pointcut("replicatedCRUDService() && create()")
-//    private void replicatedCreate() {
-//
-//    }
-//
-//    @Pointcut("replicatedCRUDService() && createAll()")
-//    private void replicatedCreateAll() {
-//
-//    }
-//
-//    @Pointcut("replicatedRUDService() && (update() || updatePartial())")
-//    private void replicatedUpdate() {
-//
-//    }
-//
-//    @Pointcut("replicatedRUDService() && deleteById()")
-//    private void replicatedDeleteById() {
-//
-//    }
-//
-//    @Pointcut("replicatedService() && rudService()")
-//    private void replicatedRUDService() {
-//
-//    }
-//
-//    @Pointcut("replicatedService() && crudService()")
-//    private void replicatedCRUDService() {
-//
-//    }
-//
-//    @Pointcut("@target(by.aurorasoft.replicator.annotation.ReplicatedService)")
-//    private void replicatedService() {
-//
-//    }
-//
-//    @Pointcut("rudServiceV1() || rudServiceV2()")
-//    private void rudService() {
-//
-//    }
-//
-//    @Pointcut("target(by.nhorushko.crudgeneric.service.RudGenericService)")
-//    private void rudServiceV1() {
-//
-//    }
-//
-//    @Pointcut("target(by.nhorushko.crudgeneric.v2.service.AbsServiceRUD)")
-//    private void rudServiceV2() {
-//
-//    }
-//
-//    @Pointcut("crudServiceV1() || crudServiceV2()")
-//    private void crudService() {
-//
-//    }
-//
-//    @Pointcut("target(by.nhorushko.crudgeneric.service.CrudGenericService)")
-//    private void crudServiceV1() {
-//
-//    }
-//
-//    @Pointcut("target(by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD)")
-//    private void crudServiceV2() {
-//
-//    }
-//
-//    @Pointcut("execution(public java.util.List *.saveAll(java.util.Collection+))")
-//    private void createAll() {
-//
-//    }
-//
-//    @Pointcut("execution(public Object+ *.update(Object+))")
-//    private void update() {
-//
-//    }
-//
-//    @Pointcut("execution(public Object+ *.updatePartial(Object+, Object))")
-//    private void updatePartial() {
-//
-//    }
-//
-//    @Pointcut("deleteByIdV1() || deleteByIdV2()")
-//    private void deleteById() {
-//
-//    }
-//
-//    @Pointcut("execution(public void *.deleteById(Object+))")
-//    private void deleteByIdV1() {
-//
-//    }
-//
-//    @Pointcut("execution(public void *.delete(Object+))")
-//    private void deleteByIdV2() {
-//
-//    }
+    @Pointcut("replicatedDeleteByIdV1() || replicatedDeleteByIdV2()")
+    private void replicatedDeleteById() {
+
+    }
+
+    @Pointcut("replicatedService() && rudServiceV1() && deleteByIdV1()")
+    private void replicatedDeleteByIdV1() {
+
+    }
+
+    @Pointcut("replicatedService() && rudServiceV2() && deleteByIdV2()")
+    private void replicatedDeleteByIdV2() {
+
+    }
+
+    @Pointcut("execution(public void *.deleteById(Long))")
+    private void deleteByIdV1() {
+
+    }
+
+    @Pointcut("execution(public void *.delete(Object+))")
+    private void deleteByIdV2() {
+
+    }
+
+    @Pointcut("replicatedService() && rudServiceV1() && deleteAll()")
+    private void replicatedDeleteAll() {
+
+    }
+
+    @Pointcut("execution(public void *.deleteAll(java.util.List+))")
+    private void deleteAll() {
+
+    }
 
     @RequiredArgsConstructor
     @Getter
