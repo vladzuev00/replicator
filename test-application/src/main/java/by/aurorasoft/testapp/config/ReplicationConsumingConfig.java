@@ -31,27 +31,29 @@ public class ReplicationConsumingConfig {
     public ReplicationConsumePipeline<Long, ReplicatedPersonEntity> personPipeline(
             final ReplicatedPersonRepository repository
     ) {
-        return ReplicationConsumePipeline.<Long, ReplicatedPersonEntity>builder()
-                .id(personPipelineId)
-                .topic(personTopic)
-                .idSerde(Long())
-                .replicationTypeReference(new TypeReference<>() {
-                })
-                .repository(repository)
-                .build();
+        return null;
+//        return ReplicationConsumePipeline.<Long, ReplicatedPersonEntity>builder()
+//                .id(personPipelineId)
+//                .topic(personTopic)
+//                .idSerde(Long())
+//                .replicationTypeReference(new TypeReference<>() {
+//                })
+//                .repository(repository)
+//                .build();
     }
 
     @Bean
     public ReplicationConsumePipeline<Long, ReplicatedAddressEntity> addressPipeline(
             final ReplicatedAddressRepository repository
     ) {
-        return ReplicationConsumePipeline.<Long, ReplicatedAddressEntity>builder()
-                .id(addressPipelineId)
-                .topic(addressTopic)
-                .idSerde(Long())
-                .replicationTypeReference(new TypeReference<>() {
-                })
-                .repository(repository)
-                .build();
+        return null;
+//        return ReplicationConsumePipeline.<Long, ReplicatedAddressEntity>builder()
+//                .id(addressPipelineId)
+//                .topic(addressTopic)
+//                .idSerde(Long())
+//                .replicationTypeReference(new TypeReference<>() {
+//                })
+//                .repository(repository)
+//                .build();
     }
 }

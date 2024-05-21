@@ -33,16 +33,13 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
-        annotations.stream()
-                .flatMap(annotation -> getAnnotatedElements(annotation, env))
-                .filter(element -> !isRUDService(element))
-                .forEach(this::alertWrongAnnotating);
+        processInternal(annotations, env);
         return true;
     }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(getReplicatedServiceName());
+        return Set.of(REPLICATED_SERVICE.getName());
     }
 
     @Override
@@ -56,8 +53,14 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
                 .collect(toCollection(LinkedHashSet::new));
     }
 
-    private static Stream<? extends Element> getAnnotatedElements(final TypeElement annotation,
-                                                                  final RoundEnvironment env) {
+    private void processInternal(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
+        annotations.stream()
+                .flatMap(annotation -> getAnnotatedElements(annotation, env))
+                .filter(element -> !isRUDService(element))
+                .forEach(this::alertWrongAnnotating);
+    }
+
+    private Stream<? extends Element> getAnnotatedElements(final TypeElement annotation, final RoundEnvironment env) {
         return env.getElementsAnnotatedWith(annotation).stream();
     }
 
@@ -87,7 +90,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     private String getWrongAnnotatingMessage() {
         return "'@%s' can be applied only for subclass one of '%s'".formatted(
-                getReplicatedServiceName(),
+                REPLICATED_SERVICE.getName(),
                 RUD_SERVICE_NAMES
         );
     }
@@ -102,9 +105,5 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     private Messager getMessager() {
         return processingEnv.getMessager();
-    }
-
-    private static String getReplicatedServiceName() {
-        return REPLICATED_SERVICE.getName();
     }
 }

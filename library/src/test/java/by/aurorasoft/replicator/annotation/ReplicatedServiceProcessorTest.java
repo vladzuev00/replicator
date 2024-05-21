@@ -17,22 +17,22 @@ public final class ReplicatedServiceProcessorTest {
             + "'[by.nhorushko.crudgeneric.v2.service.AbsServiceRUD, by.nhorushko.crudgeneric.service.RudGenericService]'";
 
     @ParameterizedTest
-    @MethodSource("provideClassNameAndCompiledSourceCode")
+    @MethodSource("provideClassNameAndSourceCode")
     public void sourceCodeShouldBeCompiled(final String givenClassName, final String givenSourceCode) {
         compile(givenClassName, givenSourceCode);
     }
 
     @ParameterizedTest
-    @MethodSource("provideClassNameAndNotCompiledSourceCode")
+    @MethodSource("provideClassNameAndNotSourceCode")
     public void sourceCodeShouldNotBeCompiled(final String givenClassName, final String givenSourceCode) {
         compileExpectingAnnotatingError(givenClassName, givenSourceCode);
     }
 
-    private static void compile(final String className, final String sourceCode) {
+    private void compile(final String className, final String sourceCode) {
         Reflect.compile(className, sourceCode, getCompileOptions());
     }
 
-    private static void compileExpectingAnnotatingError(final String className, final String sourceCode) {
+    private void compileExpectingAnnotatingError(final String className, final String sourceCode) {
         try {
             compile(className, sourceCode);
         } catch (final ReflectException exception) {
@@ -40,15 +40,15 @@ public final class ReplicatedServiceProcessorTest {
         }
     }
 
-    private static boolean isWrongAnnotatingError(final ReflectException exception) {
+    private boolean isWrongAnnotatingError(final ReflectException exception) {
         return exception.getMessage().contains(WRONG_ANNOTATING_MESSAGE);
     }
 
-    private static CompileOptions getCompileOptions() {
+    private CompileOptions getCompileOptions() {
         return new CompileOptions().processors(new ReplicatedServiceProcessor());
     }
 
-    private static Stream<Arguments> provideClassNameAndCompiledSourceCode() {
+    private static Stream<Arguments> provideClassNameAndSourceCode() {
         return Stream.of(
                 Arguments.of(
                         "by.aurorasoft.replicator.TestV1RUDService",
@@ -158,7 +158,7 @@ public final class ReplicatedServiceProcessorTest {
         );
     }
 
-    private static Stream<Arguments> provideClassNameAndNotCompiledSourceCode() {
+    private static Stream<Arguments> provideClassNameAndNotSourceCode() {
         return Stream.of(
                 Arguments.of(
                         "by.aurorasoft.replicator.TestV1ReadService",
