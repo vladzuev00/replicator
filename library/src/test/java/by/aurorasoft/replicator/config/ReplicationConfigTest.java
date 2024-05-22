@@ -9,6 +9,8 @@ import org.mockito.MockedConstruction;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.retry.support.RetryTemplateBuilder;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
@@ -42,8 +44,9 @@ public final class ReplicationConfigTest {
         ) {
             config.replicationRetryTemplate(givenProperty);
 
-            assertEquals(1, mockedBuilderConstruction.constructed().size());
-            final RetryTemplateBuilder builder = mockedBuilderConstruction.constructed().get(0);
+            final List<RetryTemplateBuilder> constructedBuilders = mockedBuilderConstruction.constructed();
+            assertEquals(1, constructedBuilders.size());
+            final RetryTemplateBuilder builder = constructedBuilders.get(0);
 
             final RetryTemplate actual = builder.build();
             assertSame(givenTemplate, actual);
