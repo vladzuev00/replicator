@@ -45,4 +45,9 @@ public abstract class TestV1CRUDService extends CrudGenericService<
     public void deleteById(final Long id) {
 
     }
+
+    @Override
+    public void deleteAll(final List<TestV1Dto> dtos) {
+
+    }
 }
