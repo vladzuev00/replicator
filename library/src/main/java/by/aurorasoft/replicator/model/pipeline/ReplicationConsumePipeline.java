@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.pipeline;
 
-import by.aurorasoft.replicator.consuming.serde.ReplicationSerde;
+import by.aurorasoft.replicator.consuming.serde.ConsumedReplicationSerde;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Builder;
@@ -27,7 +27,7 @@ public final class ReplicationConsumePipeline<E, ID> {
         this.id = requireNonNull(id);
         this.topic = requireNonNull(topic);
         this.idSerde = requireNonNull(idSerde);
-        replicationSerde = new ReplicationSerde<>(requireNonNull(replicationTypeReference));
+        replicationSerde = new ConsumedReplicationSerde<>(requireNonNull(replicationTypeReference));
         this.repository = requireNonNull(repository);
     }
 

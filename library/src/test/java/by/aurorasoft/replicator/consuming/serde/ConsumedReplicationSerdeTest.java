@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
-public final class ReplicationSerdeTest {
+public final class ConsumedReplicationSerdeTest {
     private static final String GIVEN_TOPIC_NAME = "topic";
 
-    private final ReplicationSerde<Long, TestV2Entity> serde = createSerde();
+    private final ConsumedReplicationSerde<TestV2Entity, Long> serde = createSerde();
 
     @Test(expected = UnsupportedOperationException.class)
     public void serializerShouldNotBeCreated() {
@@ -27,17 +27,17 @@ public final class ReplicationSerdeTest {
     @ParameterizedTest
     @MethodSource("provideJsonAndExpectedReplication")
     public void replicationShouldBeDeserialized(final String givenJson,
-                                                final ConsumedReplication<Long, TestV2Entity> expected) {
-        final ConsumedReplication<Long, TestV2Entity> actual = deserialize(givenJson);
+                                                final ConsumedReplication<TestV2Entity, Long> expected) {
+        final ConsumedReplication<TestV2Entity, Long> actual = deserialize(givenJson);
         assertEquals(expected, actual);
     }
 
-    private static ReplicationSerde<Long, TestV2Entity> createSerde() {
-        return new ReplicationSerde<>(new TypeReference<>() {
+    private ConsumedReplicationSerde<TestV2Entity, Long> createSerde() {
+        return new ConsumedReplicationSerde<>(new TypeReference<>() {
         });
     }
 
-    private ConsumedReplication<Long, TestV2Entity> deserialize(final String json) {
+    private ConsumedReplication<TestV2Entity, Long> deserialize(final String json) {
         return serde.deserializer().deserialize(GIVEN_TOPIC_NAME, json.getBytes());
     }
 
@@ -57,7 +57,7 @@ public final class ReplicationSerdeTest {
                         """
                                 {
                                   "type": "delete",
-                                  "entityId": 255
+                                  "body": 255
                                 }""",
                         new DeleteConsumedReplication<>(255L)
                 )
