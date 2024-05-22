@@ -46,14 +46,14 @@ public final class ReplicationConfigTest {
 
             final List<RetryTemplateBuilder> constructedBuilders = mockedBuilderConstruction.constructed();
             assertEquals(1, constructedBuilders.size());
-            final RetryTemplateBuilder builder = constructedBuilders.get(0);
+            final RetryTemplateBuilder constructedBuilder = constructedBuilders.get(0);
 
-            final RetryTemplate actual = builder.build();
+            final RetryTemplate actual = constructedBuilder.build();
             assertSame(givenTemplate, actual);
 
-            verify(builder, times(1)).fixedBackoff(eq(givenTimeLapseMs));
-            verify(builder, times(1)).maxAttempts(eq(givenMaxAttempts));
-            verify(builder, times(1)).retryOn(same(RelatedReplicationNotDeliveredException.class));
+            verify(constructedBuilder, times(1)).fixedBackoff(eq(givenTimeLapseMs));
+            verify(constructedBuilder, times(1)).maxAttempts(eq(givenMaxAttempts));
+            verify(constructedBuilder, times(1)).retryOn(same(RelatedReplicationNotDeliveredException.class));
         }
     }
 
