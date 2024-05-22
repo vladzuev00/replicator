@@ -1,6 +1,5 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.consuming.starter.factory;
 
-import by.aurorasoft.replicator.consuming.starter.factory.KafkaStreamsFactory;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
@@ -28,7 +27,7 @@ public final class KafkaStreamsFactoryTest {
 
     @Before
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void bindMockedRuntime() {
+    public void mockRuntime() {
         mockedStaticRuntime = mockStatic(Runtime.class);
         mockedStaticRuntime.when(Runtime::getRuntime).thenReturn(mockedRuntime);
     }
