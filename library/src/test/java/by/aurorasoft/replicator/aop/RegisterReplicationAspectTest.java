@@ -62,6 +62,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     @Test
     public void createByV1ServiceShouldBeReplicated() {
         final TestV1Dto givenDto = new TestV1Dto(255L);
+
         final ReplicationProducer givenProducer = mockProducerFor(v1Service);
 
         final TestV1Dto actual = v1Service.save(givenDto);
@@ -80,6 +81,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
     @Test
     public void createByV2ServiceShouldBeReplicated() {
         final TestV2Dto givenDto = new TestV2Dto(255L);
+
         final ReplicationProducer givenProducer = mockProducerFor(v2Service);
 
         final TestV2Dto actual = v2Service.save(givenDto);
@@ -95,107 +97,110 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
         v2Service.save(givenDto);
     }
 
-//    @Test
-//    public void createAllByV1ServiceShouldBeReplicated() {
-//        final List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
-//        final ReplicationProducer givenProducer = createProducerForService(v1Service);
-//
-//        final List<TestV1Dto> actual = v1Service.saveAll(givenDtos);
-//        assertEquals(givenDtos, actual);
-//
-//        verifyReplications(
-//                givenProducer,
-//                new SaveProducedReplication(actual.get(0)),
-//                new SaveProducedReplication(actual.get(1))
-//        );
-//    }
-//
-//    @Test
-//    public void createAllByV2ServiceShouldBeReplicated() {
-//        final List<TestV2Dto> givenDtos = List.of(new TestV2Dto(255L), new TestV2Dto(256L));
-//        final ReplicationProducer givenProducer = createProducerForService(v2Service);
-//
-//        final List<TestV2Dto> actual = v2Service.saveAll(givenDtos);
-//        assertEquals(givenDtos, actual);
-//
-//        verifyReplications(
-//                givenProducer,
-//                new SaveProducedReplication(actual.get(0)),
-//                new SaveProducedReplication(actual.get(1))
-//        );
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void createAllByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
-//
-//        leaveServiceWithoutProducer(v1Service);
-//
-//        v1Service.saveAll(givenDtos);
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void createAllByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final List<TestV2Dto> givenDtos = List.of(new TestV2Dto(255L), new TestV2Dto(256L));
-//
-//        leaveServiceWithoutProducer(v2Service);
-//
-//        v2Service.saveAll(givenDtos);
-//    }
-//
-//    @Test
-//    public void updateByV1ServiceShouldBeReplicated() {
-//        final TestV1Dto givenDto = new TestV1Dto(255L);
-//        final ReplicationProducer givenProducer = createProducerForService(v1Service);
-//
-//        final TestV1Dto actual = v1Service.update(givenDto);
-//        assertSame(givenDto, actual);
-//
-//        verifyReplications(givenProducer, new SaveProducedReplication(actual));
-//    }
-//
-//    @Test
-//    public void updateByV2ServiceShouldBeReplicated() {
-//        final TestV2Dto givenDto = new TestV2Dto(255L);
-//        final ReplicationProducer givenProducer = createProducerForService(v2Service);
-//
-//        final TestV2Dto actual = v2Service.update(givenDto);
-//        assertSame(givenDto, actual);
-//
-//        verifyReplications(givenProducer, new SaveProducedReplication(actual));
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void updateByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final TestV1Dto givenDto = new TestV1Dto(255L);
-//
-//        leaveServiceWithoutProducer(v1Service);
-//
-//        v1Service.update(givenDto);
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void updateByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final TestV2Dto givenDto = new TestV2Dto(255L);
-//
-//        leaveServiceWithoutProducer(v2Service);
-//
-//        v2Service.update(givenDto);
-//    }
-//
-//    @Test
-//    public void partialUpdateByV1ServiceShouldBeReplicated() {
-//        final Long givenId = 255L;
-//        final Object givenPartial = new Object();
-//        final ReplicationProducer givenProducer = createProducerForService(v1Service);
-//
-//        final TestV1Dto actual = v1Service.updatePartial(givenId, givenPartial);
-//        final TestV1Dto expected = new TestV1Dto(givenId);
-//        assertEquals(expected, actual);
-//
-//        verifyReplications(givenProducer, new SaveProducedReplication(actual));
-//    }
-//
+    @Test
+    public void createAllByV1ServiceShouldBeReplicated() {
+        final List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
+
+        final ReplicationProducer givenProducer = mockProducerFor(v1Service);
+
+        final List<TestV1Dto> actual = v1Service.saveAll(givenDtos);
+        assertEquals(givenDtos, actual);
+
+        verifyReplications(
+                givenProducer,
+                new SaveProducedReplication(actual.get(0)),
+                new SaveProducedReplication(actual.get(1))
+        );
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void createAllByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
+
+        v1Service.saveAll(givenDtos);
+    }
+
+    @Test
+    public void createAllByV2ServiceShouldBeReplicated() {
+        final List<TestV2Dto> givenDtos = List.of(new TestV2Dto(255L), new TestV2Dto(256L));
+
+        final ReplicationProducer givenProducer = mockProducerFor(v2Service);
+
+        final List<TestV2Dto> actual = v2Service.saveAll(givenDtos);
+        assertEquals(givenDtos, actual);
+
+        verifyReplications(
+                givenProducer,
+                new SaveProducedReplication(actual.get(0)),
+                new SaveProducedReplication(actual.get(1))
+        );
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void createAllByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final List<TestV2Dto> givenDtos = List.of(new TestV2Dto(255L), new TestV2Dto(256L));
+
+        v2Service.saveAll(givenDtos);
+    }
+
+    @Test
+    public void updateByV1ServiceShouldBeReplicated() {
+        final TestV1Dto givenDto = new TestV1Dto(255L);
+
+        final ReplicationProducer givenProducer = mockProducerFor(v1Service);
+
+        final TestV1Dto actual = v1Service.update(givenDto);
+        assertSame(givenDto, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void updateByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final TestV1Dto givenDto = new TestV1Dto(255L);
+
+        v1Service.update(givenDto);
+    }
+
+    @Test
+    public void updateByV2ServiceShouldBeReplicated() {
+        final TestV2Dto givenDto = new TestV2Dto(255L);
+        final ReplicationProducer givenProducer = mockProducerFor(v2Service);
+
+        final TestV2Dto actual = v2Service.update(givenDto);
+        assertSame(givenDto, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void updateByV2ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final TestV2Dto givenDto = new TestV2Dto(255L);
+
+        v2Service.update(givenDto);
+    }
+
+    @Test
+    public void partialUpdateByV1ServiceShouldBeReplicated() {
+        final Long givenId = 255L;
+        final Object givenPartial = new Object();
+        final ReplicationProducer givenProducer = mockProducerFor(v1Service);
+
+        final TestV1Dto actual = v1Service.updatePartial(givenId, givenPartial);
+        final TestV1Dto expected = new TestV1Dto(givenId);
+        assertEquals(expected, actual);
+
+        verifyReplications(givenProducer, new SaveProducedReplication(actual));
+    }
+
+    @Test(expected = NoReplicationProducerException.class)
+    public void partialUpdateByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
+        final Long givenId = 255L;
+        final Object givenPartial = new Object();
+
+        v1Service.updatePartial(givenId, givenPartial);
+    }
+
 //    @Test
 //    public void partialUpdateByV2ServiceShouldBeReplicated() {
 //        final Long givenId = 255L;
@@ -207,16 +212,6 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
 //        assertEquals(expected, actual);
 //
 //        verifyReplications(givenProducer, new SaveProducedReplication(actual));
-//    }
-//
-//    @Test(expected = NoReplicationProducerException.class)
-//    public void partialUpdateByV1ServiceShouldNotBeReplicatedBecauseOfNoReplicationProducerForService() {
-//        final Long givenId = 255L;
-//        final Object givenPartial = new Object();
-//
-//        leaveServiceWithoutProducer(v1Service);
-//
-//        v1Service.updatePartial(givenId, givenPartial);
 //    }
 //
 //    @Test(expected = NoReplicationProducerException.class)
