@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,10 +19,10 @@ import static org.mockito.Mockito.verify;
 public final class ReplicationConsumeStarterTest {
 
     @Mock
-    private ReplicationConsumePipeline<Long, TestV2Entity> firstMockedPipeline;
+    private ReplicationConsumePipeline<?, ?> firstMockedPipeline;
 
     @Mock
-    private ReplicationConsumePipeline<Long, TestV2Entity> secondMockedPipeline;
+    private ReplicationConsumePipeline<?, ?> secondMockedPipeline;
 
     @Mock
     private ReplicationConsumePipelineStarter mockedPipelineStarter;
@@ -31,24 +30,23 @@ public final class ReplicationConsumeStarterTest {
     private ReplicationConsumeStarter starter;
 
     @Captor
-    private ArgumentCaptor<ReplicationConsumePipeline<Long, TestV2Entity>> pipelineArgumentCaptor;
+    private ArgumentCaptor<ReplicationConsumePipeline<?, ?>> pipelineArgumentCaptor;
 
     @Before
     public void initializeStarter() {
-        starter = new ReplicationConsumeStarter(getGivenPipelines(), mockedPipelineStarter);
+        starter = new ReplicationConsumeStarter(
+                List.of(firstMockedPipeline, secondMockedPipeline),
+                mockedPipelineStarter
+        );
     }
 
     @Test
     public void consumingShouldBeStarted() {
         starter.start();
 
-        final List<ReplicationConsumePipeline<?, ?>> expected = getGivenPipelines();
-        verify(mockedPipelineStarter, times(expected.size())).start(pipelineArgumentCaptor.capture());
-        final List<ReplicationConsumePipeline<Long, TestV2Entity>> actual = pipelineArgumentCaptor.getAllValues();
-        assertEquals(expected, actual);
-    }
-
-    private List<ReplicationConsumePipeline<?, ?>> getGivenPipelines() {
-        return List.of(firstMockedPipeline, secondMockedPipeline);
+        final var expectedStartedPipelines = List.of(firstMockedPipeline, secondMockedPipeline);
+        verify(mockedPipelineStarter, times(expectedStartedPipelines.size())).start(pipelineArgumentCaptor.capture());
+        final var actualStartedPipelines = pipelineArgumentCaptor.getAllValues();
+        assertEquals(expectedStartedPipelines, actualStartedPipelines);
     }
 }
