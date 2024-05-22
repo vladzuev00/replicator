@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.consuming.starter.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;

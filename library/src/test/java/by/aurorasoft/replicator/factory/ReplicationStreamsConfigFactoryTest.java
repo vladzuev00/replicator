@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
+import by.aurorasoft.replicator.consuming.starter.factory.ReplicationStreamsConfigFactory;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;

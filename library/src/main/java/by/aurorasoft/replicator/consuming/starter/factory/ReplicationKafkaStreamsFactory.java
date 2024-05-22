@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.consuming.starter.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,9 @@ public final class ReplicationKafkaStreamsFactory {
     private final KafkaStreamsFactory streamsFactory;
 
     public KafkaStreams create(final ReplicationConsumePipeline<?, ?> pipeline) {
+        final Topology topology = null;
 //        final Topology topology = topologyFactory.create(pipeline);
-//        final StreamsConfig config = configFactory.create(pipeline);
-//        return streamsFactory.create(topology, config);
-        return null;
+        final StreamsConfig config = configFactory.create(pipeline);
+        return streamsFactory.create(topology, config);
     }
 }
