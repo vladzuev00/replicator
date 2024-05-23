@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.consuming.starter.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
-import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,19 +25,19 @@ public final class ReplicationTopologyFactory {
     public <E, ID> Topology create(final ReplicationConsumePipeline<E, ID> pipeline) {
         final StreamsBuilder builder = new StreamsBuilder();
         builder
-                .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()));
-//                .foreach((id, replication) -> executeRetrying(replication, pipeline.getRepository()));
+                .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()))
+                .foreach((id, replication) -> executeRetrying(replication, pipeline.getRepository()));
         return builder.build();
     }
 
-    private <ID, E extends AbstractEntity<ID>> void executeRetrying(final ConsumedReplication<ID, E> replication,
-                                                                    final JpaRepository<E, ID> repository) {
+    private <E, ID> void executeRetrying(final ConsumedReplication<E, ID> replication,
+                                         final JpaRepository<E, ID> repository) {
         retryTemplate.execute(context -> execute(replication, repository));
     }
 
-    private <ID, E extends AbstractEntity<ID>> Optional<Void> execute(final ConsumedReplication<ID, E> replication,
-                                                                      final JpaRepository<E, ID> repository) {
-//        replication.execute(repository);
+    private <E, ID> Optional<?> execute(final ConsumedReplication<E, ID> replication,
+                                        final JpaRepository<E, ID> repository) {
+        replication.execute(repository);
         return empty();
     }
 }
