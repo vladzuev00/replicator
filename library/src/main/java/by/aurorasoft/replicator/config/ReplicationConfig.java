@@ -21,6 +21,8 @@ public class ReplicationConfig {
         return factory.create();
     }
 
+    //TODO: create ReplicatedServiceHolder
+
     @Bean
     public RetryTemplate replicationRetryTemplate(final ReplicationRetryConsumeProperty property) {
         return new RetryTemplateBuilder()
