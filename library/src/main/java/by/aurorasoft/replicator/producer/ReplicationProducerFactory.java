@@ -1,10 +1,9 @@
-package by.aurorasoft.replicator.holder.producer;
+package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.producer.ReplicationProducer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;

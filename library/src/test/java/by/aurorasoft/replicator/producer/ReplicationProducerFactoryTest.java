@@ -1,7 +1,6 @@
-package by.aurorasoft.replicator.holder.producer;
+package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.replicator.base.v2.service.SecondTestV2CRUDService;
-import by.aurorasoft.replicator.producer.ReplicationProducer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;

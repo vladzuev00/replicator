@@ -21,7 +21,7 @@ public final class ReplicationTopicCreator {
 
     @EventListener(PipelinesValidatedEvent.class)
     public void createTopics() {
-        serviceHolder.getServices().forEach(this::createTopic);
+//        serviceHolder.getServices().forEach(this::createTopic);
         publishEvent();
     }
 

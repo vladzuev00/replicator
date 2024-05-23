@@ -14,10 +14,11 @@ import static org.springframework.aop.framework.AopProxyUtils.ultimateTargetClas
 @Component
 @Getter
 public final class ReplicatedServiceHolder {
-    private final List<? extends AbsServiceRUD<?, ?, ?, ?, ?>> services;
+    private final List<Object> services;
 
     public ReplicatedServiceHolder(final List<AbsServiceRUD<?, ?, ?, ?, ?>> services) {
-        this.services = unProxyReplicated(services);
+        this.services = null;
+//        this.services = unProxyReplicated(services);
     }
 
     private static List<? extends AbsServiceRUD<?, ?, ?, ?, ?>> unProxyReplicated(
