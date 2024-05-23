@@ -1,8 +1,10 @@
 package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolderFactory;
 import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolderFactory;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolderFactory;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import org.junit.Test;
 import org.mockito.MockedConstruction;
@@ -17,6 +19,17 @@ import static org.mockito.Mockito.*;
 
 public final class ReplicationConfigTest {
     private final ReplicationConfig config = new ReplicationConfig();
+
+    @Test
+    public void serviceHolderShouldBeCreated() {
+        final ReplicatedServiceHolderFactory givenFactory = mock(ReplicatedServiceHolderFactory.class);
+
+        final ReplicatedServiceHolder givenHolder = mock(ReplicatedServiceHolder.class);
+        when(givenFactory.create()).thenReturn(givenHolder);
+
+        final ReplicatedServiceHolder actual = config.replicatedServiceHolder(givenFactory);
+        assertSame(givenHolder, actual);
+    }
 
     @Test
     public void producerHolderShouldBeCreated() {
