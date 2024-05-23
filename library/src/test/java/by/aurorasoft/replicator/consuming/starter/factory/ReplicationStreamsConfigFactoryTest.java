@@ -1,6 +1,5 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.consuming.starter.factory;
 
-import by.aurorasoft.replicator.consuming.starter.factory.ReplicationStreamsConfigFactory;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;
@@ -16,6 +15,7 @@ import static org.mockito.Mockito.mock;
 
 public final class ReplicationStreamsConfigFactoryTest {
     private static final String GIVEN_BOOTSTRAP_ADDRESS = "127.0.0.1:9092";
+    private static final String GIVEN_TOPIC_NAME = "test-topic";
 
     private final ReplicationStreamsConfigFactory factory = new ReplicationStreamsConfigFactory(GIVEN_BOOTSTRAP_ADDRESS);
 
@@ -25,29 +25,25 @@ public final class ReplicationStreamsConfigFactoryTest {
         final ReplicationConsumePipeline<?, ?> givenPipeline = createPipeline(givenPipelineId);
 
         final StreamsConfig actual = factory.create(givenPipeline);
-        final StreamsConfig expected = createExpected(givenPipelineId);
+        final StreamsConfig expected = new StreamsConfig(
+                Map.of(
+                        APPLICATION_ID_CONFIG, givenPipelineId,
+                        BOOTSTRAP_SERVERS_CONFIG, GIVEN_BOOTSTRAP_ADDRESS,
+                        PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE_V2
+                )
+        );
         assertEquals(expected, actual);
     }
 
     @SuppressWarnings({"unchecked", "SameParameterValue"})
-    private static ReplicationConsumePipeline<?, ?> createPipeline(final String id) {
+    private ReplicationConsumePipeline<?, ?> createPipeline(final String id) {
         return ReplicationConsumePipeline.builder()
                 .id(id)
-                .topic("test-topic")
+                .topic(GIVEN_TOPIC_NAME)
                 .idSerde(mock(Serde.class))
                 .replicationTypeReference(new TypeReference<>() {
                 })
                 .repository(mock(JpaRepository.class))
                 .build();
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private static StreamsConfig createExpected(final String pipelineId) {
-        final Map<String, Object> configsByNames = Map.of(
-                APPLICATION_ID_CONFIG, pipelineId,
-                BOOTSTRAP_SERVERS_CONFIG, GIVEN_BOOTSTRAP_ADDRESS,
-                PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE_V2
-        );
-        return new StreamsConfig(configsByNames);
     }
 }
