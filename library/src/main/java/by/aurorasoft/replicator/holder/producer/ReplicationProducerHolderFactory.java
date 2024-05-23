@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.holder.service;
+package by.aurorasoft.replicator.holder.producer;
 
 import by.aurorasoft.replicator.holder.producer.ReplicationProducerFactory;
 import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
