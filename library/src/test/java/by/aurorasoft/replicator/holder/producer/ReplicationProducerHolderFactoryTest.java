@@ -9,11 +9,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -40,8 +39,8 @@ public final class ReplicationProducerHolderFactoryTest {
     public void holderShouldBeCreated() {
         final Object firstGivenService = new Object();
         final Object secondGivenService = new Object();
-
-        putIntoHolder(firstGivenService, secondGivenService);
+        final Set<Object> givenServices = Set.of(firstGivenService, secondGivenService);
+        when(mockedServiceHolder.getServices()).thenReturn(givenServices);
 
         final ReplicationProducer firstGivenProducer = mockProducerFor(firstGivenService);
         final ReplicationProducer secondGivenProducer = mockProducerFor(secondGivenService);
@@ -53,11 +52,6 @@ public final class ReplicationProducerHolderFactoryTest {
                 secondGivenService, secondGivenProducer
         );
         assertEquals(expectedProducersByServices, actualProducersByServices);
-    }
-
-    private void putIntoHolder(final Object... services) {
-        final List<Object> givenServices = asList(services);
-        when(mockedServiceHolder.getServices()).thenReturn(givenServices);
     }
 
     private ReplicationProducer mockProducerFor(final Object service) {

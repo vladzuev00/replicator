@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
 
 @Component
@@ -20,7 +20,7 @@ public final class ReplicatedServiceHolderFactory {
                 .values()
                 .stream()
                 .map(this::unProxy)
-                .collect(collectingAndThen(toList(), ReplicatedServiceHolder::new));
+                .collect(collectingAndThen(toSet(), ReplicatedServiceHolder::new));
     }
 
     private Object unProxy(final Object service) {
