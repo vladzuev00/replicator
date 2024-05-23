@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -44,9 +46,12 @@ public final class KafkaStreamsFactoryTest {
             final StreamsConfig givenConfig = mock(StreamsConfig.class);
 
             final KafkaStreams actual = factory.create(givenTopology, givenConfig);
-            verifyConstruction(mockedConstruction);
-            final KafkaStreams expected = getConstructedObject(mockedConstruction);
-            assertSame(expected, actual);
+
+            final List<KafkaStreams> constructedStreams = mockedConstruction.constructed();
+            assertEquals(1, constructedStreams.size());
+            final KafkaStreams constructedStream = constructedStreams.get(0);
+
+            assertSame(constructedStream, actual);
 
             verifyNotClosed(actual);
             verifyClosingShutdownHook(actual);
@@ -59,24 +64,17 @@ public final class KafkaStreamsFactoryTest {
             final Topology givenTopology = mock(Topology.class);
             final StreamsConfig givenConfig = mock(StreamsConfig.class);
 
-            throwExceptionOnAddingShutdownHook();
+            mockExceptionOnAddingShutdownHook();
 
             createStreamsVerifyingException(givenTopology, givenConfig);
 
-            verifyConstruction(mockedConstruction);
-            final KafkaStreams constructedStreams = getConstructedObject(mockedConstruction);
+            final List<KafkaStreams> constructedStreams = mockedConstruction.constructed();
+            assertEquals(1, constructedStreams.size());
+            final KafkaStreams constructedStream = constructedStreams.get(0);
 
-            verifyClosed(constructedStreams);
+            verifyClosed(constructedStream);
             verifyAddShutdownHook();
         }
-    }
-
-    private void verifyConstruction(final MockedConstruction<?> mockedConstruction) {
-        assertEquals(1, mockedConstruction.constructed().size());
-    }
-
-    private <T> T getConstructedObject(final MockedConstruction<T> mockedConstruction) {
-        return mockedConstruction.constructed().get(0);
     }
 
     private void verifyNotClosed(final KafkaStreams streams) {
@@ -98,7 +96,11 @@ public final class KafkaStreamsFactoryTest {
         verifyClosed(streams);
     }
 
-    private void throwExceptionOnAddingShutdownHook() {
+    private void verifyAddShutdownHook() {
+        verify(mockedRuntime, times(1)).addShutdownHook(threadArgumentCaptor.capture());
+    }
+
+    private void mockExceptionOnAddingShutdownHook() {
         doThrow(TestException.class)
                 .when(mockedRuntime)
                 .addShutdownHook(any(Thread.class));
@@ -113,10 +115,6 @@ public final class KafkaStreamsFactoryTest {
             exceptionArisen = true;
         }
         assertTrue(exceptionArisen);
-    }
-
-    private void verifyAddShutdownHook() {
-        verify(mockedRuntime, times(1)).addShutdownHook(threadArgumentCaptor.capture());
     }
 
     private static final class TestException extends RuntimeException {
