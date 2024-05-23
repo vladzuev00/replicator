@@ -2,8 +2,7 @@ package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
-import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
-import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;

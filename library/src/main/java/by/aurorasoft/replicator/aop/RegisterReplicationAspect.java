@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;

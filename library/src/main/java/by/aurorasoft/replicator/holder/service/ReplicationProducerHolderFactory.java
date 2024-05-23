@@ -1,12 +1,11 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.holder.service;
 
-import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
-import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerFactory;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toMap;
 
 @Component

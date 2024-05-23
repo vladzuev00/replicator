@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.holder;
+package by.aurorasoft.replicator.holder.service;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;

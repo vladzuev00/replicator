@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
-import by.aurorasoft.replicator.factory.ReplicationProducerHolderFactory;
-import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.service.ReplicationProducerHolderFactory;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

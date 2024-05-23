@@ -7,7 +7,7 @@ import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
 import by.aurorasoft.replicator.base.v1.service.FirstTestV1CRUDService;
 import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
 import by.aurorasoft.replicator.base.v2.service.FirstTestV2CRUDService;
-import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;

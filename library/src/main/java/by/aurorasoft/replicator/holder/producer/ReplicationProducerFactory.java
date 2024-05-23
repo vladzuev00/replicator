@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.holder.producer;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;

@@ -4,6 +4,7 @@ import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.base.v2.service.FirstTestV2CRUDService;
 import by.aurorasoft.replicator.base.v2.service.SecondTestV2CRUDService;
 import by.aurorasoft.replicator.base.v2.service.ThirdTestV2CRUDService;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

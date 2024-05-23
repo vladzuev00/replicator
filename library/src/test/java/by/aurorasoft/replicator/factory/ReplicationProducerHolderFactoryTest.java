@@ -1,7 +1,7 @@
 //package by.aurorasoft.replicator.factory;
 //
-//import by.aurorasoft.replicator.holder.ReplicatedServiceHolder;
-//import by.aurorasoft.replicator.holder.ReplicationProducerHolder;
+//import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
+//import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
 //import by.aurorasoft.replicator.producer.ReplicationProducer;
 //import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 //import org.junit.Before;
