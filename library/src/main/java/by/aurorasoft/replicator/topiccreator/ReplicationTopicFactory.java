@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.stereotype.Component;
 
@@ -11,26 +10,26 @@ import static org.springframework.kafka.config.TopicBuilder.name;
 @Component
 public final class ReplicationTopicFactory {
 
-    public NewTopic create(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    public NewTopic create(final Object service) {
         return name(getTopicName(service))
                 .partitions(getTopicPartitionCount(service))
                 .replicas(getTopicReplicationFactor(service))
                 .build();
     }
 
-    private static String getTopicName(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private String getTopicName(final Object service) {
         return getTopicConfig(service).name();
     }
 
-    private static int getTopicPartitionCount(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private int getTopicPartitionCount(final Object service) {
         return getTopicConfig(service).partitionCount();
     }
 
-    private static short getTopicReplicationFactor(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private short getTopicReplicationFactor(final Object service) {
         return getTopicConfig(service).replicationFactor();
     }
 
-    private static TopicConfig getTopicConfig(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private TopicConfig getTopicConfig(final Object service) {
         return service.getClass()
                 .getAnnotation(ReplicatedService.class)
                 .topicConfig();
