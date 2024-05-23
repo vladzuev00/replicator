@@ -16,25 +16,25 @@ import static org.mockito.Mockito.mock;
 public final class ReplicationProducerHolderTest {
 
     @Test
-    public void producerShouldBeFoundByService() {
+    public void producerShouldBeFoundForService() {
         final Object givenService = new Object();
         final ReplicationProducer givenProducer = mock(ReplicationProducer.class);
         final ReplicationProducerHolder givenHolder = createHolder(givenService, givenProducer);
 
-        final Optional<ReplicationProducer> optionalActual = givenHolder.findByService(givenService);
+        final Optional<ReplicationProducer> optionalActual = givenHolder.findForService(givenService);
         assertTrue(optionalActual.isPresent());
         final ReplicationProducer actual = optionalActual.get();
         assertSame(givenProducer, actual);
     }
 
     @Test
-    public void producerShouldNotBeFoundByService() {
+    public void producerShouldNotBeFoundForService() {
         final Object firstGivenService = new Object();
         final Object secondGivenService = new Object();
         final ReplicationProducer givenProducer = mock(ReplicationProducer.class);
         final ReplicationProducerHolder givenHolder = createHolder(firstGivenService, givenProducer);
 
-        final Optional<ReplicationProducer> optionalActual = givenHolder.findByService(secondGivenService);
+        final Optional<ReplicationProducer> optionalActual = givenHolder.findForService(secondGivenService);
         assertTrue(optionalActual.isEmpty());
     }
 

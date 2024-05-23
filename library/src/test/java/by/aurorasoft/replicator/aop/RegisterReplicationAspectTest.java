@@ -288,7 +288,7 @@ public final class RegisterReplicationAspectTest extends AbstractSpringBootTest 
 
     private ReplicationProducer mockProducerFor(final Object service) {
         final ReplicationProducer producer = mock(ReplicationProducer.class);
-        when(mockedProducerHolder.findByService(same(unProxy(service)))).thenReturn(of(producer));
+        when(mockedProducerHolder.findForService(same(unProxy(service)))).thenReturn(of(producer));
         return producer;
     }
 

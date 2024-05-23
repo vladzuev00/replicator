@@ -68,7 +68,7 @@ public class RegisterReplicationAspect {
     }
 
     private ReplicationProducer getProducer(final JoinPoint joinPoint) {
-        return producerHolder.findByService(joinPoint.getTarget())
+        return producerHolder.findForService(joinPoint.getTarget())
                 .orElseThrow(() -> createNoProducerException(joinPoint));
     }
 

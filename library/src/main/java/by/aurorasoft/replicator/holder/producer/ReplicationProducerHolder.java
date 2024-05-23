@@ -12,7 +12,7 @@ import static java.util.Optional.ofNullable;
 public final class ReplicationProducerHolder {
     private final Map<Object, ReplicationProducer> producersByServices;
 
-    public Optional<ReplicationProducer> findByService(final Object service) {
+    public Optional<ReplicationProducer> findForService(final Object service) {
         return ofNullable(producersByServices.get(service));
     }
 }
