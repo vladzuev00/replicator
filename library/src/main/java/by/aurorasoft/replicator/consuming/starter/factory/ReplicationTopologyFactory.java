@@ -23,7 +23,7 @@ public final class ReplicationTopologyFactory {
         this.retryTemplate = retryTemplate;
     }
 
-    public <ID, E extends AbstractEntity<ID>> Topology create(final ReplicationConsumePipeline<ID, E> pipeline) {
+    public <E, ID> Topology create(final ReplicationConsumePipeline<E, ID> pipeline) {
         final StreamsBuilder builder = new StreamsBuilder();
         builder
                 .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()));
