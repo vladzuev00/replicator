@@ -1,6 +1,6 @@
 package by.aurorasoft.testapp.util;
 
-import by.aurorasoft.testapp.crud.v2.entity.AbstractEntity;
+import by.aurorasoft.testapp.crud.entity.AbstractEntity;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;

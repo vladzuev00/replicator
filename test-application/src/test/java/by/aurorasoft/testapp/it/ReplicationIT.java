@@ -4,6 +4,7 @@ import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.dto.Person;
+import by.aurorasoft.testapp.crud.entity.*;
 import by.aurorasoft.testapp.crud.v2.entity.*;
 import by.aurorasoft.testapp.crud.v2.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.v2.repository.ReplicatedPersonRepository;

@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.crud.v2.entity;
+package by.aurorasoft.testapp.crud.entity;
 
 import org.hibernate.Hibernate;
 
@@ -6,10 +6,11 @@ import java.util.Objects;
 
 import static java.util.Objects.hash;
 
-public abstract class AbstractEntity<ID> implements by.nhorushko.crudgeneric.v2.domain.AbstractEntity<ID> {
+@SuppressWarnings("deprecation")
+public abstract class AbstractEntity implements by.nhorushko.crudgeneric.v2.domain.AbstractEntity<Long>, by.nhorushko.crudgeneric.domain.AbstractEntity {
 
     @Override
-    @SuppressWarnings({"unchecked", "EqualsWhichDoesntCheckParameterClass"})
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public final boolean equals(final Object otherObject) {
         if (this == otherObject) {
             return true;
@@ -20,7 +21,7 @@ public abstract class AbstractEntity<ID> implements by.nhorushko.crudgeneric.v2.
         if (Hibernate.getClass(this) != Hibernate.getClass(otherObject)) {
             return false;
         }
-        final AbstractEntity<ID> other = (AbstractEntity<ID>) otherObject;
+        final AbstractEntity other = (AbstractEntity) otherObject;
         return Objects.equals(getId(), other.getId());
     }
 

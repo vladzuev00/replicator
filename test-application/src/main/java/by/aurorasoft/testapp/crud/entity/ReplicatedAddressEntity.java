@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.crud.v2.entity;
+package by.aurorasoft.testapp.crud.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,8 +12,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @ToString
 @Builder
 @Entity
-@Table(name = "addresses")
-public class AddressEntity extends AbstractEntity<Long> {
+@Table(name = "replicated_addresses")
+public class ReplicatedAddressEntity extends AbstractEntity<Long> {
 
     @Id
     @Column(name = "id")
@@ -26,3 +26,4 @@ public class AddressEntity extends AbstractEntity<Long> {
     @Column(name = "city")
     private String city;
 }
+

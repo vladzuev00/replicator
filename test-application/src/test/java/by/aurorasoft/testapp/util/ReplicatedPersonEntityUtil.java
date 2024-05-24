@@ -1,6 +1,6 @@
 package by.aurorasoft.testapp.util;
 
-import by.aurorasoft.testapp.crud.v2.entity.ReplicatedPersonEntity;
+import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import lombok.experimental.UtilityClass;
 
 import static org.junit.Assert.assertEquals;
