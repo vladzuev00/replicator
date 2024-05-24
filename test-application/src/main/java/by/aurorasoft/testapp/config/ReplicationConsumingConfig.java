@@ -5,9 +5,12 @@ import by.aurorasoft.testapp.crud.v2.entity.ReplicatedAddressEntity;
 import by.aurorasoft.testapp.crud.v2.entity.ReplicatedPersonEntity;
 import by.aurorasoft.testapp.crud.v2.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.v2.repository.ReplicatedPersonRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import static org.apache.kafka.common.serialization.Serdes.Long;
 
 @Configuration
 public class ReplicationConsumingConfig {
@@ -25,32 +28,30 @@ public class ReplicationConsumingConfig {
     private String addressPipelineId;
 
     @Bean
-    public ReplicationConsumePipeline<Long, ReplicatedPersonEntity> personPipeline(
+    public ReplicationConsumePipeline<ReplicatedPersonEntity, Long> personPipeline(
             final ReplicatedPersonRepository repository
     ) {
-        return null;
-//        return ReplicationConsumePipeline.<Long, ReplicatedPersonEntity>builder()
-//                .id(personPipelineId)
-//                .topic(personTopic)
-//                .idSerde(Long())
-//                .replicationTypeReference(new TypeReference<>() {
-//                })
-//                .repository(repository)
-//                .build();
+        return ReplicationConsumePipeline.<ReplicatedPersonEntity, Long>builder()
+                .id(personPipelineId)
+                .topic(personTopic)
+                .idSerde(Long())
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(repository)
+                .build();
     }
 
     @Bean
-    public ReplicationConsumePipeline<Long, ReplicatedAddressEntity> addressPipeline(
+    public ReplicationConsumePipeline<ReplicatedAddressEntity, Long> addressPipeline(
             final ReplicatedAddressRepository repository
     ) {
-        return null;
-//        return ReplicationConsumePipeline.<Long, ReplicatedAddressEntity>builder()
-//                .id(addressPipelineId)
-//                .topic(addressTopic)
-//                .idSerde(Long())
-//                .replicationTypeReference(new TypeReference<>() {
-//                })
-//                .repository(repository)
-//                .build();
+        return ReplicationConsumePipeline.<ReplicatedAddressEntity, Long>builder()
+                .id(addressPipelineId)
+                .topic(addressTopic)
+                .idSerde(Long())
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(repository)
+                .build();
     }
 }
