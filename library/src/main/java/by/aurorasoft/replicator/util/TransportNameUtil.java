@@ -8,5 +8,4 @@ public final class TransportNameUtil {
     public static final String SAVE = "save";
     public static final String DELETE = "delete";
     public static final String BODY = "body";
-    public static final String ENTITY_ID = "entityId";
 }
