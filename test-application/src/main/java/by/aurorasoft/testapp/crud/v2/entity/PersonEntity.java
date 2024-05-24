@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.crud.entity;
+package by.aurorasoft.testapp.crud.v2.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

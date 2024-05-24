@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @Value
 @AllArgsConstructor
 @Builder
-public class Person implements AbstractDto<Long> {
+@SuppressWarnings("deprecation")
+public class Person implements AbstractDto<Long>, by.nhorushko.crudgeneric.domain.AbstractDto {
     Long id;
     String name;
     String surname;

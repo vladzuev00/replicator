@@ -1,6 +1,6 @@
-package by.aurorasoft.testapp.crud.dto;
+package by.aurorasoft.testapp.crud.v1.dto;
 
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
+import by.nhorushko.crudgeneric.domain.AbstractDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -9,7 +9,7 @@ import lombok.Value;
 @AllArgsConstructor
 @Builder
 @SuppressWarnings("deprecation")
-public class Address implements AbstractDto<Long>, by.nhorushko.crudgeneric.domain.AbstractDto {
+public class Address implements AbstractDto {
     Long id;
     String country;
     String city;

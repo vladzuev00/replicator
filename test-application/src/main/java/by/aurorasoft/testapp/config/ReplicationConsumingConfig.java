@@ -1,16 +1,13 @@
 package by.aurorasoft.testapp.config;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
-import by.aurorasoft.testapp.crud.entity.ReplicatedAddressEntity;
-import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
-import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
-import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
+import by.aurorasoft.testapp.crud.v2.entity.ReplicatedAddressEntity;
+import by.aurorasoft.testapp.crud.v2.entity.ReplicatedPersonEntity;
+import by.aurorasoft.testapp.crud.v2.repository.ReplicatedAddressRepository;
+import by.aurorasoft.testapp.crud.v2.repository.ReplicatedPersonRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static org.apache.kafka.common.serialization.Serdes.Long;
 
 @Configuration
 public class ReplicationConsumingConfig {

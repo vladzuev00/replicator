@@ -1,7 +1,7 @@
-package by.aurorasoft.testapp.crud.mapper;
+package by.aurorasoft.testapp.crud.v2.mapper;
 
 import by.aurorasoft.testapp.crud.dto.Address;
-import by.aurorasoft.testapp.crud.entity.AddressEntity;
+import by.aurorasoft.testapp.crud.v2.entity.AddressEntity;
 import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
 import jakarta.persistence.EntityManager;
 import org.modelmapper.ModelMapper;

@@ -5,10 +5,11 @@ import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.*;
-import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
-import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
-import by.aurorasoft.testapp.crud.service.AddressService;
-import by.aurorasoft.testapp.crud.service.PersonService;
+import by.aurorasoft.testapp.crud.v2.entity.*;
+import by.aurorasoft.testapp.crud.v2.repository.ReplicatedAddressRepository;
+import by.aurorasoft.testapp.crud.v2.repository.ReplicatedPersonRepository;
+import by.aurorasoft.testapp.crud.v2.service.AddressService;
+import by.aurorasoft.testapp.crud.v2.service.PersonService;
 import by.aurorasoft.testapp.model.AddressName;
 import by.aurorasoft.testapp.model.PersonAddress;
 import by.aurorasoft.testapp.model.PersonName;
@@ -694,12 +695,12 @@ public final class ReplicationIT extends AbstractSpringBootTest {
             }
         }
 
-        @Pointcut("target(by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository)")
+        @Pointcut("target(by.aurorasoft.testapp.crud.v2.repository.ReplicatedAddressRepository)")
         private void replicatedAddressRepository() {
 
         }
 
-        @Pointcut("target(by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository)")
+        @Pointcut("target(by.aurorasoft.testapp.crud.v2.repository.ReplicatedPersonRepository)")
         private void replicatedPersonRepository() {
 
         }
