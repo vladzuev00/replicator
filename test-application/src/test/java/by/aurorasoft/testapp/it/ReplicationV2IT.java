@@ -4,6 +4,8 @@ import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
 import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
 import by.aurorasoft.testapp.crud.v2.service.AddressV2Service;
 import by.aurorasoft.testapp.crud.v2.service.PersonV2Service;
+import by.aurorasoft.testapp.model.AddressName;
+import by.aurorasoft.testapp.model.PersonAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -62,4 +64,13 @@ public final class ReplicationV2IT extends ReplicationIT<AddressV2, PersonV2> {
         return personService.update(person);
     }
 
+    @Override
+    protected AddressV2 updateAddressPartial(final Long id, final AddressName name) {
+        return addressService.updatePartial(id, name);
+    }
+
+    @Override
+    protected PersonV2 updatePersonPartial(final Long id, final PersonAddress address) {
+        return personService.updatePartial(id, address);
+    }
 }

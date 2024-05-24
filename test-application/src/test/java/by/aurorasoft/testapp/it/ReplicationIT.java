@@ -9,6 +9,8 @@ import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
 import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
+import by.aurorasoft.testapp.model.AddressName;
+import by.aurorasoft.testapp.model.PersonAddress;
 import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
@@ -174,6 +176,43 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         verifyNoReplicatedRepositoryMethodCall();
     }
 
+    @Test
+    public void addressShouldBeUpdatedPartially() {
+        final Long givenId = 255L;
+        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
+
+        final ADDRESS actual = executeWaitingReplication(
+                () -> updateAddressPartial(givenId, givenNewName),
+                1,
+                0,
+                false
+        );
+        final ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
+        assertEquals(expected, actual);
+
+        verifyAddressReplication(actual);
+    }
+
+    @Test
+    public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
+        final Long givenId = 256L;
+        final AddressName givenNewName = new AddressName("Russia", "Moscow");
+
+        executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+//    @Test
+//    public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
+//        final Long givenId = 255L;
+//        final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
+//
+//        executeExpectingNoSuchEntityException(() -> personService.updatePartial(givenId, givenNewAddress));
+//
+//        verifyNoReplicatedRepositoryMethodCall();
+//    }
+//
     protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
 
     protected abstract PERSON createPerson(final Long id,
@@ -194,6 +233,10 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     protected abstract ADDRESS update(final ADDRESS address);
 
     protected abstract PERSON update(final PERSON person);
+
+    protected abstract ADDRESS updateAddressPartial(final Long id, final AddressName name);
+
+    protected abstract PERSON updatePersonPartial(final Long id, final PersonAddress address);
 
     private ADDRESS createAddress(final Long id) {
         return createAddress(id, null, null);
@@ -221,38 +264,6 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         return createPerson(id, name, surname, patronymic, birthDate, address);
     }
 
-//    @Test
-//    public void addressShouldBeUpdatedPartially() {
-//        final Long givenId = 255L;
-//        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
-//
-//        final Address actual = executeWaitingReplication(() -> addressService.updatePartial(givenId, givenNewName), 1, 0, false);
-//        final Address expected = new Address(givenId, givenNewName.getCountry(), givenNewName.getCity());
-//        assertEquals(expected, actual);
-//
-//        verifyAddressReplication(actual);
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
-//        final Long givenId = 256L;
-//        final AddressName givenNewName = new AddressName("Russia", "Moscow");
-//
-//        executeExpectingUniqueViolation(() -> addressService.updatePartial(givenId, givenNewName));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
-//        final Long givenId = 255L;
-//        final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
-//
-//        executeExpectingNoSuchEntityException(() -> personService.updatePartial(givenId, givenNewAddress));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
 //    @Test
 //    public void addressShouldBeDeleted() {
 //        final Long givenId = 262L;
