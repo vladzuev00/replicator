@@ -3,7 +3,7 @@ package by.aurorasoft.testapp.it;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.AbstractAddress;
-import by.aurorasoft.testapp.crud.dto.PersonDto;
+import by.aurorasoft.testapp.crud.dto.AbstractPerson;
 import by.aurorasoft.testapp.crud.entity.*;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @Import(ReplicationIT.ReplicationBarrier.class)
-public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON extends PersonDto> extends AbstractSpringBootTest {
+public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON extends AbstractPerson> extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
