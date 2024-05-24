@@ -13,5 +13,5 @@ public interface PersonDto {
 
     LocalDate getBirthDate();
 
-    AddressDto getAddress();
+    AbstractAddress getAddress();
 }

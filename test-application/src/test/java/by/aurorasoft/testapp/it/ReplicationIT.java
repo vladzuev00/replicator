@@ -2,12 +2,11 @@ package by.aurorasoft.testapp.it;
 
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
-import by.aurorasoft.testapp.crud.dto.AddressDto;
+import by.aurorasoft.testapp.crud.dto.AbstractAddress;
 import by.aurorasoft.testapp.crud.dto.PersonDto;
 import by.aurorasoft.testapp.crud.entity.*;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
-import by.aurorasoft.testapp.crud.v2.dto.Address;
 import by.aurorasoft.testapp.crud.v2.dto.Person;
 import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
@@ -46,7 +45,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @Import(ReplicationIT.ReplicationBarrier.class)
-public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends PersonDto> extends AbstractSpringBootTest {
+public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON extends PersonDto> extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
@@ -107,7 +106,12 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
                 createAddress(secondGivenAddressCountry, secondGivenAddressCity)
         );
 
-        final List<ADDRESS> actual = executeWaitingReplication(() -> saveAddresses(givenAddresses), givenAddresses.size(), 0, false);
+        final List<ADDRESS> actual = executeWaitingReplication(
+                () -> saveAddresses(givenAddresses),
+                givenAddresses.size(),
+                0,
+                false
+        );
         final List<ADDRESS> expected = List.of(
                 createAddress(1L, firstGivenAddressCountry, firstGivenAddressCity),
                 createAddress(2L, secondGivenAddressCountry, secondGivenAddressCity)
@@ -412,7 +416,7 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
     }
 
     private void verifyAddressReplications(final List<ADDRESS> addresses) {
-        final List<Long> ids = addresses.stream().map(AddressDto::getId).toList();
+        final List<Long> ids = addresses.stream().map(AbstractAddress::getId).toList();
         final List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
         final List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
         ReplicatedAddressEntityUtil.checkEquals(expected, actual);
@@ -431,7 +435,7 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
                 .toList();
     }
 
-    private static ReplicatedAddressEntity mapToReplicatedAddress(final AddressDto address) {
+    private static ReplicatedAddressEntity mapToReplicatedAddress(final AbstractAddress address) {
         return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
     }
 
@@ -554,7 +558,7 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
         verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
     }
 
-    private void verifyReplicationAbsence(final Address address) {
+    private void verifyReplicationAbsence(final by.aurorasoft.testapp.crud.v2.dto.Address address) {
         verifyReplicationAbsence(address, replicatedAddressRepository);
     }
 
