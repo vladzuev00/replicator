@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
+import by.aurorasoft.replicator.v2.dto.TestV2Dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

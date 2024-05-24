@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.base.v1.service;
+package by.aurorasoft.replicator.v1.service;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;

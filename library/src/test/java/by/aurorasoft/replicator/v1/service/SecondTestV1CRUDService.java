@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.base.v2.service;
+package by.aurorasoft.replicator.v1.service;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
@@ -18,6 +18,6 @@ import org.apache.kafka.common.serialization.LongSerializer;
                 replicationFactor = 2
         )
 )
-public class SecondTestV2CRUDService extends TestV2CRUDService {
+public class SecondTestV1CRUDService extends TestV1CRUDService {
 
 }

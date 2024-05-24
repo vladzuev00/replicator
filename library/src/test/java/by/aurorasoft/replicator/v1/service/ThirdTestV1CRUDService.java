@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.base.v1.service;
+package by.aurorasoft.replicator.v1.service;
 
 import org.springframework.stereotype.Service;
 

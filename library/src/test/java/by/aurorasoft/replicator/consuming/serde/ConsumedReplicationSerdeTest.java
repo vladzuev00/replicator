@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.serde;
 
-import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
+import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.DeleteConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;

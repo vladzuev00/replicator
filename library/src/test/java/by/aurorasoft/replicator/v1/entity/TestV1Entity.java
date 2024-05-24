@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.base.v1.entity;
+package by.aurorasoft.replicator.v1.entity;
 
 import by.nhorushko.crudgeneric.domain.AbstractEntity;
 import lombok.*;

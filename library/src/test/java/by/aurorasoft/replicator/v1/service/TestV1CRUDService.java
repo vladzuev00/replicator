@@ -1,7 +1,7 @@
-package by.aurorasoft.replicator.base.v1.service;
+package by.aurorasoft.replicator.v1.service;
 
-import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
-import by.aurorasoft.replicator.base.v1.entity.TestV1Entity;
+import by.aurorasoft.replicator.v1.dto.TestV1Dto;
+import by.aurorasoft.replicator.v1.entity.TestV1Entity;
 import by.nhorushko.crudgeneric.mapper.AbstractMapper;
 import by.nhorushko.crudgeneric.service.CrudGenericService;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;

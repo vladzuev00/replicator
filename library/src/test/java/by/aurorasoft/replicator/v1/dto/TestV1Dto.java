@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.base.v1.dto;
+package by.aurorasoft.replicator.v1.dto;
 
 import by.nhorushko.crudgeneric.domain.AbstractDto;
 import lombok.Value;
