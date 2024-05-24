@@ -15,7 +15,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 @Entity
 @Table(name = "replicated_persons")
-public class ReplicatedPersonEntity extends AbstractEntity<Long> {
+public class ReplicatedPersonEntity extends AbstractEntity {
 
     @Id
     @Column(name = "id")
