@@ -2,12 +2,13 @@ package by.aurorasoft.testapp.it;
 
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
-import by.aurorasoft.testapp.crud.dto.AbstractAddress;
-import by.aurorasoft.testapp.crud.dto.AbstractPerson;
+import by.aurorasoft.testapp.crud.dto.Address;
+import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.*;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
-import by.aurorasoft.testapp.crud.v2.dto.Person;
+import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
+import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
 import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
@@ -45,7 +46,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @Import(ReplicationIT.ReplicationBarrier.class)
-public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON extends AbstractPerson> extends AbstractSpringBootTest {
+public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Person> extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
@@ -434,7 +435,7 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
     }
 
     private void verifyAddressReplications(final List<ADDRESS> addresses) {
-        final List<Long> ids = addresses.stream().map(AbstractAddress::getId).toList();
+        final List<Long> ids = addresses.stream().map(Address::getId).toList();
         final List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
         final List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
         ReplicatedAddressEntityUtil.checkEquals(expected, actual);
@@ -453,7 +454,7 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
                 .toList();
     }
 
-    private static ReplicatedAddressEntity mapToReplicatedAddress(final AbstractAddress address) {
+    private static ReplicatedAddressEntity mapToReplicatedAddress(final Address address) {
         return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
     }
 
@@ -535,15 +536,15 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
         );
     }
 
-    private <E extends AbstractEntity> void verifyEntities(final List<E> expected,
-                                                           final String hqlQuery,
-                                                           final Class<E> entityType,
-                                                           final BiConsumer<E, E> equalChecker) {
+    private <E extends Entity> void verifyEntities(final List<E> expected,
+                                                   final String hqlQuery,
+                                                   final Class<E> entityType,
+                                                   final BiConsumer<E, E> equalChecker) {
         final List<E> actual = findEntities(hqlQuery, entityType);
         checkEquals(expected, actual, equalChecker);
     }
 
-    private <E extends AbstractEntity> List<E> findEntities(final String hqlQuery, final Class<E> entityType) {
+    private <E extends Entity> List<E> findEntities(final String hqlQuery, final Class<E> entityType) {
         return entityManager.createQuery(hqlQuery, entityType).getResultList();
     }
 
@@ -576,11 +577,11 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
         verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
     }
 
-    private void verifyReplicationAbsence(final by.aurorasoft.testapp.crud.v2.dto.Address address) {
+    private void verifyReplicationAbsence(final AddressV2 address) {
         verifyReplicationAbsence(address, replicatedAddressRepository);
     }
 
-    private void verifyReplicationAbsence(final Person person) {
+    private void verifyReplicationAbsence(final PersonV2 person) {
         verifyReplicationAbsence(person, replicatedPersonRepository);
     }
 

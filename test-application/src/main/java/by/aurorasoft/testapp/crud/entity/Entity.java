@@ -7,7 +7,7 @@ import java.util.Objects;
 import static java.util.Objects.hash;
 
 @SuppressWarnings("deprecation")
-public abstract class AbstractEntity implements by.nhorushko.crudgeneric.v2.domain.AbstractEntity<Long>, by.nhorushko.crudgeneric.domain.AbstractEntity {
+public abstract class Entity implements by.nhorushko.crudgeneric.v2.domain.AbstractEntity<Long>, by.nhorushko.crudgeneric.domain.AbstractEntity {
 
     @Override
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
@@ -21,7 +21,7 @@ public abstract class AbstractEntity implements by.nhorushko.crudgeneric.v2.doma
         if (Hibernate.getClass(this) != Hibernate.getClass(otherObject)) {
             return false;
         }
-        final AbstractEntity other = (AbstractEntity) otherObject;
+        final Entity other = (Entity) otherObject;
         return Objects.equals(getId(), other.getId());
     }
 

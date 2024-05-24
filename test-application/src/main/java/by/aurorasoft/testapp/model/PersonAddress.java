@@ -1,9 +1,9 @@
 package by.aurorasoft.testapp.model;
 
-import by.aurorasoft.testapp.crud.v2.dto.Address;
+import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
 import lombok.Value;
 
 @Value
 public class PersonAddress {
-    Address address;
+    AddressV2 address;
 }

@@ -1,7 +1,7 @@
 package by.aurorasoft.testapp.it;
 
-import by.aurorasoft.testapp.crud.v1.dto.Address;
-import by.aurorasoft.testapp.crud.v1.dto.Person;
+import by.aurorasoft.testapp.crud.v1.dto.AddressV1;
+import by.aurorasoft.testapp.crud.v1.dto.PersonV1;
 import by.aurorasoft.testapp.crud.v1.service.AddressV1Service;
 import by.aurorasoft.testapp.crud.v1.service.PersonV1Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.List;
 
-public final class ReplicationV1IT extends ReplicationIT<Address, Person> {
+public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
 
     @Autowired
     private AddressV1Service addressService;
@@ -18,47 +18,47 @@ public final class ReplicationV1IT extends ReplicationIT<Address, Person> {
     private PersonV1Service personService;
 
     @Override
-    protected Address createAddress(final Long id, final String country, final String city) {
-        return new Address(id, country, city);
+    protected AddressV1 createAddress(final Long id, final String country, final String city) {
+        return new AddressV1(id, country, city);
     }
 
     @Override
-    protected Person createPerson(final Long id,
-                                  final String name,
-                                  final String surname,
-                                  final String patronymic,
-                                  final LocalDate birthDate,
-                                  final Address address) {
-        return new Person(id, name, surname, patronymic, birthDate, address);
+    protected PersonV1 createPerson(final Long id,
+                                    final String name,
+                                    final String surname,
+                                    final String patronymic,
+                                    final LocalDate birthDate,
+                                    final AddressV1 address) {
+        return new PersonV1(id, name, surname, patronymic, birthDate, address);
     }
 
     @Override
-    protected Address save(final Address address) {
+    protected AddressV1 save(final AddressV1 address) {
         return addressService.save(address);
     }
 
     @Override
-    protected Person save(final Person person) {
+    protected PersonV1 save(final PersonV1 person) {
         return personService.save(person);
     }
 
     @Override
-    protected List<Address> saveAddresses(final List<Address> addresses) {
+    protected List<AddressV1> saveAddresses(final List<AddressV1> addresses) {
         return addressService.saveAll(addresses);
     }
 
     @Override
-    protected List<Person> savePersons(final List<Person> persons) {
+    protected List<PersonV1> savePersons(final List<PersonV1> persons) {
         return personService.saveAll(persons);
     }
 
     @Override
-    protected Address update(final Address address) {
+    protected AddressV1 update(final AddressV1 address) {
         return addressService.update(address);
     }
 
     @Override
-    protected Person update(final Person person) {
+    protected PersonV1 update(final PersonV1 person) {
         return personService.update(person);
     }
 }

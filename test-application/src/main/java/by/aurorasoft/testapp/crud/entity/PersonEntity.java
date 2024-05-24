@@ -14,9 +14,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @ToString
 @Builder
-@Entity
+@jakarta.persistence.Entity
 @Table(name = "persons")
-public class PersonEntity extends AbstractEntity {
+public class PersonEntity extends Entity {
 
     @Id
     @Column(name = "id")

@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode
 @ToString
-public abstract class AbstractAddress {
+public abstract class Address {
     private final Long id;
     private final String country;
     private final String city;

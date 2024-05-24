@@ -11,12 +11,12 @@ import java.time.LocalDate;
 @Getter
 @EqualsAndHashCode
 @ToString
-public abstract class AbstractPerson {
+public abstract class Person {
     private final Long id;
     private final String name;
     private final String surname;
     private final String patronymic;
     private final LocalDate birthDate;
 
-    public abstract AbstractAddress getAddress();
+    public abstract Address getAddress();
 }
