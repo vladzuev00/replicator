@@ -16,7 +16,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.util.List;
 
-import static by.aurorasoft.replicator.util.IdUtil.getIds;
+import static by.aurorasoft.replicator.util.IdUtil.getId;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
 
 @Aspect
@@ -49,8 +49,8 @@ public class RegisterReplicationAspect {
     @SuppressWarnings("unchecked")
     @AfterReturning("replicatedDeleteAll()")
     public void registerDeleteAll(final JoinPoint joinPoint) {
-        final List<Object> dtos = (List<Object>) joinPoint.getArgs()[0];
-        getIds(dtos).forEach(id -> registerDeleteReplication(id, joinPoint));
+        final List<Object> dtos = ((List<Object>) joinPoint.getArgs()[0]);
+        dtos.forEach(dto -> registerDeleteReplication(getId(dto), joinPoint));
     }
 
     private void registerSaveReplication(final Object dto, final JoinPoint joinPoint) {
