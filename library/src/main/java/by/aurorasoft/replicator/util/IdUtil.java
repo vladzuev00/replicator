@@ -1,9 +1,9 @@
 package by.aurorasoft.replicator.util;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 
@@ -11,38 +11,39 @@ import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 public final class IdUtil {
     private static final String FIELD_NAME_ID = "id";
 
+    @SneakyThrows
     public static Object getId(final Object object) {
-        try {
-            return getIdDescriptor(object)
-                    .getReadMethod()
-                    .invoke(object);
-        } catch (final IllegalAccessException | InvocationTargetException cause) {
-            throw new GettingIdException(cause);
-        }
+        return getIdDescriptor(object)
+                .getReadMethod()
+                .invoke(object);
     }
 
     private PropertyDescriptor getIdDescriptor(final Object object) {
-        return getPropertyDescriptor(object.getClass(), FIELD_NAME_ID);
+        final PropertyDescriptor descriptor = getPropertyDescriptor(object.getClass(), FIELD_NAME_ID);
+        if (descriptor == null) {
+            throw new NoIdGetterException("There is no id's getter in '%s'".formatted(object));
+        }
+        return descriptor;
     }
 
-    static final class GettingIdException extends RuntimeException {
+    static final class NoIdGetterException extends RuntimeException {
 
         @SuppressWarnings("unused")
-        public GettingIdException() {
+        public NoIdGetterException() {
 
         }
 
-        @SuppressWarnings("unused")
-        public GettingIdException(final String description) {
+        public NoIdGetterException(final String description) {
             super(description);
         }
 
-        public GettingIdException(final Exception cause) {
+        @SuppressWarnings("unused")
+        public NoIdGetterException(final Exception cause) {
             super(cause);
         }
 
         @SuppressWarnings("unused")
-        public GettingIdException(final String description, final Exception cause) {
+        public NoIdGetterException(final String description, final Exception cause) {
             super(description, cause);
         }
     }
