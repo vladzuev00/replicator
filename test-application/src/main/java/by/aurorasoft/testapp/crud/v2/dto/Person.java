@@ -1,5 +1,6 @@
-package by.aurorasoft.testapp.crud.dto;
+package by.aurorasoft.testapp.crud.v2.dto;
 
+import by.aurorasoft.testapp.crud.dto.PersonDto;
 import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +11,7 @@ import java.time.LocalDate;
 @Value
 @AllArgsConstructor
 @Builder
-@SuppressWarnings("deprecation")
-public class Person implements AbstractDto<Long>, by.nhorushko.crudgeneric.domain.AbstractDto {
+public class Person implements AbstractDto<Long>, PersonDto {
     Long id;
     String name;
     String surname;

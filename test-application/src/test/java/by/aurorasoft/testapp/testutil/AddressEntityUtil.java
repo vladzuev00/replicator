@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.util;
+package by.aurorasoft.testapp.testutil;
 
 import by.aurorasoft.testapp.crud.entity.AddressEntity;
 import lombok.experimental.UtilityClass;

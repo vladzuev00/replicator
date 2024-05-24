@@ -1,6 +1,6 @@
 package by.aurorasoft.testapp.model;
 
-import by.aurorasoft.testapp.crud.dto.Address;
+import by.aurorasoft.testapp.crud.v2.dto.Address;
 import lombok.Value;
 
 @Value

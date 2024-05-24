@@ -1,17 +1,17 @@
 package by.aurorasoft.testapp.crud.v1.mapper;
 
-import by.aurorasoft.testapp.crud.dto.Address;
-import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.PersonEntity;
+import by.aurorasoft.testapp.crud.v1.dto.Address;
+import by.aurorasoft.testapp.crud.v1.dto.Person;
 import by.nhorushko.crudgeneric.mapper.ImmutableDtoAbstractMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 @SuppressWarnings("deprecation")
-public final class PersonMapper extends ImmutableDtoAbstractMapper<PersonEntity, Person> {
+public final class PersonV1Mapper extends ImmutableDtoAbstractMapper<PersonEntity, Person> {
 
-    public PersonMapper(final ModelMapper modelMapper) {
+    public PersonV1Mapper(final ModelMapper modelMapper) {
         super(PersonEntity.class, Person.class, modelMapper);
     }
 

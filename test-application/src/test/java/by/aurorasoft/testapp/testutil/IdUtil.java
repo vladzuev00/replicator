@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.util;
+package by.aurorasoft.testapp.testutil;
 
 import by.nhorushko.crudgeneric.v2.domain.IdEntity;
 import lombok.experimental.UtilityClass;
