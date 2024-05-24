@@ -155,7 +155,6 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
         verifyAddressReplication(actual);
     }
 
-
     @Test
     public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
         final ADDRESS givenAddress = createAddress(256L, "Russia", "Moscow");
@@ -174,20 +173,7 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    //TODO: do private
-    protected abstract ADDRESS createAddress(final Long id);
-
-    //TODO: do private
-    protected abstract ADDRESS createAddress(final String country, final String city);
-
     protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
-
-    //TODO: do private
-    protected abstract PERSON createPerson(final String name,
-                                           final String surname,
-                                           final String patronymic,
-                                           final LocalDate birthDate,
-                                           final ADDRESS address);
 
     protected abstract PERSON createPerson(final Long id,
                                            final String name,
@@ -208,13 +194,20 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
 
     protected abstract PERSON update(final PERSON person);
 
+    private ADDRESS createAddress(final Long id) {
+        return createAddress(id, null, null);
+    }
+
+    private ADDRESS createAddress(final String country, final String city) {
+        return createAddress(null, country, city);
+    }
+
     private PERSON createPerson(final String name,
                                 final String surname,
                                 final String patronymic,
                                 final LocalDate birthDate,
                                 final Long addressId) {
-        final ADDRESS address = createAddress(addressId);
-        return createPerson(name, surname, patronymic, birthDate, address);
+        return createPerson(null, name, surname, patronymic, birthDate, addressId);
     }
 
     private PERSON createPerson(final Long id,
