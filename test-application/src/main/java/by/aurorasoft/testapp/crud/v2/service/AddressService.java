@@ -6,7 +6,7 @@ import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.entity.AddressEntity;
 import by.aurorasoft.testapp.crud.v2.mapper.AddressMapper;
-import by.aurorasoft.testapp.crud.v2.repository.AddressRepository;
+import by.aurorasoft.testapp.crud.repository.AddressRepository;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.apache.kafka.common.serialization.LongSerializer;
 

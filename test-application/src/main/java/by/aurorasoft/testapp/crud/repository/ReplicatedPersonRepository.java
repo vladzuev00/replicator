@@ -1,4 +1,4 @@
-package by.aurorasoft.testapp.crud.v2.repository;
+package by.aurorasoft.testapp.crud.repository;
 
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
