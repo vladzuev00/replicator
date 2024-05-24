@@ -1,9 +1,8 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
+import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
-import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,11 +20,11 @@ public final class ReplicationTopicCreator {
 
     @EventListener(PipelinesValidatedEvent.class)
     public void createTopics() {
-//        serviceHolder.getServices().forEach(this::createTopic);
+        serviceHolder.getServices().forEach(this::createTopic);
         publishEvent();
     }
 
-    private void createTopic(final AbsServiceRUD<?, ?, ?, ?, ?> service) {
+    private void createTopic(final Object service) {
         final NewTopic topic = topicFactory.create(service);
         kafkaAdmin.createOrModifyTopics(topic);
     }
