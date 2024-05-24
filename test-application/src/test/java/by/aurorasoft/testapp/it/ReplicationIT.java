@@ -145,13 +145,52 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
         verifyNoReplicatedRepositoryMethodCall();
     }
 
+    @Test
+    public void addressShouldBeUpdated() {
+        final ADDRESS givenAddress = createAddress(255L, "Belarus", "Minsk");
+
+        final ADDRESS actual = executeWaitingReplication(() -> update(givenAddress), 1, 0, false);
+        assertEquals(givenAddress, actual);
+
+        verifyAddressReplication(actual);
+    }
+
+
+    @Test
+    public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
+        final ADDRESS givenAddress = createAddress(256L, "Russia", "Moscow");
+
+        executeExpectingUniqueViolation(() -> update(givenAddress));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+    @Test
+    public void personShouldNotBeUpdatedBecauseOfNoSuchAddress() {
+        final PERSON givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
+
+        executeExpectingNoSuchEntityException(() -> update(givenPerson));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+    //TODO: do private
     protected abstract ADDRESS createAddress(final Long id);
 
+    //TODO: do private
     protected abstract ADDRESS createAddress(final String country, final String city);
 
     protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
 
+    //TODO: do private
     protected abstract PERSON createPerson(final String name,
+                                           final String surname,
+                                           final String patronymic,
+                                           final LocalDate birthDate,
+                                           final ADDRESS address);
+
+    protected abstract PERSON createPerson(final Long id,
+                                           final String name,
                                            final String surname,
                                            final String patronymic,
                                            final LocalDate birthDate,
@@ -165,6 +204,10 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
 
     protected abstract List<PERSON> savePersons(final List<PERSON> persons);
 
+    protected abstract ADDRESS update(final ADDRESS address);
+
+    protected abstract PERSON update(final PERSON person);
+
     private PERSON createPerson(final String name,
                                 final String surname,
                                 final String patronymic,
@@ -174,34 +217,16 @@ public abstract class ReplicationIT<ADDRESS extends AbstractAddress, PERSON exte
         return createPerson(name, surname, patronymic, birthDate, address);
     }
 
-//    @Test
-//    public void addressShouldBeUpdated() {
-//        final Address givenAddress = new Address(255L, "Belarus", "Minsk");
-//
-//        final Address actual = executeWaitingReplication(() -> addressService.update(givenAddress), 1, 0, false);
-//        assertEquals(givenAddress, actual);
-//
-//        verifyAddressReplication(actual);
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
-//        final Address givenAddress = new Address(256L, "Russia", "Moscow");
-//
-//        executeExpectingUniqueViolation(() -> addressService.update(givenAddress));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personShouldNotBeUpdatedBecauseOfNoSuchAddress() {
-//        final Person givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
-//
-//        executeExpectingNoSuchEntityException(() -> personService.update(givenPerson));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
+    private PERSON createPerson(final Long id,
+                                final String name,
+                                final String surname,
+                                final String patronymic,
+                                final LocalDate birthDate,
+                                final Long addressId) {
+        final ADDRESS address = createAddress(addressId);
+        return createPerson(id, name, surname, patronymic, birthDate, address);
+    }
+
 //    @Test
 //    public void addressShouldBeUpdatedPartially() {
 //        final Long givenId = 255L;

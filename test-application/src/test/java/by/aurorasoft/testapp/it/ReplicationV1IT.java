@@ -53,6 +53,16 @@ public final class ReplicationV1IT extends ReplicationIT<Address, Person> {
     }
 
     @Override
+    protected Person createPerson(final Long id,
+                                  final String name,
+                                  final String surname,
+                                  final String patronymic,
+                                  final LocalDate birthDate,
+                                  final Address address) {
+        return new Person(id, name, surname, patronymic, birthDate, address);
+    }
+
+    @Override
     protected Address save(final Address address) {
         return addressService.save(address);
     }
@@ -70,5 +80,15 @@ public final class ReplicationV1IT extends ReplicationIT<Address, Person> {
     @Override
     protected List<Person> savePersons(final List<Person> persons) {
         return personService.saveAll(persons);
+    }
+
+    @Override
+    protected Address update(final Address address) {
+        return addressService.update(address);
+    }
+
+    @Override
+    protected Person update(final Person person) {
+        return personService.update(person);
     }
 }
