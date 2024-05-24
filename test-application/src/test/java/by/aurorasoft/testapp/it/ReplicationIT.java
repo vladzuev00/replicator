@@ -96,6 +96,51 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
         verifyNoReplicatedRepositoryMethodCall();
     }
 
+    @Test
+    public void addressesShouldBeSaved() {
+        final String firstGivenAddressCountry = "China";
+        final String firstGivenAddressCity = "Fuyang";
+        final String secondGivenAddressCountry = "China";
+        final String secondGivenAddressCity = "Hefei";
+        final List<ADDRESS> givenAddresses = List.of(
+                createAddress(firstGivenAddressCountry, firstGivenAddressCity),
+                createAddress(secondGivenAddressCountry, secondGivenAddressCity)
+        );
+
+        final List<ADDRESS> actual = executeWaitingReplication(() -> saveAddresses(givenAddresses), givenAddresses.size(), 0, false);
+        final List<ADDRESS> expected = List.of(
+                createAddress(1L, firstGivenAddressCountry, firstGivenAddressCity),
+                createAddress(2L, secondGivenAddressCountry, secondGivenAddressCity)
+        );
+        assertEquals(expected, actual);
+
+        verifyAddressReplications(actual);
+    }
+
+    @Test
+    public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
+        final List<ADDRESS> givenAddresses = List.of(
+                createAddress("Belarus", "Minsk"),
+                createAddress("Russia", "Moscow")
+        );
+
+        executeExpectingUniqueViolation(() -> saveAddresses(givenAddresses));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+    @Test
+    public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
+        final List<PERSON> givenPersons = List.of(
+                createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 255L),
+                createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L)
+        );
+
+        executeExpectingForeignKeyViolation(() -> savePersons(givenPersons));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
     protected abstract ADDRESS createAddress(final Long id);
 
     protected abstract ADDRESS createAddress(final String country, final String city);
@@ -112,6 +157,10 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
 
     protected abstract PERSON save(final PERSON person);
 
+    protected abstract List<ADDRESS> saveAddresses(final List<ADDRESS> addresses);
+
+    protected abstract List<PERSON> savePersons(final List<PERSON> persons);
+
     private PERSON createPerson(final String name,
                                 final String surname,
                                 final String patronymic,
@@ -121,46 +170,6 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
         return createPerson(name, surname, patronymic, birthDate, address);
     }
 
-//    @Test
-//    public void addressesShouldBeSaved() {
-//        final Address firstGivenAddress = createAddress("China", "Fuyang");
-//        final Address secondGivenAddress = createAddress("China", "Hefei");
-//        final List<Address> givenAddresses = List.of(firstGivenAddress, secondGivenAddress);
-//
-//        final List<Address> actual = executeWaitingReplication(() -> addressService.saveAll(givenAddresses), givenAddresses.size(), 0, false);
-//        final List<Address> expected = List.of(
-//                new Address(1L, firstGivenAddress.getCountry(), firstGivenAddress.getCity()),
-//                new Address(2L, secondGivenAddress.getCountry(), secondGivenAddress.getCity())
-//        );
-//        assertEquals(expected, actual);
-//
-//        verifyAddressReplications(actual);
-//    }
-//
-//    @Test
-//    public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
-//        final List<Address> givenAddresses = List.of(
-//                createAddress("Belarus", "Minsk"),
-//                createAddress("Russia", "Moscow")
-//        );
-//
-//        executeExpectingUniqueViolation(() -> addressService.saveAll(givenAddresses));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
-//        final List<Person> givenPersons = List.of(
-//                createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 255L),
-//                createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L)
-//        );
-//
-//        executeExpectingForeignKeyViolation(() -> personService.saveAll(givenPersons));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
 //    @Test
 //    public void addressShouldBeUpdated() {
 //        final Address givenAddress = new Address(255L, "Belarus", "Minsk");
@@ -398,11 +407,11 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
         return result;
     }
 
-    private void verifyAddressReplication(final AddressDto address) {
+    private void verifyAddressReplication(final ADDRESS address) {
         verifyAddressReplications(singletonList(address));
     }
 
-    private void verifyAddressReplications(final List<AddressDto> addresses) {
+    private void verifyAddressReplications(final List<ADDRESS> addresses) {
         final List<Long> ids = addresses.stream().map(AddressDto::getId).toList();
         final List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
         final List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
@@ -416,7 +425,7 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
                 .getResultList();
     }
 
-    private static List<ReplicatedAddressEntity> mapToReplicatedAddresses(final List<AddressDto> addresses) {
+    private List<ReplicatedAddressEntity> mapToReplicatedAddresses(final List<ADDRESS> addresses) {
         return addresses.stream()
                 .map(ReplicationIT::mapToReplicatedAddress)
                 .toList();

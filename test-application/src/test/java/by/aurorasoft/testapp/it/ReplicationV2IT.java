@@ -7,6 +7,7 @@ import by.aurorasoft.testapp.crud.v2.service.PersonV2Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public final class ReplicationV2IT extends ReplicationIT<Address, Person> {
 
@@ -59,6 +60,16 @@ public final class ReplicationV2IT extends ReplicationIT<Address, Person> {
     @Override
     protected Person save(final Person person) {
         return personService.save(person);
+    }
+
+    @Override
+    protected List<Address> saveAddresses(final List<Address> addresses) {
+        return addressService.saveAll(addresses);
+    }
+
+    @Override
+    protected List<Person> savePersons(final List<Person> persons) {
+        return personService.saveAll(persons);
     }
 
 }
