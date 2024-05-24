@@ -89,14 +89,7 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
 
     @Test
     public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
-        final PERSON givenPerson = createPerson(
-                "Harry",
-                "Potter",
-                "Sergeevich",
-                LocalDate.of(1990, 8, 4),
-                //TODO: do just address id as parameter
-                createAddress(254L)
-        );
+        final PERSON givenPerson = createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L);
 
         executeExpectingForeignKeyViolation(() -> save(givenPerson));
 
@@ -118,6 +111,15 @@ public abstract class ReplicationIT<ADDRESS extends AddressDto, PERSON extends P
     protected abstract ADDRESS save(final ADDRESS address);
 
     protected abstract PERSON save(final PERSON person);
+
+    private PERSON createPerson(final String name,
+                                final String surname,
+                                final String patronymic,
+                                final LocalDate birthDate,
+                                final Long addressId) {
+        final ADDRESS address = createAddress(addressId);
+        return createPerson(name, surname, patronymic, birthDate, address);
+    }
 
 //    @Test
 //    public void addressesShouldBeSaved() {
