@@ -10,7 +10,6 @@ import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
 import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
 import by.aurorasoft.testapp.model.AddressName;
-import by.aurorasoft.testapp.model.PersonAddress;
 import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
