@@ -10,6 +10,7 @@ import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
 import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
 import by.aurorasoft.testapp.model.AddressName;
+import by.aurorasoft.testapp.model.PersonAddress;
 import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
@@ -47,7 +48,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @Import(ReplicationIT.ReplicationBarrier.class)
-public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Person> extends AbstractSpringBootTest {
+public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Person>
+        extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
@@ -235,7 +237,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     protected abstract ADDRESS updateAddressPartial(final Long id, final AddressName name);
 
-    protected abstract PERSON updatePersonPartial(final Long id, final PersonAddress address);
+    protected abstract PERSON updatePersonPartial(final Long id, final PERSON_ADDRESS address);
 
     private ADDRESS createAddress(final Long id) {
         return createAddress(id, null, null);

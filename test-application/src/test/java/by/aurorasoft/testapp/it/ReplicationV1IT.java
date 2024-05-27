@@ -5,12 +5,13 @@ import by.aurorasoft.testapp.crud.v1.dto.PersonV1;
 import by.aurorasoft.testapp.crud.v1.service.AddressV1Service;
 import by.aurorasoft.testapp.crud.v1.service.PersonV1Service;
 import by.aurorasoft.testapp.model.AddressName;
+import by.aurorasoft.testapp.model.personaddress.PersonAddressV1;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
+public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1, PersonAddressV1> {
 
     @Autowired
     private AddressV1Service addressService;
@@ -66,6 +67,11 @@ public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
     @Override
     protected AddressV1 updateAddressPartial(final Long id, final AddressName name) {
         return addressService.updatePartial(id, name);
+    }
+
+    @Override
+    protected PersonV1 updatePersonPartial(final Long id, final PersonAddressV1 address) {
+        return personService.updatePartial(id, address);
     }
 
     @Override
