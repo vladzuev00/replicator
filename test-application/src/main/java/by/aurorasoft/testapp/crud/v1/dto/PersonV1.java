@@ -2,28 +2,22 @@ package by.aurorasoft.testapp.crud.v1.dto;
 
 import by.aurorasoft.testapp.crud.dto.Person;
 import by.nhorushko.crudgeneric.domain.AbstractDto;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@SuppressWarnings("deprecation")
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
 @Getter
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public final class PersonV1 extends Person implements AbstractDto {
-    private final AddressV1 address;
-
-    @Builder
-    public PersonV1(final Long id,
-                    final String name,
-                    final String surname,
-                    final String patronymic,
-                    final LocalDate birthDate,
-                    final AddressV1 address) {
-        super(id, name, surname, patronymic, birthDate);
-        this.address = address;
-    }
+@EqualsAndHashCode
+@ToString
+@SuppressWarnings("deprecation")
+public final class PersonV1 implements AbstractDto, Person {
+    private Long id;
+    private String name;
+    private String surname;
+    private String patronymic;
+    private LocalDate birthDate;
+    private AddressV1 address;
 }
