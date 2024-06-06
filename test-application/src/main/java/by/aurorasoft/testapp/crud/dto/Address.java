@@ -1,16 +1,7 @@
 package by.aurorasoft.testapp.crud.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-
-@RequiredArgsConstructor
-@Getter
-@EqualsAndHashCode
-@ToString
-public abstract class Address {
-    private final Long id;
-    private final String country;
-    private final String city;
+public interface Address {
+    Long getId();
+    String getCountry();
+    String getCity();
 }

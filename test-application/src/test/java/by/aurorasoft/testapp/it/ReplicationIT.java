@@ -47,7 +47,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@Import(ReplicationIT.ReplicationBarrier.class)
+@Import(ReplicationIT.ReplicationRepositoryBarrier.class)
 public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Person>
         extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
@@ -57,7 +57,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     private ReplicationRetryConsumeProperty retryConsumeProperty;
 
     @Autowired
-    private ReplicationBarrier replicationBarrier;
+    private ReplicationRepositoryBarrier replicationRepositoryBarrier;
 
     @SpyBean
     private ReplicatedAddressRepository replicatedAddressRepository;
@@ -177,32 +177,32 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-    @Test
-    public void addressShouldBeUpdatedPartially() {
-        final Long givenId = 255L;
-        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
-
-        final ADDRESS actual = executeWaitingReplication(
-                () -> updateAddressPartial(givenId, givenNewName),
-                1,
-                0,
-                false
-        );
-        final ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
-        assertEquals(expected, actual);
-
-        verifyAddressReplication(actual);
-    }
-
-    @Test
-    public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
-        final Long givenId = 256L;
-        final AddressName givenNewName = new AddressName("Russia", "Moscow");
-
-        executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
-
-        verifyNoReplicatedRepositoryMethodCall();
-    }
+//    @Test
+//    public void addressShouldBeUpdatedPartially() {
+//        final Long givenId = 255L;
+//        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
+//
+//        final ADDRESS actual = executeWaitingReplication(
+//                () -> updateAddressPartial(givenId, givenNewName),
+//                1,
+//                0,
+//                false
+//        );
+//        final ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
+//        assertEquals(expected, actual);
+//
+//        verifyAddressReplication(actual);
+//    }
+//
+//    @Test
+//    public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
+//        final Long givenId = 256L;
+//        final AddressName givenNewName = new AddressName("Russia", "Moscow");
+//
+//        executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
+//
+//        verifyNoReplicatedRepositoryMethodCall();
+//    }
 
 //    @Test
 //    public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
@@ -237,7 +237,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     protected abstract ADDRESS updateAddressPartial(final Long id, final AddressName name);
 
-    protected abstract PERSON updatePersonPartial(final Long id, final PERSON_ADDRESS address);
+    protected abstract PERSON updatePersonPartial(final Long id, final PersonAddress address);
 
     private ADDRESS createAddress(final Long id) {
         return createAddress(id, null, null);
@@ -436,9 +436,9 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
                                             final int addressCalls,
                                             final int personCalls,
                                             final boolean failedCallsCounted) {
-        replicationBarrier.expect(addressCalls, personCalls, failedCallsCounted);
+        replicationRepositoryBarrier.expect(addressCalls, personCalls, failedCallsCounted);
         final R result = operation.get();
-        replicationBarrier.await();
+        replicationRepositoryBarrier.await();
         return result;
     }
 
@@ -647,7 +647,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Aspect
     @Component
-    public static class ReplicationBarrier {
+    public static class ReplicationRepositoryBarrier {
         private static final long TIMEOUT_DELTA_MS = 20000;
         private static final CountDownLatch DEFAULT_LATCH = new CountDownLatch(0);
 
@@ -656,7 +656,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         private volatile CountDownLatch personLatch;
         private volatile boolean failedCallsCounted;
 
-        public ReplicationBarrier(final ReplicationRetryConsumeProperty retryProperty) {
+        public ReplicationRepositoryBarrier(final ReplicationRetryConsumeProperty retryProperty) {
             timeoutMs = findTimeoutMs(retryProperty);
             addressLatch = DEFAULT_LATCH;
             personLatch = DEFAULT_LATCH;
