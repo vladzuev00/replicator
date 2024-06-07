@@ -40,8 +40,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static by.aurorasoft.testapp.testutil.EntityUtil.checkEquals;
+import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
-import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
@@ -177,43 +177,71 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         verifyNoReplicatedRepositoryMethodCall();
     }
 
-//    @Test
-//    public void addressShouldBeUpdatedPartially() {
-//        final Long givenId = 255L;
-//        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
-//
-//        final ADDRESS actual = executeWaitingReplication(
-//                () -> updateAddressPartial(givenId, givenNewName),
-//                1,
-//                0,
-//                false
-//        );
-//        final ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
-//        assertEquals(expected, actual);
-//
-//        verifyAddressReplication(actual);
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
-//        final Long givenId = 256L;
-//        final AddressName givenNewName = new AddressName("Russia", "Moscow");
-//
-//        executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
+    @Test
+    public void addressShouldBeUpdatedPartially() {
+        final Long givenId = 255L;
+        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
 
-//    @Test
-//    public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
-//        final Long givenId = 255L;
-//        final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
-//
-//        executeExpectingNoSuchEntityException(() -> personService.updatePartial(givenId, givenNewAddress));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
+        final ADDRESS actual = executeWaitingReplication(
+                () -> updateAddressPartial(givenId, givenNewName),
+                1,
+                0,
+                false
+        );
+        final ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
+        assertEquals(expected, actual);
+
+        verifyAddressReplication(actual);
+    }
+
+    @Test
+    public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
+        final Long givenId = 256L;
+        final AddressName givenNewName = new AddressName("Russia", "Moscow");
+
+        executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+    @Test
+    public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
+        final Long givenId = 255L;
+        final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
+
+        executeExpectingNoSuchEntityException(() -> updatePersonPartial(givenId, givenNewAddress));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressShouldBeDeleted() {
+        final Long givenId = 262L;
+
+        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, false);
+
+        assertTrue(isAddressDeletedWithReplication(givenId));
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedByNotExistId() {
+        final Long givenId = MAX_VALUE;
+
+        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
+
+        verifyAttemptDeleteReplicatedAddress(givenId);
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
+        final Long givenId = 255L;
+
+        executeExpectingForeignKeyViolation(() -> deleteAddress(givenId));
+
+        verifyNoReplicatedRepositoryMethodCall();
+    }
+
+
     protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
 
     protected abstract PERSON createPerson(final Long id,
@@ -238,6 +266,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     protected abstract ADDRESS updateAddressPartial(final Long id, final AddressName name);
 
     protected abstract PERSON updatePersonPartial(final Long id, final PersonAddress address);
+
+    protected abstract void deleteAddress(final Long id);
 
     private ADDRESS createAddress(final Long id) {
         return createAddress(id, null, null);
@@ -265,33 +295,6 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         return createPerson(id, name, surname, patronymic, birthDate, address);
     }
 
-//    @Test
-//    public void addressShouldBeDeleted() {
-//        final Long givenId = 262L;
-//
-//        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, false);
-//
-//        assertTrue(isAddressDeletedWithReplication(givenId));
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedByNotExistId() {
-//        final Long givenId = MAX_VALUE;
-//
-//        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
-//
-//        verifyAttemptDeleteReplicatedAddress(givenId);
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
-//        final Long givenId = 255L;
-//
-//        executeExpectingForeignKeyViolation(() -> addressService.delete(givenId));
-//
-//        verifyNoReplicatedRepositoryMethodCall();
-//    }
-//
 //    @Test
 //    public void operationsShouldBeExecuted() {
 //        executeWaitingReplication(
@@ -431,6 +434,16 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 //
 //        assertTrue(isAddressExistWithReplication(givenId));
 //    }
+
+    private void executeWaitingReplication(final Runnable operation,
+                                           final int addressCalls,
+                                           final int personCalls,
+                                           final boolean failedCallsCounted) {
+        executeWaitingReplication(() -> {
+            operation.run();
+            return Optional.empty();
+        }, addressCalls, personCalls, failedCallsCounted);
+    }
 
     private <R> R executeWaitingReplication(final Supplier<R> operation,
                                             final int addressCalls,
@@ -602,19 +615,14 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         assertFalse(replicationRepository.existsById(dto.getId()));
     }
 
-    private Optional<Void> deleteAddress(final Long id) {
-//        addressService.delete(id);
-        return empty();
-    }
-
-    private void deleteAddressInRollBackedTransaction(final Long id) {
-        transactionTemplate.execute(
-                status -> {
-                    status.setRollbackOnly();
-                    return deleteAddress(id);
-                }
-        );
-    }
+//    private void deleteAddressInRollBackedTransaction(final Long id) {
+//        transactionTemplate.execute(
+//                status -> {
+//                    status.setRollbackOnly();
+//                    return deleteAddress(id);
+//                }
+//        );
+//    }
 
     private static AddressEntity createAddressEntity(final Long id) {
         return AddressEntity.builder()
