@@ -65,8 +65,8 @@ public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
     }
 
     @Override
-    protected AddressV1 updateAddressPartial(final Long id, final AddressName name) {
-        return addressService.updatePartial(id, name);
+    protected AddressV1 updateAddressPartial(final Long id, final Object partial) {
+        return addressService.updatePartial(id, partial);
     }
 
     @Override

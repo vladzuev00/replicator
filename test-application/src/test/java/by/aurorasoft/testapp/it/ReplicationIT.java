@@ -362,26 +362,26 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         verifyMaxAttemptSaveReplicatedPerson();
     }
 
-//    @Test
-//    public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
-//        final Address givenAddress = createAddress("Japan", "Tokyo");
-//
-//        final Address actual = executeWaitingReplication(() -> addressService.save(givenAddress), 1, 0, true);
-//        final Address expected = new Address(1L, givenAddress.getCountry(), givenAddress.getCity());
-//        assertEquals(expected, actual);
-//
-//        verifyReplicationAbsence(actual);
-//        verifyAttemptSaveReplicatedAddress();
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
-//        final Long givenId = 262L;
-//
-//        deleteAddressInRollBackedTransaction(givenId);
-//
-//        assertTrue(isAddressExistWithReplication(givenId));
-//    }
+    @Test
+    public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
+        final ADDRESS givenAddress = createAddress("Japan", "Tokyo");
+
+        final ADDRESS actual = executeWaitingReplication(() -> save(givenAddress), 1, 0, true);
+        final ADDRESS expected = createAddress(1L, givenAddress.getCountry(), givenAddress.getCity());
+        assertEquals(expected, actual);
+
+        verifyReplicationAbsence(actual);
+        verifyAttemptSaveReplicatedAddress();
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
+        final Long givenId = 262L;
+
+        deleteAddressInRollBackedTransaction(givenId);
+
+        assertTrue(isAddressExistWithReplication(givenId));
+    }
 
     protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
 
@@ -404,8 +404,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     protected abstract PERSON update(final PERSON person);
 
-    //TODO: change 2 argument to object
-    protected abstract ADDRESS updateAddressPartial(final Long id, final AddressName name);
+    protected abstract ADDRESS updateAddressPartial(final Long id, final Object partial);
 
     protected abstract PERSON updatePersonPartial(final Long id, final Object partial);
 
@@ -583,9 +582,9 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         return !isAddressExist(id) && !replicatedAddressRepository.existsById(id);
     }
 
-//    private boolean isAddressExistWithReplication(final Long id) {
-//        return addressService.isExist(id) && replicatedAddressRepository.existsById(id);
-//    }
+    private boolean isAddressExistWithReplication(final Long id) {
+        return isAddressExist(id) && replicatedAddressRepository.existsById(id);
+    }
 
     private void verifyNoReplicatedRepositoryMethodCall() {
         verifyNoInteractions(replicatedAddressRepository, replicatedPersonRepository);
@@ -609,26 +608,22 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     }
 
     private void verifyReplicationAbsence(final ADDRESS address) {
-        verifyReplicationAbsence(address, replicatedAddressRepository);
+        assertFalse(replicatedAddressRepository.existsById(address.getId()));
     }
 
     private void verifyReplicationAbsence(final PERSON person) {
-        verifyReplicationAbsence(person, replicatedPersonRepository);
+        assertFalse(replicatedPersonRepository.existsById(person.getId()));
     }
 
-    private <ID> void verifyReplicationAbsence(final AbstractDto<ID> dto,
-                                               final JpaRepository<?, ID> replicationRepository) {
-        assertFalse(replicationRepository.existsById(dto.getId()));
+    private void deleteAddressInRollBackedTransaction(final Long id) {
+        transactionTemplate.execute(
+                status -> {
+                    status.setRollbackOnly();
+                    deleteAddress(id);
+                    return empty();
+                }
+        );
     }
-
-//    private void deleteAddressInRollBackedTransaction(final Long id) {
-//        transactionTemplate.execute(
-//                status -> {
-//                    status.setRollbackOnly();
-//                    return deleteAddress(id);
-//                }
-//        );
-//    }
 
     private static AddressEntity createAddressEntity(final Long id) {
         return AddressEntity.builder()
