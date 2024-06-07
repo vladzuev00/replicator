@@ -11,6 +11,7 @@ import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
 import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
 import by.aurorasoft.testapp.model.AddressName;
 import by.aurorasoft.testapp.model.PersonAddress;
+import by.aurorasoft.testapp.model.PersonName;
 import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
@@ -42,6 +43,7 @@ import java.util.function.Supplier;
 import static by.aurorasoft.testapp.testutil.EntityUtil.checkEquals;
 import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
@@ -241,6 +243,145 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         verifyNoReplicatedRepositoryMethodCall();
     }
 
+    @Test
+    public void operationsShouldBeExecuted() {
+        executeWaitingReplication(
+                () -> {
+                    saveAddresses(
+                            List.of(
+                                    createAddress("China", "Hong Kong"),
+                                    createAddress("China", "Anqing"),
+                                    createAddress("China", "Bozhou")
+                            )
+                    );
+                    savePersons(
+                            List.of(
+                                    createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 1L),
+                                    createPerson("Vitenka", "Kozar", "Vadimovich", LocalDate.of(1996, 6, 1), 2L),
+                                    createPerson("Yury", "Sitnikov", "Stepanovich", LocalDate.of(1997, 8, 3), 3L)
+                            )
+                    );
+                    save(createAddress("China", "Huainan"));
+                    executeExpectingUniqueViolation(() -> save(createAddress("China", "Huainan")));
+                    executeExpectingUniqueViolation(() -> save(createAddress("Russia", "Moscow")));
+                    updateAddressPartial(4L, new AddressName("Belarus", "Gomel"));
+                    updatePersonPartial(2L, new PersonName("Ivan", "Zuev", "Ivanovich"));
+                    deletePerson(MAX_VALUE);
+                    deleteAddress(MAX_VALUE);
+                    executeExpectingUniqueViolation(() -> updateAddressPartial(256L, new AddressName("Russia", "Moscow")));
+                    deletePerson(259L);
+                    deleteAddress(257L);
+                    update(createPerson(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L));
+                    return empty();
+                },
+                7,
+                7,
+                false
+        );
+
+        verifyDatabase(
+                List.of(
+                        new AddressEntity(1L, "China", "Hong Kong"),
+                        new AddressEntity(2L, "China", "Anqing"),
+                        new AddressEntity(3L, "China", "Bozhou"),
+                        new AddressEntity(4L, "Belarus", "Gomel"),
+                        new AddressEntity(255L, "Russia", "Moscow"),
+                        new AddressEntity(256L, "America", "Chicago"),
+                        new AddressEntity(258L, "Austria", "Styria"),
+                        new AddressEntity(259L, "Austria", "Tyrol"),
+                        new AddressEntity(260L, "Estonia", "Tallinn"),
+                        new AddressEntity(261L, "Estonia", "Tartu"),
+                        new AddressEntity(262L, "Estonia", "Narva"),
+                        new AddressEntity(263L, "Armenia", "Yerevan"),
+                        new AddressEntity(264L, "America", "New York")
+                ),
+                List.of(
+                        createPersonEntity(1L, "Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 1L),
+                        createPersonEntity(2L, "Ivan", "Zuev", "Ivanovich", LocalDate.of(1996, 6, 1), 2L),
+                        createPersonEntity(3L, "Yury", "Sitnikov", "Stepanovich", LocalDate.of(1997, 8, 3), 3L),
+                        createPersonEntity(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 255L),
+                        createPersonEntity(256L, "Vasilii", "Dolzhikov", "Borisovich", LocalDate.of(1980, 3, 15), 255L),
+                        createPersonEntity(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L),
+                        createPersonEntity(258L, "Pashenka", "Kornev", "Filippovich", LocalDate.of(1995, 4, 23), 256L)
+                ),
+                List.of(
+                        new ReplicatedAddressEntity(1L, "China", "Hong Kong"),
+                        new ReplicatedAddressEntity(2L, "China", "Anqing"),
+                        new ReplicatedAddressEntity(3L, "China", "Bozhou"),
+                        new ReplicatedAddressEntity(4L, "Belarus", "Gomel"),
+                        new ReplicatedAddressEntity(255L, "Russia", "Moscow"),
+                        new ReplicatedAddressEntity(256L, "America", "Chicago"),
+                        new ReplicatedAddressEntity(258L, "Austria", "Styria"),
+                        new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
+                        new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
+                        new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
+                        new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
+                        new ReplicatedAddressEntity(263L, "Armenia", "Yerevan"),
+                        new ReplicatedAddressEntity(265L, "Japan", "Tokyo")
+                ),
+                List.of(
+                        createReplicatedPerson(1L, "Avdifaks", "Kuznetsov", LocalDate.of(1995, 7, 2), 1L),
+                        createReplicatedPerson(2L, "Ivan", "Zuev", LocalDate.of(1996, 6, 1), 2L),
+                        createReplicatedPerson(3L, "Yury", "Sitnikov", LocalDate.of(1997, 8, 3), 3L),
+                        createReplicatedPerson(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
+                        createReplicatedPerson(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
+                        createReplicatedPerson(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
+                        createReplicatedPerson(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L),
+                        createReplicatedPerson(260L, "Nikolay", "Radoman", LocalDate.of(2000, 2, 20), 258L)
+                )
+        );
+    }
+
+    @Test
+    public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
+        final Long givenId = 258L;
+
+        executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, true);
+
+        assertFalse(isAddressExist(givenId));
+        assertTrue(replicatedAddressRepository.existsById(givenId));
+        verifyMaxAttemptDeleteReplicatedAddress(givenId);
+    }
+
+    @Test
+    public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
+        final PERSON givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
+
+        final PERSON actual = executeWaitingReplication(() -> save(givenPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
+        final PERSON expected = createPerson(
+                1L,
+                givenPerson.getName(),
+                givenPerson.getSurname(),
+                givenPerson.getPatronymic(),
+                givenPerson.getBirthDate(),
+                createAddress(264L)
+        );
+        assertEquals(expected, actual);
+
+        verifyReplicationAbsence(actual);
+        verifyMaxAttemptSaveReplicatedPerson();
+    }
+
+//    @Test
+//    public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
+//        final Address givenAddress = createAddress("Japan", "Tokyo");
+//
+//        final Address actual = executeWaitingReplication(() -> addressService.save(givenAddress), 1, 0, true);
+//        final Address expected = new Address(1L, givenAddress.getCountry(), givenAddress.getCity());
+//        assertEquals(expected, actual);
+//
+//        verifyReplicationAbsence(actual);
+//        verifyAttemptSaveReplicatedAddress();
+//    }
+//
+//    @Test
+//    public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
+//        final Long givenId = 262L;
+//
+//        deleteAddressInRollBackedTransaction(givenId);
+//
+//        assertTrue(isAddressExistWithReplication(givenId));
+//    }
 
     protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
 
@@ -263,11 +404,16 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     protected abstract PERSON update(final PERSON person);
 
+    //TODO: change 2 argument to object
     protected abstract ADDRESS updateAddressPartial(final Long id, final AddressName name);
 
-    protected abstract PERSON updatePersonPartial(final Long id, final PersonAddress address);
+    protected abstract PERSON updatePersonPartial(final Long id, final Object partial);
 
     protected abstract void deleteAddress(final Long id);
+
+    protected abstract void deletePerson(final Long id);
+
+    protected abstract boolean isAddressExist(final Long id);
 
     private ADDRESS createAddress(final Long id) {
         return createAddress(id, null, null);
@@ -295,153 +441,13 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         return createPerson(id, name, surname, patronymic, birthDate, address);
     }
 
-//    @Test
-//    public void operationsShouldBeExecuted() {
-//        executeWaitingReplication(
-//                () -> {
-//                    addressService.saveAll(
-//                            List.of(
-//                                    createAddress("China", "Hong Kong"),
-//                                    createAddress("China", "Anqing"),
-//                                    createAddress("China", "Bozhou")
-//                            )
-//                    );
-//                    personService.saveAll(
-//                            List.of(
-//                                    createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 1L),
-//                                    createPerson("Vitenka", "Kozar", "Vadimovich", LocalDate.of(1996, 6, 1), 2L),
-//                                    createPerson("Yury", "Sitnikov", "Stepanovich", LocalDate.of(1997, 8, 3), 3L)
-//                            )
-//                    );
-//                    addressService.save(createAddress("China", "Huainan"));
-//                    executeExpectingUniqueViolation(() -> addressService.save(createAddress("China", "Huainan")));
-//                    executeExpectingUniqueViolation(() -> addressService.save(createAddress("Russia", "Moscow")));
-//                    addressService.updatePartial(4L, new AddressName("Belarus", "Gomel"));
-//                    personService.updatePartial(2L, new PersonName("Ivan", "Zuev", "Ivanovich"));
-//                    personService.delete(MAX_VALUE);
-//                    addressService.delete(MAX_VALUE);
-//                    executeExpectingUniqueViolation(() -> addressService.updatePartial(256L, new AddressName("Russia", "Moscow")));
-//                    personService.delete(259L);
-//                    addressService.delete(257L);
-//                    personService.update(createPerson(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L));
-//                    return empty();
-//                },
-//                7,
-//                7,
-//                false
-//        );
-//
-//        verifyDatabase(
-//                List.of(
-//                        new AddressEntity(1L, "China", "Hong Kong"),
-//                        new AddressEntity(2L, "China", "Anqing"),
-//                        new AddressEntity(3L, "China", "Bozhou"),
-//                        new AddressEntity(4L, "Belarus", "Gomel"),
-//                        new AddressEntity(255L, "Russia", "Moscow"),
-//                        new AddressEntity(256L, "America", "Chicago"),
-//                        new AddressEntity(258L, "Austria", "Styria"),
-//                        new AddressEntity(259L, "Austria", "Tyrol"),
-//                        new AddressEntity(260L, "Estonia", "Tallinn"),
-//                        new AddressEntity(261L, "Estonia", "Tartu"),
-//                        new AddressEntity(262L, "Estonia", "Narva"),
-//                        new AddressEntity(263L, "Armenia", "Yerevan"),
-//                        new AddressEntity(264L, "America", "New York")
-//                ),
-//                List.of(
-//                        createPersonEntity(1L, "Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 1L),
-//                        createPersonEntity(2L, "Ivan", "Zuev", "Ivanovich", LocalDate.of(1996, 6, 1), 2L),
-//                        createPersonEntity(3L, "Yury", "Sitnikov", "Stepanovich", LocalDate.of(1997, 8, 3), 3L),
-//                        createPersonEntity(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 255L),
-//                        createPersonEntity(256L, "Vasilii", "Dolzhikov", "Borisovich", LocalDate.of(1980, 3, 15), 255L),
-//                        createPersonEntity(257L, "Alexandr", "Verbitskiy", "Dmitrievich", LocalDate.of(2000, 5, 20), 256L),
-//                        createPersonEntity(258L, "Pashenka", "Kornev", "Filippovich", LocalDate.of(1995, 4, 23), 256L)
-//                ),
-//                List.of(
-//                        new ReplicatedAddressEntity(1L, "China", "Hong Kong"),
-//                        new ReplicatedAddressEntity(2L, "China", "Anqing"),
-//                        new ReplicatedAddressEntity(3L, "China", "Bozhou"),
-//                        new ReplicatedAddressEntity(4L, "Belarus", "Gomel"),
-//                        new ReplicatedAddressEntity(255L, "Russia", "Moscow"),
-//                        new ReplicatedAddressEntity(256L, "America", "Chicago"),
-//                        new ReplicatedAddressEntity(258L, "Austria", "Styria"),
-//                        new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
-//                        new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
-//                        new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
-//                        new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
-//                        new ReplicatedAddressEntity(263L, "Armenia", "Yerevan"),
-//                        new ReplicatedAddressEntity(265L, "Japan", "Tokyo")
-//                ),
-//                List.of(
-//                        createReplicatedPerson(1L, "Avdifaks", "Kuznetsov", LocalDate.of(1995, 7, 2), 1L),
-//                        createReplicatedPerson(2L, "Ivan", "Zuev", LocalDate.of(1996, 6, 1), 2L),
-//                        createReplicatedPerson(3L, "Yury", "Sitnikov", LocalDate.of(1997, 8, 3), 3L),
-//                        createReplicatedPerson(255L, "Vlad", "Zuev", LocalDate.of(2000, 2, 18), 255L),
-//                        createReplicatedPerson(256L, "Vasilii", "Dolzhikov", LocalDate.of(1980, 3, 15), 255L),
-//                        createReplicatedPerson(257L, "Alexandr", "Verbitskiy", LocalDate.of(2000, 5, 20), 256L),
-//                        createReplicatedPerson(258L, "Pashenka", "Kornev", LocalDate.of(1995, 4, 23), 256L),
-//                        createReplicatedPerson(260L, "Nikolay", "Radoman", LocalDate.of(2000, 2, 20), 258L)
-//                )
-//        );
-//    }
-//
-//    @Test
-//    public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
-//        final Long givenId = 258L;
-//
-//        executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, true);
-//
-//        assertFalse(addressService.isExist(givenId));
-//        assertTrue(replicatedAddressRepository.existsById(givenId));
-//        verifyMaxAttemptDeleteReplicatedAddress(givenId);
-//    }
-//
-//    @Test
-//    public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
-//        final Person givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
-//
-//        final Person actual = executeWaitingReplication(() -> personService.save(givenPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
-//        final Person expected = new Person(
-//                1L,
-//                givenPerson.getName(),
-//                givenPerson.getSurname(),
-//                givenPerson.getPatronymic(),
-//                givenPerson.getBirthDate(),
-//                givenPerson.getAddress()
-//        );
-//        assertEquals(expected, actual);
-//
-//        verifyReplicationAbsence(actual);
-//        verifyMaxAttemptSaveReplicatedPerson();
-//    }
-//
-//    @Test
-//    public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
-//        final Address givenAddress = createAddress("Japan", "Tokyo");
-//
-//        final Address actual = executeWaitingReplication(() -> addressService.save(givenAddress), 1, 0, true);
-//        final Address expected = new Address(1L, givenAddress.getCountry(), givenAddress.getCity());
-//        assertEquals(expected, actual);
-//
-//        verifyReplicationAbsence(actual);
-//        verifyAttemptSaveReplicatedAddress();
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
-//        final Long givenId = 262L;
-//
-//        deleteAddressInRollBackedTransaction(givenId);
-//
-//        assertTrue(isAddressExistWithReplication(givenId));
-//    }
-
     private void executeWaitingReplication(final Runnable operation,
                                            final int addressCalls,
                                            final int personCalls,
                                            final boolean failedCallsCounted) {
         executeWaitingReplication(() -> {
             operation.run();
-            return Optional.empty();
+            return empty();
         }, addressCalls, personCalls, failedCallsCounted);
     }
 
@@ -573,10 +579,10 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         return entityManager.createQuery(hqlQuery, entityType).getResultList();
     }
 
-//    private boolean isAddressDeletedWithReplication(final Long id) {
-//        return !addressService.isExist(id) && !replicatedAddressRepository.existsById(id);
-//    }
-//
+    private boolean isAddressDeletedWithReplication(final Long id) {
+        return !isAddressExist(id) && !replicatedAddressRepository.existsById(id);
+    }
+
 //    private boolean isAddressExistWithReplication(final Long id) {
 //        return addressService.isExist(id) && replicatedAddressRepository.existsById(id);
 //    }
@@ -602,11 +608,11 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
     }
 
-    private void verifyReplicationAbsence(final AddressV2 address) {
+    private void verifyReplicationAbsence(final ADDRESS address) {
         verifyReplicationAbsence(address, replicatedAddressRepository);
     }
 
-    private void verifyReplicationAbsence(final PersonV2 person) {
+    private void verifyReplicationAbsence(final PERSON person) {
         verifyReplicationAbsence(person, replicatedPersonRepository);
     }
 

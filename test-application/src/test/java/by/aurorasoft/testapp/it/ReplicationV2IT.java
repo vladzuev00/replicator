@@ -70,7 +70,22 @@ public final class ReplicationV2IT extends ReplicationIT<AddressV2, PersonV2> {
     }
 
     @Override
-    protected PersonV2 updatePersonPartial(final Long id, final PersonAddress address) {
-        return personService.updatePartial(id, address);
+    protected PersonV2 updatePersonPartial(final Long id, final Object partial) {
+        return personService.updatePartial(id, partial);
+    }
+
+    @Override
+    protected void deleteAddress(final Long id) {
+        addressService.delete(id);
+    }
+
+    @Override
+    protected void deletePerson(final Long id) {
+        personService.delete(id);
+    }
+
+    @Override
+    protected boolean isAddressExist(final Long id) {
+        return addressService.isExist(id);
     }
 }

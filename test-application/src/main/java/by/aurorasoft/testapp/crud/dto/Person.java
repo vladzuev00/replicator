@@ -12,4 +12,5 @@ public interface Person {
     String getPatronymic();
 
     LocalDate getBirthDate();
+    Address getAddress();
 }
