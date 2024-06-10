@@ -7,8 +7,6 @@ import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.*;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
-import by.aurorasoft.testapp.crud.v2.dto.AddressV2;
-import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
 import by.aurorasoft.testapp.model.AddressName;
 import by.aurorasoft.testapp.model.PersonAddress;
 import by.aurorasoft.testapp.model.PersonName;
@@ -16,7 +14,6 @@ import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedPersonEntityUtil;
-import by.nhorushko.crudgeneric.v2.domain.AbstractDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -26,7 +23,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -34,7 +30,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -80,7 +75,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         final ADDRESS expected = createAddress(1L, givenCountry, givenCity);
         assertEquals(expected, actual);
 
-        verifyAddressReplication(actual);
+        verifyReplicationFor(actual);
     }
 
     @Test
@@ -89,7 +84,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingUniqueViolation(() -> save(givenAddress));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -98,18 +93,18 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingForeignKeyViolation(() -> save(givenPerson));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
     public void addressesShouldBeSaved() {
-        final String firstGivenAddressCountry = "China";
-        final String firstGivenAddressCity = "Fuyang";
-        final String secondGivenAddressCountry = "China";
-        final String secondGivenAddressCity = "Hefei";
+        final String firstGivenCountry = "China";
+        final String secondGivenCountry = "China";
+        final String firstGivenCity = "Fuyang";
+        final String secondGivenCity = "Hefei";
         final List<ADDRESS> givenAddresses = List.of(
-                createAddress(firstGivenAddressCountry, firstGivenAddressCity),
-                createAddress(secondGivenAddressCountry, secondGivenAddressCity)
+                createAddress(firstGivenCountry, firstGivenCity),
+                createAddress(secondGivenCountry, secondGivenCity)
         );
 
         final List<ADDRESS> actual = executeWaitingReplication(
@@ -119,12 +114,12 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
                 false
         );
         final List<ADDRESS> expected = List.of(
-                createAddress(1L, firstGivenAddressCountry, firstGivenAddressCity),
-                createAddress(2L, secondGivenAddressCountry, secondGivenAddressCity)
+                createAddress(1L, firstGivenCountry, firstGivenCity),
+                createAddress(2L, secondGivenCountry, secondGivenCity)
         );
         assertEquals(expected, actual);
 
-        verifyAddressReplications(actual);
+        verifyReplicationsFor(actual);
     }
 
     @Test
@@ -136,7 +131,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingUniqueViolation(() -> saveAddresses(givenAddresses));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -148,7 +143,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingForeignKeyViolation(() -> savePersons(givenPersons));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -158,7 +153,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         final ADDRESS actual = executeWaitingReplication(() -> update(givenAddress), 1, 0, false);
         assertEquals(givenAddress, actual);
 
-        verifyAddressReplication(actual);
+        verifyReplicationFor(actual);
     }
 
     @Test
@@ -167,7 +162,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingUniqueViolation(() -> update(givenAddress));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -176,7 +171,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingNoSuchEntityException(() -> update(givenPerson));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -193,7 +188,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         final ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
         assertEquals(expected, actual);
 
-        verifyAddressReplication(actual);
+        verifyReplicationFor(actual);
     }
 
     @Test
@@ -203,7 +198,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -213,7 +208,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingNoSuchEntityException(() -> updatePersonPartial(givenId, givenNewAddress));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -222,7 +217,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, false);
 
-        assertTrue(isAddressDeletedWithReplication(givenId));
+        assertFalse(isAddressExist(givenId));
+        assertFalse(replicatedAddressRepository.existsById(givenId));
     }
 
     @Test
@@ -231,7 +227,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
 
-        verifyAttemptDeleteReplicatedAddress(givenId);
+        verify(replicatedAddressRepository, times(1)).deleteById(eq(givenId));
     }
 
     @Test
@@ -240,7 +236,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         executeExpectingForeignKeyViolation(() -> deleteAddress(givenId));
 
-        verifyNoReplicatedRepositoryMethodCall();
+        verifyNoReplicationRepositoryMethodCall();
     }
 
     @Test
@@ -340,7 +336,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         assertFalse(isAddressExist(givenId));
         assertTrue(replicatedAddressRepository.existsById(givenId));
-        verifyMaxAttemptDeleteReplicatedAddress(givenId);
+
+        verify(replicatedAddressRepository, times(retryConsumeProperty.getMaxAttempts())).deleteById(eq(givenId));
     }
 
     @Test
@@ -358,8 +355,12 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
         assertEquals(expected, actual);
 
-        verifyReplicationAbsence(actual);
-        verifyMaxAttemptSaveReplicatedPerson();
+        assertFalse(replicatedPersonRepository.existsById(actual.getId()));
+
+        verify(
+                replicatedPersonRepository,
+                times(retryConsumeProperty.getMaxAttempts())
+        ).save(any(ReplicatedPersonEntity.class));
     }
 
     @Test
@@ -370,8 +371,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         final ADDRESS expected = createAddress(1L, givenAddress.getCountry(), givenAddress.getCity());
         assertEquals(expected, actual);
 
-        verifyReplicationAbsence(actual);
-        verifyAttemptSaveReplicatedAddress();
+        assertFalse(replicatedAddressRepository.existsById(actual.getId()));
+        verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
     }
 
     @Test
@@ -380,7 +381,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
         deleteAddressInRollBackedTransaction(givenId);
 
-        assertTrue(isAddressExistWithReplication(givenId));
+        assertTrue(isAddressExist(givenId));
+        assertTrue(replicatedAddressRepository.existsById(givenId));
     }
 
     protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
@@ -398,14 +400,17 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     protected abstract List<ADDRESS> saveAddresses(final List<ADDRESS> addresses);
 
+    @SuppressWarnings("UnusedReturnValue")
     protected abstract List<PERSON> savePersons(final List<PERSON> persons);
 
     protected abstract ADDRESS update(final ADDRESS address);
 
+    @SuppressWarnings("UnusedReturnValue")
     protected abstract PERSON update(final PERSON person);
 
     protected abstract ADDRESS updateAddressPartial(final Long id, final Object partial);
 
+    @SuppressWarnings("UnusedReturnValue")
     protected abstract PERSON updatePersonPartial(final Long id, final Object partial);
 
     protected abstract void deleteAddress(final Long id);
@@ -442,12 +447,17 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     private void executeWaitingReplication(final Runnable operation,
                                            final int addressCalls,
-                                           final int personCalls,
+                                           @SuppressWarnings("SameParameterValue") final int personCalls,
                                            final boolean failedCallsCounted) {
-        executeWaitingReplication(() -> {
-            operation.run();
-            return empty();
-        }, addressCalls, personCalls, failedCallsCounted);
+        executeWaitingReplication(
+                () -> {
+                    operation.run();
+                    return empty();
+                },
+                addressCalls,
+                personCalls,
+                failedCallsCounted
+        );
     }
 
     private <R> R executeWaitingReplication(final Supplier<R> operation,
@@ -460,51 +470,56 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         return result;
     }
 
-    private void verifyAddressReplication(final ADDRESS address) {
-        verifyAddressReplications(singletonList(address));
+    private void verifyReplicationFor(final ADDRESS address) {
+        verifyReplicationsFor(singletonList(address));
     }
 
-    private void verifyAddressReplications(final List<ADDRESS> addresses) {
-        final List<Long> ids = addresses.stream().map(Address::getId).toList();
+    private void verifyReplicationsFor(final List<ADDRESS> addresses) {
+        final List<Long> ids = mapToIds(addresses);
         final List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
         final List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
         ReplicatedAddressEntityUtil.checkEquals(expected, actual);
     }
 
+    private List<Long> mapToIds(final List<ADDRESS> addresses) {
+        return addresses.stream()
+                .map(Address::getId)
+                .toList();
+    }
+
     private List<ReplicatedAddressEntity> findReplicatedAddressesOrderedById(final List<Long> ids) {
-        return entityManager
-                .createQuery("SELECT e FROM ReplicatedAddressEntity e WHERE e.id IN :ids ORDER BY e.id", ReplicatedAddressEntity.class)
+        return entityManager.createQuery("SELECT e FROM ReplicatedAddressEntity e WHERE e.id IN :ids ORDER BY e.id", ReplicatedAddressEntity.class)
                 .setParameter("ids", ids)
                 .getResultList();
     }
 
     private List<ReplicatedAddressEntity> mapToReplicatedAddresses(final List<ADDRESS> addresses) {
         return addresses.stream()
-                .map(ReplicationIT::mapToReplicatedAddress)
+                .map(this::mapToReplicatedAddress)
                 .toList();
     }
 
-    private static ReplicatedAddressEntity mapToReplicatedAddress(final Address address) {
+    private ReplicatedAddressEntity mapToReplicatedAddress(final Address address) {
         return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
     }
 
-    private static void executeExpectingUniqueViolation(final Runnable task) {
-        executeExpectingConstraintViolation(task, UNIQUE_VIOLATION_SQL_STATE);
+    private void executeExpectingUniqueViolation(final Runnable task) {
+        executeExpectingSqlConstraintViolation(task, UNIQUE_VIOLATION_SQL_STATE);
     }
 
-    private static void executeExpectingForeignKeyViolation(final Runnable task) {
-        executeExpectingConstraintViolation(task, FOREIGN_KEY_VIOLATION_SQL_STATE);
+    private void executeExpectingForeignKeyViolation(final Runnable task) {
+        executeExpectingSqlConstraintViolation(task, FOREIGN_KEY_VIOLATION_SQL_STATE);
     }
 
-    private static void executeExpectingConstraintViolation(final Runnable task, final String expectedSqlState) {
-        executeExpectingMatchingException(task, exception -> Objects.equals(expectedSqlState, getSqlState(exception)));
+    private void executeExpectingSqlConstraintViolation(final Runnable task, final String sqlState) {
+        executeExpectingMatchingException(task, exception -> Objects.equals(sqlState, getSqlState(exception)));
     }
 
-    private static void executeExpectingNoSuchEntityException(final Runnable task) {
+    private void executeExpectingNoSuchEntityException(final Runnable task) {
         executeExpectingMatchingException(task, exception -> getRootCause(exception).getClass() == EntityNotFoundException.class);
     }
 
-    private static void executeExpectingMatchingException(final Runnable task, final Predicate<Throwable> predicate) {
+    private void executeExpectingMatchingException(final Runnable task, final Predicate<Throwable> predicate) {
         boolean exceptionArisen;
         try {
             task.run();
@@ -516,7 +531,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         assertTrue(exceptionArisen);
     }
 
-    private static String getSqlState(final Throwable exception) {
+    private String getSqlState(final Throwable exception) {
         return ((SQLException) getRootCause(exception)).getSQLState();
     }
 
@@ -570,49 +585,12 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
                                                    final String hqlQuery,
                                                    final Class<E> entityType,
                                                    final BiConsumer<E, E> equalChecker) {
-        final List<E> actual = findEntities(hqlQuery, entityType);
+        final List<E> actual = entityManager.createQuery(hqlQuery, entityType).getResultList();
         checkEquals(expected, actual, equalChecker);
     }
 
-    private <E extends Entity> List<E> findEntities(final String hqlQuery, final Class<E> entityType) {
-        return entityManager.createQuery(hqlQuery, entityType).getResultList();
-    }
-
-    private boolean isAddressDeletedWithReplication(final Long id) {
-        return !isAddressExist(id) && !replicatedAddressRepository.existsById(id);
-    }
-
-    private boolean isAddressExistWithReplication(final Long id) {
-        return isAddressExist(id) && replicatedAddressRepository.existsById(id);
-    }
-
-    private void verifyNoReplicatedRepositoryMethodCall() {
+    private void verifyNoReplicationRepositoryMethodCall() {
         verifyNoInteractions(replicatedAddressRepository, replicatedPersonRepository);
-    }
-
-    private void verifyAttemptDeleteReplicatedAddress(final Long id) {
-        verify(replicatedAddressRepository, times(1)).deleteById(eq(id));
-    }
-
-    private void verifyMaxAttemptDeleteReplicatedAddress(final Long id) {
-        verify(replicatedAddressRepository, times(retryConsumeProperty.getMaxAttempts())).deleteById(eq(id));
-    }
-
-    private void verifyMaxAttemptSaveReplicatedPerson() {
-        verify(replicatedPersonRepository, times(retryConsumeProperty.getMaxAttempts()))
-                .save(any(ReplicatedPersonEntity.class));
-    }
-
-    private void verifyAttemptSaveReplicatedAddress() {
-        verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
-    }
-
-    private void verifyReplicationAbsence(final ADDRESS address) {
-        assertFalse(replicatedAddressRepository.existsById(address.getId()));
-    }
-
-    private void verifyReplicationAbsence(final PERSON person) {
-        assertFalse(replicatedPersonRepository.existsById(person.getId()));
     }
 
     private void deleteAddressInRollBackedTransaction(final Long id) {
@@ -625,32 +603,32 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
     }
 
-    private static AddressEntity createAddressEntity(final Long id) {
+    private PersonEntity createPersonEntity(final Long id,
+                                            final String name,
+                                            final String surname,
+                                            final String patronymic,
+                                            final LocalDate birthDate,
+                                            final Long addressId) {
+        return new PersonEntity(id, name, surname, patronymic, birthDate, createAddressEntity(addressId));
+    }
+
+    private AddressEntity createAddressEntity(final Long id) {
         return AddressEntity.builder()
                 .id(id)
                 .build();
     }
 
-    private static PersonEntity createPersonEntity(final Long id,
-                                                   final String name,
-                                                   final String surname,
-                                                   final String patronymic,
-                                                   final LocalDate birthDate,
-                                                   final Long addressId) {
-        return new PersonEntity(id, name, surname, patronymic, birthDate, createAddressEntity(addressId));
-    }
-
-    private static ReplicatedAddressEntity createReplicatedAddress(final Long id) {
+    private ReplicatedAddressEntity createReplicatedAddress(final Long id) {
         return ReplicatedAddressEntity.builder()
                 .id(id)
                 .build();
     }
 
-    private static ReplicatedPersonEntity createReplicatedPerson(final Long id,
-                                                                 final String name,
-                                                                 final String surname,
-                                                                 final LocalDate birthDate,
-                                                                 final Long addressId) {
+    private ReplicatedPersonEntity createReplicatedPerson(final Long id,
+                                                          final String name,
+                                                          final String surname,
+                                                          final LocalDate birthDate,
+                                                          final Long addressId) {
         return new ReplicatedPersonEntity(id, name, surname, birthDate, createReplicatedAddress(addressId));
     }
 
@@ -694,7 +672,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
             await(personLatch);
         }
 
-        private static long findTimeoutMs(final ReplicationRetryConsumeProperty retryProperty) {
+        private long findTimeoutMs(final ReplicationRetryConsumeProperty retryProperty) {
             return retryProperty.getTimeLapseMs() * retryProperty.getMaxAttempts() + TIMEOUT_DELTA_MS;
         }
 
