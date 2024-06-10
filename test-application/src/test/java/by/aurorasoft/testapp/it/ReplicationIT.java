@@ -35,11 +35,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static by.aurorasoft.testapp.testutil.EntityUtil.checkEquals;
 import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -475,22 +475,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     }
 
     private void verifyReplicationsFor(final List<ADDRESS> addresses) {
-        final List<Long> ids = mapToIds(addresses);
-        final List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
         final List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
-        ReplicatedAddressEntityUtil.checkEquals(expected, actual);
-    }
-
-    private List<Long> mapToIds(final List<ADDRESS> addresses) {
-        return addresses.stream()
-                .map(Address::getId)
-                .toList();
-    }
-
-    private List<ReplicatedAddressEntity> findReplicatedAddressesOrderedById(final List<Long> ids) {
-        return entityManager.createQuery("SELECT e FROM ReplicatedAddressEntity e WHERE e.id IN :ids ORDER BY e.id", ReplicatedAddressEntity.class)
-                .setParameter("ids", ids)
-                .getResultList();
+        verifyReplicatedAddresses(expected);
     }
 
     private List<ReplicatedAddressEntity> mapToReplicatedAddresses(final List<ADDRESS> addresses) {
@@ -586,7 +572,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
                                                    final Class<E> entityType,
                                                    final BiConsumer<E, E> equalChecker) {
         final List<E> actual = entityManager.createQuery(hqlQuery, entityType).getResultList();
-        checkEquals(expected, actual, equalChecker);
+        assertEquals(expected.size(), actual.size());
+        range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
     }
 
     private void verifyNoReplicationRepositoryMethodCall() {
