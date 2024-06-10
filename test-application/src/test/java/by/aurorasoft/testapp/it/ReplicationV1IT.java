@@ -4,8 +4,6 @@ import by.aurorasoft.testapp.crud.v1.dto.AddressV1;
 import by.aurorasoft.testapp.crud.v1.dto.PersonV1;
 import by.aurorasoft.testapp.crud.v1.service.AddressV1Service;
 import by.aurorasoft.testapp.crud.v1.service.PersonV1Service;
-import by.aurorasoft.testapp.model.AddressName;
-import by.aurorasoft.testapp.model.PersonAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
