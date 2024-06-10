@@ -4,10 +4,14 @@ import by.aurorasoft.testapp.crud.v1.dto.AddressV1;
 import by.aurorasoft.testapp.crud.v1.dto.PersonV1;
 import by.aurorasoft.testapp.crud.v1.service.AddressV1Service;
 import by.aurorasoft.testapp.crud.v1.service.PersonV1Service;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static java.util.Arrays.stream;
+import static org.junit.Assert.assertTrue;
 
 public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
 
@@ -16,6 +20,22 @@ public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
 
     @Autowired
     private PersonV1Service personService;
+
+    @Test
+    public void deleteAllShouldBeReplicated() {
+        final Long firstGivenAddressId = 259L;
+        final Long secondGivenAddressId = 260L;
+        final Long thirdGivenAddressId = 261L;
+        final List<AddressV1> givenAddresses = List.of(
+                createAddress(firstGivenAddressId),
+                createAddress(secondGivenAddressId),
+                createAddress(thirdGivenAddressId)
+        );
+
+        executeWaitingReplication(() -> addressService.deleteAll(givenAddresses), 1, 0, false);
+
+        assertTrue(isAddressesNotExist(firstGivenAddressId, secondGivenAddressId, thirdGivenAddressId));
+    }
 
     @Override
     protected AddressV1 createAddress(final Long id, final String country, final String city) {
@@ -85,5 +105,9 @@ public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
     @Override
     protected boolean isAddressExist(final Long id) {
         return addressService.existById(id);
+    }
+
+    private boolean isAddressesNotExist(final Long... ids) {
+        return stream(ids).allMatch(id -> !addressService.existById(id) && !replicatedAddressRepository.existsById(id));
     }
 }

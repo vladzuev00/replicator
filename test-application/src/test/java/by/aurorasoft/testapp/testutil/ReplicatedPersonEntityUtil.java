@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 @UtilityClass
 public final class ReplicatedPersonEntityUtil {
 
-    public void checkEquals(final ReplicatedPersonEntity expected, final ReplicatedPersonEntity actual) {
+    public static void checkEquals(final ReplicatedPersonEntity expected, final ReplicatedPersonEntity actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getSurname(), actual.getSurname());

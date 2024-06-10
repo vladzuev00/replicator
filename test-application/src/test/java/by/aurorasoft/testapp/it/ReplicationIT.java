@@ -50,17 +50,17 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
+    @SpyBean
+    protected ReplicatedAddressRepository replicatedAddressRepository;
+
+    @SpyBean
+    protected ReplicatedPersonRepository replicatedPersonRepository;
+
     @Autowired
     private ReplicationRetryConsumeProperty retryConsumeProperty;
 
     @Autowired
     private ReplicationRepositoryBarrier replicationRepositoryBarrier;
-
-    @SpyBean
-    private ReplicatedAddressRepository replicatedAddressRepository;
-
-    @SpyBean
-    private ReplicatedPersonRepository replicatedPersonRepository;
 
     @Autowired
     private TransactionTemplate transactionTemplate;
@@ -419,8 +419,23 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     protected abstract boolean isAddressExist(final Long id);
 
-    private ADDRESS createAddress(final Long id) {
+    protected final ADDRESS createAddress(final Long id) {
         return createAddress(id, null, null);
+    }
+
+    protected void executeWaitingReplication(final Runnable operation,
+                                             final int addressCalls,
+                                             @SuppressWarnings("SameParameterValue") final int personCalls,
+                                             final boolean failedCallsCounted) {
+        executeWaitingReplication(
+                () -> {
+                    operation.run();
+                    return empty();
+                },
+                addressCalls,
+                personCalls,
+                failedCallsCounted
+        );
     }
 
     private ADDRESS createAddress(final String country, final String city) {
@@ -443,21 +458,6 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
                                 final Long addressId) {
         final ADDRESS address = createAddress(addressId);
         return createPerson(id, name, surname, patronymic, birthDate, address);
-    }
-
-    private void executeWaitingReplication(final Runnable operation,
-                                           final int addressCalls,
-                                           @SuppressWarnings("SameParameterValue") final int personCalls,
-                                           final boolean failedCallsCounted) {
-        executeWaitingReplication(
-                () -> {
-                    operation.run();
-                    return empty();
-                },
-                addressCalls,
-                personCalls,
-                failedCallsCounted
-        );
     }
 
     private <R> R executeWaitingReplication(final Supplier<R> operation,
