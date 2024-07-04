@@ -11,10 +11,10 @@ public final class SaveConsumedReplicationTest {
     @Test
     @SuppressWarnings("unchecked")
     public void replicationShouldBeExecutedInternally() {
-        final TestV2Entity givenEntity = new TestV2Entity(255L);
-        final SaveConsumedReplication<TestV2Entity, Long> givenReplication = new SaveConsumedReplication<>(givenEntity);
+        TestV2Entity givenEntity = new TestV2Entity(255L);
+        SaveConsumedReplication<TestV2Entity, Long> givenReplication = new SaveConsumedReplication<>(givenEntity);
 
-        final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
+        JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
 
         givenReplication.executeInternal(givenRepository);
 

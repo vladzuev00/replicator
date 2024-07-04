@@ -16,12 +16,12 @@ public final class SaveConsumedReplication<E, ID> extends ConsumedReplication<E,
     private final E entity;
 
     @JsonCreator
-    public SaveConsumedReplication(@JsonProperty(BODY) final E entity) {
+    public SaveConsumedReplication(@JsonProperty(BODY) E entity) {
         this.entity = entity;
     }
 
     @Override
-    public void executeInternal(final JpaRepository<E, ID> repository) {
+    public void executeInternal(JpaRepository<E, ID> repository) {
         repository.save(entity);
     }
 }
