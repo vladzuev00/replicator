@@ -36,21 +36,21 @@ public final class ReplicationProducerTest {
 
     @Test
     public void replicationShouldBeSent() {
-        final ProducedReplication givenReplication = new SaveProducedReplication(new TestV2Dto(255L));
+        ProducedReplication givenReplication = new SaveProducedReplication(new TestV2Dto(255L));
 
         producer.send(givenReplication);
 
         verifyProduce(givenReplication);
     }
 
-    private void verifyProduce(final ProducedReplication replication) {
+    private void verifyProduce(ProducedReplication replication) {
         verify(mockedKafkaTemplate, times(1)).send(recordArgumentCaptor.capture());
-        final ProducerRecord<Object, ProducedReplication> actual = recordArgumentCaptor.getValue();
-        final ProducerRecord<Object, ProducedReplication> expected = createRecord(replication);
+        ProducerRecord<Object, ProducedReplication> actual = recordArgumentCaptor.getValue();
+        ProducerRecord<Object, ProducedReplication> expected = createRecord(replication);
         assertEquals(expected, actual);
     }
 
-    private ProducerRecord<Object, ProducedReplication> createRecord(final ProducedReplication replication) {
+    private ProducerRecord<Object, ProducedReplication> createRecord(ProducedReplication replication) {
         return new ProducerRecord<>(GIVEN_TOPIC_NAME, replication.getEntityId(), replication);
     }
 }

@@ -6,12 +6,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 public final class ReplicationProducer extends KafkaProducerAbstractSimple<Object, ProducedReplication> {
 
-    public ReplicationProducer(final String topicName, final KafkaTemplate<Object, ProducedReplication> kafkaTemplate) {
+    public ReplicationProducer(String topicName, KafkaTemplate<Object, ProducedReplication> kafkaTemplate) {
         super(topicName, kafkaTemplate);
     }
 
     @Override
-    public void send(final ProducedReplication replication) {
+    public void send(ProducedReplication replication) {
         sendModel(replication.getEntityId(), replication);
     }
 }
