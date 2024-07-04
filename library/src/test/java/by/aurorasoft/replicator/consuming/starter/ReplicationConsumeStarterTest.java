@@ -44,9 +44,9 @@ public final class ReplicationConsumeStarterTest {
     public void consumingShouldBeStarted() {
         starter.start();
 
-        final var expectedStartedPipelines = List.of(firstMockedPipeline, secondMockedPipeline);
+        var expectedStartedPipelines = List.of(firstMockedPipeline, secondMockedPipeline);
         verify(mockedPipelineStarter, times(expectedStartedPipelines.size())).start(pipelineArgumentCaptor.capture());
-        final var actualStartedPipelines = pipelineArgumentCaptor.getAllValues();
+        var actualStartedPipelines = pipelineArgumentCaptor.getAllValues();
         assertEquals(expectedStartedPipelines, actualStartedPipelines);
     }
 }
