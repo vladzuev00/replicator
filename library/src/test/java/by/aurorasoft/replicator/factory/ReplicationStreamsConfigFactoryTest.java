@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.factory.ReplicationStreamsConfigFactory;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;
@@ -22,11 +21,11 @@ public final class ReplicationStreamsConfigFactoryTest {
 
     @Test
     public void configShouldBeCreated() {
-        final String givenPipelineId = "test-pipeline";
-        final ReplicationConsumePipeline<?, ?> givenPipeline = createPipeline(givenPipelineId);
+        String givenPipelineId = "test-pipeline";
+        ReplicationConsumePipeline<?, ?> givenPipeline = createPipeline(givenPipelineId);
 
-        final StreamsConfig actual = factory.create(givenPipeline);
-        final StreamsConfig expected = new StreamsConfig(
+        StreamsConfig actual = factory.create(givenPipeline);
+        StreamsConfig expected = new StreamsConfig(
                 Map.of(
                         APPLICATION_ID_CONFIG, givenPipelineId,
                         BOOTSTRAP_SERVERS_CONFIG, GIVEN_BOOTSTRAP_ADDRESS,
@@ -37,7 +36,7 @@ public final class ReplicationStreamsConfigFactoryTest {
     }
 
     @SuppressWarnings({"unchecked", "SameParameterValue"})
-    private ReplicationConsumePipeline<?, ?> createPipeline(final String id) {
+    private ReplicationConsumePipeline<?, ?> createPipeline(String id) {
         return ReplicationConsumePipeline.builder()
                 .id(id)
                 .topic(GIVEN_TOPIC_NAME)
