@@ -26,9 +26,9 @@ public final class ReplicationConsumePipelineStarterTest {
 
     @Test
     public void pipelineShouldBeStarted() {
-        final ReplicationConsumePipeline<?, ?> givenPipeline = mock(ReplicationConsumePipeline.class);
+        ReplicationConsumePipeline<?, ?> givenPipeline = mock(ReplicationConsumePipeline.class);
 
-        final KafkaStreams givenStreams = mock(KafkaStreams.class);
+        KafkaStreams givenStreams = mock(KafkaStreams.class);
         when(mockedStreamsFactory.create(same(givenPipeline))).thenReturn(givenStreams);
 
         starter.start(givenPipeline);

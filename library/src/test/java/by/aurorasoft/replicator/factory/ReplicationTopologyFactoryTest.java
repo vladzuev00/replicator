@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consuming.starter.factory;
+package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.factory.ReplicationTopologyFactory;
 import by.aurorasoft.replicator.v2.entity.TestV2Entity;
