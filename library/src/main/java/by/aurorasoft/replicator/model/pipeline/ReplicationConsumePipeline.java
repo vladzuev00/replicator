@@ -25,8 +25,8 @@ public final class ReplicationConsumePipeline<E, ID> {
                                       TypeReference<ConsumedReplication<E, ID>> replicationTypeReference,
                                       JpaRepository<E, ID> repository) {
         requireNonNull(property);
-        this.id = requireNonNull(property.getPipelineId());
-        this.topic = requireNonNull(property.getTopicName());
+        id = requireNonNull(property.getPipelineId());
+        topic = requireNonNull(property.getTopicName());
         this.idSerde = requireNonNull(idSerde);
         replicationSerde = new ConsumedReplicationSerde<>(requireNonNull(replicationTypeReference));
         this.repository = requireNonNull(repository);

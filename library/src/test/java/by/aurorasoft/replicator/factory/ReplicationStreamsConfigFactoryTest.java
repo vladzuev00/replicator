@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.property.ReplicationConsumeProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.StreamsConfig;
@@ -38,8 +39,8 @@ public final class ReplicationStreamsConfigFactoryTest {
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     private ReplicationConsumePipeline<?, ?> createPipeline(String id) {
         return ReplicationConsumePipeline.builder()
-                .id(id)
-                .topic(GIVEN_TOPIC_NAME)
+                .property(new ReplicationConsumeProperty(GIVEN_TOPIC_NAME, id) {
+                })
                 .idSerde(mock(Serde.class))
                 .replicationTypeReference(new TypeReference<>() {
                 })

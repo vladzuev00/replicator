@@ -3,6 +3,7 @@ package by.aurorasoft.replicator.factory;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
+import by.aurorasoft.replicator.property.ReplicationConsumeProperty;
 import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongSerializer;
@@ -66,8 +67,8 @@ public final class ReplicationTopologyFactoryTest {
 
     private ReplicationConsumePipeline<TestV2Entity, Long> createPipeline(JpaRepository<TestV2Entity, Long> repository) {
         return new ReplicationConsumePipeline<>(
-                DRIVER_APPLICATION_ID,
-                GIVEN_TOPIC,
+                new ReplicationConsumeProperty(GIVEN_TOPIC, DRIVER_APPLICATION_ID) {
+                },
                 Long(),
                 new TypeReference<>() {
                 },

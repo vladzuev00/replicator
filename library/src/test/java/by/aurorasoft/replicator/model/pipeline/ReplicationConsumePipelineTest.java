@@ -1,7 +1,8 @@
 package by.aurorasoft.replicator.model.pipeline;
 
-import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.property.ReplicationConsumeProperty;
+import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;
 import org.junit.Test;
@@ -17,16 +18,16 @@ public final class ReplicationConsumePipelineTest {
     @Test
     @SuppressWarnings("unchecked")
     public void pipelineShouldBeCreated() {
-        final String givenId = "test-pipeline";
-        final String givenTopic = "test-topic";
-        final Serde<Long> givenIdSerde = mock(Serde.class);
-        final var givenReplicationTypeReference = new TypeReference<ConsumedReplication<TestV2Entity, Long>>() {
+        String givenTopic = "test-topic";
+        String givenId = "test-pipeline";
+        Serde<Long> givenIdSerde = mock(Serde.class);
+        var givenReplicationTypeReference = new TypeReference<ConsumedReplication<TestV2Entity, Long>>() {
         };
-        final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
+        JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
 
-        final var actual = new ReplicationConsumePipeline<>(
-                givenId,
-                givenTopic,
+        var actual = new ReplicationConsumePipeline<>(
+                new ReplicationConsumeProperty(givenTopic, givenId) {
+                },
                 givenIdSerde,
                 givenReplicationTypeReference,
                 givenRepository
@@ -41,9 +42,21 @@ public final class ReplicationConsumePipelineTest {
 
     @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
+    public void pipelineShouldNotBeCreatedBecauseOfPropertyIsNull() {
+        ReplicationConsumePipeline.builder()
+                .idSerde(mock(Serde.class))
+                .replicationTypeReference(new TypeReference<>() {
+                })
+                .repository(mock(JpaRepository.class))
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = NullPointerException.class)
     public void pipelineShouldNotBeCreatedBecauseOfIdIsNull() {
         ReplicationConsumePipeline.builder()
-                .topic("test-topic")
+                .property(new ReplicationConsumeProperty("test-topic", null) {
+                })
                 .idSerde(mock(Serde.class))
                 .replicationTypeReference(new TypeReference<>() {
                 })
@@ -55,7 +68,8 @@ public final class ReplicationConsumePipelineTest {
     @Test(expected = NullPointerException.class)
     public void pipelineShouldBeCreatedBecauseOfTopicIsNull() {
         ReplicationConsumePipeline.builder()
-                .id("test-pipeline")
+                .property(new ReplicationConsumeProperty(null, "test-pipeline") {
+                })
                 .idSerde(mock(Serde.class))
                 .replicationTypeReference(new TypeReference<>() {
                 })
@@ -67,8 +81,8 @@ public final class ReplicationConsumePipelineTest {
     @Test(expected = NullPointerException.class)
     public void pipelineShouldBeCreatedBecauseOfIdSerdeIsNull() {
         ReplicationConsumePipeline.builder()
-                .id("test-pipeline")
-                .topic("test-topic")
+                .property(new ReplicationConsumeProperty("test-topic", "test-pipeline") {
+                })
                 .replicationTypeReference(new TypeReference<>() {
                 })
                 .repository(mock(JpaRepository.class))
@@ -79,8 +93,8 @@ public final class ReplicationConsumePipelineTest {
     @Test(expected = NullPointerException.class)
     public void pipelineShouldBeCreatedBecauseOfReplicationTypeReferenceIsNull() {
         ReplicationConsumePipeline.builder()
-                .id("test-pipeline")
-                .topic("test-topic")
+                .property(new ReplicationConsumeProperty("test-topic", "test-pipeline") {
+                })
                 .idSerde(mock(Serde.class))
                 .repository(mock(JpaRepository.class))
                 .build();
@@ -90,15 +104,15 @@ public final class ReplicationConsumePipelineTest {
     @Test(expected = NullPointerException.class)
     public void pipelineShouldBeCreatedBecauseOfRepositoryIsNull() {
         ReplicationConsumePipeline.builder()
-                .id("test-pipeline")
-                .topic("test-topic")
+                .property(new ReplicationConsumeProperty("test-topic", "test-pipeline") {
+                })
                 .idSerde(mock(Serde.class))
                 .replicationTypeReference(new TypeReference<>() {
                 })
                 .build();
     }
 
-    private TypeReference<?> getReplicationTypeReference(final ReplicationConsumePipeline<?, ?> pipeline) {
+    private TypeReference<?> getReplicationTypeReference(ReplicationConsumePipeline<?, ?> pipeline) {
         return getFieldValue(pipeline.getReplicationSerde(), REPLICATION_TYPE_REFERENCE_FIELD_NAME, TypeReference.class);
     }
 }

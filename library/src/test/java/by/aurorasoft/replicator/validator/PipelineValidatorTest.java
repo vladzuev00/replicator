@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.property.ReplicationConsumeProperty;
 import by.aurorasoft.replicator.validator.PipelineValidator.PipelineConstraintViolationException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serde;
@@ -60,8 +61,8 @@ public final class PipelineValidatorTest {
     @SuppressWarnings("unchecked")
     private static ReplicationConsumePipeline<?, ?> createPipeline(final String id) {
         return ReplicationConsumePipeline.builder()
-                .id(id)
-                .topic("test-topic")
+                .property(new ReplicationConsumeProperty("test-topic", id) {
+                })
                 .idSerde(mock(Serde.class))
                 .replicationTypeReference(new TypeReference<>() {
                 })
