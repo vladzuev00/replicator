@@ -24,7 +24,7 @@ public final class ReplicatedServiceRegistryFactory {
                 .collect(collectingAndThen(toSet(), ReplicatedServiceRegistry::new));
     }
 
-    private Object unProxy(final Object service) {
+    private Object unProxy(Object service) {
         return requireNonNullElse(getSingletonTarget(service), service);
     }
 }
