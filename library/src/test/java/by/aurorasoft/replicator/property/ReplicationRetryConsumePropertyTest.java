@@ -20,7 +20,7 @@ public final class ReplicationRetryConsumePropertyTest extends AbstractSpringBoo
 
     @Test
     public void propertyShouldBeCreated() {
-        final ReplicationRetryConsumeProperty expected = new ReplicationRetryConsumeProperty(3000, 100);
+        ReplicationRetryConsumeProperty expected = new ReplicationRetryConsumeProperty(3000, 100);
         assertEquals(expected, actual);
     }
 }
