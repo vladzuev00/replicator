@@ -15,9 +15,9 @@ public final class ProducedReplicationTest {
 
     @ParameterizedTest
     @MethodSource("provideReplicationAndExpectedJson")
-    public void replicationShouldBeSerializedToJson(final ProducedReplication givenReplication, final String expected)
+    public void replicationShouldBeSerializedToJson(ProducedReplication givenReplication, String expected)
             throws Exception {
-        final String actual = objectMapper.writeValueAsString(givenReplication);
+        String actual = objectMapper.writeValueAsString(givenReplication);
         assertEquals(expected, actual, true);
     }
 

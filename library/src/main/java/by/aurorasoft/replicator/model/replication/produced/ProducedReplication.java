@@ -32,5 +32,5 @@ public abstract class ProducedReplication {
         return getEntityId(body);
     }
 
-    protected abstract Object getEntityId(final Object body);
+    protected abstract Object getEntityId(Object body);
 }
