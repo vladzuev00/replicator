@@ -1,10 +1,9 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.factory.ReplicationTopologyFactory;
-import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
+import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.streams.TestInputTopic;
@@ -52,20 +51,20 @@ public final class ReplicationTopologyFactoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void topologyShouldBeCreatedAndReplicationShouldBeProducedAndConsumed() {
-        final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
-        final ReplicationConsumePipeline<TestV2Entity, Long> givenPipeline = createPipeline(givenRepository);
+        JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
+        ReplicationConsumePipeline<TestV2Entity, Long> givenPipeline = createPipeline(givenRepository);
 
-        final TestV2Entity givenEntity = new TestV2Entity(255L);
-        final ConsumedReplication<TestV2Entity, Long> givenReplication = new SaveConsumedReplication<>(givenEntity);
+        TestV2Entity givenEntity = new TestV2Entity(255L);
+        ConsumedReplication<TestV2Entity, Long> givenReplication = new SaveConsumedReplication<>(givenEntity);
 
-        try (final TopologyTestDriver driver = createDriver(givenPipeline)) {
+        try (TopologyTestDriver driver = createDriver(givenPipeline)) {
             createTopic(driver).pipeInput(givenReplication);
 
             verifySave(givenRepository, givenEntity);
         }
     }
 
-    private ReplicationConsumePipeline<TestV2Entity, Long> createPipeline(final JpaRepository<TestV2Entity, Long> repository) {
+    private ReplicationConsumePipeline<TestV2Entity, Long> createPipeline(JpaRepository<TestV2Entity, Long> repository) {
         return new ReplicationConsumePipeline<>(
                 DRIVER_APPLICATION_ID,
                 GIVEN_TOPIC,
@@ -76,26 +75,26 @@ public final class ReplicationTopologyFactoryTest {
         );
     }
 
-    private TopologyTestDriver createDriver(final ReplicationConsumePipeline<TestV2Entity, Long> pipeline) {
-        final Topology topology = topologyFactory.create(pipeline);
-        final Properties properties = createDriverProperties();
+    private TopologyTestDriver createDriver(ReplicationConsumePipeline<TestV2Entity, Long> pipeline) {
+        Topology topology = topologyFactory.create(pipeline);
+        Properties properties = createDriverProperties();
         return new TopologyTestDriver(topology, properties);
     }
 
     private Properties createDriverProperties() {
-        final Properties properties = new Properties();
+        Properties properties = new Properties();
         properties.put(APPLICATION_ID_CONFIG, DRIVER_APPLICATION_ID);
         properties.put(BOOTSTRAP_SERVERS_CONFIG, DRIVER_BOOTSTRAP_ADDRESS);
         return properties;
     }
 
-    private TestInputTopic<Long, ConsumedReplication<TestV2Entity, Long>> createTopic(final TopologyTestDriver driver) {
+    private TestInputTopic<Long, ConsumedReplication<TestV2Entity, Long>> createTopic(TopologyTestDriver driver) {
         return driver.createInputTopic(GIVEN_TOPIC, new LongSerializer(), new JsonSerializer<>());
     }
 
-    private void verifySave(final JpaRepository<TestV2Entity, Long> repository, final TestV2Entity entity) {
+    private void verifySave(JpaRepository<TestV2Entity, Long> repository, TestV2Entity entity) {
         verify(mockedRetryTemplate, times(1)).execute(callbackArgumentCaptor.capture());
-        final RetryCallback<?, RuntimeException> capturedCallback = callbackArgumentCaptor.getValue();
+        RetryCallback<?, RuntimeException> capturedCallback = callbackArgumentCaptor.getValue();
         capturedCallback.doWithRetry(null);
         verify(repository, times(1)).save(eq(entity));
     }

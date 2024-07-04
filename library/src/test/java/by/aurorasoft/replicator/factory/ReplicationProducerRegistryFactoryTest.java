@@ -1,9 +1,8 @@
-package by.aurorasoft.replicator.registry.producer;
+package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
-import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.factory.ReplicationProducerFactory;
+import by.aurorasoft.replicator.registry.producer.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

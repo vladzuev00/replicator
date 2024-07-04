@@ -18,25 +18,23 @@ import static org.apache.kafka.streams.kstream.Consumed.with;
 public final class ReplicationTopologyFactory {
     private final RetryTemplate retryTemplate;
 
-    public ReplicationTopologyFactory(@Qualifier("replicationRetryTemplate") final RetryTemplate retryTemplate) {
+    public ReplicationTopologyFactory(@Qualifier("replicationRetryTemplate") RetryTemplate retryTemplate) {
         this.retryTemplate = retryTemplate;
     }
 
-    public <E, ID> Topology create(final ReplicationConsumePipeline<E, ID> pipeline) {
-        final StreamsBuilder builder = new StreamsBuilder();
+    public <E, ID> Topology create(ReplicationConsumePipeline<E, ID> pipeline) {
+        StreamsBuilder builder = new StreamsBuilder();
         builder
                 .stream(pipeline.getTopic(), with(pipeline.getIdSerde(), pipeline.getReplicationSerde()))
                 .foreach((id, replication) -> executeRetrying(replication, pipeline.getRepository()));
         return builder.build();
     }
 
-    private <E, ID> void executeRetrying(final ConsumedReplication<E, ID> replication,
-                                         final JpaRepository<E, ID> repository) {
+    private <E, ID> void executeRetrying(ConsumedReplication<E, ID> replication, JpaRepository<E, ID> repository) {
         retryTemplate.execute(context -> execute(replication, repository));
     }
 
-    private <E, ID> Optional<?> execute(final ConsumedReplication<E, ID> replication,
-                                        final JpaRepository<E, ID> repository) {
+    private <E, ID> Optional<?> execute(ConsumedReplication<E, ID> replication, JpaRepository<E, ID> repository) {
         replication.execute(repository);
         return empty();
     }
