@@ -1,6 +1,5 @@
-package by.aurorasoft.replicator.topiccreator;
+package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
 import by.aurorasoft.replicator.v2.service.SecondTestV2CRUDService;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.Test;
