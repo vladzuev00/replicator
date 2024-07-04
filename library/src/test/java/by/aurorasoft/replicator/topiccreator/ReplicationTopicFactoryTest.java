@@ -12,10 +12,10 @@ public final class ReplicationTopicFactoryTest {
 
     @Test
     public void topicShouldBeCreated() {
-        final SecondTestV2CRUDService givenService = new SecondTestV2CRUDService();
+        SecondTestV2CRUDService givenService = new SecondTestV2CRUDService();
 
-        final NewTopic actual = factory.create(givenService);
-        final NewTopic expected = new NewTopic("second-topic", 2, (short) 2);
+        NewTopic actual = factory.create(givenService);
+        NewTopic expected = new NewTopic("second-topic", 2, (short) 2);
         assertEquals(expected, actual);
     }
 }
