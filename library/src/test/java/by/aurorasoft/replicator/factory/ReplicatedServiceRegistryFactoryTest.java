@@ -1,7 +1,7 @@
-package by.aurorasoft.replicator.registry.service;
+package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
+import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
 
 @RunWith(MockitoJUnitRunner.class)
-public final class ReplicatedServiceHolderFactoryTest {
+public final class ReplicatedServiceRegistryFactoryTest {
 
     @Mock
     private ApplicationContext mockedContext;
@@ -34,27 +34,27 @@ public final class ReplicatedServiceHolderFactoryTest {
     }
 
     @Test
-    public void holderShouldBeCreated() {
-        try (final MockedStatic<AopProxyUtils> mockedProxyUtil = mockStatic(AopProxyUtils.class)) {
-            final Object firstGivenProxy = new Object();
-            final Object secondGivenService = new Object();
-            final Map<String, Object> givenServicesByNames = Map.of(
+    public void registryShouldBeCreated() {
+        try (MockedStatic<AopProxyUtils> mockedProxyUtil = mockStatic(AopProxyUtils.class)) {
+            Object firstGivenProxy = new Object();
+            Object secondGivenService = new Object();
+            Map<String, Object> givenServicesByNames = Map.of(
                     "FirstService", firstGivenProxy,
                     "SecondService", secondGivenService
             );
             when(mockedContext.getBeansWithAnnotation(same(ReplicatedService.class))).thenReturn(givenServicesByNames);
 
-            final Object firstGivenService = mockServiceFor(firstGivenProxy, mockedProxyUtil);
+            Object firstGivenService = mockServiceFor(firstGivenProxy, mockedProxyUtil);
 
-            final ReplicatedServiceRegistry actual = factory.create();
-            final Set<Object> actualServices = actual.getServices();
-            final Set<Object> expectedServices = Set.of(firstGivenService, secondGivenService);
+            ReplicatedServiceRegistry actual = factory.create();
+            Set<Object> actualServices = actual.getServices();
+            Set<Object> expectedServices = Set.of(firstGivenService, secondGivenService);
             assertEquals(expectedServices, actualServices);
         }
     }
 
-    private Object mockServiceFor(final Object proxy, final MockedStatic<AopProxyUtils> mockedProxyUtil) {
-        final Object service = new Object();
+    private Object mockServiceFor(Object proxy, MockedStatic<AopProxyUtils> mockedProxyUtil) {
+        Object service = new Object();
         mockedProxyUtil.when(() -> getSingletonTarget(same(proxy))).thenReturn(service);
         return service;
     }
