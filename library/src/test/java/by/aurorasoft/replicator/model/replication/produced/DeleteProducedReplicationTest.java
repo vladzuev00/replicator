@@ -8,10 +8,10 @@ public final class DeleteProducedReplicationTest {
 
     @Test
     public void entityIdShouldBeGot() {
-        final Object givenEntityId = new Object();
-        final DeleteProducedReplication givenReplication = new DeleteProducedReplication(null);
+        Object givenEntityId = new Object();
+        DeleteProducedReplication givenReplication = new DeleteProducedReplication(null);
 
-        final Object actual = givenReplication.getEntityId(givenEntityId);
+        Object actual = givenReplication.getEntityId(givenEntityId);
         assertSame(givenEntityId, actual);
     }
 }
