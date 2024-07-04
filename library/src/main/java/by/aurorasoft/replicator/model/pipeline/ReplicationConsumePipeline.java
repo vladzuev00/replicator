@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.model.pipeline;
 
 import by.aurorasoft.replicator.consuming.serde.ConsumedReplicationSerde;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.property.ReplicationConsumeProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,19 +20,19 @@ public final class ReplicationConsumePipeline<E, ID> {
     private final JpaRepository<E, ID> repository;
 
     @Builder
-    public ReplicationConsumePipeline(final String id,
-                                      final String topic,
-                                      final Serde<ID> idSerde,
-                                      final TypeReference<ConsumedReplication<E, ID>> replicationTypeReference,
-                                      final JpaRepository<E, ID> repository) {
-        this.id = requireNonNull(id);
-        this.topic = requireNonNull(topic);
+    public ReplicationConsumePipeline(ReplicationConsumeProperty property,
+                                      Serde<ID> idSerde,
+                                      TypeReference<ConsumedReplication<E, ID>> replicationTypeReference,
+                                      JpaRepository<E, ID> repository) {
+        requireNonNull(property);
+        this.id = requireNonNull(property.getPipelineId());
+        this.topic = requireNonNull(property.getTopicName());
         this.idSerde = requireNonNull(idSerde);
         replicationSerde = new ConsumedReplicationSerde<>(requireNonNull(replicationTypeReference));
         this.repository = requireNonNull(repository);
     }
 
-    private <T> T requireNonNull(final T object) {
+    private <T> T requireNonNull(T object) {
         return Objects.requireNonNull(object, "All properties of pipeline should be defined");
     }
 }
