@@ -12,11 +12,11 @@ import static java.util.stream.Collectors.toMap;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationProducerRegistryFactory {
-    private final ReplicatedServiceRegistry serviceHolder;
+    private final ReplicatedServiceRegistry serviceRegistry;
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
-        return serviceHolder.getServices()
+        return serviceRegistry.getServices()
                 .stream()
                 .collect(collectingAndThen(toMap(identity(), producerFactory::create), ReplicationProducerRegistry::new));
     }
