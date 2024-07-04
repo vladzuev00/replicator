@@ -58,8 +58,8 @@ public final class ReplicatedServiceProcessorTest {
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
-                                import by.aurorasoft.replicator.base.v1.entity.TestV1Entity;
+                                import by.aurorasoft.replicator.v1.dto.TestV1Dto;
+                                import by.aurorasoft.replicator.v1.entity.TestV1Entity;
                                 import by.nhorushko.crudgeneric.mapper.AbstractMapper;
                                 import by.nhorushko.crudgeneric.service.RudGenericService;
                                 import org.apache.kafka.common.serialization.LongSerializer;
@@ -85,8 +85,8 @@ public final class ReplicatedServiceProcessorTest {
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
-                                import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
+                                import by.aurorasoft.replicator.v2.dto.TestV2Dto;
+                                import by.aurorasoft.replicator.v2.entity.TestV2Entity;
                                 import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
                                 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
                                 import org.apache.kafka.common.serialization.LongSerializer;
@@ -111,8 +111,8 @@ public final class ReplicatedServiceProcessorTest {
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
-                                import by.aurorasoft.replicator.base.v1.entity.TestV1Entity;
+                                import by.aurorasoft.replicator.v1.dto.TestV1Dto;
+                                import by.aurorasoft.replicator.v1.entity.TestV1Entity;
                                 import by.nhorushko.crudgeneric.mapper.AbstractMapper;
                                 import by.nhorushko.crudgeneric.service.CrudGenericService;
                                 import org.apache.kafka.common.serialization.LongSerializer;
@@ -138,8 +138,8 @@ public final class ReplicatedServiceProcessorTest {
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
-                                import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
+                                import by.aurorasoft.replicator.v2.dto.TestV2Dto;
+                                import by.aurorasoft.replicator.v2.entity.TestV2Entity;
                                 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
                                 import org.apache.kafka.common.serialization.LongSerializer;
                                 import org.springframework.data.jpa.repository.JpaRepository;
@@ -168,8 +168,8 @@ public final class ReplicatedServiceProcessorTest {
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v1.dto.TestV1Dto;
-                                import by.aurorasoft.replicator.base.v1.entity.TestV1Entity;
+                                import by.aurorasoft.replicator.v1.dto.TestV1Dto;
+                                import by.aurorasoft.replicator.v1.entity.TestV1Entity;
                                 import by.nhorushko.crudgeneric.mapper.AbstractMapper;
                                 import by.nhorushko.crudgeneric.service.ImmutableGenericService;
                                 import org.apache.kafka.common.serialization.LongSerializer;
@@ -195,8 +195,8 @@ public final class ReplicatedServiceProcessorTest {
                                 import by.aurorasoft.replicator.annotation.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
                                 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-                                import by.aurorasoft.replicator.base.v2.dto.TestV2Dto;
-                                import by.aurorasoft.replicator.base.v2.entity.TestV2Entity;
+                                import by.aurorasoft.replicator.v2.dto.TestV2Dto;
+                                import by.aurorasoft.replicator.v2.entity.TestV2Entity;
                                 import by.nhorushko.crudgeneric.v2.mapper.AbsMapperDto;
                                 import by.nhorushko.crudgeneric.v2.service.AbsServiceR;
                                 import org.apache.kafka.common.serialization.LongSerializer;
