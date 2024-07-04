@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolderFactory;
 import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
 import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolderFactory;
@@ -24,7 +24,7 @@ public class ReplicationConfig {
     }
 
     @Bean
-    public ReplicationProducerHolder replicationProducerHolder(final ReplicationProducerHolderFactory factory) {
+    public ReplicationProducerRegistry replicationProducerHolder(final ReplicationProducerHolderFactory factory) {
         return factory.create();
     }
 

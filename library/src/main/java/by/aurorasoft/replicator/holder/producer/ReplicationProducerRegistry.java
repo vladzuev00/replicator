@@ -9,10 +9,10 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
 @RequiredArgsConstructor
-public final class ReplicationProducerHolder {
+public final class ReplicationProducerRegistry {
     private final Map<Object, ReplicationProducer> producersByServices;
 
-    public Optional<ReplicationProducer> findForService(final Object service) {
+    public Optional<ReplicationProducer> get(final Object service) {
         return ofNullable(producersByServices.get(service));
     }
 }

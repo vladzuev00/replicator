@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolderFactory;
 import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
 import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolderFactory;
@@ -35,10 +35,10 @@ public final class ReplicationConfigTest {
     public void producerHolderShouldBeCreated() {
         final ReplicationProducerHolderFactory givenFactory = mock(ReplicationProducerHolderFactory.class);
 
-        final ReplicationProducerHolder givenHolder = mock(ReplicationProducerHolder.class);
+        final ReplicationProducerRegistry givenHolder = mock(ReplicationProducerRegistry.class);
         when(givenFactory.create()).thenReturn(givenHolder);
 
-        final ReplicationProducerHolder actual = config.replicationProducerHolder(givenFactory);
+        final ReplicationProducerRegistry actual = config.replicationProducerHolder(givenFactory);
         assertSame(givenHolder, actual);
     }
 

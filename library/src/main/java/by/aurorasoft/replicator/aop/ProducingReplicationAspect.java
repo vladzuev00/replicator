@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolder;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
@@ -22,58 +22,57 @@ import static org.springframework.transaction.support.TransactionSynchronization
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class RegisterReplicationAspect {
-    private final ReplicationProducerHolder producerHolder;
+public class ProducingReplicationAspect {
+    private final ReplicationProducerRegistry producerRegistry;
 
     @AfterReturning(pointcut = "replicatedCreate()", returning = "dto")
-    public void registerCreate(final JoinPoint joinPoint, final Object dto) {
-        registerSaveReplication(dto, joinPoint);
+    public void produceCreate(JoinPoint joinPoint, Object dto) {
+        produceSaveReplication(dto, joinPoint);
     }
 
     @AfterReturning(pointcut = "replicatedCreateAll()", returning = "dtos")
-    public void registerCreateAll(final JoinPoint joinPoint, final List<?> dtos) {
-        dtos.forEach(dto -> registerSaveReplication(dto, joinPoint));
+    public void produceCreateAll(JoinPoint joinPoint, List<?> dtos) {
+        dtos.forEach(dto -> produceSaveReplication(dto, joinPoint));
     }
 
     @AfterReturning(pointcut = "replicatedUpdate()", returning = "dto")
-    public void registerUpdate(final JoinPoint joinPoint, final Object dto) {
-        registerSaveReplication(dto, joinPoint);
+    public void produceUpdate(JoinPoint joinPoint, Object dto) {
+        produceSaveReplication(dto, joinPoint);
     }
 
     @AfterReturning("replicatedDeleteById()")
-    public void registerDeleteById(final JoinPoint joinPoint) {
-        final Object id = joinPoint.getArgs()[0];
-        registerDeleteReplication(id, joinPoint);
+    public void produceDeleteById(JoinPoint joinPoint) {
+        Object id = joinPoint.getArgs()[0];
+        produceDeleteReplication(id, joinPoint);
     }
 
     @SuppressWarnings("unchecked")
     @AfterReturning("replicatedDeleteAll()")
-    public void registerDeleteAll(final JoinPoint joinPoint) {
-        final List<Object> dtos = ((List<Object>) joinPoint.getArgs()[0]);
-        dtos.forEach(dto -> registerDeleteReplication(getId(dto), joinPoint));
+    public void produceDeleteAll(JoinPoint joinPoint) {
+        List<Object> dtos = ((List<Object>) joinPoint.getArgs()[0]);
+        dtos.forEach(dto -> produceDeleteReplication(getId(dto), joinPoint));
     }
 
-    private void registerSaveReplication(final Object dto, final JoinPoint joinPoint) {
-        registerReplication(new SaveProducedReplication(dto), joinPoint);
+    private void produceSaveReplication(Object dto, JoinPoint joinPoint) {
+        produceReplication(new SaveProducedReplication(dto), joinPoint);
     }
 
-    private void registerDeleteReplication(final Object entityId, final JoinPoint joinPoint) {
-        registerReplication(new DeleteProducedReplication(entityId), joinPoint);
+    private void produceDeleteReplication(Object entityId, JoinPoint joinPoint) {
+        produceReplication(new DeleteProducedReplication(entityId), joinPoint);
     }
 
-    private void registerReplication(final ProducedReplication replication, final JoinPoint joinPoint) {
-        final ReplicationProducer producer = getProducer(joinPoint);
-        final ReplicationCallback callback = new ReplicationCallback(producer, replication);
+    private void produceReplication(ProducedReplication replication, JoinPoint joinPoint) {
+        ReplicationProducer producer = getProducer(joinPoint);
+        ReplicationCallback callback = new ReplicationCallback(producer, replication);
         registerSynchronization(callback);
     }
 
-    private ReplicationProducer getProducer(final JoinPoint joinPoint) {
-        return producerHolder.findForService(joinPoint.getTarget())
-                .orElseThrow(() -> createNoProducerException(joinPoint));
+    private ReplicationProducer getProducer(JoinPoint joinPoint) {
+        return producerRegistry.get(joinPoint.getTarget()).orElseThrow(() -> createNoProducerException(joinPoint));
     }
 
-    private NoReplicationProducerException createNoProducerException(final JoinPoint joinPoint) {
-        return new NoReplicationProducerException("There is no replication producer for '%s'".formatted(joinPoint));
+    private IllegalStateException createNoProducerException(JoinPoint joinPoint) {
+        return new IllegalStateException("There is no replication producer for '%s'".formatted(joinPoint));
     }
 
     @Pointcut("replicatedService() && (crudServiceV1() || crudServiceV2()) && create()")
@@ -170,28 +169,6 @@ public class RegisterReplicationAspect {
         @Override
         public void afterCommit() {
             producer.send(replication);
-        }
-    }
-
-    static final class NoReplicationProducerException extends RuntimeException {
-
-        @SuppressWarnings("unused")
-        public NoReplicationProducerException() {
-
-        }
-
-        public NoReplicationProducerException(final String description) {
-            super(description);
-        }
-
-        @SuppressWarnings("unused")
-        public NoReplicationProducerException(final Exception cause) {
-            super(cause);
-        }
-
-        @SuppressWarnings("unused")
-        public NoReplicationProducerException(final String description, final Exception cause) {
-            super(description, cause);
         }
     }
 }

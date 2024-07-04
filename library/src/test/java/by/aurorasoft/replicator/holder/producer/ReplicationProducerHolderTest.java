@@ -19,9 +19,9 @@ public final class ReplicationProducerHolderTest {
     public void producerShouldBeFoundForService() {
         final Object givenService = new Object();
         final ReplicationProducer givenProducer = mock(ReplicationProducer.class);
-        final ReplicationProducerHolder givenHolder = createHolder(givenService, givenProducer);
+        final ReplicationProducerRegistry givenHolder = createHolder(givenService, givenProducer);
 
-        final Optional<ReplicationProducer> optionalActual = givenHolder.findForService(givenService);
+        final Optional<ReplicationProducer> optionalActual = givenHolder.get(givenService);
         assertTrue(optionalActual.isPresent());
         final ReplicationProducer actual = optionalActual.get();
         assertSame(givenProducer, actual);
@@ -32,13 +32,13 @@ public final class ReplicationProducerHolderTest {
         final Object firstGivenService = new Object();
         final Object secondGivenService = new Object();
         final ReplicationProducer givenProducer = mock(ReplicationProducer.class);
-        final ReplicationProducerHolder givenHolder = createHolder(firstGivenService, givenProducer);
+        final ReplicationProducerRegistry givenHolder = createHolder(firstGivenService, givenProducer);
 
-        final Optional<ReplicationProducer> optionalActual = givenHolder.findForService(secondGivenService);
+        final Optional<ReplicationProducer> optionalActual = givenHolder.get(secondGivenService);
         assertTrue(optionalActual.isEmpty());
     }
 
-    private ReplicationProducerHolder createHolder(final Object service, final ReplicationProducer producer) {
-        return new ReplicationProducerHolder(Map.of(service, producer));
+    private ReplicationProducerRegistry createHolder(final Object service, final ReplicationProducer producer) {
+        return new ReplicationProducerRegistry(Map.of(service, producer));
     }
 }

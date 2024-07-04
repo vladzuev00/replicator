@@ -45,7 +45,7 @@ public final class ReplicationProducerHolderFactoryTest {
         final ReplicationProducer firstGivenProducer = mockProducerFor(firstGivenService);
         final ReplicationProducer secondGivenProducer = mockProducerFor(secondGivenService);
 
-        final ReplicationProducerHolder actual = holderFactory.create();
+        final ReplicationProducerRegistry actual = holderFactory.create();
         final var actualProducersByServices = getProducersByServices(actual);
         final var expectedProducersByServices = Map.of(
                 firstGivenService, firstGivenProducer,
@@ -61,7 +61,7 @@ public final class ReplicationProducerHolderFactoryTest {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<Object, ReplicationProducer> getProducersByServices(final ReplicationProducerHolder holder) {
+    private Map<Object, ReplicationProducer> getProducersByServices(final ReplicationProducerRegistry holder) {
         return getFieldValue(holder, FIELD_NAME_PRODUCERS_BY_SERVICES, Map.class);
     }
 }
