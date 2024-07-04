@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.registry.producer;
+package by.aurorasoft.replicator.registry;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import static java.util.Optional.ofNullable;
 public final class ReplicationProducerRegistry {
     private final Map<Object, ReplicationProducer> producersByServices;
 
-    public Optional<ReplicationProducer> get(final Object service) {
+    public Optional<ReplicationProducer> get(Object service) {
         return ofNullable(producersByServices.get(service));
     }
 }

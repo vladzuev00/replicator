@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.registry.service;
+package by.aurorasoft.replicator.registry;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

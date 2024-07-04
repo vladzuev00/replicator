@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

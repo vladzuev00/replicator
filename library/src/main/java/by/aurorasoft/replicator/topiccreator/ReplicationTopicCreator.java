@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.topiccreator;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
-import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;

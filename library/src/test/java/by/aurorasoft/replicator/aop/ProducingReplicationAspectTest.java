@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.aop;
 
 import by.aurorasoft.replicator.aop.ProducingReplicationAspect.ReplicationCallback;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.registry.producer.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
