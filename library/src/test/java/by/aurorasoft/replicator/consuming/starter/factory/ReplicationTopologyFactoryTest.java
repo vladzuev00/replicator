@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter.factory;
 
+import by.aurorasoft.replicator.factory.ReplicationTopologyFactory;
 import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;

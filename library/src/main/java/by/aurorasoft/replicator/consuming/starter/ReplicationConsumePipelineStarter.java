@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.consuming.starter.factory.ReplicationKafkaStreamsFactory;
+import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

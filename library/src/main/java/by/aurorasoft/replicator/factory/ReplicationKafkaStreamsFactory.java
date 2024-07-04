@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consuming.starter.factory;
+package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consuming.starter.factory;
+package by.aurorasoft.replicator.factory;
 
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;

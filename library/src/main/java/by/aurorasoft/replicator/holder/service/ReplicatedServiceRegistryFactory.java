@@ -12,15 +12,15 @@ import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget
 
 @Component
 @RequiredArgsConstructor
-public final class ReplicatedServiceHolderFactory {
+public final class ReplicatedServiceRegistryFactory {
     private final ApplicationContext context;
 
-    public ReplicatedServiceHolder create() {
+    public ReplicatedServiceRegistry create() {
         return context.getBeansWithAnnotation(ReplicatedService.class)
                 .values()
                 .stream()
                 .map(this::unProxy)
-                .collect(collectingAndThen(toSet(), ReplicatedServiceHolder::new));
+                .collect(collectingAndThen(toSet(), ReplicatedServiceRegistry::new));
     }
 
     private Object unProxy(final Object service) {

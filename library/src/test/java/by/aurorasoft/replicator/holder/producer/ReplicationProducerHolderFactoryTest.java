@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.holder.producer;
 
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.producer.ReplicationProducerFactory;
 import org.junit.Before;
@@ -23,16 +23,16 @@ public final class ReplicationProducerHolderFactoryTest {
     private static final String FIELD_NAME_PRODUCERS_BY_SERVICES = "producersByServices";
 
     @Mock
-    private ReplicatedServiceHolder mockedServiceHolder;
+    private ReplicatedServiceRegistry mockedServiceHolder;
 
     @Mock
     private ReplicationProducerFactory mockedProducerFactory;
 
-    private ReplicationProducerHolderFactory holderFactory;
+    private ReplicationProducerRegistryFactory holderFactory;
 
     @Before
     public void initializeHolderFactory() {
-        holderFactory = new ReplicationProducerHolderFactory(mockedServiceHolder, mockedProducerFactory);
+        holderFactory = new ReplicationProducerRegistryFactory(mockedServiceHolder, mockedProducerFactory);
     }
 
     @Test

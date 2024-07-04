@@ -1,5 +1,9 @@
 package by.aurorasoft.replicator.consuming.starter.factory;
 
+import by.aurorasoft.replicator.factory.KafkaStreamsFactory;
+import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
+import by.aurorasoft.replicator.factory.ReplicationStreamsConfigFactory;
+import by.aurorasoft.replicator.factory.ReplicationTopologyFactory;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;

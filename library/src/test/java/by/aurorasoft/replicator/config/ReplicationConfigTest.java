@@ -1,80 +1,50 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
+import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolderFactory;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolderFactory;
-import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistryFactory;
 import org.junit.Test;
-import org.mockito.MockedConstruction;
 import org.springframework.retry.support.RetryTemplate;
-import org.springframework.retry.support.RetryTemplateBuilder;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public final class ReplicationConfigTest {
     private final ReplicationConfig config = new ReplicationConfig();
 
     @Test
-    public void serviceHolderShouldBeCreated() {
-        final ReplicatedServiceHolderFactory givenFactory = mock(ReplicatedServiceHolderFactory.class);
+    public void replicatedServiceRegistryShouldBeCreated() {
+        ReplicatedServiceRegistryFactory givenFactory = mock(ReplicatedServiceRegistryFactory.class);
 
-        final ReplicatedServiceHolder givenHolder = mock(ReplicatedServiceHolder.class);
-        when(givenFactory.create()).thenReturn(givenHolder);
+        ReplicatedServiceRegistry givenRegistry = mock(ReplicatedServiceRegistry.class);
+        when(givenFactory.create()).thenReturn(givenRegistry);
 
-        final ReplicatedServiceHolder actual = config.replicatedServiceHolder(givenFactory);
-        assertSame(givenHolder, actual);
+        ReplicatedServiceRegistry actual = config.replicatedServiceRegistry(givenFactory);
+        assertSame(givenRegistry, actual);
     }
 
     @Test
-    public void producerHolderShouldBeCreated() {
-        final ReplicationProducerHolderFactory givenFactory = mock(ReplicationProducerHolderFactory.class);
+    public void replicationProducerRegistryShouldBeCreated() {
+        ReplicationProducerRegistryFactory givenFactory = mock(ReplicationProducerRegistryFactory.class);
 
-        final ReplicationProducerRegistry givenHolder = mock(ReplicationProducerRegistry.class);
-        when(givenFactory.create()).thenReturn(givenHolder);
+        ReplicationProducerRegistry givenRegistry = mock(ReplicationProducerRegistry.class);
+        when(givenFactory.create()).thenReturn(givenRegistry);
 
-        final ReplicationProducerRegistry actual = config.replicationProducerHolder(givenFactory);
-        assertSame(givenHolder, actual);
+        ReplicationProducerRegistry actual = config.replicationProducerRegistry(givenFactory);
+        assertSame(givenRegistry, actual);
     }
 
     @Test
-    public void retryTemplateShouldBeCreated() {
-        final long givenTimeLapseMs = 255;
-        final int givenMaxAttempts = 10;
-        final var givenProperty = new ReplicationRetryConsumeProperty(givenTimeLapseMs, givenMaxAttempts);
-        final RetryTemplate givenTemplate = mock(RetryTemplate.class);
+    public void replicationRetryTemplateShouldBeCreated() {
+        ReplicationRetryTemplateFactory givenFactory = mock(ReplicationRetryTemplateFactory.class);
 
-        try (
-                final MockedConstruction<RetryTemplateBuilder> mockedBuilderConstruction = mockConstruction(
-                        RetryTemplateBuilder.class,
-                        (builder, context) -> configureBuilder(builder, givenTemplate)
-                )
-        ) {
-            config.replicationRetryTemplate(givenProperty);
+        RetryTemplate givenTemplate = mock(RetryTemplate.class);
+        when(givenFactory.create()).thenReturn(givenTemplate);
 
-            final List<RetryTemplateBuilder> constructedBuilders = mockedBuilderConstruction.constructed();
-            assertEquals(1, constructedBuilders.size());
-            final RetryTemplateBuilder constructedBuilder = constructedBuilders.get(0);
-
-            final RetryTemplate actual = constructedBuilder.build();
-            assertSame(givenTemplate, actual);
-
-            verify(constructedBuilder, times(1)).fixedBackoff(eq(givenTimeLapseMs));
-            verify(constructedBuilder, times(1)).maxAttempts(eq(givenMaxAttempts));
-            verify(constructedBuilder, times(1)).retryOn(same(RelatedReplicationNotDeliveredException.class));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void configureBuilder(final RetryTemplateBuilder builder, final RetryTemplate template) {
-        when(builder.fixedBackoff(anyLong())).thenReturn(builder);
-        when(builder.maxAttempts(anyInt())).thenReturn(builder);
-        when(builder.retryOn(any(Class.class))).thenReturn(builder);
-        when(builder.build()).thenReturn(template);
+        RetryTemplate actual = config.replicationRetryTemplate(givenFactory);
+        assertSame(givenTemplate, actual);
     }
 }

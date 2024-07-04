@@ -1,17 +1,15 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
+import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerHolderFactory;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolderFactory;
-import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
+import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.retry.support.RetryTemplate;
-import org.springframework.retry.support.RetryTemplateBuilder;
 
 @Configuration
 @ComponentScan("by.aurorasoft.replicator")
@@ -19,21 +17,17 @@ import org.springframework.retry.support.RetryTemplateBuilder;
 public class ReplicationConfig {
 
     @Bean
-    public ReplicatedServiceHolder replicatedServiceHolder(final ReplicatedServiceHolderFactory factory) {
+    public ReplicatedServiceRegistry replicatedServiceRegistry(ReplicatedServiceRegistryFactory factory) {
         return factory.create();
     }
 
     @Bean
-    public ReplicationProducerRegistry replicationProducerHolder(final ReplicationProducerHolderFactory factory) {
+    public ReplicationProducerRegistry replicationProducerRegistry(ReplicationProducerRegistryFactory factory) {
         return factory.create();
     }
 
     @Bean
-    public RetryTemplate replicationRetryTemplate(final ReplicationRetryConsumeProperty property) {
-        return new RetryTemplateBuilder()
-                .fixedBackoff(property.getTimeLapseMs())
-                .maxAttempts(property.getMaxAttempts())
-                .retryOn(RelatedReplicationNotDeliveredException.class)
-                .build();
+    public RetryTemplate replicationRetryTemplate(ReplicationRetryTemplateFactory factory) {
+        return factory.create();
     }
 }

@@ -25,11 +25,11 @@ public final class ReplicatedServiceHolderFactoryTest {
     @Mock
     private ApplicationContext mockedContext;
 
-    private ReplicatedServiceHolderFactory factory;
+    private ReplicatedServiceRegistryFactory factory;
 
     @Before
     public void initializeFactory() {
-        factory = new ReplicatedServiceHolderFactory(mockedContext);
+        factory = new ReplicatedServiceRegistryFactory(mockedContext);
     }
 
     @Test
@@ -45,7 +45,7 @@ public final class ReplicatedServiceHolderFactoryTest {
 
             final Object firstGivenService = mockServiceFor(firstGivenProxy, mockedProxyUtil);
 
-            final ReplicatedServiceHolder actual = factory.create();
+            final ReplicatedServiceRegistry actual = factory.create();
             final Set<Object> actualServices = actual.getServices();
             final Set<Object> expectedServices = Set.of(firstGivenService, secondGivenService);
             assertEquals(expectedServices, actualServices);

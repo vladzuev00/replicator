@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceHolder;
+import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistry;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 public final class ReplicationTopicCreatorTest {
 
     @Mock
-    private ReplicatedServiceHolder mockedServiceHolder;
+    private ReplicatedServiceRegistry mockedServiceHolder;
 
     @Mock
     private ReplicationTopicFactory mockedTopicFactory;
