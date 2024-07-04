@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEvent;
 
 public final class ReplicationTopicsCreatedEvent extends ApplicationEvent {
 
-    public ReplicationTopicsCreatedEvent(final ReplicationTopicCreator source) {
+    public ReplicationTopicsCreatedEvent(ReplicationTopicCreator source) {
         super(source);
     }
 }

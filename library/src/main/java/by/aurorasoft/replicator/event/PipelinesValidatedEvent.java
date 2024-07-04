@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationEvent;
 
 public final class PipelinesValidatedEvent extends ApplicationEvent {
 
-    public PipelinesValidatedEvent(final PipelineValidator source) {
+    public PipelinesValidatedEvent(PipelineValidator source) {
         super(source);
     }
 }
