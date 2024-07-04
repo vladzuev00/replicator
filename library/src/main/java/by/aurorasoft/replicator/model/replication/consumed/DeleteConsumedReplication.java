@@ -16,12 +16,12 @@ public final class DeleteConsumedReplication<E, ID> extends ConsumedReplication<
     private final ID entityId;
 
     @JsonCreator
-    public DeleteConsumedReplication(@JsonProperty(BODY) final ID entityId) {
+    public DeleteConsumedReplication(@JsonProperty(BODY) ID entityId) {
         this.entityId = entityId;
     }
 
     @Override
-    protected void executeInternal(final JpaRepository<E, ID> repository) {
+    protected void executeInternal(JpaRepository<E, ID> repository) {
         repository.deleteById(entityId);
     }
 }

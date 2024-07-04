@@ -11,10 +11,10 @@ public final class DeleteConsumedReplicationTest {
     @Test
     @SuppressWarnings("unchecked")
     public void replicationShouldBeExecutedInternally() {
-        final Long givenEntityId = 255L;
-        final var givenReplication = new DeleteConsumedReplication<TestV2Entity, Long>(givenEntityId);
+        Long givenEntityId = 255L;
+        var givenReplication = new DeleteConsumedReplication<TestV2Entity, Long>(givenEntityId);
 
-        final JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
+        JpaRepository<TestV2Entity, Long> givenRepository = mock(JpaRepository.class);
 
         givenReplication.executeInternal(givenRepository);
 
