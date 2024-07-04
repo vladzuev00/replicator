@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.annotation;
+package by.aurorasoft.replicator.annotation.processor;
 
 import org.joor.CompileOptions;
 import org.joor.Reflect;
@@ -18,29 +18,29 @@ public final class ReplicatedServiceProcessorTest {
 
     @ParameterizedTest
     @MethodSource("provideClassNameAndSourceCode")
-    public void sourceCodeShouldBeCompiled(final String givenClassName, final String givenSourceCode) {
+    public void sourceCodeShouldBeCompiled(String givenClassName, String givenSourceCode) {
         compile(givenClassName, givenSourceCode);
     }
 
     @ParameterizedTest
     @MethodSource("provideClassNameAndNotSourceCode")
-    public void sourceCodeShouldNotBeCompiled(final String givenClassName, final String givenSourceCode) {
+    public void sourceCodeShouldNotBeCompiled(String givenClassName, String givenSourceCode) {
         compileExpectingAnnotatingError(givenClassName, givenSourceCode);
     }
 
-    private void compile(final String className, final String sourceCode) {
+    private void compile(String className, String sourceCode) {
         Reflect.compile(className, sourceCode, getCompileOptions());
     }
 
-    private void compileExpectingAnnotatingError(final String className, final String sourceCode) {
+    private void compileExpectingAnnotatingError(String className, String sourceCode) {
         try {
             compile(className, sourceCode);
-        } catch (final ReflectException exception) {
+        } catch (ReflectException exception) {
             assertTrue(isWrongAnnotatingError(exception));
         }
     }
 
-    private boolean isWrongAnnotatingError(final ReflectException exception) {
+    private boolean isWrongAnnotatingError(ReflectException exception) {
         return exception.getMessage().contains(WRONG_ANNOTATING_MESSAGE);
     }
 
@@ -228,7 +228,7 @@ public final class ReplicatedServiceProcessorTest {
                                         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
                                         topicConfig = @TopicConfig(name = "sync-person")
                                 )
-                                public final class TestService {
+                                public class TestService {
                                                         
                                 }"""
                 )

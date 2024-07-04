@@ -1,5 +1,6 @@
-package by.aurorasoft.replicator.annotation;
+package by.aurorasoft.replicator.annotation.processor;
 
+import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.nhorushko.crudgeneric.service.RudGenericService;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.google.auto.service.AutoService;
@@ -14,7 +15,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -26,20 +26,19 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 
 @AutoService(Processor.class)
 public final class ReplicatedServiceProcessor extends AbstractProcessor {
-    private static final Class<? extends Annotation> REPLICATED_SERVICE = ReplicatedService.class;
 
     @SuppressWarnings("deprecation")
     private static final Set<String> RUD_SERVICE_NAMES = getNames(AbsServiceRUD.class, RudGenericService.class);
 
     @Override
-    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         processInternal(annotations, env);
         return true;
     }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(REPLICATED_SERVICE.getName());
+        return Set.of(ReplicatedService.class.getName());
     }
 
     @Override
@@ -47,50 +46,50 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
         return latestSupported();
     }
 
-    private static Set<String> getNames(final Class<?>... classes) {
+    private static Set<String> getNames(Class<?>... classes) {
         return stream(classes)
                 .map(Class::getName)
                 .collect(toCollection(LinkedHashSet::new));
     }
 
-    private void processInternal(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
+    private void processInternal(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         annotations.stream()
                 .flatMap(annotation -> getAnnotatedElements(annotation, env))
                 .filter(element -> !isRUDService(element))
                 .forEach(this::alertWrongAnnotating);
     }
 
-    private Stream<? extends Element> getAnnotatedElements(final TypeElement annotation, final RoundEnvironment env) {
+    private Stream<? extends Element> getAnnotatedElements(TypeElement annotation, RoundEnvironment env) {
         return env.getElementsAnnotatedWith(annotation).stream();
     }
 
-    private boolean isRUDService(final Element element) {
+    private boolean isRUDService(Element element) {
         return RUD_SERVICE_NAMES.stream()
                 .map(this::getRawType)
                 .anyMatch(rawServiceType -> isInstanceOf(element, rawServiceType));
     }
 
-    private TypeMirror getRawType(final String name) {
+    private TypeMirror getRawType(String name) {
         return getTypeUtils().erasure(getType(name));
     }
 
-    private TypeMirror getType(final String name) {
+    private TypeMirror getType(String name) {
         return getElementUtils()
                 .getTypeElement(name)
                 .asType();
     }
 
-    private boolean isInstanceOf(final Element element, final TypeMirror type) {
+    private boolean isInstanceOf(Element element, TypeMirror type) {
         return getTypeUtils().isAssignable(element.asType(), type);
     }
 
-    private void alertWrongAnnotating(final Element element) {
+    private void alertWrongAnnotating(Element element) {
         getMessager().printMessage(ERROR, getWrongAnnotatingMessage(), element);
     }
 
     private String getWrongAnnotatingMessage() {
         return "'@%s' can be applied only for subclass one of '%s'".formatted(
-                REPLICATED_SERVICE.getName(),
+                ReplicatedService.class.getName(),
                 RUD_SERVICE_NAMES
         );
     }
