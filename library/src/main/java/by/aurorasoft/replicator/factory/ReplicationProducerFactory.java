@@ -20,40 +20,40 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 public final class ReplicationProducerFactory {
     private final String bootstrapAddress;
 
-    public ReplicationProducerFactory(@Value("${spring.kafka.bootstrap-servers}") final String bootstrapAddress) {
+    public ReplicationProducerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapAddress) {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public ReplicationProducer create(final Object service) {
-        final String topicName = getTopicName(service);
-        final KafkaTemplate<Object, ProducedReplication> kafkaTemplate = createKafkaTemplate(service);
+    public ReplicationProducer create(Object service) {
+        String topicName = getTopicName(service);
+        KafkaTemplate<Object, ProducedReplication> kafkaTemplate = createKafkaTemplate(service);
         return new ReplicationProducer(topicName, kafkaTemplate);
     }
 
-    private String getTopicName(final Object service) {
+    private String getTopicName(Object service) {
         return getTopicConfig(service).name();
     }
 
-    private KafkaTemplate<Object, ProducedReplication> createKafkaTemplate(final Object service) {
-        final ProducerConfig producerConfig = getProducerConfig(service);
-        final Map<String, Object> configsByKeys = createConfigsByKeys(producerConfig);
-        final ProducerFactory<Object, ProducedReplication> factory = new DefaultKafkaProducerFactory<>(configsByKeys);
+    private KafkaTemplate<Object, ProducedReplication> createKafkaTemplate(Object service) {
+        ProducerConfig producerConfig = getProducerConfig(service);
+        Map<String, Object> configsByKeys = createConfigsByKeys(producerConfig);
+        ProducerFactory<Object, ProducedReplication> factory = new DefaultKafkaProducerFactory<>(configsByKeys);
         return new KafkaTemplate<>(factory);
     }
 
-    private ProducerConfig getProducerConfig(final Object service) {
+    private ProducerConfig getProducerConfig(Object service) {
         return getReplicatedServiceAnnotation(service).producerConfig();
     }
 
-    private TopicConfig getTopicConfig(final Object service) {
+    private TopicConfig getTopicConfig(Object service) {
         return getReplicatedServiceAnnotation(service).topicConfig();
     }
 
-    private ReplicatedService getReplicatedServiceAnnotation(final Object service) {
+    private ReplicatedService getReplicatedServiceAnnotation(Object service) {
         return service.getClass().getAnnotation(ReplicatedService.class);
     }
 
-    private Map<String, Object> createConfigsByKeys(final ProducerConfig config) {
+    private Map<String, Object> createConfigsByKeys(ProducerConfig config) {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 KEY_SERIALIZER_CLASS_CONFIG, config.idSerializer(),

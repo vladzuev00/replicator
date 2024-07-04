@@ -1,6 +1,6 @@
-package by.aurorasoft.replicator.producer;
+package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.factory.ReplicationProducerFactory;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.v2.service.SecondTestV2CRUDService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,11 +24,11 @@ public final class ReplicationProducerFactoryTest {
 
     @Test
     public void producerShouldBeCreated() {
-        final SecondTestV2CRUDService givenService = new SecondTestV2CRUDService();
+        SecondTestV2CRUDService givenService = new SecondTestV2CRUDService();
 
-        final ReplicationProducer actual = factory.create(givenService);
-        final TestProducerMetadata actualMetadata = createMetadata(actual);
-        final TestProducerMetadata expectedMetadata = TestProducerMetadata.builder()
+        ReplicationProducer actual = factory.create(givenService);
+        TestProducerMetadata actualMetadata = createMetadata(actual);
+        TestProducerMetadata expectedMetadata = TestProducerMetadata.builder()
                 .topicName("second-topic")
                 .keySerializerType(LongSerializer.class)
                 .batchSize(15)
@@ -39,7 +39,7 @@ public final class ReplicationProducerFactoryTest {
         assertEquals(expectedMetadata, actualMetadata);
     }
 
-    private TestProducerMetadata createMetadata(final ReplicationProducer producer) {
+    private TestProducerMetadata createMetadata(ReplicationProducer producer) {
         return TestProducerMetadata.builder()
                 .topicName(getTopicName(producer))
                 .keySerializerType(getKeySerializerType(producer))
@@ -50,46 +50,44 @@ public final class ReplicationProducerFactoryTest {
                 .build();
     }
 
-    private String getTopicName(final ReplicationProducer producer) {
+    private String getTopicName(ReplicationProducer producer) {
         return getFieldValue(producer, FIELD_NAME_PRODUCER_TOPIC_NAME, String.class);
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends Serializer<?>> getKeySerializerType(final ReplicationProducer producer) {
+    private Class<? extends Serializer<?>> getKeySerializerType(ReplicationProducer producer) {
         return getKafkaTemplateProperty(producer, KEY_SERIALIZER_CLASS_CONFIG, Class.class);
     }
 
-    private int getBatchSize(final ReplicationProducer producer) {
+    private int getBatchSize(ReplicationProducer producer) {
         return getKafkaTemplateProperty(producer, BATCH_SIZE_CONFIG, Integer.class);
     }
 
-    private int getLingerMs(final ReplicationProducer producer) {
+    private int getLingerMs(ReplicationProducer producer) {
         return getKafkaTemplateProperty(producer, LINGER_MS_CONFIG, Integer.class);
     }
 
-    private int getDeliveryTimeout(final ReplicationProducer producer) {
+    private int getDeliveryTimeout(ReplicationProducer producer) {
         return getKafkaTemplateProperty(producer, DELIVERY_TIMEOUT_MS_CONFIG, Integer.class);
     }
 
-    private boolean getIdempotenceEnable(final ReplicationProducer producer) {
+    private boolean getIdempotenceEnable(ReplicationProducer producer) {
         return getKafkaTemplateProperty(producer, ENABLE_IDEMPOTENCE_CONFIG, Boolean.class);
     }
 
-    private <P> P getKafkaTemplateProperty(final ReplicationProducer producer,
-                                           final String propertyKey,
-                                           final Class<P> propertyType) {
-        final Object value = getKafkaTemplateProperty(producer, propertyKey);
+    private <P> P getKafkaTemplateProperty(ReplicationProducer producer, String propertyKey, Class<P> propertyType) {
+        Object value = getKafkaTemplateProperty(producer, propertyKey);
         return propertyType.cast(value);
     }
 
-    private Object getKafkaTemplateProperty(final ReplicationProducer producer, final String propertyKey) {
+    private Object getKafkaTemplateProperty(ReplicationProducer producer, String propertyKey) {
         return getKafkaTemplate(producer)
                 .getProducerFactory()
                 .getConfigurationProperties()
                 .get(propertyKey);
     }
 
-    private KafkaTemplate<?, ?> getKafkaTemplate(final ReplicationProducer producer) {
+    private KafkaTemplate<?, ?> getKafkaTemplate(ReplicationProducer producer) {
         return getFieldValue(producer, FIELD_NAME_PRODUCER_KAFKA_TEMPLATE, KafkaTemplate.class);
     }
 
