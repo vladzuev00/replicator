@@ -14,9 +14,9 @@ public final class ReplicationKafkaStreamsFactory {
     private final ReplicationStreamsConfigFactory configFactory;
     private final KafkaStreamsFactory streamsFactory;
 
-    public KafkaStreams create(final ReplicationConsumePipeline<?, ?> pipeline) {
-        final Topology topology = topologyFactory.create(pipeline);
-        final StreamsConfig config = configFactory.create(pipeline);
+    public KafkaStreams create(ReplicationConsumePipeline<?, ?> pipeline) {
+        Topology topology = topologyFactory.create(pipeline);
+        StreamsConfig config = configFactory.create(pipeline);
         return streamsFactory.create(topology, config);
     }
 }

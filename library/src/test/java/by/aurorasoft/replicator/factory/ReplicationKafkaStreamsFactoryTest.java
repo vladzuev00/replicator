@@ -1,9 +1,5 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.factory.KafkaStreamsFactory;
-import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
-import by.aurorasoft.replicator.factory.ReplicationStreamsConfigFactory;
-import by.aurorasoft.replicator.factory.ReplicationTopologyFactory;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
@@ -44,18 +40,18 @@ public final class ReplicationKafkaStreamsFactoryTest {
 
     @Test
     public void streamsShouldBeCreated() {
-        final ReplicationConsumePipeline<?, ?> givenPipeline = mock(ReplicationConsumePipeline.class);
+        ReplicationConsumePipeline<?, ?> givenPipeline = mock(ReplicationConsumePipeline.class);
 
-        final Topology givenTopology = mock(Topology.class);
+        Topology givenTopology = mock(Topology.class);
         when(mockedTopologyFactory.create(same(givenPipeline))).thenReturn(givenTopology);
 
-        final StreamsConfig givenConfig = mock(StreamsConfig.class);
+        StreamsConfig givenConfig = mock(StreamsConfig.class);
         when(mockedConfigFactory.create(same(givenPipeline))).thenReturn(givenConfig);
 
-        final KafkaStreams givenKafkaStreams = mock(KafkaStreams.class);
+        KafkaStreams givenKafkaStreams = mock(KafkaStreams.class);
         when(mockedStreamsFactory.create(same(givenTopology), same(givenConfig))).thenReturn(givenKafkaStreams);
 
-        final KafkaStreams actual = replicationStreamsFactory.create(givenPipeline);
+        KafkaStreams actual = replicationStreamsFactory.create(givenPipeline);
         assertSame(givenKafkaStreams, actual);
     }
 }
