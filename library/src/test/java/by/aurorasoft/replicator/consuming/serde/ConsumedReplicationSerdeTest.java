@@ -26,9 +26,8 @@ public final class ConsumedReplicationSerdeTest {
 
     @ParameterizedTest
     @MethodSource("provideJsonAndExpectedReplication")
-    public void replicationShouldBeDeserialized(final String givenJson,
-                                                final ConsumedReplication<TestV2Entity, Long> expected) {
-        final ConsumedReplication<TestV2Entity, Long> actual = deserialize(givenJson);
+    public void replicationShouldBeDeserialized(String givenJson, ConsumedReplication<TestV2Entity, Long> expected) {
+        ConsumedReplication<TestV2Entity, Long> actual = deserialize(givenJson);
         assertEquals(expected, actual);
     }
 
@@ -37,7 +36,7 @@ public final class ConsumedReplicationSerdeTest {
         });
     }
 
-    private ConsumedReplication<TestV2Entity, Long> deserialize(final String json) {
+    private ConsumedReplication<TestV2Entity, Long> deserialize(String json) {
         return serde.deserializer().deserialize(GIVEN_TOPIC_NAME, json.getBytes());
     }
 
