@@ -10,18 +10,18 @@ import static java.lang.Runtime.getRuntime;
 @Component
 public final class KafkaStreamsFactory {
 
-    public KafkaStreams create(final Topology topology, final StreamsConfig config) {
-        final KafkaStreams streams = new KafkaStreams(topology, config);
+    public KafkaStreams create(Topology topology, StreamsConfig config) {
+        KafkaStreams streams = new KafkaStreams(topology, config);
         try {
             closeOnShutdown(streams);
             return streams;
-        } catch (final Exception exception) {
+        } catch (Exception exception) {
             streams.close();
             throw exception;
         }
     }
 
-    private static void closeOnShutdown(final KafkaStreams streams) {
+    private static void closeOnShutdown(KafkaStreams streams) {
         getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }

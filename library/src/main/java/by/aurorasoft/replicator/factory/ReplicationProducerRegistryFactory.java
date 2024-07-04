@@ -1,7 +1,7 @@
-package by.aurorasoft.replicator.holder.producer;
+package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistry;
-import by.aurorasoft.replicator.producer.ReplicationProducerFactory;
+import by.aurorasoft.replicator.registry.producer.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

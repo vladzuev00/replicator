@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.holder.producer;
+package by.aurorasoft.replicator.registry.producer;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,8 @@
 package by.aurorasoft.replicator.topiccreator;
 
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
+import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.Before;
 import org.junit.Test;

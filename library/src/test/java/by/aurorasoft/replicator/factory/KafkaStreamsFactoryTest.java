@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.factory.KafkaStreamsFactory;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
@@ -42,15 +41,15 @@ public final class KafkaStreamsFactoryTest {
 
     @Test
     public void streamsShouldBeCreated() {
-        try (final MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class)) {
-            final Topology givenTopology = mock(Topology.class);
-            final StreamsConfig givenConfig = mock(StreamsConfig.class);
+        try (MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class)) {
+            Topology givenTopology = mock(Topology.class);
+            StreamsConfig givenConfig = mock(StreamsConfig.class);
 
-            final KafkaStreams actual = factory.create(givenTopology, givenConfig);
+            KafkaStreams actual = factory.create(givenTopology, givenConfig);
 
-            final List<KafkaStreams> constructedStreams = mockedConstruction.constructed();
+            List<KafkaStreams> constructedStreams = mockedConstruction.constructed();
             assertEquals(1, constructedStreams.size());
-            final KafkaStreams constructedStream = constructedStreams.get(0);
+            KafkaStreams constructedStream = constructedStreams.get(0);
 
             assertSame(constructedStream, actual);
 
@@ -61,38 +60,38 @@ public final class KafkaStreamsFactoryTest {
 
     @Test
     public void streamsShouldNotBeCreatedBecauseOfFailedAddingShutdownHook() {
-        try (final MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class)) {
-            final Topology givenTopology = mock(Topology.class);
-            final StreamsConfig givenConfig = mock(StreamsConfig.class);
+        try (MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class)) {
+            Topology givenTopology = mock(Topology.class);
+            StreamsConfig givenConfig = mock(StreamsConfig.class);
 
             mockExceptionOnAddingShutdownHook();
 
             createStreamsVerifyingException(givenTopology, givenConfig);
 
-            final List<KafkaStreams> constructedStreams = mockedConstruction.constructed();
+            List<KafkaStreams> constructedStreams = mockedConstruction.constructed();
             assertEquals(1, constructedStreams.size());
-            final KafkaStreams constructedStream = constructedStreams.get(0);
+            KafkaStreams constructedStream = constructedStreams.get(0);
 
             verifyClosed(constructedStream);
             verifyAddShutdownHook();
         }
     }
 
-    private void verifyNotClosed(final KafkaStreams streams) {
+    private void verifyNotClosed(KafkaStreams streams) {
         verifyCallingClose(streams, 0);
     }
 
-    private void verifyClosed(final KafkaStreams streams) {
+    private void verifyClosed(KafkaStreams streams) {
         verifyCallingClose(streams, 1);
     }
 
-    private void verifyCallingClose(final KafkaStreams streams, final int times) {
+    private void verifyCallingClose(KafkaStreams streams, int times) {
         verify(streams, times(times)).close();
     }
 
-    private void verifyClosingShutdownHook(final KafkaStreams streams) {
+    private void verifyClosingShutdownHook(KafkaStreams streams) {
         verifyAddShutdownHook();
-        final Runnable capturedThread = threadArgumentCaptor.getValue();
+        Runnable capturedThread = threadArgumentCaptor.getValue();
         capturedThread.run();
         verifyClosed(streams);
     }
@@ -107,12 +106,12 @@ public final class KafkaStreamsFactoryTest {
                 .addShutdownHook(any(Thread.class));
     }
 
-    private void createStreamsVerifyingException(final Topology topology, final StreamsConfig config) {
+    private void createStreamsVerifyingException(Topology topology, StreamsConfig config) {
         boolean exceptionArisen;
         try {
             factory.create(topology, config);
             exceptionArisen = false;
-        } catch (final TestException cause) {
+        } catch (TestException cause) {
             exceptionArisen = true;
         }
         assertTrue(exceptionArisen);
@@ -120,24 +119,5 @@ public final class KafkaStreamsFactoryTest {
 
     private static final class TestException extends RuntimeException {
 
-        @SuppressWarnings("unused")
-        public TestException() {
-
-        }
-
-        @SuppressWarnings("unused")
-        public TestException(final String description) {
-            super(description);
-        }
-
-        @SuppressWarnings("unused")
-        public TestException(final Exception cause) {
-            super(cause);
-        }
-
-        @SuppressWarnings("unused")
-        public TestException(final String description, final Exception cause) {
-            super(description, cause);
-        }
     }
 }

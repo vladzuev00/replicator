@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.topiccreator;
+package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;

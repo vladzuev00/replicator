@@ -1,6 +1,7 @@
-package by.aurorasoft.replicator.holder.service;
+package by.aurorasoft.replicator.registry.service;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

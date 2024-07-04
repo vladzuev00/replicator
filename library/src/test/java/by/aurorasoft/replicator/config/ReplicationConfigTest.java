@@ -1,10 +1,10 @@
 package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.holder.producer.ReplicationProducerRegistryFactory;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistry;
-import by.aurorasoft.replicator.holder.service.ReplicatedServiceRegistryFactory;
+import by.aurorasoft.replicator.registry.producer.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.registry.service.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
 import org.junit.Test;
 import org.springframework.retry.support.RetryTemplate;
 
