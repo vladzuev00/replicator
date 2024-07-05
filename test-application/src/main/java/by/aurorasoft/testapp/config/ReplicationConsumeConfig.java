@@ -13,27 +13,13 @@ import org.springframework.context.annotation.Configuration;
 import static org.apache.kafka.common.serialization.Serdes.Long;
 
 @Configuration
-public class ReplicationConsumingConfig {
-
-    @Value("${kafka.topic.sync-person.name}")
-    private String personTopic;
-
-    @Value("${replication.consume.pipeline.id.person}")
-    private String personPipelineId;
-
-    @Value("${kafka.topic.sync-address.name}")
-    private String addressTopic;
-
-    @Value("${replication.consume.pipeline.id.address}")
-    private String addressPipelineId;
+public class ReplicationConsumeConfig {
 
     @Bean
-    public ReplicationConsumePipeline<ReplicatedPersonEntity, Long> personPipeline(
-            final ReplicatedPersonRepository repository
-    ) {
+    public ReplicationConsumePipeline<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
+                                                                                   ReplicatedPersonRepository repository) {
         return ReplicationConsumePipeline.<ReplicatedPersonEntity, Long>builder()
-                .id(personPipelineId)
-                .topic(personTopic)
+                .topic(topic)
                 .idSerde(Long())
                 .replicationTypeReference(new TypeReference<>() {
                 })
@@ -42,12 +28,10 @@ public class ReplicationConsumingConfig {
     }
 
     @Bean
-    public ReplicationConsumePipeline<ReplicatedAddressEntity, Long> addressPipeline(
-            final ReplicatedAddressRepository repository
-    ) {
+    public ReplicationConsumePipeline<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
+                                                                                     ReplicatedAddressRepository repository) {
         return ReplicationConsumePipeline.<ReplicatedAddressEntity, Long>builder()
-                .id(addressPipelineId)
-                .topic(addressTopic)
+                .topic(topic)
                 .idSerde(Long())
                 .replicationTypeReference(new TypeReference<>() {
                 })
