@@ -57,13 +57,13 @@ public final class ReplicationTopicCreatorTest {
 
     @Test
     public void topicsShouldBeCreated() {
-        final Object firstGivenService = new Object();
-        final Object secondGivenService = new Object();
-        final Set<Object> givenServices = Set.of(firstGivenService, secondGivenService);
+        Object firstGivenService = new Object();
+        Object secondGivenService = new Object();
+        Set<Object> givenServices = Set.of(firstGivenService, secondGivenService);
         when(mockedServiceHolder.getServices()).thenReturn(givenServices);
 
-        final NewTopic firstGivenTopic = mockTopicForService("first-topic", 1, 1, firstGivenService);
-        final NewTopic secondGivenTopic = mockTopicForService("second-topic", 2, 2, secondGivenService);
+        NewTopic firstGivenTopic = mockTopicForService("first-topic", 1, 1, firstGivenService);
+        NewTopic secondGivenTopic = mockTopicForService("second-topic", 2, 2, secondGivenService);
 
         creator.createTopics();
 
@@ -71,25 +71,22 @@ public final class ReplicationTopicCreatorTest {
         verifySuccessEventPublishing();
     }
 
-    private NewTopic mockTopicForService(final String topicName,
-                                         final int numPartitions,
-                                         final int replicationFactor,
-                                         final Object service) {
-        final NewTopic topic = new NewTopic(topicName, numPartitions, (short) replicationFactor);
+    private NewTopic mockTopicForService(String topicName, int numPartitions, int replicationFactor, Object service) {
+        NewTopic topic = new NewTopic(topicName, numPartitions, (short) replicationFactor);
         when(mockedTopicFactory.create(same(service))).thenReturn(topic);
         return topic;
     }
 
-    private void verifyCreation(final NewTopic... topics) {
+    private void verifyCreation(NewTopic... topics) {
         verify(mockedKafkaAdmin, times(topics.length)).createOrModifyTopics(topicArgumentCaptor.capture());
-        final List<NewTopic> actual = topicArgumentCaptor.getAllValues();
-        final List<NewTopic> expected = asList(topics);
+        List<NewTopic> actual = topicArgumentCaptor.getAllValues();
+        List<NewTopic> expected = asList(topics);
         assertEquals(expected, actual);
     }
 
     private void verifySuccessEventPublishing() {
         verify(mockedEventPublisher, times(1)).publishEvent(eventArgumentCaptor.capture());
-        final ApplicationEvent actual = eventArgumentCaptor.getValue();
+        ApplicationEvent actual = eventArgumentCaptor.getValue();
         assertTrue(actual instanceof ReplicationTopicsCreatedEvent);
         assertSame(creator, actual.getSource());
     }
