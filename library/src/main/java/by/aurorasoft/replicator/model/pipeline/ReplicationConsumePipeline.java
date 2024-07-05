@@ -1,34 +1,17 @@
 package by.aurorasoft.replicator.model.pipeline;
 
-import by.aurorasoft.replicator.consuming.serde.ConsumedReplicationSerde;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.Builder;
 import lombok.Getter;
-import org.apache.kafka.common.serialization.Serde;
+import lombok.RequiredArgsConstructor;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Objects;
-
+@RequiredArgsConstructor
 @Getter
 public final class ReplicationConsumePipeline<E, ID> {
     private final String topic;
-    private final Serde<ID> idSerde;
-    private final Serde<ConsumedReplication<E, ID>> replicationSerde;
+    private final Deserializer<ID> idDeserializer;
+    private final TypeReference<ConsumedReplication<E, ID>> replicationTypeReference;
     private final JpaRepository<E, ID> repository;
-
-    @Builder
-    public ReplicationConsumePipeline(String topic,
-                                      Serde<ID> idSerde,
-                                      TypeReference<ConsumedReplication<E, ID>> replicationTypeReference,
-                                      JpaRepository<E, ID> repository) {
-        this.topic = requireNonNull(topic);
-        this.idSerde = requireNonNull(idSerde);
-        replicationSerde = new ConsumedReplicationSerde<>(requireNonNull(replicationTypeReference));
-        this.repository = requireNonNull(repository);
-    }
-
-    private <T> T requireNonNull(T object) {
-        return Objects.requireNonNull(object, "All properties of pipeline should be defined");
-    }
 }

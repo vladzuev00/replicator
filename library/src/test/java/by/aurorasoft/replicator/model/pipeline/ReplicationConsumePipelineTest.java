@@ -31,7 +31,7 @@ public final class ReplicationConsumePipelineTest {
         );
 
         assertSame(givenTopic, actual.getTopic());
-        assertSame(givenIdSerde, actual.getIdSerde());
+        assertSame(givenIdSerde, actual.getIdDeserializer());
         assertSame(givenRepository, actual.getRepository());
         assertSame(givenReplicationTypeReference, getReplicationTypeReference(actual));
     }
