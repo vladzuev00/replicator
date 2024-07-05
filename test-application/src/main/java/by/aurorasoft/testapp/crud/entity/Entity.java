@@ -11,7 +11,7 @@ public abstract class Entity implements by.nhorushko.crudgeneric.v2.domain.Abstr
 
     @Override
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-    public final boolean equals(final Object otherObject) {
+    public final boolean equals(Object otherObject) {
         if (this == otherObject) {
             return true;
         }
@@ -21,7 +21,7 @@ public abstract class Entity implements by.nhorushko.crudgeneric.v2.domain.Abstr
         if (Hibernate.getClass(this) != Hibernate.getClass(otherObject)) {
             return false;
         }
-        final Entity other = (Entity) otherObject;
+        Entity other = (Entity) otherObject;
         return Objects.equals(getId(), other.getId());
     }
 
