@@ -32,7 +32,7 @@ public final class PipelineValidatorTest {
 
     @Test
     public void constraintShouldBeRespected() {
-        final PipelineValidator givenValidator = createValidator(
+        PipelineValidator givenValidator = createValidator(
                 createPipeline("first-pipeline"),
                 createPipeline("second-pipeline"),
                 createPipeline("third-pipeline")
@@ -45,7 +45,7 @@ public final class PipelineValidatorTest {
 
     @Test
     public void constraintShouldNotBeRespected() {
-        final PipelineValidator givenValidator = createValidator(
+        PipelineValidator givenValidator = createValidator(
                 createPipeline("first-pipeline"),
                 createPipeline("second-pipeline"),
                 createPipeline("second-pipeline"),
@@ -59,7 +59,7 @@ public final class PipelineValidatorTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static ReplicationConsumePipeline<?, ?> createPipeline(final String id) {
+    private static ReplicationConsumePipeline<?, ?> createPipeline(String id) {
         return ReplicationConsumePipeline.builder()
                 .property(new ReplicationConsumeProperty("test-topic", id) {
                 })
@@ -70,24 +70,24 @@ public final class PipelineValidatorTest {
                 .build();
     }
 
-    private PipelineValidator createValidator(final ReplicationConsumePipeline<?, ?>... pipelines) {
+    private PipelineValidator createValidator(ReplicationConsumePipeline<?, ?>... pipelines) {
         return new PipelineValidator(Arrays.asList(pipelines), mockedEventPublisher);
     }
 
-    private void verifySuccessValidation(final PipelineValidator validator) {
+    private void verifySuccessValidation(PipelineValidator validator) {
         verify(mockedEventPublisher, times(1)).publishEvent(eventArgumentCaptor.capture());
-        final ApplicationEvent capturedEvent = eventArgumentCaptor.getValue();
+        ApplicationEvent capturedEvent = eventArgumentCaptor.getValue();
         assertTrue(capturedEvent instanceof PipelinesValidatedEvent);
         assertSame(validator, capturedEvent.getSource());
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void validateExpectingFail(final PipelineValidator validator, final String expectedMessage) {
+    private void validateExpectingFail(PipelineValidator validator, String expectedMessage) {
         boolean exceptionArisen;
         try {
             validator.validate();
             exceptionArisen = false;
-        } catch (final PipelineConstraintViolationException exception) {
+        } catch (PipelineConstraintViolationException exception) {
             exceptionArisen = true;
             assertEquals(expectedMessage, exception.getMessage());
         }

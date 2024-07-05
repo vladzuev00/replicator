@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.validator;
 
-import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
+import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -28,7 +28,7 @@ public final class PipelineValidator {
 
     @EventListener(ContextRefreshedEvent.class)
     public void validate() {
-        final List<String> duplicatedIds = findDuplicatedIds();
+        List<String> duplicatedIds = findDuplicatedIds();
         if (duplicatedIds.isEmpty()) {
             publishSuccessEvent();
         } else {
@@ -51,34 +51,19 @@ public final class PipelineValidator {
         eventPublisher.publishEvent(new PipelinesValidatedEvent(this));
     }
 
-    private void throwConstraintViolationException(final List<String> duplicatedIds) {
-        final String message = createConstraintViolationMessage(duplicatedIds);
+    private void throwConstraintViolationException(List<String> duplicatedIds) {
+        String message = createConstraintViolationMessage(duplicatedIds);
         throw new PipelineConstraintViolationException(message);
     }
 
-    private String createConstraintViolationMessage(final List<String> duplicatedIds) {
+    private String createConstraintViolationMessage(List<String> duplicatedIds) {
         return VIOLATION_MESSAGE_TEMPLATE.formatted(join(VIOLATION_MESSAGE_IDS_DELIMITER, duplicatedIds));
     }
 
     static final class PipelineConstraintViolationException extends RuntimeException {
 
-        @SuppressWarnings("unused")
-        public PipelineConstraintViolationException() {
-
-        }
-
-        public PipelineConstraintViolationException(final String description) {
+        public PipelineConstraintViolationException(String description) {
             super(description);
-        }
-
-        @SuppressWarnings("unused")
-        public PipelineConstraintViolationException(final Exception cause) {
-            super(cause);
-        }
-
-        @SuppressWarnings("unused")
-        public PipelineConstraintViolationException(final String description, final Exception cause) {
-            super(description, cause);
         }
     }
 }
