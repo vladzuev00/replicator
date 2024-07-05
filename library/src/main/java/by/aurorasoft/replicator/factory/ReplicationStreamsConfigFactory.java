@@ -19,7 +19,7 @@ public final class ReplicationStreamsConfigFactory {
 
     public StreamsConfig create(ReplicationConsumePipeline<?, ?> pipeline) {
         Map<String, Object> configsByNames = Map.of(
-                APPLICATION_ID_CONFIG, pipeline.getId(),
+                APPLICATION_ID_CONFIG, pipeline.getTopic(),
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE_V2
         );
