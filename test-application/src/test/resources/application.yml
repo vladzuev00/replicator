@@ -19,19 +19,11 @@ spring:
     bootstrap-servers: 127.0.0.1:9092
     app-id: test-app
 
-kafka:
-  topic:
-    sync-person:
-      name: sync-person
-    sync-address:
-      name: sync-address
-
 replication:
   consume:
-    pipeline:
-      id:
-        person: person-replication-consume-pipeline
-        address: address-replication-consume-pipeline
+    topic:
+      person: sync-person
+      address: sync-address
     retry:
       time-lapse-ms: 1000
       max-attempts: 10
