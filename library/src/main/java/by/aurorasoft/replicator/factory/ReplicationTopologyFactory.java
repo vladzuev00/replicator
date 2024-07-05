@@ -1,11 +1,13 @@
 package by.aurorasoft.replicator.factory;
 
+import by.aurorasoft.replicator.consuming.serde.ConsumingSerde;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +27,17 @@ public final class ReplicationTopologyFactory {
     public <E, ID> Topology create(ReplicationConsumePipeline<E, ID> pipeline) {
         StreamsBuilder builder = new StreamsBuilder();
         builder
-                .stream(pipeline.getTopic(), with(pipeline.getIdDeserializer(), pipeline.getReplicationSerde()))
+                .stream(pipeline.getTopic(), with(getIdSerde(pipeline), getReplicationSerde(pipeline)))
                 .foreach((id, replication) -> executeRetrying(replication, pipeline.getRepository()));
         return builder.build();
+    }
+
+    private <ID> ConsumingSerde<ID> getIdSerde(ReplicationConsumePipeline<?, ID> pipeline) {
+        return new ConsumingSerde<>(pipeline.getIdDeserializer());
+    }
+
+    private <E, ID> ConsumingSerde<ConsumedReplication<E, ID>> getReplicationSerde(ReplicationConsumePipeline<E, ID> pipeline) {
+        return new ConsumingSerde<>(new JsonDeserializer<>(pipeline.getReplicationTypeReference(), false));
     }
 
     private <E, ID> void executeRetrying(ConsumedReplication<E, ID> replication, JpaRepository<E, ID> repository) {

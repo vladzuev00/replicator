@@ -5,6 +5,7 @@ import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
 import by.aurorasoft.replicator.v2.entity.TestV2Entity;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.Topology;
@@ -23,7 +24,6 @@ import org.springframework.retry.support.RetryTemplate;
 
 import java.util.Properties;
 
-import static org.apache.kafka.common.serialization.Serdes.Long;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.mockito.Mockito.*;
@@ -67,10 +67,11 @@ public final class ReplicationTopologyFactoryTest {
     private ReplicationConsumePipeline<TestV2Entity, Long> createPipeline(JpaRepository<TestV2Entity, Long> repository) {
         return new ReplicationConsumePipeline<>(
                 GIVEN_TOPIC,
-                Long(),
+                new LongDeserializer(),
                 new TypeReference<>() {
                 },
-                repository);
+                repository
+        );
     }
 
     private TopologyTestDriver createDriver(ReplicationConsumePipeline<TestV2Entity, Long> pipeline) {

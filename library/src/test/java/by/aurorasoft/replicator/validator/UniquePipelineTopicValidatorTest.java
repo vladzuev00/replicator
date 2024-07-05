@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.validator.UniquePipelineTopicValidator.DuplicateReplicationTopicException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -59,13 +59,13 @@ public final class UniquePipelineTopicValidatorTest {
 
     @SuppressWarnings("unchecked")
     private static ReplicationConsumePipeline<?, ?> createPipeline(String topic) {
-        return ReplicationConsumePipeline.builder()
-                .topic(topic)
-                .idSerde(mock(Serde.class))
-                .replicationTypeReference(new TypeReference<>() {
-                })
-                .repository(mock(JpaRepository.class))
-                .build();
+        return new ReplicationConsumePipeline<Object, Object>(
+                topic,
+                mock(Deserializer.class),
+                new TypeReference<>() {
+                },
+                mock(JpaRepository.class)
+        );
     }
 
     private UniquePipelineTopicValidator createValidator(ReplicationConsumePipeline<?, ?>... pipelines) {

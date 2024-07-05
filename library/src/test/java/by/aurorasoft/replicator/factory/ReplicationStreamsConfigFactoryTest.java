@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,12 +36,12 @@ public final class ReplicationStreamsConfigFactoryTest {
 
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     private ReplicationConsumePipeline<?, ?> createPipeline(String topic) {
-        return ReplicationConsumePipeline.builder()
-                .topic(topic)
-                .idSerde(mock(Serde.class))
-                .replicationTypeReference(new TypeReference<>() {
-                })
-                .repository(mock(JpaRepository.class))
-                .build();
+        return new ReplicationConsumePipeline<Object, Object>(
+                topic,
+                mock(Deserializer.class),
+                new TypeReference<>() {
+                },
+                mock(JpaRepository.class)
+        );
     }
 }
