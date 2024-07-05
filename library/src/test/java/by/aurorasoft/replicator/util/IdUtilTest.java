@@ -12,17 +12,17 @@ public final class IdUtilTest {
 
     @Test
     public void idShouldBeGot() {
-        final Object givenId = new Object();
-        final FirstTestObject givenObject = new FirstTestObject(givenId);
+        Object givenId = new Object();
+        FirstTestObject givenObject = new FirstTestObject(givenId);
 
-        final Object actual = getId(givenObject);
+        Object actual = getId(givenObject);
         assertSame(givenId, actual);
     }
 
     @Test(expected = NoIdGetterException.class)
     public void idShouldNotBeGotBecauseOfNoSuitableGetter() {
-        final Object givenId = new Object();
-        final SecondTestObject givenObject = new SecondTestObject(givenId);
+        Object givenId = new Object();
+        SecondTestObject givenObject = new SecondTestObject(givenId);
 
         getId(givenObject);
     }
