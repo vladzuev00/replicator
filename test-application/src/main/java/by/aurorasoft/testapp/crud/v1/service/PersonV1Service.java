@@ -17,7 +17,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 )
 public class PersonV1Service extends CrudGenericService<PersonV1, PersonEntity, PersonRepository, PersonV1Mapper> {
 
-    public PersonV1Service(final PersonRepository repository, final PersonV1Mapper mapper) {
+    public PersonV1Service(PersonRepository repository, PersonV1Mapper mapper) {
         super(repository, mapper, PersonV1.class, PersonEntity.class);
     }
 }

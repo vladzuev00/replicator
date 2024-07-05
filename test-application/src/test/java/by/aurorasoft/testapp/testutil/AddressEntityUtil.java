@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 @UtilityClass
 public final class AddressEntityUtil {
 
-    public static void checkEquals(final AddressEntity expected, final AddressEntity actual) {
+    public static void checkEquals(AddressEntity expected, AddressEntity actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getCountry(), expected.getCountry());
         assertEquals(expected.getCity(), actual.getCity());

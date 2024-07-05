@@ -16,7 +16,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 )
 public class AddressV2Service extends AbsServiceCRUD<Long, AddressEntity, AddressV2, AddressRepository> {
 
-    public AddressV2Service(final AddressV2Mapper mapper, final AddressRepository repository) {
+    public AddressV2Service(AddressV2Mapper mapper, AddressRepository repository) {
         super(mapper, repository);
     }
 }

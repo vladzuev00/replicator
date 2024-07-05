@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("deprecation")
 public final class PersonV1Mapper extends ImmutableDtoAbstractMapper<PersonEntity, PersonV1> {
 
-    public PersonV1Mapper(final ModelMapper modelMapper) {
+    public PersonV1Mapper(ModelMapper modelMapper) {
         super(PersonEntity.class, PersonV1.class, modelMapper);
     }
 
     @Override
-    protected PersonV1 mapDto(final PersonEntity entity) {
+    protected PersonV1 mapDto(PersonEntity entity) {
         return new PersonV1(
                 entity.getId(),
                 entity.getName(),
@@ -27,7 +27,7 @@ public final class PersonV1Mapper extends ImmutableDtoAbstractMapper<PersonEntit
         );
     }
 
-    private AddressV1 mapAddress(final PersonEntity entity) {
+    private AddressV1 mapAddress(PersonEntity entity) {
         return mapper.map(entity.getAddress(), AddressV1.class);
     }
 }

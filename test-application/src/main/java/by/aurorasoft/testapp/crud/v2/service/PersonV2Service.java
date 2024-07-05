@@ -16,7 +16,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 )
 public class PersonV2Service extends AbsServiceCRUD<Long, PersonEntity, PersonV2, PersonRepository> {
 
-    public PersonV2Service(final PersonV2Mapper mapper, final PersonRepository repository) {
+    public PersonV2Service(PersonV2Mapper mapper, PersonRepository repository) {
         super(mapper, repository);
     }
 }

@@ -18,72 +18,72 @@ public final class ReplicationV2IT extends ReplicationIT<AddressV2, PersonV2> {
     private PersonV2Service personService;
 
     @Override
-    protected AddressV2 createAddress(final Long id, final String country, final String city) {
+    protected AddressV2 createAddress(Long id, String country, String city) {
         return new AddressV2(id, country, city);
     }
 
     @Override
-    protected PersonV2 createPerson(final Long id,
-                                    final String name,
-                                    final String surname,
-                                    final String patronymic,
-                                    final LocalDate birthDate,
-                                    final AddressV2 address) {
+    protected PersonV2 createPerson(Long id,
+                                    String name,
+                                    String surname,
+                                    String patronymic,
+                                    LocalDate birthDate,
+                                    AddressV2 address) {
         return new PersonV2(id, name, surname, patronymic, birthDate, address);
     }
 
     @Override
-    protected AddressV2 save(final AddressV2 address) {
+    protected AddressV2 save(AddressV2 address) {
         return addressService.save(address);
     }
 
     @Override
-    protected PersonV2 save(final PersonV2 person) {
+    protected PersonV2 save(PersonV2 person) {
         return personService.save(person);
     }
 
     @Override
-    protected List<AddressV2> saveAddresses(final List<AddressV2> addresses) {
+    protected List<AddressV2> saveAddresses(List<AddressV2> addresses) {
         return addressService.saveAll(addresses);
     }
 
     @Override
-    protected List<PersonV2> savePersons(final List<PersonV2> persons) {
+    protected List<PersonV2> savePersons(List<PersonV2> persons) {
         return personService.saveAll(persons);
     }
 
     @Override
-    protected AddressV2 update(final AddressV2 address) {
+    protected AddressV2 update(AddressV2 address) {
         return addressService.update(address);
     }
 
     @Override
-    protected PersonV2 update(final PersonV2 person) {
+    protected PersonV2 update(PersonV2 person) {
         return personService.update(person);
     }
 
     @Override
-    protected AddressV2 updateAddressPartial(final Long id, final Object partial) {
+    protected AddressV2 updateAddressPartial(Long id, Object partial) {
         return addressService.updatePartial(id, partial);
     }
 
     @Override
-    protected PersonV2 updatePersonPartial(final Long id, final Object partial) {
+    protected PersonV2 updatePersonPartial(Long id, Object partial) {
         return personService.updatePartial(id, partial);
     }
 
     @Override
-    protected void deleteAddress(final Long id) {
+    protected void deleteAddress(Long id) {
         addressService.delete(id);
     }
 
     @Override
-    protected void deletePerson(final Long id) {
+    protected void deletePerson(Long id) {
         personService.delete(id);
     }
 
     @Override
-    protected boolean isAddressExist(final Long id) {
+    protected boolean isAddressExist(Long id) {
         return addressService.isExist(id);
     }
 }

@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 public final class AddressV2Mapper extends AbsMapperEntityDto<AddressEntity, AddressV2> {
 
-    public AddressV2Mapper(final ModelMapper modelMapper, final EntityManager entityManager) {
+    public AddressV2Mapper(ModelMapper modelMapper, EntityManager entityManager) {
         super(modelMapper, entityManager, AddressEntity.class, AddressV2.class);
     }
 
     @Override
-    protected AddressV2 create(final AddressEntity entity) {
+    protected AddressV2 create(AddressEntity entity) {
         return new AddressV2(entity.getId(), entity.getCountry(), entity.getCity());
     }
 }

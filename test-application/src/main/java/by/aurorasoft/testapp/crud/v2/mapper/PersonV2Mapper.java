@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @Component
 public final class PersonV2Mapper extends AbsMapperEntityDto<PersonEntity, PersonV2> {
 
-    public PersonV2Mapper(final ModelMapper modelMapper, final EntityManager entityManager) {
+    public PersonV2Mapper(ModelMapper modelMapper, EntityManager entityManager) {
         super(modelMapper, entityManager, PersonEntity.class, PersonV2.class);
     }
 
     @Override
-    protected PersonV2 create(final PersonEntity entity) {
+    protected PersonV2 create(PersonEntity entity) {
         return new PersonV2(
                 entity.getId(),
                 entity.getName(),
@@ -27,7 +27,7 @@ public final class PersonV2Mapper extends AbsMapperEntityDto<PersonEntity, Perso
         );
     }
 
-    private AddressV2 mapAddress(final PersonEntity entity) {
+    private AddressV2 mapAddress(PersonEntity entity) {
         return map(entity.getAddress(), AddressV2.class);
     }
 }

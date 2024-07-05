@@ -17,7 +17,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 )
 public class AddressV1Service extends CrudGenericService<AddressV1, AddressEntity, AddressRepository, AddressV1Mapper> {
 
-    public AddressV1Service(final AddressRepository repository, final AddressV1Mapper mapper) {
+    public AddressV1Service(AddressRepository repository, AddressV1Mapper mapper) {
         super(repository, mapper, AddressV1.class, AddressEntity.class);
     }
 }

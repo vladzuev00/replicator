@@ -10,7 +10,7 @@ import static org.springframework.boot.SpringApplication.run;
 @Import(ReplicationConfig.class)
 public class ApplicationRunner {
 
-    public static void main(final String... args) {
+    public static void main(String... args) {
         run(ApplicationRunner.class, args);
     }
 }

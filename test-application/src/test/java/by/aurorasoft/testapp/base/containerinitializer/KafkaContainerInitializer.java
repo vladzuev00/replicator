@@ -24,17 +24,17 @@ public final class KafkaContainerInitializer extends ContainerInitializer<KafkaC
     }
 
     @Override
-    protected KafkaContainer createContainer(final DockerImageName imageName) {
+    protected KafkaContainer createContainer(DockerImageName imageName) {
         return new KafkaContainer(imageName);
     }
 
     @Override
-    protected void configure(final KafkaContainer container) {
+    protected void configure(KafkaContainer container) {
 
     }
 
     @Override
-    protected Map<String, String> getPropertiesByKeys(final KafkaContainer container) {
+    protected Map<String, String> getPropertiesByKeys(KafkaContainer container) {
         return Map.of(KEY_BOOTSTRAP_SERVERS, container.getBootstrapServers());
     }
 }

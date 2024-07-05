@@ -67,12 +67,12 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldBeSaved() {
-        final String givenCountry = "Belarus";
-        final String givenCity = "Minsk";
-        final ADDRESS givenAddress = createAddress(givenCountry, givenCity);
+        String givenCountry = "Belarus";
+        String givenCity = "Minsk";
+        ADDRESS givenAddress = createAddress(givenCountry, givenCity);
 
-        final ADDRESS actual = executeWaitingReplication(() -> save(givenAddress), 1, 0, false);
-        final ADDRESS expected = createAddress(1L, givenCountry, givenCity);
+        ADDRESS actual = executeWaitingReplication(() -> save(givenAddress), 1, 0, false);
+        ADDRESS expected = createAddress(1L, givenCountry, givenCity);
         assertEquals(expected, actual);
 
         verifyReplicationFor(actual);
@@ -80,7 +80,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
-        final ADDRESS givenAddress = createAddress("Russia", "Moscow");
+        ADDRESS givenAddress = createAddress("Russia", "Moscow");
 
         executeExpectingUniqueViolation(() -> save(givenAddress));
 
@@ -89,7 +89,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
-        final PERSON givenPerson = createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L);
+        PERSON givenPerson = createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L);
 
         executeExpectingForeignKeyViolation(() -> save(givenPerson));
 
@@ -98,22 +98,22 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressesShouldBeSaved() {
-        final String firstGivenCountry = "China";
-        final String secondGivenCountry = "China";
-        final String firstGivenCity = "Fuyang";
-        final String secondGivenCity = "Hefei";
-        final List<ADDRESS> givenAddresses = List.of(
+        String firstGivenCountry = "China";
+        String secondGivenCountry = "China";
+        String firstGivenCity = "Fuyang";
+        String secondGivenCity = "Hefei";
+        List<ADDRESS> givenAddresses = List.of(
                 createAddress(firstGivenCountry, firstGivenCity),
                 createAddress(secondGivenCountry, secondGivenCity)
         );
 
-        final List<ADDRESS> actual = executeWaitingReplication(
+        List<ADDRESS> actual = executeWaitingReplication(
                 () -> saveAddresses(givenAddresses),
                 givenAddresses.size(),
                 0,
                 false
         );
-        final List<ADDRESS> expected = List.of(
+        List<ADDRESS> expected = List.of(
                 createAddress(1L, firstGivenCountry, firstGivenCity),
                 createAddress(2L, secondGivenCountry, secondGivenCity)
         );
@@ -124,7 +124,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
-        final List<ADDRESS> givenAddresses = List.of(
+        List<ADDRESS> givenAddresses = List.of(
                 createAddress("Belarus", "Minsk"),
                 createAddress("Russia", "Moscow")
         );
@@ -136,7 +136,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
-        final List<PERSON> givenPersons = List.of(
+        List<PERSON> givenPersons = List.of(
                 createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 255L),
                 createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L)
         );
@@ -148,9 +148,9 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldBeUpdated() {
-        final ADDRESS givenAddress = createAddress(255L, "Belarus", "Minsk");
+        ADDRESS givenAddress = createAddress(255L, "Belarus", "Minsk");
 
-        final ADDRESS actual = executeWaitingReplication(() -> update(givenAddress), 1, 0, false);
+        ADDRESS actual = executeWaitingReplication(() -> update(givenAddress), 1, 0, false);
         assertEquals(givenAddress, actual);
 
         verifyReplicationFor(actual);
@@ -158,7 +158,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
-        final ADDRESS givenAddress = createAddress(256L, "Russia", "Moscow");
+        ADDRESS givenAddress = createAddress(256L, "Russia", "Moscow");
 
         executeExpectingUniqueViolation(() -> update(givenAddress));
 
@@ -167,7 +167,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void personShouldNotBeUpdatedBecauseOfNoSuchAddress() {
-        final PERSON givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
+        PERSON givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
 
         executeExpectingNoSuchEntityException(() -> update(givenPerson));
 
@@ -176,16 +176,16 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldBeUpdatedPartially() {
-        final Long givenId = 255L;
-        final AddressName givenNewName = new AddressName("Belarus", "Minsk");
+        Long givenId = 255L;
+        AddressName givenNewName = new AddressName("Belarus", "Minsk");
 
-        final ADDRESS actual = executeWaitingReplication(
+        ADDRESS actual = executeWaitingReplication(
                 () -> updateAddressPartial(givenId, givenNewName),
                 1,
                 0,
                 false
         );
-        final ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
+        ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
         assertEquals(expected, actual);
 
         verifyReplicationFor(actual);
@@ -193,8 +193,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
-        final Long givenId = 256L;
-        final AddressName givenNewName = new AddressName("Russia", "Moscow");
+        Long givenId = 256L;
+        AddressName givenNewName = new AddressName("Russia", "Moscow");
 
         executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
 
@@ -203,8 +203,8 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
-        final Long givenId = 255L;
-        final PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
+        Long givenId = 255L;
+        PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
 
         executeExpectingNoSuchEntityException(() -> updatePersonPartial(givenId, givenNewAddress));
 
@@ -213,7 +213,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldBeDeleted() {
-        final Long givenId = 262L;
+        Long givenId = 262L;
 
         executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, false);
 
@@ -223,7 +223,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldNotBeDeletedByNotExistId() {
-        final Long givenId = MAX_VALUE;
+        Long givenId = MAX_VALUE;
 
         executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
 
@@ -232,7 +232,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
-        final Long givenId = 255L;
+        Long givenId = 255L;
 
         executeExpectingForeignKeyViolation(() -> deleteAddress(givenId));
 
@@ -330,7 +330,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
-        final Long givenId = 258L;
+        Long givenId = 258L;
 
         executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, true);
 
@@ -342,10 +342,10 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
-        final PERSON givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
+        PERSON givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
 
-        final PERSON actual = executeWaitingReplication(() -> save(givenPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
-        final PERSON expected = createPerson(
+        PERSON actual = executeWaitingReplication(() -> save(givenPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
+        PERSON expected = createPerson(
                 1L,
                 givenPerson.getName(),
                 givenPerson.getSurname(),
@@ -365,10 +365,10 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
-        final ADDRESS givenAddress = createAddress("Japan", "Tokyo");
+        ADDRESS givenAddress = createAddress("Japan", "Tokyo");
 
-        final ADDRESS actual = executeWaitingReplication(() -> save(givenAddress), 1, 0, true);
-        final ADDRESS expected = createAddress(1L, givenAddress.getCountry(), givenAddress.getCity());
+        ADDRESS actual = executeWaitingReplication(() -> save(givenAddress), 1, 0, true);
+        ADDRESS expected = createAddress(1L, givenAddress.getCountry(), givenAddress.getCity());
         assertEquals(expected, actual);
 
         assertFalse(replicatedAddressRepository.existsById(actual.getId()));
@@ -377,7 +377,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
 
     @Test
     public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
-        final Long givenId = 262L;
+        Long givenId = 262L;
 
         deleteAddressInRollBackedTransaction(givenId);
 
@@ -385,48 +385,48 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         assertTrue(replicatedAddressRepository.existsById(givenId));
     }
 
-    protected abstract ADDRESS createAddress(final Long id, final String country, final String city);
+    protected abstract ADDRESS createAddress(Long id, String country, String city);
 
-    protected abstract PERSON createPerson(final Long id,
-                                           final String name,
-                                           final String surname,
-                                           final String patronymic,
-                                           final LocalDate birthDate,
-                                           final ADDRESS address);
+    protected abstract PERSON createPerson(Long id,
+                                           String name,
+                                           String surname,
+                                           String patronymic,
+                                           LocalDate birthDate,
+                                           ADDRESS address);
 
-    protected abstract ADDRESS save(final ADDRESS address);
+    protected abstract ADDRESS save(ADDRESS address);
 
-    protected abstract PERSON save(final PERSON person);
+    protected abstract PERSON save(PERSON person);
 
-    protected abstract List<ADDRESS> saveAddresses(final List<ADDRESS> addresses);
-
-    @SuppressWarnings("UnusedReturnValue")
-    protected abstract List<PERSON> savePersons(final List<PERSON> persons);
-
-    protected abstract ADDRESS update(final ADDRESS address);
+    protected abstract List<ADDRESS> saveAddresses(List<ADDRESS> addresses);
 
     @SuppressWarnings("UnusedReturnValue")
-    protected abstract PERSON update(final PERSON person);
+    protected abstract List<PERSON> savePersons(List<PERSON> persons);
 
-    protected abstract ADDRESS updateAddressPartial(final Long id, final Object partial);
+    protected abstract ADDRESS update(ADDRESS address);
 
     @SuppressWarnings("UnusedReturnValue")
-    protected abstract PERSON updatePersonPartial(final Long id, final Object partial);
+    protected abstract PERSON update(PERSON person);
 
-    protected abstract void deleteAddress(final Long id);
+    protected abstract ADDRESS updateAddressPartial(Long id, Object partial);
 
-    protected abstract void deletePerson(final Long id);
+    @SuppressWarnings("UnusedReturnValue")
+    protected abstract PERSON updatePersonPartial(Long id, Object partial);
 
-    protected abstract boolean isAddressExist(final Long id);
+    protected abstract void deleteAddress(Long id);
 
-    protected final ADDRESS createAddress(final Long id) {
+    protected abstract void deletePerson(Long id);
+
+    protected abstract boolean isAddressExist(Long id);
+
+    protected final ADDRESS createAddress(Long id) {
         return createAddress(id, null, null);
     }
 
-    protected void executeWaitingReplication(final Runnable operation,
-                                             final int addressCalls,
-                                             @SuppressWarnings("SameParameterValue") final int personCalls,
-                                             final boolean failedCallsCounted) {
+    protected void executeWaitingReplication(Runnable operation,
+                                             int addressCalls,
+                                             @SuppressWarnings("SameParameterValue") int personCalls,
+                                             boolean failedCallsCounted) {
         executeWaitingReplication(
                 () -> {
                     operation.run();
@@ -438,114 +438,114 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
     }
 
-    private ADDRESS createAddress(final String country, final String city) {
+    private ADDRESS createAddress(String country, String city) {
         return createAddress(null, country, city);
     }
 
-    private PERSON createPerson(final String name,
-                                final String surname,
-                                final String patronymic,
-                                final LocalDate birthDate,
-                                final Long addressId) {
+    private PERSON createPerson(String name,
+                                String surname,
+                                String patronymic,
+                                LocalDate birthDate,
+                                Long addressId) {
         return createPerson(null, name, surname, patronymic, birthDate, addressId);
     }
 
-    private PERSON createPerson(final Long id,
-                                final String name,
-                                final String surname,
-                                final String patronymic,
-                                final LocalDate birthDate,
-                                final Long addressId) {
-        final ADDRESS address = createAddress(addressId);
+    private PERSON createPerson(Long id,
+                                String name,
+                                String surname,
+                                String patronymic,
+                                LocalDate birthDate,
+                                Long addressId) {
+        ADDRESS address = createAddress(addressId);
         return createPerson(id, name, surname, patronymic, birthDate, address);
     }
 
-    private <R> R executeWaitingReplication(final Supplier<R> operation,
-                                            final int addressCalls,
-                                            final int personCalls,
-                                            final boolean failedCallsCounted) {
+    private <R> R executeWaitingReplication(Supplier<R> operation,
+                                            int addressCalls,
+                                            int personCalls,
+                                            boolean failedCallsCounted) {
         replicationRepositoryBarrier.expect(addressCalls, personCalls, failedCallsCounted);
-        final R result = operation.get();
+        R result = operation.get();
         replicationRepositoryBarrier.await();
         return result;
     }
 
-    private void verifyReplicationFor(final ADDRESS address) {
+    private void verifyReplicationFor(ADDRESS address) {
         verifyReplicationsFor(singletonList(address));
     }
 
-    private void verifyReplicationsFor(final List<ADDRESS> addresses) {
-        final List<Long> ids = mapToIds(addresses);
-        final List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
-        final List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
+    private void verifyReplicationsFor(List<ADDRESS> addresses) {
+        List<Long> ids = mapToIds(addresses);
+        List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
+        List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
         ReplicatedAddressEntityUtil.checkEquals(expected, actual);
     }
 
-    private List<Long> mapToIds(final List<ADDRESS> addresses) {
+    private List<Long> mapToIds(List<ADDRESS> addresses) {
         return addresses.stream()
                 .map(Address::getId)
                 .toList();
     }
 
-    private List<ReplicatedAddressEntity> findReplicatedAddressesOrderedById(final List<Long> ids) {
+    private List<ReplicatedAddressEntity> findReplicatedAddressesOrderedById(List<Long> ids) {
         return entityManager.createQuery("SELECT e FROM ReplicatedAddressEntity e WHERE e.id IN :ids ORDER BY e.id", ReplicatedAddressEntity.class)
                 .setParameter("ids", ids)
                 .getResultList();
     }
 
-    private List<ReplicatedAddressEntity> mapToReplicatedAddresses(final List<ADDRESS> addresses) {
+    private List<ReplicatedAddressEntity> mapToReplicatedAddresses(List<ADDRESS> addresses) {
         return addresses.stream()
                 .map(this::mapToReplicatedAddress)
                 .toList();
     }
 
-    private ReplicatedAddressEntity mapToReplicatedAddress(final Address address) {
+    private ReplicatedAddressEntity mapToReplicatedAddress(Address address) {
         return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
     }
 
-    private void executeExpectingUniqueViolation(final Runnable task) {
+    private void executeExpectingUniqueViolation(Runnable task) {
         executeExpectingSqlConstraintViolation(task, UNIQUE_VIOLATION_SQL_STATE);
     }
 
-    private void executeExpectingForeignKeyViolation(final Runnable task) {
+    private void executeExpectingForeignKeyViolation(Runnable task) {
         executeExpectingSqlConstraintViolation(task, FOREIGN_KEY_VIOLATION_SQL_STATE);
     }
 
-    private void executeExpectingSqlConstraintViolation(final Runnable task, final String sqlState) {
+    private void executeExpectingSqlConstraintViolation(Runnable task, String sqlState) {
         executeExpectingMatchingException(task, exception -> Objects.equals(sqlState, getSqlState(exception)));
     }
 
-    private void executeExpectingNoSuchEntityException(final Runnable task) {
+    private void executeExpectingNoSuchEntityException(Runnable task) {
         executeExpectingMatchingException(task, exception -> getRootCause(exception).getClass() == EntityNotFoundException.class);
     }
 
-    private void executeExpectingMatchingException(final Runnable task, final Predicate<Throwable> predicate) {
+    private void executeExpectingMatchingException(Runnable task, Predicate<Throwable> predicate) {
         boolean exceptionArisen;
         try {
             task.run();
             exceptionArisen = false;
-        } catch (final Throwable exception) {
+        } catch (Throwable exception) {
             exceptionArisen = true;
             assertTrue(predicate.test(exception));
         }
         assertTrue(exceptionArisen);
     }
 
-    private String getSqlState(final Throwable exception) {
+    private String getSqlState(Throwable exception) {
         return ((SQLException) getRootCause(exception)).getSQLState();
     }
 
-    private void verifyDatabase(final List<AddressEntity> expectedAddresses,
-                                final List<PersonEntity> expectedPersons,
-                                final List<ReplicatedAddressEntity> expectedReplicatedAddresses,
-                                final List<ReplicatedPersonEntity> expectedReplicatedPersons) {
+    private void verifyDatabase(List<AddressEntity> expectedAddresses,
+                                List<PersonEntity> expectedPersons,
+                                List<ReplicatedAddressEntity> expectedReplicatedAddresses,
+                                List<ReplicatedPersonEntity> expectedReplicatedPersons) {
         verifyAddresses(expectedAddresses);
         verifyPersons(expectedPersons);
         verifyReplicatedAddresses(expectedReplicatedAddresses);
         verifyReplicatedPersons(expectedReplicatedPersons);
     }
 
-    private void verifyAddresses(final List<AddressEntity> expected) {
+    private void verifyAddresses(List<AddressEntity> expected) {
         verifyEntities(
                 expected,
                 "SELECT e FROM AddressEntity e ORDER BY e.id",
@@ -554,7 +554,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
     }
 
-    private void verifyPersons(final List<PersonEntity> expected) {
+    private void verifyPersons(List<PersonEntity> expected) {
         verifyEntities(
                 expected,
                 "SELECT e FROM PersonEntity e ORDER BY e.id",
@@ -563,7 +563,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
     }
 
-    private void verifyReplicatedAddresses(final List<ReplicatedAddressEntity> expected) {
+    private void verifyReplicatedAddresses(List<ReplicatedAddressEntity> expected) {
         verifyEntities(
                 expected,
                 "SELECT e FROM ReplicatedAddressEntity e ORDER BY e.id",
@@ -572,7 +572,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
     }
 
-    private void verifyReplicatedPersons(final List<ReplicatedPersonEntity> expected) {
+    private void verifyReplicatedPersons(List<ReplicatedPersonEntity> expected) {
         verifyEntities(
                 expected,
                 "SELECT e FROM ReplicatedPersonEntity e ORDER BY e.id",
@@ -581,11 +581,11 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
     }
 
-    private <E extends Entity> void verifyEntities(final List<E> expected,
-                                                   final String hqlQuery,
-                                                   final Class<E> entityType,
-                                                   final BiConsumer<E, E> equalChecker) {
-        final List<E> actual = entityManager.createQuery(hqlQuery, entityType).getResultList();
+    private <E extends Entity> void verifyEntities(List<E> expected,
+                                                   String hqlQuery,
+                                                   Class<E> entityType,
+                                                   BiConsumer<E, E> equalChecker) {
+        List<E> actual = entityManager.createQuery(hqlQuery, entityType).getResultList();
         checkEquals(expected, actual, equalChecker);
     }
 
@@ -593,7 +593,7 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         verifyNoInteractions(replicatedAddressRepository, replicatedPersonRepository);
     }
 
-    private void deleteAddressInRollBackedTransaction(final Long id) {
+    private void deleteAddressInRollBackedTransaction(Long id) {
         transactionTemplate.execute(
                 status -> {
                     status.setRollbackOnly();
@@ -603,32 +603,32 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         );
     }
 
-    private PersonEntity createPersonEntity(final Long id,
-                                            final String name,
-                                            final String surname,
-                                            final String patronymic,
-                                            final LocalDate birthDate,
-                                            final Long addressId) {
+    private PersonEntity createPersonEntity(Long id,
+                                            String name,
+                                            String surname,
+                                            String patronymic,
+                                            LocalDate birthDate,
+                                            Long addressId) {
         return new PersonEntity(id, name, surname, patronymic, birthDate, createAddressEntity(addressId));
     }
 
-    private AddressEntity createAddressEntity(final Long id) {
+    private AddressEntity createAddressEntity(Long id) {
         return AddressEntity.builder()
                 .id(id)
                 .build();
     }
 
-    private ReplicatedAddressEntity createReplicatedAddress(final Long id) {
+    private ReplicatedAddressEntity createReplicatedAddress(Long id) {
         return ReplicatedAddressEntity.builder()
                 .id(id)
                 .build();
     }
 
-    private ReplicatedPersonEntity createReplicatedPerson(final Long id,
-                                                          final String name,
-                                                          final String surname,
-                                                          final LocalDate birthDate,
-                                                          final Long addressId) {
+    private ReplicatedPersonEntity createReplicatedPerson(Long id,
+                                                          String name,
+                                                          String surname,
+                                                          LocalDate birthDate,
+                                                          Long addressId) {
         return new ReplicatedPersonEntity(id, name, surname, birthDate, createReplicatedAddress(addressId));
     }
 
@@ -643,26 +643,26 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
         private volatile CountDownLatch personLatch;
         private volatile boolean failedCallsCounted;
 
-        public ReplicationRepositoryBarrier(final ReplicationRetryConsumeProperty retryProperty) {
+        public ReplicationRepositoryBarrier(ReplicationRetryConsumeProperty retryProperty) {
             timeoutMs = findTimeoutMs(retryProperty);
             addressLatch = DEFAULT_LATCH;
             personLatch = DEFAULT_LATCH;
         }
 
-        public final void expect(final int addressCalls, final int personCalls, final boolean failedCallsCounted) {
+        public final void expect(int addressCalls, int personCalls, boolean failedCallsCounted) {
             addressLatch = new CountDownLatch(addressCalls);
             personLatch = new CountDownLatch(personCalls);
             this.failedCallsCounted = failedCallsCounted;
         }
 
         @Around("replicatedAddressRepository()")
-        public Object executeAddressMethod(final ProceedingJoinPoint joinPoint)
+        public Object executeAddressMethod(ProceedingJoinPoint joinPoint)
                 throws Throwable {
             return executeCountingDownLatch(joinPoint, addressLatch);
         }
 
         @Around("replicatedPersonRepository()")
-        public Object executePersonMethod(final ProceedingJoinPoint joinPoint)
+        public Object executePersonMethod(ProceedingJoinPoint joinPoint)
                 throws Throwable {
             return executeCountingDownLatch(joinPoint, personLatch);
         }
@@ -672,39 +672,39 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
             await(personLatch);
         }
 
-        private long findTimeoutMs(final ReplicationRetryConsumeProperty retryProperty) {
+        private long findTimeoutMs(ReplicationRetryConsumeProperty retryProperty) {
             return retryProperty.getTimeLapseMs() * retryProperty.getMaxAttempts() + TIMEOUT_DELTA_MS;
         }
 
-        private void await(final CountDownLatch latch) {
+        private void await(CountDownLatch latch) {
             try {
                 awaitInterrupted(latch);
-            } catch (final InterruptedException cause) {
+            } catch (InterruptedException cause) {
                 throw new IllegalStateException(cause);
             }
         }
 
-        private void awaitInterrupted(final CountDownLatch latch)
+        private void awaitInterrupted(CountDownLatch latch)
                 throws InterruptedException {
-            final boolean timeoutExceeded = !latch.await(timeoutMs, MILLISECONDS);
+            boolean timeoutExceeded = !latch.await(timeoutMs, MILLISECONDS);
             if (timeoutExceeded) {
                 throw new IllegalStateException("Latch timeout was exceeded");
             }
         }
 
-        private Object executeCountingDownLatch(final ProceedingJoinPoint joinPoint, final CountDownLatch latch)
+        private Object executeCountingDownLatch(ProceedingJoinPoint joinPoint, CountDownLatch latch)
                 throws Throwable {
             try {
-                final Object result = joinPoint.proceed();
+                Object result = joinPoint.proceed();
                 latch.countDown();
                 return result;
-            } catch (final Throwable exception) {
+            } catch (Throwable exception) {
                 onFailedExecution(latch);
                 throw exception;
             }
         }
 
-        private void onFailedExecution(final CountDownLatch latch) {
+        private void onFailedExecution(CountDownLatch latch) {
             if (failedCallsCounted) {
                 latch.countDown();
             }

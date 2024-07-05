@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("deprecation")
 public final class AddressV1Mapper extends ImmutableDtoAbstractMapper<AddressEntity, AddressV1> {
 
-    public AddressV1Mapper(final ModelMapper modelMapper) {
+    public AddressV1Mapper(ModelMapper modelMapper) {
         super(AddressEntity.class, AddressV1.class, modelMapper);
     }
 
     @Override
-    protected AddressV1 mapDto(final AddressEntity entity) {
+    protected AddressV1 mapDto(AddressEntity entity) {
         return new AddressV1(entity.getId(), entity.getCountry(), entity.getCity());
     }
 }

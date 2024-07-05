@@ -30,19 +30,19 @@ public final class DataBaseContainerInitializer extends ContainerInitializer<Pos
     }
 
     @Override
-    protected PostgreSQLContainer<?> createContainer(final DockerImageName imageName) {
+    protected PostgreSQLContainer<?> createContainer(DockerImageName imageName) {
         return new PostgreSQLContainer<>(imageName);
     }
 
     @Override
-    protected void configure(final PostgreSQLContainer<?> container) {
+    protected void configure(PostgreSQLContainer<?> container) {
         container.withDatabaseName(DATA_BASE_NAME);
         container.withUsername(USERNAME);
         container.withPassword(PASSWORD);
     }
 
     @Override
-    protected Map<String, String> getPropertiesByKeys(final PostgreSQLContainer<?> container) {
+    protected Map<String, String> getPropertiesByKeys(PostgreSQLContainer<?> container) {
         return Map.of(
                 KEY_DATASOURCE_URL, container.getJdbcUrl(),
                 KEY_USERNAME, container.getUsername(),

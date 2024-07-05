@@ -23,10 +23,10 @@ public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
 
     @Test
     public void deleteAllShouldBeReplicated() {
-        final Long firstGivenAddressId = 259L;
-        final Long secondGivenAddressId = 260L;
-        final Long thirdGivenAddressId = 261L;
-        final List<AddressV1> givenAddresses = List.of(
+        Long firstGivenAddressId = 259L;
+        Long secondGivenAddressId = 260L;
+        Long thirdGivenAddressId = 261L;
+        List<AddressV1> givenAddresses = List.of(
                 createAddress(firstGivenAddressId),
                 createAddress(secondGivenAddressId),
                 createAddress(thirdGivenAddressId)
@@ -38,76 +38,76 @@ public final class ReplicationV1IT extends ReplicationIT<AddressV1, PersonV1> {
     }
 
     @Override
-    protected AddressV1 createAddress(final Long id, final String country, final String city) {
+    protected AddressV1 createAddress(Long id, String country, String city) {
         return new AddressV1(id, country, city);
     }
 
     @Override
-    protected PersonV1 createPerson(final Long id,
-                                    final String name,
-                                    final String surname,
-                                    final String patronymic,
-                                    final LocalDate birthDate,
-                                    final AddressV1 address) {
+    protected PersonV1 createPerson(Long id,
+                                    String name,
+                                    String surname,
+                                    String patronymic,
+                                    LocalDate birthDate,
+                                    AddressV1 address) {
         return new PersonV1(id, name, surname, patronymic, birthDate, address);
     }
 
     @Override
-    protected AddressV1 save(final AddressV1 address) {
+    protected AddressV1 save(AddressV1 address) {
         return addressService.save(address);
     }
 
     @Override
-    protected PersonV1 save(final PersonV1 person) {
+    protected PersonV1 save(PersonV1 person) {
         return personService.save(person);
     }
 
     @Override
-    protected List<AddressV1> saveAddresses(final List<AddressV1> addresses) {
+    protected List<AddressV1> saveAddresses(List<AddressV1> addresses) {
         return addressService.saveAll(addresses);
     }
 
     @Override
-    protected List<PersonV1> savePersons(final List<PersonV1> persons) {
+    protected List<PersonV1> savePersons(List<PersonV1> persons) {
         return personService.saveAll(persons);
     }
 
     @Override
-    protected AddressV1 update(final AddressV1 address) {
+    protected AddressV1 update(AddressV1 address) {
         return addressService.update(address);
     }
 
     @Override
-    protected PersonV1 update(final PersonV1 person) {
+    protected PersonV1 update(PersonV1 person) {
         return personService.update(person);
     }
 
     @Override
-    protected AddressV1 updateAddressPartial(final Long id, final Object partial) {
+    protected AddressV1 updateAddressPartial(Long id, Object partial) {
         return addressService.updatePartial(id, partial);
     }
 
     @Override
-    protected PersonV1 updatePersonPartial(final Long id, final Object partial) {
+    protected PersonV1 updatePersonPartial(Long id, Object partial) {
         return personService.updatePartial(id, partial);
     }
 
     @Override
-    protected void deleteAddress(final Long id) {
+    protected void deleteAddress(Long id) {
         addressService.deleteById(id);
     }
 
     @Override
-    protected void deletePerson(final Long id) {
+    protected void deletePerson(Long id) {
         personService.deleteById(id);
     }
 
     @Override
-    protected boolean isAddressExist(final Long id) {
+    protected boolean isAddressExist(Long id) {
         return addressService.existById(id);
     }
 
-    private boolean isAddressesNotExist(final Long... ids) {
+    private boolean isAddressesNotExist(Long... ids) {
         return stream(ids).allMatch(id -> !addressService.existById(id) && !replicatedAddressRepository.existsById(id));
     }
 }

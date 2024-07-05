@@ -12,9 +12,7 @@ import static org.junit.Assert.assertEquals;
 @UtilityClass
 public final class EntityUtil {
 
-    public static <E extends Entity> void checkEquals(final List<E> expected,
-                                                      final List<E> actual,
-                                                      final BiConsumer<E, E> equalChecker) {
+    public static <E extends Entity> void checkEquals(List<E> expected, List<E> actual, BiConsumer<E, E> equalChecker) {
         assertEquals(expected.size(), actual.size());
         range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
     }
