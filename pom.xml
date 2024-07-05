@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>by.aurorasoft</groupId>
-    <artifactId>replicator</artifactId>
-    <version>1.0</version>
+    <artifactId>replicator-lib</artifactId>
     <packaging>pom</packaging>
     <name>root</name>
+    <version>1.0</version>
 
     <modules>
         <module>library</module>

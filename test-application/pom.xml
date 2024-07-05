@@ -3,10 +3,9 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <name>test-application</name>
-
     <groupId>by.aurorasoft</groupId>
     <artifactId>replicator-test</artifactId>
+    <name>test-application</name>
     <version>1.0</version>
 
     <parent>
