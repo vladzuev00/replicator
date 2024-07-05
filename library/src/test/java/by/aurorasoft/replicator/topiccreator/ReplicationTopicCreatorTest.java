@@ -15,10 +15,8 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.core.KafkaAdmin;
 
-import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -79,8 +77,8 @@ public final class ReplicationTopicCreatorTest {
 
     private void verifyCreation(NewTopic... topics) {
         verify(mockedKafkaAdmin, times(topics.length)).createOrModifyTopics(topicArgumentCaptor.capture());
-        List<NewTopic> actual = topicArgumentCaptor.getAllValues();
-        List<NewTopic> expected = asList(topics);
+        Set<NewTopic> actual = Set.copyOf(topicArgumentCaptor.getAllValues());
+        Set<NewTopic> expected = Set.of(topics);
         assertEquals(expected, actual);
     }
 
