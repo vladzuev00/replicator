@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <crud-generic.version>12.5-jakarta</crud-generic.version>
         <lombok.version>1.18.26</lombok.version>
-        <replication.version>1.0</replication.version>
+        <replicator.version>1.0</replicator.version>
         <jackson.version>2.16.1</jackson.version>
         <postgresql.version>42.7.2</postgresql.version>
         <postgresql-container.version>1.17.6</postgresql-container.version>
@@ -58,8 +58,8 @@
 
         <dependency>
             <groupId>by.aurorasoft</groupId>
-            <artifactId>replication</artifactId>
-            <version>${replication.version}</version>
+            <artifactId>replicator</artifactId>
+            <version>${replicator.version}</version>
         </dependency>
 
         <dependency>
