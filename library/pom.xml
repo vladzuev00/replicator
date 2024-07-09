@@ -98,6 +98,13 @@
             <scope>provided</scope>
         </dependency>
 
+<!--        TODO: refactor-->
+        <dependency>
+            <groupId>com.monitorjbl</groupId>
+            <artifactId>json-view</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

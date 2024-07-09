@@ -2,6 +2,7 @@ package by.aurorasoft.testapp.crud.v1.dto;
 
 import by.aurorasoft.testapp.crud.dto.Person;
 import by.nhorushko.crudgeneric.domain.AbstractDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,7 +17,10 @@ import java.time.LocalDate;
 public final class PersonV1 implements AbstractDto, Person {
     private Long id;
     private String name;
+
+    @JsonIgnore
     private String surname;
+
     private String patronymic;
     private LocalDate birthDate;
     private AddressV1 address;
