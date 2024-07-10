@@ -26,7 +26,7 @@ public final class ReplicationProducerFactory {
 
     public ReplicationProducer create(Object service) {
         String topicName = getTopicName(service);
-        KafkaTemplate<Object, ProducedReplication> kafkaTemplate = createKafkaTemplate(service);
+        KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate = createKafkaTemplate(service);
         return new ReplicationProducer(topicName, kafkaTemplate);
     }
 
@@ -34,10 +34,10 @@ public final class ReplicationProducerFactory {
         return getTopicConfig(service).name();
     }
 
-    private KafkaTemplate<Object, ProducedReplication> createKafkaTemplate(Object service) {
+    private KafkaTemplate<Object, ProducedReplication<?>> createKafkaTemplate(Object service) {
         ProducerConfig producerConfig = getProducerConfig(service);
         Map<String, Object> configsByKeys = createConfigsByKeys(producerConfig);
-        ProducerFactory<Object, ProducedReplication> factory = new DefaultKafkaProducerFactory<>(configsByKeys);
+        ProducerFactory<Object, ProducedReplication<?>> factory = new DefaultKafkaProducerFactory<>(configsByKeys);
         return new KafkaTemplate<>(factory);
     }
 
