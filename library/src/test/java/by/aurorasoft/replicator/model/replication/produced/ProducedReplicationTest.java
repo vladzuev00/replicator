@@ -4,7 +4,6 @@ import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.view.DtoJsonView;
 import by.aurorasoft.replicator.v2.dto.TestV2Dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monitorjbl.json.JsonViewModule;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
