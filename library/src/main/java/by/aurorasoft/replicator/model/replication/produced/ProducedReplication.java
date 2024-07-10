@@ -22,15 +22,15 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
-public abstract class ProducedReplication {
+public abstract class ProducedReplication<B> {
 
     @JsonProperty(BODY)
-    private final Object body;
+    private final B body;
 
     @JsonIgnore
     public final Object getEntityId() {
         return getEntityId(body);
     }
 
-    protected abstract Object getEntityId(Object body);
+    protected abstract Object getEntityId(B body);
 }
