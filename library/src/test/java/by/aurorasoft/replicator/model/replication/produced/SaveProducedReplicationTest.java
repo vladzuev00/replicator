@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.model.view.DtoJsonView;
 import by.aurorasoft.replicator.v2.dto.TestV2Dto;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertSame;
 

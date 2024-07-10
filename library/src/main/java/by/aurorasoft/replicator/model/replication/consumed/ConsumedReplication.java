@@ -31,13 +31,13 @@ public abstract class ConsumedReplication<E, ID> {
         try {
             executeInternal(repository);
         } catch (Exception exception) {
-            throw wrapInRuntimeException(exception);
+            throw wrapByRuntimeException(exception);
         }
     }
 
     protected abstract void executeInternal(JpaRepository<E, ID> repository);
 
-    private RuntimeException wrapInRuntimeException(Exception exception) {
+    private RuntimeException wrapByRuntimeException(Exception exception) {
         return isRelatedReplicationNotDelivered(exception)
                 ? new RelatedReplicationNotDeliveredException(exception)
                 : new ReplicationExecutionException(exception);
