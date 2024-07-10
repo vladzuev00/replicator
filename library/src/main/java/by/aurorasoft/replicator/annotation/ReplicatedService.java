@@ -14,7 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface ReplicatedService {
     ProducerConfig producerConfig();
+
     TopicConfig topicConfig();
+
+    DtoViewConfig[] dtoViewConfigs() default {};
 
     @interface ProducerConfig {
         Class<? extends Serializer<?>> idSerializer();
@@ -32,5 +35,13 @@ public @interface ReplicatedService {
         int partitionCount() default 1;
 
         short replicationFactor() default 1;
+    }
+
+    @interface DtoViewConfig {
+        Class<?> type();
+
+        String[] includedFields() default {};
+
+        String[] excludedFields() default {};
     }
 }
