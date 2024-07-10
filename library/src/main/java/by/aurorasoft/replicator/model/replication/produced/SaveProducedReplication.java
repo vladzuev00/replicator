@@ -1,19 +1,18 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import com.monitorjbl.json.JsonView;
+import by.aurorasoft.replicator.model.view.DtoJsonView;
 
 import static by.aurorasoft.replicator.util.IdUtil.getId;
 
-public final class SaveProducedReplication extends ProducedReplication<JsonView<?>> {
+public final class SaveProducedReplication extends ProducedReplication<DtoJsonView<?>> {
 
-    //TODO: JsonView instead of dto
-    public SaveProducedReplication(JsonView<?> view) {
-        super(view);
+    public SaveProducedReplication(DtoJsonView<?> dtoJsonView) {
+        super(dtoJsonView);
     }
 
+
     @Override
-    protected Object getEntityId(JsonView<?> view) {
-        view.
-        return getId(dto);
+    protected Object getEntityId(DtoJsonView<?> body) {
+        return getId(body.getDto());
     }
 }
