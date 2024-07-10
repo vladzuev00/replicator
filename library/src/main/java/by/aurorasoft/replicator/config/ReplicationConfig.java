@@ -1,10 +1,10 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
+import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
+import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

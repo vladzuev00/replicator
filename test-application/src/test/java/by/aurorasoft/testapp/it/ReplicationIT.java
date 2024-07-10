@@ -80,14 +80,18 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     public void a()
             throws Exception {
         String json = objectMapper.writeValueAsString(
-                JsonView.with(
-                        new SaveProducedReplication(
-                                new PersonV1(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18),
+                new SaveProducedReplication(
+                        JsonView.with(
+                                new PersonV1(
+                                        255L,
+                                        "Vlad",
+                                        "Zuev",
+                                        "Sergeevich",
+                                        LocalDate.of(2000, 2, 18),
                                         new AddressV1(256L, "Belarus", "Minsk")
                                 )
-                        )
+                        ).onClass(PersonV1.class, match().include("surname"))
                 )
-                        .onClass(PersonV1.class, match().include("surname"))
         );
         System.out.println(json);
     }
