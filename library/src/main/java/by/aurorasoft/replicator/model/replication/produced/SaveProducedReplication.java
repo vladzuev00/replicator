@@ -10,9 +10,8 @@ public final class SaveProducedReplication extends ProducedReplication<DtoJsonVi
         super(dtoJsonView);
     }
 
-
     @Override
-    protected Object getEntityId(DtoJsonView<?> body) {
-        return getId(body.getDto());
+    protected Object getEntityId(DtoJsonView<?> dtoJsonView) {
+        return getId(dtoJsonView.getDto());
     }
 }
