@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 public final class SaveProducedReplicationFactory {
     private final DtoJsonViewFactory dtoJsonViewFactory;
 
-    public SaveProducedReplication create(Object dto, JoinPoint joinPoint) {
+    public SaveProducedReplication create(Object savedDto, JoinPoint joinPoint) {
         DtoViewConfig[] dtoViewConfigs = joinPoint.getTarget()
                 .getClass()
                 .getAnnotation(ReplicatedService.class)
                 .dtoViewConfigs();
-        DtoJsonView<Object> dtoJsonView = dtoJsonViewFactory.create(dto, dtoViewConfigs);
+        DtoJsonView<Object> dtoJsonView = dtoJsonViewFactory.create(savedDto, dtoViewConfigs);
         return new SaveProducedReplication(dtoJsonView);
     }
 }

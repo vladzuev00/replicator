@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.aop;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.annotation.ReplicatedService.DtoViewConfig;
-import by.aurorasoft.replicator.factory.DtoJsonViewFactory;
+import by.aurorasoft.replicator.factory.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
@@ -28,7 +28,7 @@ import static org.springframework.transaction.support.TransactionSynchronization
 @RequiredArgsConstructor
 public class ProducingReplicationAspect {
     private final ReplicationProducerRegistry producerRegistry;
-    private final DtoJsonViewFactory dtoJsonViewFactory;
+    private final SaveProducedReplicationFactory saveReplicationFactory;
 
     @AfterReturning(pointcut = "replicatedCreate()", returning = "dto")
     public void produceCreate(JoinPoint joinPoint, Object dto) {
@@ -59,16 +59,8 @@ public class ProducingReplicationAspect {
     }
 
     private void produceSaveReplication(Object dto, JoinPoint joinPoint) {
-        DtoViewConfig[] dtoViewConfigs = getDtoViewConfigs(joinPoint);
-        DtoJsonView<Object> dtoJsonView = dtoJsonViewFactory.create(dto, dtoViewConfigs);
-        produceReplication(new SaveProducedReplication(dtoJsonView), joinPoint);
-    }
-
-    private DtoViewConfig[] getDtoViewConfigs(JoinPoint joinPoint) {
-        return joinPoint.getTarget()
-                .getClass()
-                .getAnnotation(ReplicatedService.class)
-                .dtoViewConfigs();
+        SaveProducedReplication replication = saveReplicationFactory.create(dto, joinPoint);
+        produceReplication(replication, joinPoint);
     }
 
     private void produceDeleteReplication(Object entityId, JoinPoint joinPoint) {
