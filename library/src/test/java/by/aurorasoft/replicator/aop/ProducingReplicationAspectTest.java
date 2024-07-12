@@ -1,76 +1,84 @@
-//package by.aurorasoft.replicator.aop;
-//
-//import by.aurorasoft.replicator.aop.ProducingReplicationAspect.ReplicationCallback;
-//import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-//import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
-//import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
-//import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-//import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-//import by.aurorasoft.replicator.producer.ReplicationProducer;
-//import by.aurorasoft.replicator.v1.dto.TestV1Dto;
-//import by.aurorasoft.replicator.v1.service.FirstTestV1CRUDService;
-//import by.aurorasoft.replicator.v2.dto.TestV2Dto;
-//import by.aurorasoft.replicator.v2.service.FirstTestV2CRUDService;
-//import org.junit.After;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.mockito.ArgumentCaptor;
-//import org.mockito.Captor;
-//import org.mockito.MockedStatic;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.transaction.support.TransactionSynchronizationManager;
-//
-//import java.util.List;
-//
-//import static java.util.Arrays.stream;
-//import static java.util.Objects.requireNonNullElse;
-//import static java.util.Optional.of;
-//import static java.util.stream.IntStream.range;
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertSame;
-//import static org.mockito.Mockito.*;
-//import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
-//import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
-//
-//public final class ProducingReplicationAspectTest extends AbstractSpringBootTest {
-//
-//    @MockBean
-//    private ReplicationProducerRegistry mockedProducerRegistry;
-//
-//    @Autowired
-//    private FirstTestV1CRUDService v1Service;
-//
-//    @Autowired
-//    private FirstTestV2CRUDService v2Service;
-//
-//    private MockedStatic<TransactionSynchronizationManager> mockedTransactionManager;
-//
-//    @Captor
-//    private ArgumentCaptor<ReplicationCallback> callbackArgumentCaptor;
-//
-//    @Before
-//    public void mockTransactionManager() {
-//        mockedTransactionManager = mockStatic(TransactionSynchronizationManager.class);
-//    }
-//
-//    @After
-//    public void closeTransactionManager() {
-//        mockedTransactionManager.close();
-//    }
-//
-//    @Test
-//    public void createByV1ServiceShouldBeProduced() {
-//        TestV1Dto givenDto = new TestV1Dto(255L);
-//
-//        ReplicationProducer givenProducer = mockProducerFor(v1Service);
-//
-//        TestV1Dto actual = v1Service.save(givenDto);
-//        assertSame(givenDto, actual);
-//
-//        verifyProducing(givenProducer, new SaveProducedReplication(actual));
-//    }
-//
+package by.aurorasoft.replicator.aop;
+
+import by.aurorasoft.replicator.aop.ProducingReplicationAspect.ReplicationCallback;
+import by.aurorasoft.replicator.base.AbstractSpringBootTest;
+import by.aurorasoft.replicator.factory.SaveProducedReplicationFactory;
+import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
+import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.v1.dto.TestV1Dto;
+import by.aurorasoft.replicator.v1.service.FirstTestV1CRUDService;
+import by.aurorasoft.replicator.v2.dto.TestV2Dto;
+import by.aurorasoft.replicator.v2.service.FirstTestV2CRUDService;
+import org.aspectj.lang.JoinPoint;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockedStatic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.List;
+
+import static java.util.Arrays.stream;
+import static java.util.Objects.requireNonNullElse;
+import static java.util.Optional.of;
+import static java.util.stream.IntStream.range;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.*;
+import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
+import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
+
+public final class ProducingReplicationAspectTest extends AbstractSpringBootTest {
+
+    @MockBean
+    private ReplicationProducerRegistry mockedProducerRegistry;
+
+    @MockBean
+    private SaveProducedReplicationFactory mockedSaveReplicationFactory;
+
+    @Autowired
+    private FirstTestV1CRUDService v1Service;
+
+    @Autowired
+    private FirstTestV2CRUDService v2Service;
+
+    private MockedStatic<TransactionSynchronizationManager> mockedTransactionManager;
+
+    @Captor
+    private ArgumentCaptor<ReplicationCallback> callbackArgumentCaptor;
+
+    @Before
+    public void mockTransactionManager() {
+        mockedTransactionManager = mockStatic(TransactionSynchronizationManager.class);
+    }
+
+    @After
+    public void closeTransactionManager() {
+        mockedTransactionManager.close();
+    }
+
+    @Test
+    public void createByV1ServiceShouldBeProduced() {
+        TestV1Dto givenDto = new TestV1Dto(255L);
+
+        ReplicationProducer givenProducer = mockProducerFor(v1Service);
+
+        TestV1Dto actual = v1Service.save(givenDto);
+        assertSame(givenDto, actual);
+
+        SaveProducedReplication givenReplication = mock(SaveProducedReplication.class);
+        when(mockedSaveReplicationFactory.create(same(actual), any(JoinPoint.class))).thenReturn(givenReplication);
+
+        verifyProducing(givenProducer, givenReplication);
+    }
+
 //    @Test(expected = IllegalStateException.class)
 //    public void createByV1ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
 //        TestV1Dto givenDto = new TestV1Dto(255L);
@@ -284,39 +292,39 @@
 //
 //        v1Service.deleteAll(givenDtos);
 //    }
-//
-//    private ReplicationProducer mockProducerFor(Object service) {
-//        ReplicationProducer producer = mock(ReplicationProducer.class);
-//        when(mockedProducerRegistry.get(same(unProxy(service)))).thenReturn(of(producer));
-//        return producer;
-//    }
-//
-//    private Object unProxy(Object object) {
-//        return requireNonNullElse(getSingletonTarget(object), object);
-//    }
-//
-//    private void verifyProducing(ReplicationProducer producer, ProducedReplication... replications) {
-//        mockedTransactionManager
-//                .verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(replications.length));
-//        List<ReplicationCallback> actual = callbackArgumentCaptor.getAllValues();
-//        List<ReplicationCallback> expected = createCallbacks(producer, replications);
-//        checkEquals(expected, actual);
-//    }
-//
-//    private List<ReplicationCallback> createCallbacks(ReplicationProducer producer,
-//                                                      ProducedReplication... replications) {
-//        return stream(replications)
-//                .map(replication -> new ReplicationCallback(producer, replication))
-//                .toList();
-//    }
-//
-//    private void checkEquals(List<ReplicationCallback> expected, List<ReplicationCallback> actual) {
-//        assertEquals(expected.size(), actual.size());
-//        range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
-//    }
-//
-//    private void checkEquals(ReplicationCallback expected, ReplicationCallback actual) {
-//        assertSame(expected.getProducer(), actual.getProducer());
-//        assertEquals(expected.getReplication(), actual.getReplication());
-//    }
-//}
+
+    private ReplicationProducer mockProducerFor(Object service) {
+        ReplicationProducer producer = mock(ReplicationProducer.class);
+        when(mockedProducerRegistry.get(same(unProxy(service)))).thenReturn(of(producer));
+        return producer;
+    }
+
+    private Object unProxy(Object object) {
+        return requireNonNullElse(getSingletonTarget(object), object);
+    }
+
+    private void verifyProducing(ReplicationProducer producer, ProducedReplication<?>... replications) {
+        mockedTransactionManager
+                .verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(replications.length));
+        List<ReplicationCallback> actual = callbackArgumentCaptor.getAllValues();
+        List<ReplicationCallback> expected = createCallbacks(producer, replications);
+        checkEquals(expected, actual);
+    }
+
+    private List<ReplicationCallback> createCallbacks(ReplicationProducer producer,
+                                                      ProducedReplication<?>... replications) {
+        return stream(replications)
+                .map(replication -> new ReplicationCallback(producer, replication))
+                .toList();
+    }
+
+    private void checkEquals(List<ReplicationCallback> expected, List<ReplicationCallback> actual) {
+        assertEquals(expected.size(), actual.size());
+        range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
+    }
+
+    private void checkEquals(ReplicationCallback expected, ReplicationCallback actual) {
+        assertSame(expected.getProducer(), actual.getProducer());
+        assertEquals(expected.getReplication(), actual.getReplication());
+    }
+}
