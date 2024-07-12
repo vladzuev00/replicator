@@ -61,7 +61,8 @@ public class ProducingReplicationAspect {
     }
 
     private void produceDeleteReplication(Object entityId, JoinPoint joinPoint) {
-        produceReplication(new DeleteProducedReplication(entityId), joinPoint);
+        DeleteProducedReplication replication = new DeleteProducedReplication(entityId);
+        produceReplication(replication, joinPoint);
     }
 
     private void produceReplication(ProducedReplication<?> replication, JoinPoint joinPoint) {
