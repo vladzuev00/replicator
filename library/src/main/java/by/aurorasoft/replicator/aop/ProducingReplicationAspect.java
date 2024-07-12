@@ -1,12 +1,9 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.DtoViewConfig;
 import by.aurorasoft.replicator.factory.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.model.view.DtoJsonView;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import lombok.Getter;
@@ -30,19 +27,19 @@ public class ProducingReplicationAspect {
     private final ReplicationProducerRegistry producerRegistry;
     private final SaveProducedReplicationFactory saveReplicationFactory;
 
-    @AfterReturning(pointcut = "replicatedCreate()", returning = "dto")
-    public void produceCreate(JoinPoint joinPoint, Object dto) {
-        produceSaveReplication(dto, joinPoint);
+    @AfterReturning(pointcut = "replicatedCreate()", returning = "savedDto")
+    public void produceCreate(JoinPoint joinPoint, Object savedDto) {
+        produceSaveReplication(savedDto, joinPoint);
     }
 
-    @AfterReturning(pointcut = "replicatedCreateAll()", returning = "dtos")
-    public void produceCreateAll(JoinPoint joinPoint, List<?> dtos) {
-        dtos.forEach(dto -> produceSaveReplication(dto, joinPoint));
+    @AfterReturning(pointcut = "replicatedCreateAll()", returning = "savedDtos")
+    public void produceCreateAll(JoinPoint joinPoint, List<?> savedDtos) {
+        savedDtos.forEach(dto -> produceSaveReplication(dto, joinPoint));
     }
 
-    @AfterReturning(pointcut = "replicatedUpdate()", returning = "dto")
-    public void produceUpdate(JoinPoint joinPoint, Object dto) {
-        produceSaveReplication(dto, joinPoint);
+    @AfterReturning(pointcut = "replicatedUpdate()", returning = "savedDto")
+    public void produceUpdate(JoinPoint joinPoint, Object savedDto) {
+        produceSaveReplication(savedDto, joinPoint);
     }
 
     @AfterReturning("replicatedDeleteById()")
@@ -58,8 +55,8 @@ public class ProducingReplicationAspect {
         dtos.forEach(dto -> produceDeleteReplication(getId(dto), joinPoint));
     }
 
-    private void produceSaveReplication(Object dto, JoinPoint joinPoint) {
-        SaveProducedReplication replication = saveReplicationFactory.create(dto, joinPoint);
+    private void produceSaveReplication(Object savedDto, JoinPoint joinPoint) {
+        SaveProducedReplication replication = saveReplicationFactory.create(savedDto, joinPoint);
         produceReplication(replication, joinPoint);
     }
 
