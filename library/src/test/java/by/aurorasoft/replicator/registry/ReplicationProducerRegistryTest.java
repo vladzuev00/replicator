@@ -1,44 +1,38 @@
 package by.aurorasoft.replicator.registry;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerRegistryTest {
+    private static final Object GIVEN_SERVICE = new Object();
+    private static final ReplicationProducer GIVEN_PRODUCER = mock(ReplicationProducer.class);
+    private static final ReplicationProducerRegistry GIVEN_REGISTRY = new ReplicationProducerRegistry(
+            Map.of(GIVEN_SERVICE, GIVEN_PRODUCER)
+    );
 
     @Test
     public void producerShouldBeGotService() {
-        Object givenService = new Object();
-        ReplicationProducer givenProducer = mock(ReplicationProducer.class);
-        ReplicationProducerRegistry givenRegistry = createRegistry(givenService, givenProducer);
-
-        Optional<ReplicationProducer> optionalActual = givenRegistry.get(givenService);
+        Optional<ReplicationProducer> optionalActual = GIVEN_REGISTRY.get(GIVEN_SERVICE);
         assertTrue(optionalActual.isPresent());
         ReplicationProducer actual = optionalActual.get();
-        assertSame(givenProducer, actual);
+        assertSame(GIVEN_PRODUCER, actual);
     }
 
     @Test
     public void producerShouldNotBeGotService() {
-        Object firstGivenService = new Object();
         Object secondGivenService = new Object();
-        ReplicationProducer givenProducer = mock(ReplicationProducer.class);
-        ReplicationProducerRegistry givenRegistry = createRegistry(firstGivenService, givenProducer);
 
-        Optional<ReplicationProducer> optionalActual = givenRegistry.get(secondGivenService);
+        Optional<ReplicationProducer> optionalActual = GIVEN_REGISTRY.get(secondGivenService);
         assertTrue(optionalActual.isEmpty());
-    }
-
-    private ReplicationProducerRegistry createRegistry(Object service, ReplicationProducer producer) {
-        return new ReplicationProducerRegistry(Map.of(service, producer));
     }
 }
