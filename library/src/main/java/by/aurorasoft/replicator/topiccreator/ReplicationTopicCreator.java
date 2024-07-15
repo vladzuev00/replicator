@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.topiccreator;
 
+import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
@@ -22,6 +23,7 @@ public final class ReplicationTopicCreator {
     public void createTopics() {
         serviceHolder.getServices()
                 .stream()
+                .map(service -> service.getClass().getAnnotation(ReplicatedService.class).topicConfig())
                 .map(topicFactory::create)
                 .forEach(kafkaAdmin::createOrModifyTopics);
         publishSuccessEvent();
