@@ -4,18 +4,18 @@ import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class ReplicationKafkaStreamsFactoryTest {
 
     @Mock
@@ -29,7 +29,7 @@ public final class ReplicationKafkaStreamsFactoryTest {
 
     private ReplicationKafkaStreamsFactory replicationStreamsFactory;
 
-    @Before
+    @BeforeEach
     public void initializeReplicationStreamsFactory() {
         replicationStreamsFactory = new ReplicationKafkaStreamsFactory(
                 mockedTopologyFactory,
