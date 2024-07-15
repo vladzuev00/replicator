@@ -17,6 +17,7 @@
         <junit.version>RELEASE</junit.version>
         <springboot.version>3.2.3</springboot.version>
         <auto-service.version>1.1.1</auto-service.version>
+        <json-view.version>1.1.0</json-view.version>
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <java.version>17</java.version>
         <joor.version>0.9.15</joor.version>
@@ -98,11 +99,10 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        TODO: refactor-->
         <dependency>
             <groupId>com.monitorjbl</groupId>
             <artifactId>json-view</artifactId>
-            <version>1.1.0</version>
+            <version>${json-view.version}</version>
         </dependency>
 
         <dependency>
