@@ -8,7 +8,6 @@ import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
 
@@ -27,22 +26,27 @@ public final class ReplicationKafkaTemplateFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    @SneakyThrows
+
     public KafkaTemplate<Object, ProducedReplication<?>> create(ProducerConfig producerConfig) {
         Map<String, Object> configsByKeys = createConfigsByKeys(producerConfig);
-        ProducerFactory<Object, ProducedReplication<?>> factory = new DefaultKafkaProducerFactory<>(configsByKeys, (Serializer<Object>) producerConfig.idSerializer().getConstructor().newInstance(), new JsonSerializer<>(objectMapper));
+        Serializer<Object> idSerializer = createIdSerializer(producerConfig);
+        JsonSerializer<ProducedReplication<?>> replicationSerializer = new JsonSerializer<>(objectMapper);
+        var factory = new DefaultKafkaProducerFactory<>(configsByKeys, idSerializer, replicationSerializer);
         return new KafkaTemplate<>(factory);
     }
 
     private Map<String, Object> createConfigsByKeys(ProducerConfig config) {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
-//                KEY_SERIALIZER_CLASS_CONFIG, config.idSerializer(),
-//                VALUE_SERIALIZER_CLASS_CONFIG, new JsonSerializer<>(objectMapper),
                 BATCH_SIZE_CONFIG, config.batchSize(),
                 LINGER_MS_CONFIG, config.lingerMs(),
                 DELIVERY_TIMEOUT_MS_CONFIG, config.deliveryTimeoutMs(),
                 ENABLE_IDEMPOTENCE_CONFIG, true
         );
+    }
+
+    @SneakyThrows
+    private Serializer<Object> createIdSerializer(ProducerConfig producerConfig) {
+        return (Serializer<Object>) producerConfig.idSerializer().getConstructor().newInstance();
     }
 }
