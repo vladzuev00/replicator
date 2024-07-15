@@ -30,8 +30,8 @@ public final class ReplicationKafkaTemplateFactory {
         Map<String, Object> configsByKeys = createConfigsByKeys(config);
         Serializer<Object> keySerializer = createKeySerializer(config);
         JsonSerializer<ProducedReplication<?>> valueSerializer = createValueSerializer();
-        var factory = new DefaultKafkaProducerFactory<>(configsByKeys, keySerializer, valueSerializer);
-        return new KafkaTemplate<>(factory);
+        var producerFactory = new DefaultKafkaProducerFactory<>(configsByKeys, keySerializer, valueSerializer);
+        return new KafkaTemplate<>(producerFactory);
     }
 
     private Map<String, Object> createConfigsByKeys(ProducerConfig config) {
