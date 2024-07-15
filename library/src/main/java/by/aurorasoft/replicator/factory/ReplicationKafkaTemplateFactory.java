@@ -29,8 +29,8 @@ public final class ReplicationKafkaTemplateFactory {
     public KafkaTemplate<Object, ProducedReplication<?>> create(ProducerConfig config) {
         Map<String, Object> configsByKeys = createConfigsByKeys(config);
         Serializer<Object> keySerializer = createKeySerializer(config);
-        JsonSerializer<ProducedReplication<?>> replicationSerializer = createValueSerializer();
-        var factory = new DefaultKafkaProducerFactory<>(configsByKeys, keySerializer, replicationSerializer);
+        JsonSerializer<ProducedReplication<?>> valueSerializer = createValueSerializer();
+        var factory = new DefaultKafkaProducerFactory<>(configsByKeys, keySerializer, valueSerializer);
         return new KafkaTemplate<>(factory);
     }
 
