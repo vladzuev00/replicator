@@ -26,12 +26,11 @@ public final class ReplicationKafkaTemplateFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-
-    public KafkaTemplate<Object, ProducedReplication<?>> create(ProducerConfig producerConfig) {
-        Map<String, Object> configsByKeys = createConfigsByKeys(producerConfig);
-        Serializer<Object> idSerializer = createIdSerializer(producerConfig);
-        JsonSerializer<ProducedReplication<?>> replicationSerializer = new JsonSerializer<>(objectMapper);
-        var factory = new DefaultKafkaProducerFactory<>(configsByKeys, idSerializer, replicationSerializer);
+    public KafkaTemplate<Object, ProducedReplication<?>> create(ProducerConfig config) {
+        Map<String, Object> configsByKeys = createConfigsByKeys(config);
+        Serializer<Object> keySerializer = createKeySerializer(config);
+        JsonSerializer<ProducedReplication<?>> replicationSerializer = createValueSerializer();
+        var factory = new DefaultKafkaProducerFactory<>(configsByKeys, keySerializer, replicationSerializer);
         return new KafkaTemplate<>(factory);
     }
 
@@ -46,7 +45,12 @@ public final class ReplicationKafkaTemplateFactory {
     }
 
     @SneakyThrows
-    private Serializer<Object> createIdSerializer(ProducerConfig producerConfig) {
-        return (Serializer<Object>) producerConfig.idSerializer().getConstructor().newInstance();
+    @SuppressWarnings("unchecked")
+    private Serializer<Object> createKeySerializer(ProducerConfig config) {
+        return (Serializer<Object>) config.idSerializer().getConstructor().newInstance();
+    }
+
+    private JsonSerializer<ProducedReplication<?>> createValueSerializer() {
+        return new JsonSerializer<>(objectMapper);
     }
 }
