@@ -16,7 +16,7 @@ public class ObjectMapperConfig {
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 //TODO: remove
-                .registerModule(new JsonViewModule())
+//                .registerModule(new JsonViewModule())
                 .configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 }

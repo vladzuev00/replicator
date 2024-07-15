@@ -1,6 +1,5 @@
 package by.aurorasoft.testapp.it;
 
-import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.Address;
@@ -8,8 +7,6 @@ import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.*;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
-import by.aurorasoft.testapp.crud.v1.dto.AddressV1;
-import by.aurorasoft.testapp.crud.v1.dto.PersonV1;
 import by.aurorasoft.testapp.model.AddressName;
 import by.aurorasoft.testapp.model.PersonAddress;
 import by.aurorasoft.testapp.model.PersonName;
@@ -17,8 +14,6 @@ import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedPersonEntityUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monitorjbl.json.JsonView;
 import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -41,7 +36,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static by.aurorasoft.testapp.testutil.EntityUtil.checkEquals;
-import static com.monitorjbl.json.Match.match;
 import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;

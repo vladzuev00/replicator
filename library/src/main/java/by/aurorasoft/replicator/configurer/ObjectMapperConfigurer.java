@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 public final class ObjectMapperConfigurer {
     private final ObjectMapper mapper;
 
+    //TODO: не успевает скорее всего до ReplicationKafkaTemplateFactory
     @EventListener(ContextRefreshedEvent.class)
     public void configure() {
         mapper.registerModule(new JsonViewModule());
