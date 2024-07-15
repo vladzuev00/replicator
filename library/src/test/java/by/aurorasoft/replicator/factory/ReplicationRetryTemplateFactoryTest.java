@@ -2,15 +2,15 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.retry.support.RetryTemplateBuilder;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 public final class ReplicationRetryTemplateFactoryTest {
