@@ -10,13 +10,13 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyTestDriver;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.retry.RetryCallback;
@@ -28,7 +28,7 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class ReplicationTopologyFactoryTest {
     private static final String GIVEN_TOPIC = "test-topic";
 
@@ -43,7 +43,7 @@ public final class ReplicationTopologyFactoryTest {
     @Captor
     private ArgumentCaptor<RetryCallback<?, RuntimeException>> callbackArgumentCaptor;
 
-    @Before
+    @BeforeEach
     public void initializeFactory() {
         topologyFactory = new ReplicationTopologyFactory(mockedRetryTemplate);
     }
