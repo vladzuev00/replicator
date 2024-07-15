@@ -2,25 +2,25 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class ReplicatedServiceRegistryFactoryTest {
 
     @Mock
@@ -28,7 +28,7 @@ public final class ReplicatedServiceRegistryFactoryTest {
 
     private ReplicatedServiceRegistryFactory factory;
 
-    @Before
+    @BeforeEach
     public void initializeFactory() {
         factory = new ReplicatedServiceRegistryFactory(mockedContext);
     }
