@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.base.config;
 
 import by.aurorasoft.replicator.annotation.EnableReplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monitorjbl.json.JsonViewModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaAdmin;
@@ -20,6 +19,6 @@ public class TestConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper().registerModule(new JsonViewModule());
+        return new ObjectMapper();
     }
 }
