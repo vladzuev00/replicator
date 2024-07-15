@@ -2,18 +2,19 @@ package by.aurorasoft.replicator.consuming.serde;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.LongDeserializer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class ConsumingSerdeTest {
     private static final Deserializer<Long> GIVEN_DESERIALIZER = new LongDeserializer();
 
     private final ConsumingSerde<Long> serde = new ConsumingSerde<>(GIVEN_DESERIALIZER);
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void serializerShouldNotBeGot() {
-        serde.serializer();
+        assertThrows(UnsupportedOperationException.class, serde::serializer);
     }
 
     @Test
