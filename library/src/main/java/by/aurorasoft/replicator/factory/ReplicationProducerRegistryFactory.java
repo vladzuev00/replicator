@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,11 @@ public final class ReplicationProducerRegistryFactory {
     public ReplicationProducerRegistry create() {
         return serviceRegistry.getServices()
                 .stream()
-                .collect(
-                        collectingAndThen(
-                                toMap(identity(), service -> producerFactory.create(service.getClass().getAnnotation(ReplicatedService.class))),
-                                ReplicationProducerRegistry::new
-                        )
-                );
+                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerRegistry::new));
+    }
+
+    private ReplicationProducer createProducer(Object service) {
+        ReplicatedService annotation = service.getClass().getAnnotation(ReplicatedService.class);
+        return producerFactory.create(annotation);
     }
 }
