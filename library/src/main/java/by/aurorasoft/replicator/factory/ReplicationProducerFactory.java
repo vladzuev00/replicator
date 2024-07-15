@@ -5,6 +5,10 @@ import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import org.apache.kafka.common.serialization.LongSerializer;
+import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,9 +22,12 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 @Component
 public final class ReplicationProducerFactory {
+    private final ObjectMapper objectMapper;
     private final String bootstrapAddress;
 
-    public ReplicationProducerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapAddress) {
+    public ReplicationProducerFactory(ObjectMapper objectMapper,
+                                      @Value("${spring.kafka.bootstrap-servers}") String bootstrapAddress) {
+        this.objectMapper = objectMapper;
         this.bootstrapAddress = bootstrapAddress;
     }
 
@@ -34,10 +41,11 @@ public final class ReplicationProducerFactory {
         return getTopicConfig(service).name();
     }
 
+    @SneakyThrows
     private KafkaTemplate<Object, ProducedReplication<?>> createKafkaTemplate(Object service) {
         ProducerConfig producerConfig = getProducerConfig(service);
         Map<String, Object> configsByKeys = createConfigsByKeys(producerConfig);
-        ProducerFactory<Object, ProducedReplication<?>> factory = new DefaultKafkaProducerFactory<>(configsByKeys);
+        ProducerFactory<Object, ProducedReplication<?>> factory = new DefaultKafkaProducerFactory<>(configsByKeys, (Serializer<Object>) producerConfig.idSerializer().getConstructor().newInstance(), new JsonSerializer<>(objectMapper));
         return new KafkaTemplate<>(factory);
     }
 
@@ -56,8 +64,8 @@ public final class ReplicationProducerFactory {
     private Map<String, Object> createConfigsByKeys(ProducerConfig config) {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
-                KEY_SERIALIZER_CLASS_CONFIG, config.idSerializer(),
-                VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
+//                KEY_SERIALIZER_CLASS_CONFIG, config.idSerializer(),
+//                VALUE_SERIALIZER_CLASS_CONFIG, new JsonSerializer<>(objectMapper),
                 BATCH_SIZE_CONFIG, config.batchSize(),
                 LINGER_MS_CONFIG, config.lingerMs(),
                 DELIVERY_TIMEOUT_MS_CONFIG, config.deliveryTimeoutMs(),

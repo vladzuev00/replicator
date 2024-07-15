@@ -14,8 +14,9 @@ public class ObjectMapperConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper()
-                .registerModule(new JsonViewModule())
                 .registerModule(new JavaTimeModule())
+                //TODO: remove
+                .registerModule(new JsonViewModule())
                 .configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 }

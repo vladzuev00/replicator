@@ -71,31 +71,6 @@ public abstract class ReplicationIT<ADDRESS extends Address, PERSON extends Pers
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    //TODO: remove
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    //TODO: remove
-    @Test
-    public void a()
-            throws Exception {
-        String json = objectMapper.writeValueAsString(
-                new SaveProducedReplication(
-                        JsonView.with(
-                                new PersonV1(
-                                        255L,
-                                        "Vlad",
-                                        "Zuev",
-                                        "Sergeevich",
-                                        LocalDate.of(2000, 2, 18),
-                                        new AddressV1(256L, "Belarus", "Minsk")
-                                )
-                        ).onClass(PersonV1.class, match().include("surname"))
-                )
-        );
-        System.out.println(json);
-    }
-
     @Test
     public void addressShouldBeSaved() {
         String givenCountry = "Belarus";

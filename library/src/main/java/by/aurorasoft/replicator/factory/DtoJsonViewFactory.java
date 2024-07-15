@@ -17,6 +17,6 @@ public final class DtoJsonViewFactory {
     }
 
     private void putMatch(DtoJsonView<?> view, ViewConfig config) {
-        view.onClass(config.getClass(), match().include(config.includedFields()).exclude(config.excludedFields()));
+        view.onClass(config.type(), match().include(config.includedFields()).exclude(config.excludedFields()));
     }
 }
