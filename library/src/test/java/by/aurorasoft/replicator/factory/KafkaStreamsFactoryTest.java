@@ -3,19 +3,19 @@ package by.aurorasoft.replicator.factory;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class KafkaStreamsFactoryTest {
     private final KafkaStreamsFactory factory = new KafkaStreamsFactory();
 
@@ -27,14 +27,14 @@ public final class KafkaStreamsFactoryTest {
     @Captor
     private ArgumentCaptor<Thread> threadArgumentCaptor;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void mockRuntime() {
         mockedStaticRuntime = mockStatic(Runtime.class);
         mockedStaticRuntime.when(Runtime::getRuntime).thenReturn(mockedRuntime);
     }
 
-    @After
+    @AfterEach
     public void closeMockedStaticRuntime() {
         mockedStaticRuntime.close();
     }
