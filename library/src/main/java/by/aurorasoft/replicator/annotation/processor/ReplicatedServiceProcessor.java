@@ -17,7 +17,6 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toCollection;
@@ -32,7 +31,10 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
-        processInternal(annotations, env);
+        annotations.stream()
+                .flatMap(annotation -> env.getElementsAnnotatedWith(annotation).stream())
+                .filter(element -> !isRUDService(element))
+                .forEach(this::alertWrongAnnotating);
         return true;
     }
 
@@ -50,17 +52,6 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
         return stream(classes)
                 .map(Class::getName)
                 .collect(toCollection(LinkedHashSet::new));
-    }
-
-    private void processInternal(Set<? extends TypeElement> annotations, RoundEnvironment env) {
-        annotations.stream()
-                .flatMap(annotation -> getAnnotatedElements(annotation, env))
-                .filter(element -> !isRUDService(element))
-                .forEach(this::alertWrongAnnotating);
-    }
-
-    private Stream<? extends Element> getAnnotatedElements(TypeElement annotation, RoundEnvironment env) {
-        return env.getElementsAnnotatedWith(annotation).stream();
     }
 
     private boolean isRUDService(Element element) {
