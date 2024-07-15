@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.base;
 
-import by.aurorasoft.replicator.base.config.TestConfig;
+import by.aurorasoft.replicator.testconfig.TestConfig;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
