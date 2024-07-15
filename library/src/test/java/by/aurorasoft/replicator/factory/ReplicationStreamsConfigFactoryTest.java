@@ -4,13 +4,13 @@ import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.streams.StreamsConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Map;
 
 import static org.apache.kafka.streams.StreamsConfig.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public final class ReplicationStreamsConfigFactoryTest {
