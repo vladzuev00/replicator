@@ -19,7 +19,11 @@ public final class ReplicationProducerRegistryFactory {
     public ReplicationProducerRegistry create() {
         return serviceRegistry.getServices()
                 .stream()
-                .map(service -> service.getClass().getAnnotation(ReplicatedService.class))
+                .map(this::getReplicatedServiceAnnotation)
                 .collect(collectingAndThen(toMap(identity(), producerFactory::create), ReplicationProducerRegistry::new));
+    }
+
+    private ReplicatedService getReplicatedServiceAnnotation(Object service) {
+        return service.getClass().getAnnotation(ReplicatedService.class);
     }
 }
