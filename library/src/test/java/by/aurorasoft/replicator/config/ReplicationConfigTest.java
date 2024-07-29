@@ -1,14 +1,18 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
+import by.aurorasoft.replicator.factory.ReplicationObjectMapperFactory;
+import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
+import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
+import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.retry.support.RetryTemplate;
 
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,5 +50,17 @@ public final class ReplicationConfigTest {
 
         RetryTemplate actual = config.replicationRetryTemplate(givenFactory);
         assertSame(givenTemplate, actual);
+    }
+
+    @Test
+    public void replicationObjectMapperShouldBeCreated() {
+        ReplicationObjectMapperFactory givenFactory = mock(ReplicationObjectMapperFactory.class);
+        ObjectMapper givenSource = mock(ObjectMapper.class);
+
+        ReplicationObjectMapper givenMapper = mock(ReplicationObjectMapper.class);
+        when(givenFactory.create(same(givenSource))).thenReturn(givenMapper);
+
+        ReplicationObjectMapper actual = config.replicationObjectMapper(givenFactory, givenSource);
+        assertSame(givenMapper, actual);
     }
 }
