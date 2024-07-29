@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class ReplicationObjectMapper extends ObjectMapper {
 
-    public ReplicationObjectMapper(ObjectMapper objectMapper) {
-        super(objectMapper);
+    public ReplicationObjectMapper(ObjectMapper source) {
+        super(source);
     }
 }
