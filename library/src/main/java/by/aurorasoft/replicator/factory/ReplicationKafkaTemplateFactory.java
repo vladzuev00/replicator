@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
+import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
@@ -17,10 +18,10 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 @Component
 public final class ReplicationKafkaTemplateFactory {
-    private final ObjectMapper objectMapper;
+    private final ReplicationObjectMapper objectMapper;
     private final String bootstrapAddress;
 
-    public ReplicationKafkaTemplateFactory(ObjectMapper objectMapper,
+    public ReplicationKafkaTemplateFactory(ReplicationObjectMapper objectMapper,
                                            @Value("${spring.kafka.bootstrap-servers}") String bootstrapAddress) {
         this.objectMapper = objectMapper;
         this.bootstrapAddress = bootstrapAddress;

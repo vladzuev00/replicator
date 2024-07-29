@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
-import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapperFactory;
+import by.aurorasoft.replicator.factory.ReplicationObjectMapperFactory;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
