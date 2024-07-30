@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.ReplicatedService.ViewConfig;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
@@ -76,21 +77,24 @@ public final class ReplicationProducerRegistryFactoryTest {
         List<ReplicatedService> expectedReplicatedServices = List.of(
                 createReplicatedService(
                         createProducerConfig(LongSerializer.class, 10, 500, 100000),
-                        createTopicConfig("first-topic", 1, 1)
+                        createTopicConfig("first-topic", 1, 1),
+                        new ViewConfig[]{}
                 ),
                 createReplicatedService(
                         createProducerConfig(LongSerializer.class, 15, 515, 110000),
                         createTopicConfig("second-topic", 2, 2),
-                        createViewConfig(
-                                TestV2Dto.class,
-                                new String[]{"first-field"},
-                                new String[]{"second-field"}
-                        ),
-                        createViewConfig(
-                                TestV2Dto.class,
-                                new String[]{"third-field", "fourth-field"},
-                                new String[]{"fifth-field", "sixth-field", "seventh-field"}
-                        )
+                        new ViewConfig[]{
+                                createViewConfig(
+                                        TestV2Dto.class,
+                                        new String[]{"first-field"},
+                                        new String[]{"second-field"}
+                                ),
+                                createViewConfig(
+                                        TestV2Dto.class,
+                                        new String[]{"third-field", "fourth-field"},
+                                        new String[]{"fifth-field", "sixth-field", "seventh-field"}
+                                )
+                        }
                 )
         );
         verifyReplicatedServices(expectedReplicatedServices);
