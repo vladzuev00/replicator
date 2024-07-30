@@ -5,7 +5,9 @@ import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.v1.service.FirstTestV1CRUDService;
+import by.aurorasoft.replicator.v2.dto.TestV2Dto;
 import by.aurorasoft.replicator.v2.service.SecondTestV2CRUDService;
+import org.apache.kafka.common.serialization.LongSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +20,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.IntStream;
 
+import static by.aurorasoft.replicator.testutil.ProducerConfigUtil.createProducerConfig;
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.checkEquals;
+import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.createReplicatedService;
+import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
+import static by.aurorasoft.replicator.testutil.ViewConfigUtil.createViewConfig;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,14 +66,34 @@ public final class ReplicationProducerRegistryFactoryTest {
                 .thenReturn(secondGivenProducer);
 
         ReplicationProducerRegistry actual = registryFactory.create();
-        var actualProducersByServices = getProducersByServices(actual);
-        var expectedProducersByServices = Map.of(
+        Map<Object, ReplicationProducer> actualProducersByServices = getProducersByServices(actual);
+        Map<Object, ReplicationProducer> expectedProducersByServices = Map.of(
                 firstGivenService, firstGivenProducer,
                 secondGivenService, secondGivenProducer
         );
         assertEquals(expectedProducersByServices, actualProducersByServices);
 
-        //TODO: verifyReplicatedServices
+        List<ReplicatedService> expectedReplicatedServices = List.of(
+                createReplicatedService(
+                        createProducerConfig(LongSerializer.class, 10, 500, 100000),
+                        createTopicConfig("first-topic", 1, 1)
+                ),
+                createReplicatedService(
+                        createProducerConfig(LongSerializer.class, 15, 515, 110000),
+                        createTopicConfig("second-topic", 2, 2),
+                        createViewConfig(
+                                TestV2Dto.class,
+                                new String[]{"first-field"},
+                                new String[]{"second-field"}
+                        ),
+                        createViewConfig(
+                                TestV2Dto.class,
+                                new String[]{"third-field", "fourth-field"},
+                                new String[]{"fifth-field", "sixth-field", "seventh-field"}
+                        )
+                )
+        );
+        verifyReplicatedServices(expectedReplicatedServices);
     }
 
     @SuppressWarnings("unchecked")
@@ -78,7 +104,6 @@ public final class ReplicationProducerRegistryFactoryTest {
     private void verifyReplicatedServices(List<ReplicatedService> expected) {
         verify(mockedProducerFactory, times(expected.size())).create(replicatedServiceArgumentCaptor.capture());
         List<ReplicatedService> actual = replicatedServiceArgumentCaptor.getAllValues();
-        throw new RuntimeException();
-//        range(0, expected.size()).forEach(i -> );
+        range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 }
