@@ -4,9 +4,8 @@ import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.Test;
 
+import static by.aurorasoft.replicator.testutil.AnnotationUtil.createTopicConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public final class ReplicationTopicFactoryTest {
     private final ReplicationTopicFactory factory = new ReplicationTopicFactory();
@@ -21,13 +20,5 @@ public final class ReplicationTopicFactoryTest {
         NewTopic actual = factory.create(givenConfig);
         NewTopic expected = new NewTopic(givenName, givenPartitionCount, givenReplicationFactor);
         assertEquals(expected, actual);
-    }
-
-    private TopicConfig createTopicConfig(String name, int partitionCount, short replicationFactor) {
-        TopicConfig config = mock(TopicConfig.class);
-        when(config.name()).thenReturn(name);
-        when(config.partitionCount()).thenReturn(partitionCount);
-        when(config.replicationFactor()).thenReturn(replicationFactor);
-        return config;
     }
 }
