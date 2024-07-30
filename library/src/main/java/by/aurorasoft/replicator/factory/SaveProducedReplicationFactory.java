@@ -14,11 +14,11 @@ public final class SaveProducedReplicationFactory {
     private final DtoJsonViewFactory dtoJsonViewFactory;
 
     public SaveProducedReplication create(Object savedDto, JoinPoint joinPoint) {
-        ViewConfig[] dtoViewConfigs = joinPoint.getTarget()
+        ViewConfig[] viewConfigs = joinPoint.getTarget()
                 .getClass()
                 .getAnnotation(ReplicatedService.class)
                 .viewConfigs();
-        DtoJsonView<Object> dtoJsonView = dtoJsonViewFactory.create(savedDto, dtoViewConfigs);
+        DtoJsonView<Object> dtoJsonView = dtoJsonViewFactory.create(savedDto, viewConfigs);
         return new SaveProducedReplication(dtoJsonView);
     }
 }
