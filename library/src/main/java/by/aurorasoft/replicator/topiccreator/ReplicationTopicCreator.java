@@ -15,14 +15,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationTopicCreator {
-    private final ReplicatedServiceRegistry serviceHolder;
+    private final ReplicatedServiceRegistry serviceRegistry;
     private final ReplicationTopicFactory topicFactory;
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
     @EventListener(PipelinesValidatedEvent.class)
     public void createTopics() {
-        serviceHolder.getServices()
+        serviceRegistry.getServices()
                 .stream()
                 .map(this::getTopicConfig)
                 .map(topicFactory::create)
