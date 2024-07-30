@@ -2,8 +2,8 @@ package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.view.DtoJsonView;
+import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
 import by.aurorasoft.replicator.v2.dto.TestV2Dto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -16,7 +16,7 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 public final class ProducedReplicationTest extends AbstractSpringBootTest {
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ReplicationObjectMapper objectMapper;
 
     @ParameterizedTest
     @MethodSource("provideReplicationAndExpectedJson")
