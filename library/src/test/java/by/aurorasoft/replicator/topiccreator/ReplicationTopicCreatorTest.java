@@ -22,6 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static by.aurorasoft.replicator.testutil.AnnotationUtil.checkEquals;
+import static by.aurorasoft.replicator.testutil.AnnotationUtil.createTopicConfig;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -90,26 +92,7 @@ public final class ReplicationTopicCreatorTest {
     private void verifyConfigs(List<TopicConfig> expected) {
         verify(mockedTopicFactory, times(expected.size())).create(topicConfigArgumentCaptor.capture());
         List<TopicConfig> actual = topicConfigArgumentCaptor.getAllValues();
-        checkEquals(expected, actual);
-    }
-
-    private void checkEquals(List<TopicConfig> expected, List<TopicConfig> actual) {
-        assertEquals(expected.size(), actual.size());
         range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
-    }
-
-    private void checkEquals(TopicConfig expected, TopicConfig actual) {
-        assertEquals(expected.name(), actual.name());
-        assertEquals(expected.partitionCount(), actual.partitionCount());
-        assertEquals(expected.replicationFactor(), actual.replicationFactor());
-    }
-
-    private TopicConfig createTopicConfig(String name, int partitionCount, int replicationFactor) {
-        TopicConfig config = mock(TopicConfig.class);
-        when(config.name()).thenReturn(name);
-        when(config.partitionCount()).thenReturn(partitionCount);
-        when(config.replicationFactor()).thenReturn((short) replicationFactor);
-        return config;
     }
 
     private void verifyCreation(NewTopic... topics) {
