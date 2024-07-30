@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -57,11 +58,6 @@ public final class ReplicationProducerFactoryTest {
         return service;
     }
 
-    private TopicConfig createTopicConfig(String name) {
-        TopicConfig config = mock(TopicConfig.class);
-        when(config.name()).thenReturn(name);
-        return config;
-    }
 
     @SuppressWarnings("unchecked")
     private KafkaTemplate<Object, ProducedReplication<?>> mockKafkaTemplateFor(ProducerConfig producerConfig) {

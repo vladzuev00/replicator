@@ -22,8 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static by.aurorasoft.replicator.testutil.AnnotationUtil.checkEquals;
-import static by.aurorasoft.replicator.testutil.AnnotationUtil.createTopicConfig;
+import static by.aurorasoft.replicator.testutil.TopicConfigUtil.checkEquals;
+import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

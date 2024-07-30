@@ -8,11 +8,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @UtilityClass
-public final class AnnotationUtil {
+public final class TopicConfigUtil {
 
-    public static TopicConfig createTopicConfig(String name, int partitionCount, int replicationFactor) {
+    public static TopicConfig createTopicConfig(String name) {
         TopicConfig config = mock(TopicConfig.class);
         when(config.name()).thenReturn(name);
+        return config;
+    }
+
+    public static TopicConfig createTopicConfig(String name, int partitionCount, int replicationFactor) {
+        TopicConfig config = createTopicConfig(name);
         when(config.partitionCount()).thenReturn(partitionCount);
         when(config.replicationFactor()).thenReturn((short) replicationFactor);
         return config;

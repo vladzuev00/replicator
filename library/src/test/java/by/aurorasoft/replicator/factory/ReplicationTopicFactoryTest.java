@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.Test;
 
-import static by.aurorasoft.replicator.testutil.AnnotationUtil.createTopicConfig;
+import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class ReplicationTopicFactoryTest {
