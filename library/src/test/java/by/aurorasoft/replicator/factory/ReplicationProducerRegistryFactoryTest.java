@@ -30,7 +30,6 @@ import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfi
 import static by.aurorasoft.replicator.testutil.ViewConfigUtil.createViewConfig;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
