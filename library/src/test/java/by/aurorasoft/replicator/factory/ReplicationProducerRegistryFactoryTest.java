@@ -3,12 +3,16 @@
 //import by.aurorasoft.replicator.producer.ReplicationProducer;
 //import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 //import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+//import by.aurorasoft.replicator.v1.service.FirstTestV1CRUDService;
+//import by.aurorasoft.replicator.v2.service.SecondTestV2CRUDService;
 //import org.junit.Before;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
 //import org.mockito.Mock;
 //import org.mockito.junit.MockitoJUnitRunner;
 //
+//import java.util.LinkedHashSet;
+//import java.util.List;
 //import java.util.Map;
 //import java.util.Set;
 //
@@ -37,9 +41,9 @@
 //
 //    @Test
 //    public void registryShouldBeCreated() {
-//        Object firstGivenService = new Object();
-//        Object secondGivenService = new Object();
-//        Set<Object> givenServices = Set.of(firstGivenService, secondGivenService);
+//        Object firstGivenService = new FirstTestV1CRUDService();
+//        Object secondGivenService = new SecondTestV2CRUDService();
+//        Set<Object> givenServices = new LinkedHashSet<>(List.of(firstGivenService, secondGivenService));
 //        when(mockedServiceRegistry.getServices()).thenReturn(givenServices);
 //
 //        ReplicationProducer firstGivenProducer = mockProducerFor(firstGivenService);
