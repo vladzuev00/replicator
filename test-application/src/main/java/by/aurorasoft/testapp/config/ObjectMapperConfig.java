@@ -2,7 +2,6 @@ package by.aurorasoft.testapp.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.monitorjbl.json.JsonViewModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,8 +14,6 @@ public class ObjectMapperConfig {
     public ObjectMapper objectMapper() {
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule())
-                //TODO: remove
-//                .registerModule(new JsonViewModule())
                 .configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 }
