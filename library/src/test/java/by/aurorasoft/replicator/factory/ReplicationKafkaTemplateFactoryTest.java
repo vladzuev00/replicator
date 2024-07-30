@@ -17,11 +17,10 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.Map;
 
+import static by.aurorasoft.replicator.testutil.ProducerConfigUtil.createProducerConfig;
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationKafkaTemplateFactoryTest {
@@ -76,19 +75,6 @@ public final class ReplicationKafkaTemplateFactoryTest {
         var actualValueSerializer = (JsonSerializer<ProducedReplication<?>>) actualProducerFactory.getValueSerializer();
         ObjectMapper actualObjectMapper = getObjectMapper(actualValueSerializer);
         assertSame(mockedObjectMapper, actualObjectMapper);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private ProducerConfig createProducerConfig(Class idSerializer,
-                                                int batchSize,
-                                                int lingerMs,
-                                                int deliveryTimeoutMs) {
-        ProducerConfig config = mock(ProducerConfig.class);
-        when(config.idSerializer()).thenReturn(idSerializer);
-        when(config.batchSize()).thenReturn(batchSize);
-        when(config.lingerMs()).thenReturn(lingerMs);
-        when(config.deliveryTimeoutMs()).thenReturn(deliveryTimeoutMs);
-        return config;
     }
 
     private ObjectMapper getObjectMapper(JsonSerializer<ProducedReplication<?>> serializer) {
