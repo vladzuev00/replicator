@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.annotation;
 
 import org.apache.kafka.common.serialization.Serializer;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Service
+@Repository
 @Target(TYPE)
 @Retention(RUNTIME)
 public @interface ReplicatedRepository {

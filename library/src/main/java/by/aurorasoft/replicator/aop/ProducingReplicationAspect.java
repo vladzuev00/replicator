@@ -111,65 +111,65 @@ public class ProducingReplicationAspect {
 
     }
 
-    @Pointcut("execution(public Object+ org.springframework.data.jpa.repository.JpaRepository.save(Object+))")
+    @Pointcut("execution(public Object+ org.springframework.data.jpa.repository.JpaRepository+.save(Object+))")
     private void save() {
 
     }
 
-    @Pointcut("execution(public Object+ org.springframework.data.jpa.repository.JpaRepository.saveAndFlush(Object+))")
+    @Pointcut("execution(public Object+ org.springframework.data.jpa.repository.JpaRepository+.saveAndFlush(Object+))")
     private void saveAndFlush() {
 
     }
 
-    @Pointcut("execution(public java.util.List+ org.springframework.data.jpa.repository.JpaRepository.saveAll(Iterable+))")
+    @Pointcut("execution(public java.util.List+ org.springframework.data.jpa.repository.JpaRepository+.saveAll(Iterable+))")
     private void saveAll() {
 
     }
 
-    @Pointcut("execution(public java.util.List+ org.springframework.data.jpa.repository.JpaRepository.saveAllAndFlush(Iterable+))")
+    @Pointcut("execution(public java.util.List+ org.springframework.data.jpa.repository.JpaRepository+.saveAllAndFlush(Iterable+))")
     private void saveAllAndFlush() {
 
     }
 
-    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteById(Object+))")
+    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteById(Object+))")
     private void deleteById() {
 
     }
 
-    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository.delete(Object+))")
+    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository+.delete(Object+))")
     private void delete() {
 
     }
 
-    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteAllById(Iterable+))")
+    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteAllById(Iterable+))")
     private void deleteByIds() {
 
     }
 
-    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteAllByIdInBatch(Iterable+))")
+    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteAllByIdInBatch(Iterable+))")
     private void deleteByIdsInBatch() {
 
     }
 
-    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteAll(Iterable+))")
+    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteAll(Iterable+))")
     private void deleteIterable() {
 
     }
 
-    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteAllInBatch(Iterable+))")
+    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteAllInBatch(Iterable+))")
     private void deleteIterableInBatch() {
 
     }
 
-    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteAll())")
+    @Pointcut("execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteAll())")
     private void deleteAll() {
 
     }
 
     @Pointcut(
-            "execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteAllInBatch())"
+            "execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteAllInBatch())"
                     + " || "
-                    + "execution(public void org.springframework.data.jpa.repository.JpaRepository.deleteInBatch())"
+                    + "execution(public void org.springframework.data.jpa.repository.JpaRepository+.deleteInBatch())"
     )
     private void deleteAllInBatch() {
 
