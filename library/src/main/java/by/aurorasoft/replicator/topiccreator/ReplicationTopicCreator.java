@@ -33,7 +33,7 @@ public final class ReplicationTopicCreator {
     private Topic getTopicConfig(Object service) {
         return service.getClass()
                 .getAnnotation(ReplicatedRepository.class)
-                .topicConfig();
+                .topic();
     }
 
     private void publishSuccessEvent() {

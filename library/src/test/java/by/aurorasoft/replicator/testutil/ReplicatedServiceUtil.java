@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.testutil;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.View;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.IntStream.range;
@@ -16,21 +16,21 @@ public final class ReplicatedServiceUtil {
 
     public static ReplicatedRepository createReplicatedService(Producer producerConfig,
                                                                Topic topicConfig,
-                                                               EntityView[] viewConfigs) {
+                                                               View[] viewConfigs) {
         ReplicatedRepository service = mock(ReplicatedRepository.class);
         when(service.producer()).thenReturn(producerConfig);
-        when(service.topicConfig()).thenReturn(topicConfig);
-        when(service.entityViews()).thenReturn(viewConfigs);
+        when(service.topic()).thenReturn(topicConfig);
+        when(service.views()).thenReturn(viewConfigs);
         return service;
     }
 
     public static void checkEquals(ReplicatedRepository expected, ReplicatedRepository actual) {
         ProducerConfigUtil.checkEquals(expected.producer(), actual.producer());
-        TopicConfigUtil.checkEquals(expected.topicConfig(), actual.topicConfig());
-        checkEquals(expected.entityViews(), actual.entityViews());
+        TopicConfigUtil.checkEquals(expected.topic(), actual.topic());
+        checkEquals(expected.views(), actual.views());
     }
 
-    private void checkEquals(EntityView[] expected, EntityView[] actual) {
+    private void checkEquals(View[] expected, View[] actual) {
         assertEquals(expected.length, actual.length);
         range(0, expected.length).forEach(i -> ViewConfigUtil.checkEquals(expected[i], actual[i]));
     }

@@ -65,7 +65,10 @@ public final class ReplicatedRepositoryProcessor extends AbstractProcessor {
     }
 
     private String getWrongAnnotatingMessage() {
-        return "@%s can be applied only for subclass of %s".formatted(ReplicatedRepository.class, JpaRepository.class);
+        return "@%s can be applied only for instant of %s".formatted(
+                ReplicatedRepository.class.getName(),
+                JpaRepository.class.getName()
+        );
     }
 
     private Types getTypeUtils() {

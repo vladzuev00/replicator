@@ -53,7 +53,7 @@ public final class ReplicationProducerFactoryTest {
     private ReplicatedRepository createReplicatedService(String topicName, Producer producerConfig) {
         Topic topicConfig = createTopicConfig(topicName);
         ReplicatedRepository service = mock(ReplicatedRepository.class);
-        when(service.topicConfig()).thenReturn(topicConfig);
+        when(service.topic()).thenReturn(topicConfig);
         when(service.producer()).thenReturn(producerConfig);
         return service;
     }

@@ -30,7 +30,7 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
-
+<!--TODO: remove extra dependencies-->
     <dependencies>
 
         <dependency>

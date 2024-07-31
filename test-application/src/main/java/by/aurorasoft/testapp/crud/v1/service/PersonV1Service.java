@@ -3,7 +3,7 @@ package by.aurorasoft.testapp.crud.v1.service;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.View;
 import by.aurorasoft.testapp.crud.entity.PersonEntity;
 import by.aurorasoft.testapp.crud.repository.PersonRepository;
 import by.aurorasoft.testapp.crud.v1.dto.PersonV1;
@@ -14,8 +14,8 @@ import org.apache.kafka.common.serialization.LongSerializer;
 @SuppressWarnings("deprecation")
 @ReplicatedRepository(
         producer = @Producer(idSerializer = LongSerializer.class),
-        topicConfig = @Topic(name = "sync-person"),
-        entityViews = @EntityView(type = PersonV1.class, includedFields = "surname")
+        topic = @Topic(name = "sync-person"),
+        views = @View(type = PersonV1.class, includedFields = "surname")
 )
 public class PersonV1Service extends CrudGenericService<PersonV1, PersonEntity, PersonRepository, PersonV1Mapper> {
 

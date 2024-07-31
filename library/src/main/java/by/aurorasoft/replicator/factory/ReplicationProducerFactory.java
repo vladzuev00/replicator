@@ -11,8 +11,8 @@ public final class ReplicationProducerFactory {
     private final ReplicationKafkaTemplateFactory kafkaTemplateFactory;
 
     public ReplicationProducer create(ReplicatedRepository service) {
-        String topicName = service.topicConfig().name();
+//        String topicName = service.topicConfig().name();
         var kafkaTemplate = kafkaTemplateFactory.create(service.producer());
-        return new ReplicationProducer(topicName, kafkaTemplate);
+        return new ReplicationProducer("topicName", kafkaTemplate);
     }
 }
