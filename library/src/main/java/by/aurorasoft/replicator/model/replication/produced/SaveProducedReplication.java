@@ -6,12 +6,12 @@ import static by.aurorasoft.replicator.util.IdUtil.getId;
 
 public final class SaveProducedReplication extends ProducedReplication<EntityJsonView<?>> {
 
-    public SaveProducedReplication(EntityJsonView<?> dtoJsonView) {
-        super(dtoJsonView);
+    public SaveProducedReplication(EntityJsonView<?> entityJsonView) {
+        super(entityJsonView);
     }
 
     @Override
-    protected Object getEntityId(EntityJsonView<?> dtoJsonView) {
-        return getId(dtoJsonView.getEntity());
+    protected Object getEntityId(EntityJsonView<?> entityJsonView) {
+        return getId(entityJsonView.getEntity());
     }
 }
