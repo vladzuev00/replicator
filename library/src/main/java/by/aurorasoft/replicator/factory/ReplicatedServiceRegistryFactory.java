@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -17,7 +17,7 @@ public final class ReplicatedServiceRegistryFactory {
     private final ApplicationContext context;
 
     public ReplicatedServiceRegistry create() {
-        return context.getBeansWithAnnotation(ReplicatedService.class)
+        return context.getBeansWithAnnotation(ReplicatedRepository.class)
                 .values()
                 .stream()
                 .map(this::unProxy)

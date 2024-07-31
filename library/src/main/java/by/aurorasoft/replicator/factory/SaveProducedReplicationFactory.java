@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ViewConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.model.view.DtoJsonView;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +14,10 @@ public final class SaveProducedReplicationFactory {
     private final DtoJsonViewFactory dtoJsonViewFactory;
 
     public SaveProducedReplication create(Object savedDto, JoinPoint joinPoint) {
-        ViewConfig[] viewConfigs = joinPoint.getTarget()
+        EntityView[] viewConfigs = joinPoint.getTarget()
                 .getClass()
-                .getAnnotation(ReplicatedService.class)
-                .viewConfigs();
+                .getAnnotation(ReplicatedRepository.class)
+                .entityViews();
         DtoJsonView<Object> dtoJsonView = dtoJsonViewFactory.create(savedDto, viewConfigs);
         return new SaveProducedReplication(dtoJsonView);
     }

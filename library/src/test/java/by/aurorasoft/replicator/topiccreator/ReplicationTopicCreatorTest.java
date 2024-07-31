@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
@@ -46,7 +46,7 @@ public final class ReplicationTopicCreatorTest {
     private ReplicationTopicCreator creator;
 
     @Captor
-    private ArgumentCaptor<TopicConfig> topicConfigArgumentCaptor;
+    private ArgumentCaptor<Topic> topicConfigArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<NewTopic> topicArgumentCaptor;
@@ -73,13 +73,13 @@ public final class ReplicationTopicCreatorTest {
 
         NewTopic firstGivenTopic = mock(NewTopic.class);
         NewTopic secondGivenTopic = mock(NewTopic.class);
-        when(mockedTopicFactory.create(any(TopicConfig.class)))
+        when(mockedTopicFactory.create(any(Topic.class)))
                 .thenReturn(firstGivenTopic)
                 .thenReturn(secondGivenTopic);
 
         creator.createTopics();
 
-        List<TopicConfig> expectedConfigs = List.of(
+        List<Topic> expectedConfigs = List.of(
                 createTopicConfig("first-topic", 1, 1),
                 createTopicConfig("second-topic", 2, 2)
         );
@@ -89,9 +89,9 @@ public final class ReplicationTopicCreatorTest {
         verifySuccessEventPublishing();
     }
 
-    private void verifyConfigs(List<TopicConfig> expected) {
+    private void verifyConfigs(List<Topic> expected) {
         verify(mockedTopicFactory, times(expected.size())).create(topicConfigArgumentCaptor.capture());
-        List<TopicConfig> actual = topicConfigArgumentCaptor.getAllValues();
+        List<Topic> actual = topicConfigArgumentCaptor.getAllValues();
         range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 

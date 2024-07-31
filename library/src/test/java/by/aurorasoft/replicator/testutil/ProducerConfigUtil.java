@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.testutil;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import lombok.experimental.UtilityClass;
 
 import static org.junit.Assert.assertEquals;
@@ -12,11 +12,11 @@ import static org.mockito.Mockito.when;
 public final class ProducerConfigUtil {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static ProducerConfig createProducerConfig(Class idSerializer,
-                                                      int batchSize,
-                                                      int lingerMs,
-                                                      int deliveryTimeoutMs) {
-        ProducerConfig config = mock(ProducerConfig.class);
+    public static Producer createProducerConfig(Class idSerializer,
+                                                int batchSize,
+                                                int lingerMs,
+                                                int deliveryTimeoutMs) {
+        Producer config = mock(Producer.class);
         when(config.idSerializer()).thenReturn(idSerializer);
         when(config.batchSize()).thenReturn(batchSize);
         when(config.lingerMs()).thenReturn(lingerMs);
@@ -24,7 +24,7 @@ public final class ProducerConfigUtil {
         return config;
     }
 
-    public static void checkEquals(ProducerConfig expected, ProducerConfig actual) {
+    public static void checkEquals(Producer expected, Producer actual) {
         assertSame(expected.idSerializer(), actual.idSerializer());
         assertEquals(expected.batchSize(), actual.batchSize());
         assertEquals(expected.lingerMs(), actual.lingerMs());

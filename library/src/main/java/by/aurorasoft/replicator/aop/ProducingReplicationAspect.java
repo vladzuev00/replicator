@@ -139,7 +139,7 @@ public class ProducingReplicationAspect {
 
     }
 
-    @Pointcut("@target(by.aurorasoft.replicator.annotation.ReplicatedService)")
+    @Pointcut("@target(by.aurorasoft.replicator.annotation.ReplicatedRepository)")
     private void replicatedService() {
 
     }

@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ViewConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
@@ -45,7 +45,7 @@ public final class ReplicationProducerRegistryFactoryTest {
     private ReplicationProducerRegistryFactory registryFactory;
 
     @Captor
-    private ArgumentCaptor<ReplicatedService> replicatedServiceArgumentCaptor;
+    private ArgumentCaptor<ReplicatedRepository> replicatedServiceArgumentCaptor;
 
     @Before
     public void initializeRegistryFactory() {
@@ -61,7 +61,7 @@ public final class ReplicationProducerRegistryFactoryTest {
 
         ReplicationProducer firstGivenProducer = mock(ReplicationProducer.class);
         ReplicationProducer secondGivenProducer = mock(ReplicationProducer.class);
-        when(mockedProducerFactory.create(any(ReplicatedService.class)))
+        when(mockedProducerFactory.create(any(ReplicatedRepository.class)))
                 .thenReturn(firstGivenProducer)
                 .thenReturn(secondGivenProducer);
 
@@ -73,16 +73,16 @@ public final class ReplicationProducerRegistryFactoryTest {
         );
         assertEquals(expectedProducersByServices, actualProducersByServices);
 
-        List<ReplicatedService> expectedReplicatedServices = List.of(
+        List<ReplicatedRepository> expectedReplicatedServices = List.of(
                 createReplicatedService(
                         createProducerConfig(LongSerializer.class, 10, 500, 100000),
                         createTopicConfig("first-topic", 1, 1),
-                        new ViewConfig[]{}
+                        new EntityView[]{}
                 ),
                 createReplicatedService(
                         createProducerConfig(LongSerializer.class, 15, 515, 110000),
                         createTopicConfig("second-topic", 2, 2),
-                        new ViewConfig[]{
+                        new EntityView[]{
                                 createViewConfig(
                                         TestV2Dto.class,
                                         new String[]{"first-field"},
@@ -104,9 +104,9 @@ public final class ReplicationProducerRegistryFactoryTest {
         return getFieldValue(registry, FIELD_NAME_PRODUCERS_BY_SERVICES, Map.class);
     }
 
-    private void verifyReplicatedServices(List<ReplicatedService> expected) {
+    private void verifyReplicatedServices(List<ReplicatedRepository> expected) {
         verify(mockedProducerFactory, times(expected.size())).create(replicatedServiceArgumentCaptor.capture());
-        List<ReplicatedService> actual = replicatedServiceArgumentCaptor.getAllValues();
+        List<ReplicatedRepository> actual = replicatedServiceArgumentCaptor.getAllValues();
         range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 }

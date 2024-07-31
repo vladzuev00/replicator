@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
@@ -24,7 +24,7 @@ public final class ReplicationProducerRegistryFactory {
     }
 
     private ReplicationProducer createProducer(Object service) {
-        ReplicatedService annotation = service.getClass().getAnnotation(ReplicatedService.class);
+        ReplicatedRepository annotation = service.getClass().getAnnotation(ReplicatedRepository.class);
         return producerFactory.create(annotation);
     }
 }

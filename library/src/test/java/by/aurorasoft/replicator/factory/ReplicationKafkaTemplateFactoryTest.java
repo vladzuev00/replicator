@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +44,7 @@ public final class ReplicationKafkaTemplateFactoryTest {
         int givenBatchSize = 10;
         int givenLingerMs = 500;
         int givenDeliveryTimeoutMs = 100000;
-        ProducerConfig givenConfig = createProducerConfig(
+        Producer givenConfig = createProducerConfig(
                 givenIdSerializerType,
                 givenBatchSize,
                 givenLingerMs,

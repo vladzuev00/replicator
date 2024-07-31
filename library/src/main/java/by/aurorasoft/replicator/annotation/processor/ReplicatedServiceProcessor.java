@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.annotation.processor;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.nhorushko.crudgeneric.service.RudGenericService;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.google.auto.service.AutoService;
@@ -40,7 +40,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(ReplicatedService.class.getName());
+        return Set.of(ReplicatedRepository.class.getName());
     }
 
     @Override
@@ -80,7 +80,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
 
     private String getWrongAnnotatingMessage() {
         return "'@%s' can be applied only for subclass one of '%s'".formatted(
-                ReplicatedService.class.getName(),
+                ReplicatedRepository.class.getName(),
                 RUD_SERVICE_NAMES
         );
     }

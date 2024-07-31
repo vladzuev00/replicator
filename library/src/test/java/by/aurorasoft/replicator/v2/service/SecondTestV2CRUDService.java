@@ -1,31 +1,31 @@
 package by.aurorasoft.replicator.v2.service;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ViewConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import by.aurorasoft.replicator.v2.dto.TestV2Dto;
 import org.apache.kafka.common.serialization.LongSerializer;
 
-@ReplicatedService(
-        producerConfig = @ProducerConfig(
+@ReplicatedRepository(
+        producer = @Producer(
                 idSerializer = LongSerializer.class,
                 batchSize = 15,
                 lingerMs = 515,
                 deliveryTimeoutMs = 110000
         ),
-        topicConfig = @TopicConfig(
+        topicConfig = @Topic(
                 name = "second-topic",
                 partitionCount = 2,
                 replicationFactor = 2
         ),
-        viewConfigs = {
-                @ViewConfig(
+        entityViews = {
+                @EntityView(
                         type = TestV2Dto.class,
                         includedFields = "first-field",
                         excludedFields = "second-field"
                 ),
-                @ViewConfig(
+                @EntityView(
                         type = TestV2Dto.class,
                         includedFields = {"third-field", "fourth-field"},
                         excludedFields = {"fifth-field", "sixth-field", "seventh-field"}

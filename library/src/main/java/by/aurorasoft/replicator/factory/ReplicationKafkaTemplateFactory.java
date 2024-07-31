@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
 import lombok.SneakyThrows;
@@ -26,7 +26,7 @@ public final class ReplicationKafkaTemplateFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public KafkaTemplate<Object, ProducedReplication<?>> create(ProducerConfig config) {
+    public KafkaTemplate<Object, ProducedReplication<?>> create(Producer config) {
         Map<String, Object> configsByKeys = createConfigsByKeys(config);
         Serializer<Object> keySerializer = createKeySerializer(config);
         JsonSerializer<ProducedReplication<?>> valueSerializer = createValueSerializer();
@@ -34,7 +34,7 @@ public final class ReplicationKafkaTemplateFactory {
         return new KafkaTemplate<>(producerFactory);
     }
 
-    private Map<String, Object> createConfigsByKeys(ProducerConfig config) {
+    private Map<String, Object> createConfigsByKeys(Producer config) {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 BATCH_SIZE_CONFIG, config.batchSize(),
@@ -46,7 +46,7 @@ public final class ReplicationKafkaTemplateFactory {
 
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    private Serializer<Object> createKeySerializer(ProducerConfig config) {
+    private Serializer<Object> createKeySerializer(Producer config) {
         return (Serializer<Object>) config.idSerializer().getConstructor().newInstance();
     }
 

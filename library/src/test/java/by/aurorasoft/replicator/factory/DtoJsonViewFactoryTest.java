@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService.ViewConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import by.aurorasoft.replicator.model.view.DtoJsonView;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ public final class DtoJsonViewFactoryTest {
     @Test
     public void viewShouldBeCreated() {
         TestDto givenDto = new TestDto(255L, "dto-name");
-        ViewConfig[] givenConfigs = new ViewConfig[]{
+        EntityView[] givenConfigs = new EntityView[]{
                 createViewConfig(
                         TestDto.class,
                         new String[]{"id"},

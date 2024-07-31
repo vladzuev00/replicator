@@ -1,9 +1,9 @@
 package by.aurorasoft.replicator.testutil;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ViewConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.IntStream.range;
@@ -14,23 +14,23 @@ import static org.mockito.Mockito.when;
 @UtilityClass
 public final class ReplicatedServiceUtil {
 
-    public static ReplicatedService createReplicatedService(ProducerConfig producerConfig,
-                                                            TopicConfig topicConfig,
-                                                            ViewConfig[] viewConfigs) {
-        ReplicatedService service = mock(ReplicatedService.class);
-        when(service.producerConfig()).thenReturn(producerConfig);
+    public static ReplicatedRepository createReplicatedService(Producer producerConfig,
+                                                               Topic topicConfig,
+                                                               EntityView[] viewConfigs) {
+        ReplicatedRepository service = mock(ReplicatedRepository.class);
+        when(service.producer()).thenReturn(producerConfig);
         when(service.topicConfig()).thenReturn(topicConfig);
-        when(service.viewConfigs()).thenReturn(viewConfigs);
+        when(service.entityViews()).thenReturn(viewConfigs);
         return service;
     }
 
-    public static void checkEquals(ReplicatedService expected, ReplicatedService actual) {
-        ProducerConfigUtil.checkEquals(expected.producerConfig(), actual.producerConfig());
+    public static void checkEquals(ReplicatedRepository expected, ReplicatedRepository actual) {
+        ProducerConfigUtil.checkEquals(expected.producer(), actual.producer());
         TopicConfigUtil.checkEquals(expected.topicConfig(), actual.topicConfig());
-        checkEquals(expected.viewConfigs(), actual.viewConfigs());
+        checkEquals(expected.entityViews(), actual.entityViews());
     }
 
-    private void checkEquals(ViewConfig[] expected, ViewConfig[] actual) {
+    private void checkEquals(EntityView[] expected, EntityView[] actual) {
         assertEquals(expected.length, actual.length);
         range(0, expected.length).forEach(i -> ViewConfigUtil.checkEquals(expected[i], actual[i]));
     }

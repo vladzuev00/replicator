@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ public final class ReplicationTopicFactoryTest {
         String givenName = "second-topic";
         int givenPartitionCount = 2;
         short givenReplicationFactor = 3;
-        TopicConfig givenConfig = createTopicConfig(givenName, givenPartitionCount, givenReplicationFactor);
+        Topic givenConfig = createTopicConfig(givenName, givenPartitionCount, givenReplicationFactor);
 
         NewTopic actual = factory.create(givenConfig);
         NewTopic expected = new NewTopic(givenName, givenPartitionCount, givenReplicationFactor);

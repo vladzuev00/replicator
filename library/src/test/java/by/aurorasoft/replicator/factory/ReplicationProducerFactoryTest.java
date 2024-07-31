@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +37,8 @@ public final class ReplicationProducerFactoryTest {
     @Test
     public void producerShouldBeCreated() {
         String givenTopicName = "sync-dto";
-        ProducerConfig givenProducerConfig = mock(ProducerConfig.class);
-        ReplicatedService givenReplicatedService = createReplicatedService(givenTopicName, givenProducerConfig);
+        Producer givenProducerConfig = mock(Producer.class);
+        ReplicatedRepository givenReplicatedService = createReplicatedService(givenTopicName, givenProducerConfig);
         KafkaTemplate<Object, ProducedReplication<?>> givenKafkaTemplate = mockKafkaTemplateFor(givenProducerConfig);
 
         ReplicationProducer actual = producerFactory.create(givenReplicatedService);
@@ -50,17 +50,17 @@ public final class ReplicationProducerFactoryTest {
         assertSame(givenKafkaTemplate, actualKafkaTemplate);
     }
 
-    private ReplicatedService createReplicatedService(String topicName, ProducerConfig producerConfig) {
-        TopicConfig topicConfig = createTopicConfig(topicName);
-        ReplicatedService service = mock(ReplicatedService.class);
+    private ReplicatedRepository createReplicatedService(String topicName, Producer producerConfig) {
+        Topic topicConfig = createTopicConfig(topicName);
+        ReplicatedRepository service = mock(ReplicatedRepository.class);
         when(service.topicConfig()).thenReturn(topicConfig);
-        when(service.producerConfig()).thenReturn(producerConfig);
+        when(service.producer()).thenReturn(producerConfig);
         return service;
     }
 
 
     @SuppressWarnings("unchecked")
-    private KafkaTemplate<Object, ProducedReplication<?>> mockKafkaTemplateFor(ProducerConfig producerConfig) {
+    private KafkaTemplate<Object, ProducedReplication<?>> mockKafkaTemplateFor(Producer producerConfig) {
         KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate = mock(KafkaTemplate.class);
         when(mockedKafkaTemplateFactory.create(same(producerConfig))).thenReturn(kafkaTemplate);
         return kafkaTemplate;

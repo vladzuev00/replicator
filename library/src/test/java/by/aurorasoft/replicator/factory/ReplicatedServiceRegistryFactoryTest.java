@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public final class ReplicatedServiceRegistryFactoryTest {
                     "FirstService", firstGivenProxy,
                     "SecondService", secondGivenService
             );
-            when(mockedContext.getBeansWithAnnotation(same(ReplicatedService.class))).thenReturn(givenServicesByNames);
+            when(mockedContext.getBeansWithAnnotation(same(ReplicatedRepository.class))).thenReturn(givenServicesByNames);
 
             Object firstGivenService = mockServiceFor(firstGivenProxy, mockedProxyUtil);
 

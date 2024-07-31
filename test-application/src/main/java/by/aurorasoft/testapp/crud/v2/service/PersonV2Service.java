@@ -1,8 +1,8 @@
 package by.aurorasoft.testapp.crud.v2.service;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.testapp.crud.v2.dto.PersonV2;
 import by.aurorasoft.testapp.crud.entity.PersonEntity;
 import by.aurorasoft.testapp.crud.v2.mapper.PersonV2Mapper;
@@ -10,9 +10,9 @@ import by.aurorasoft.testapp.crud.repository.PersonRepository;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.apache.kafka.common.serialization.LongSerializer;
 
-@ReplicatedService(
-        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-        topicConfig = @TopicConfig(name = "sync-person")
+@ReplicatedRepository(
+        producer = @Producer(idSerializer = LongSerializer.class),
+        topicConfig = @Topic(name = "sync-person")
 )
 public class PersonV2Service extends AbsServiceCRUD<Long, PersonEntity, PersonV2, PersonRepository> {
 

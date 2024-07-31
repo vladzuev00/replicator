@@ -1,18 +1,18 @@
 package by.aurorasoft.replicator.v1.service;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.ProducerConfig;
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import org.apache.kafka.common.serialization.LongSerializer;
 
-@ReplicatedService(
-        producerConfig = @ProducerConfig(
+@ReplicatedRepository(
+        producer = @Producer(
                 idSerializer = LongSerializer.class,
                 batchSize = 15,
                 lingerMs = 515,
                 deliveryTimeoutMs = 110000
         ),
-        topicConfig = @TopicConfig(
+        topicConfig = @Topic(
                 name = "second-topic",
                 partitionCount = 2,
                 replicationFactor = 2

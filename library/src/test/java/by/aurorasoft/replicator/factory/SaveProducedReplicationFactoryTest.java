@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService.ViewConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.model.view.DtoJsonView;
@@ -33,7 +33,7 @@ public final class SaveProducedReplicationFactoryTest {
     private SaveProducedReplicationFactory replicationFactory;
 
     @Captor
-    private ArgumentCaptor<ViewConfig[]> viewConfigsArgumentCaptor;
+    private ArgumentCaptor<EntityView[]> viewConfigsArgumentCaptor;
 
     @Before
     public void initializeReplicationFactory() {
@@ -49,14 +49,14 @@ public final class SaveProducedReplicationFactoryTest {
         when(givenJoinPoint.getTarget()).thenReturn(givenTarget);
 
         DtoJsonView<Object> givenDtoJsonView = new DtoJsonView<>(givenSavedDto);
-        when(mockedDtoJsonViewFactory.create(same(givenSavedDto), any(ViewConfig[].class)))
+        when(mockedDtoJsonViewFactory.create(same(givenSavedDto), any(EntityView[].class)))
                 .thenReturn(givenDtoJsonView);
 
         SaveProducedReplication actual = replicationFactory.create(givenSavedDto, givenJoinPoint);
         Object actualBody = getBody(actual);
         assertSame(givenDtoJsonView, actualBody);
 
-        ViewConfig[] expectedViewConfigs = new ViewConfig[]{
+        EntityView[] expectedViewConfigs = new EntityView[]{
                 createViewConfig(
                         TestV2Dto.class,
                         new String[]{"first-field"},
@@ -75,9 +75,9 @@ public final class SaveProducedReplicationFactoryTest {
         return getFieldValue(replication, FIELD_NAME_REPLICATION_BODY, Object.class);
     }
 
-    private void verifyViewConfigs(ViewConfig[] expected) {
+    private void verifyViewConfigs(EntityView[] expected) {
         verify(mockedDtoJsonViewFactory, times(1)).create(any(), viewConfigsArgumentCaptor.capture());
-        ViewConfig[] actual = viewConfigsArgumentCaptor.getValue();
+        EntityView[] actual = viewConfigsArgumentCaptor.getValue();
         assertEquals(expected.length, actual.length);
         range(0, expected.length).forEach(i -> checkEquals(expected[i], actual[i]));
     }

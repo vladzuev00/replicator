@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
-import by.aurorasoft.replicator.annotation.ReplicatedService.TopicConfig;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
@@ -30,9 +30,9 @@ public final class ReplicationTopicCreator {
         publishSuccessEvent();
     }
 
-    private TopicConfig getTopicConfig(Object service) {
+    private Topic getTopicConfig(Object service) {
         return service.getClass()
-                .getAnnotation(ReplicatedService.class)
+                .getAnnotation(ReplicatedRepository.class)
                 .topicConfig();
     }
 
