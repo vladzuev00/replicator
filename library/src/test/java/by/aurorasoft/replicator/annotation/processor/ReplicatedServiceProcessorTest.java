@@ -45,7 +45,7 @@ public final class ReplicatedServiceProcessorTest {
     }
 
     private CompileOptions getCompileOptions() {
-        return new CompileOptions().processors(new ReplicatedServiceProcessor());
+        return new CompileOptions().processors(new ReplicatedRepositoryProcessor());
     }
 
     private static Stream<Arguments> provideClassNameAndSourceCode() {

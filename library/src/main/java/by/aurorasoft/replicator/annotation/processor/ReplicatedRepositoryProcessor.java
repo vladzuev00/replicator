@@ -1,9 +1,8 @@
 package by.aurorasoft.replicator.annotation.processor;
 
 import by.aurorasoft.replicator.annotation.ReplicatedRepository;
-import by.nhorushko.crudgeneric.service.RudGenericService;
-import by.nhorushko.crudgeneric.v2.service.AbsServiceRUD;
 import com.google.auto.service.AutoService;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -15,25 +14,19 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toCollection;
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @AutoService(Processor.class)
-public final class ReplicatedServiceProcessor extends AbstractProcessor {
-
-    @SuppressWarnings("deprecation")
-    private static final Set<String> RUD_SERVICE_NAMES = getNames(AbsServiceRUD.class, RudGenericService.class);
+public final class ReplicatedRepositoryProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         annotations.stream()
                 .flatMap(annotation -> env.getElementsAnnotatedWith(annotation).stream())
-                .filter(element -> !isRUDService(element))
+                .filter(element -> !isJpaRepository(element))
                 .forEach(this::alertWrongAnnotating);
         return true;
     }
@@ -48,16 +41,9 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
         return latestSupported();
     }
 
-    private static Set<String> getNames(Class<?>... classes) {
-        return stream(classes)
-                .map(Class::getName)
-                .collect(toCollection(LinkedHashSet::new));
-    }
-
-    private boolean isRUDService(Element element) {
-        return RUD_SERVICE_NAMES.stream()
-                .map(this::getRawType)
-                .anyMatch(rawServiceType -> isInstanceOf(element, rawServiceType));
+    private boolean isJpaRepository(Element element) {
+        TypeMirror jpaRepositoryRawType = getRawType(JpaRepository.class.getName());
+        return isInstanceOf(element, jpaRepositoryRawType);
     }
 
     private TypeMirror getRawType(String name) {
@@ -79,10 +65,7 @@ public final class ReplicatedServiceProcessor extends AbstractProcessor {
     }
 
     private String getWrongAnnotatingMessage() {
-        return "'@%s' can be applied only for subclass one of '%s'".formatted(
-                ReplicatedRepository.class.getName(),
-                RUD_SERVICE_NAMES
-        );
+        return "@%s can be applied only for subclass of %s".formatted(ReplicatedRepository.class, JpaRepository.class);
     }
 
     private Types getTypeUtils() {
