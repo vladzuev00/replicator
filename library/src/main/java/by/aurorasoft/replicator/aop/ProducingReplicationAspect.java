@@ -58,12 +58,12 @@ public class ProducingReplicationAspect {
 
     @AfterReturning("replicatedRepository() && (deleteByIds() || deleteByIdsInBatch())")
     public void produceDeleteByIds(JoinPoint joinPoint) {
-        getFirstArgumentAsIterable(joinPoint).forEach(id -> produceDeleteReplication(id, joinPoint));
+        getIterableFirstArgument(joinPoint).forEach(id -> produceDeleteReplication(id, joinPoint));
     }
 
     @AfterReturning("replicatedRepository() && (deleteIterable() || deleteIterableInBatch())")
     public void produceDeleteIterable(JoinPoint joinPoint) {
-        getFirstArgumentAsIterable(joinPoint).forEach(entity -> produceDeleteReplication(getId(entity), joinPoint));
+        getIterableFirstArgument(joinPoint).forEach(entity -> produceDeleteReplication(getId(entity), joinPoint));
     }
 
     @AfterReturning("replicatedRepository() && (deleteAll() || deleteAllInBatch())")
@@ -97,7 +97,7 @@ public class ProducingReplicationAspect {
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<Object> getFirstArgumentAsIterable(JoinPoint joinPoint) {
+    private Iterable<Object> getIterableFirstArgument(JoinPoint joinPoint) {
         return (Iterable<Object>) joinPoint.getArgs()[0];
     }
 
