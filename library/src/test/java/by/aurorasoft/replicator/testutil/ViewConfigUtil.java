@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.testutil;
 
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.View;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import lombok.experimental.UtilityClass;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -12,14 +12,14 @@ import static org.mockito.Mockito.when;
 public final class ViewConfigUtil {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static View createViewConfig(Class type, String[] includedFields, String[] excludedFields) {
-        View config = mock(View.class);
+    public static EntityView createViewConfig(Class type, String[] includedFields, String[] excludedFields) {
+        EntityView config = mock(EntityView.class);
         when(config.type()).thenReturn(type);
         when(config.excludedFields()).thenReturn(excludedFields);
         return config;
     }
 
-    public static void checkEquals(View expected, View actual) {
+    public static void checkEquals(EntityView expected, EntityView actual) {
         assertSame(expected.type(), actual.type());
         assertArrayEquals(expected.excludedFields(), actual.excludedFields());
     }

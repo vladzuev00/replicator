@@ -17,7 +17,7 @@ public @interface ReplicatedRepository {
 
     Topic topic();
 
-    View[] views() default {};
+    EntityView[] entityViews() default {};
 
     @interface Producer {
         Class<? extends Serializer<?>> idSerializer();
@@ -37,7 +37,7 @@ public @interface ReplicatedRepository {
         short replicationFactor() default 1;
     }
 
-    @interface View {
+    @interface EntityView {
         Class<?> type();
 
         String[] excludedFields() default {};
