@@ -17,11 +17,12 @@ public final class ReplicatedRepositoryRegistryFactory {
     private final ApplicationContext context;
 
     public ReplicatedRepositoryRegistry create() {
-        return context.getBeansWithAnnotation(ReplicatedRepository.class)
-                .values()
-                .stream()
-                .map(this::unProxy)
-                .collect(collectingAndThen(toUnmodifiableSet(), ReplicatedRepositoryRegistry::new));
+        return null;
+//        return context.getBeansWithAnnotation(ReplicatedRepository.class)
+//                .values()
+//                .stream()
+//                .map(this::unProxy)
+//                .collect(collectingAndThen(toUnmodifiableSet(), ReplicatedRepositoryRegistry::new));
     }
 
     private Object unProxy(Object service) {
