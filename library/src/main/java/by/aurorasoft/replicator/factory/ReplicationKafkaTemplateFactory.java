@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationKafkaTemplateFactory {
-    private final ReplicationKafkaTemplateConfigsFactory configsFactory;
+    private final ReplicationProducerConfigsFactory configsFactory;
     private final ReplicationObjectMapper objectMapper;
 
     public KafkaTemplate<Object, ProducedReplication<?>> create(Producer config) {

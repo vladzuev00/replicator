@@ -9,10 +9,10 @@ import java.util.Map;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 @Component
-public final class ReplicationKafkaTemplateConfigsFactory {
+public final class ReplicationProducerConfigsFactory {
     private final String bootstrapAddress;
 
-    public ReplicationKafkaTemplateConfigsFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapAddress) {
+    public ReplicationProducerConfigsFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapAddress) {
         this.bootstrapAddress = bootstrapAddress;
     }
 
