@@ -22,7 +22,7 @@ public final class ReplicationTopicCreator {
 
     @EventListener(PipelinesValidatedEvent.class)
     public void createTopics() {
-        serviceRegistry.getServices()
+        serviceRegistry.getRepositories()
                 .stream()
                 .map(this::getTopicConfig)
                 .map(topicFactory::create)

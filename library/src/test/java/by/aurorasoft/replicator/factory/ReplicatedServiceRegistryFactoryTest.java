@@ -47,7 +47,7 @@ public final class ReplicatedServiceRegistryFactoryTest {
             Object firstGivenService = mockServiceFor(firstGivenProxy, mockedProxyUtil);
 
             ReplicatedRepositoryRegistry actual = factory.create();
-            Set<Object> actualServices = actual.getServices();
+            Set<Object> actualServices = actual.getRepositories();
             Set<Object> expectedServices = Set.of(firstGivenService, secondGivenService);
             assertEquals(expectedServices, actualServices);
         }

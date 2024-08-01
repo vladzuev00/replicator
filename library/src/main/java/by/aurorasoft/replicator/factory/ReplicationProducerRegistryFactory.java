@@ -18,7 +18,7 @@ public final class ReplicationProducerRegistryFactory {
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
-        return serviceRegistry.getServices()
+        return serviceRegistry.getRepositories()
                 .stream()
                 .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerRegistry::new));
     }
