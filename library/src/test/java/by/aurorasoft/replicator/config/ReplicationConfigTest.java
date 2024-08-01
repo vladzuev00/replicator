@@ -1,11 +1,11 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
+import by.aurorasoft.replicator.factory.ReplicatedRepositoryRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationObjectMapperFactory;
 import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -20,13 +20,13 @@ public final class ReplicationConfigTest {
     private final ReplicationConfig config = new ReplicationConfig();
 
     @Test
-    public void replicatedServiceRegistryShouldBeCreated() {
-        ReplicatedServiceRegistryFactory givenFactory = mock(ReplicatedServiceRegistryFactory.class);
+    public void replicatedRepositoryRegistryShouldBeCreated() {
+        ReplicatedRepositoryRegistryFactory givenFactory = mock(ReplicatedRepositoryRegistryFactory.class);
 
-        ReplicatedServiceRegistry givenRegistry = mock(ReplicatedServiceRegistry.class);
+        ReplicatedRepositoryRegistry givenRegistry = mock(ReplicatedRepositoryRegistry.class);
         when(givenFactory.create()).thenReturn(givenRegistry);
 
-        ReplicatedServiceRegistry actual = config.replicatedServiceRegistry(givenFactory);
+        ReplicatedRepositoryRegistry actual = config.replicatedRepositoryRegistry(givenFactory);
         assertSame(givenRegistry, actual);
     }
 

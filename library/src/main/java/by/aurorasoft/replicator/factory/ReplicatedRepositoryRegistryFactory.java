@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedRepository;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -13,15 +13,15 @@ import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget
 
 @Component
 @RequiredArgsConstructor
-public final class ReplicatedServiceRegistryFactory {
+public final class ReplicatedRepositoryRegistryFactory {
     private final ApplicationContext context;
 
-    public ReplicatedServiceRegistry create() {
+    public ReplicatedRepositoryRegistry create() {
         return context.getBeansWithAnnotation(ReplicatedRepository.class)
                 .values()
                 .stream()
                 .map(this::unProxy)
-                .collect(collectingAndThen(toUnmodifiableSet(), ReplicatedServiceRegistry::new));
+                .collect(collectingAndThen(toUnmodifiableSet(), ReplicatedRepositoryRegistry::new));
     }
 
     private Object unProxy(Object service) {

@@ -7,6 +7,6 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Getter
-public final class ReplicatedServiceRegistry {
+public final class ReplicatedRepositoryRegistry {
     private final Set<Object> services;
 }

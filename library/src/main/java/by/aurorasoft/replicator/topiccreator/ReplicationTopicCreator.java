@@ -5,7 +5,7 @@ import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationTopicCreator {
-    private final ReplicatedServiceRegistry serviceRegistry;
+    private final ReplicatedRepositoryRegistry serviceRegistry;
     private final ReplicationTopicFactory topicFactory;
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;

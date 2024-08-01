@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedRepository;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,11 +26,11 @@ public final class ReplicatedServiceRegistryFactoryTest {
     @Mock
     private ApplicationContext mockedContext;
 
-    private ReplicatedServiceRegistryFactory factory;
+    private ReplicatedRepositoryRegistryFactory factory;
 
     @BeforeEach
     public void initializeFactory() {
-        factory = new ReplicatedServiceRegistryFactory(mockedContext);
+        factory = new ReplicatedRepositoryRegistryFactory(mockedContext);
     }
 
     @Test
@@ -46,7 +46,7 @@ public final class ReplicatedServiceRegistryFactoryTest {
 
             Object firstGivenService = mockServiceFor(firstGivenProxy, mockedProxyUtil);
 
-            ReplicatedServiceRegistry actual = factory.create();
+            ReplicatedRepositoryRegistry actual = factory.create();
             Set<Object> actualServices = actual.getServices();
             Set<Object> expectedServices = Set.of(firstGivenService, secondGivenService);
             assertEquals(expectedServices, actualServices);

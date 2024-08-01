@@ -1,11 +1,11 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.ReplicatedServiceRegistryFactory;
+import by.aurorasoft.replicator.factory.ReplicatedRepositoryRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationObjectMapperFactory;
 import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import org.springframework.retry.support.RetryTemplate;
 public class ReplicationConfig {
 
     @Bean
-    public ReplicatedServiceRegistry replicatedServiceRegistry(ReplicatedServiceRegistryFactory factory) {
+    public ReplicatedRepositoryRegistry replicatedRepositoryRegistry(ReplicatedRepositoryRegistryFactory factory) {
         return factory.create();
     }
 
