@@ -17,7 +17,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
         topic = @Topic(name = "second-topic", partitionCount = 2, replicationFactor = 2),
         entityViews = {
                 @EntityView(type = TestEntity.class, excludedFields = "first-field"),
-                @EntityView(type = TestEntity.class, excludedFields = {"second-field", "third-field", "fourth-field"})
+                @EntityView(type = Object.class, excludedFields = {"second-field", "third-field", "fourth-field"})
         }
 )
 public class SecondTestRepository extends TestRepository {

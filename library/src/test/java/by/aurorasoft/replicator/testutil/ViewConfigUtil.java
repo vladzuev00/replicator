@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 public final class ViewConfigUtil {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static EntityView createViewConfig(Class type, String[] includedFields, String[] excludedFields) {
+    public static EntityView createViewConfig(Class type, String[] excludedFields) {
         EntityView config = mock(EntityView.class);
         when(config.type()).thenReturn(type);
         when(config.excludedFields()).thenReturn(excludedFields);

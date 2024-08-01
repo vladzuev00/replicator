@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public final class SaveProducedReplicationFactory {
-    private final DtoJsonViewFactory dtoJsonViewFactory;
+    private final EntityJsonViewFactory dtoJsonViewFactory;
 
     public SaveProducedReplication create(Object savedDto, JoinPoint joinPoint) {
         EntityView[] viewConfigs = joinPoint.getTarget()
