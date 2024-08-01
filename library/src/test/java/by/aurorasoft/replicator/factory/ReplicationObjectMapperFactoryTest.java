@@ -3,12 +3,13 @@ package by.aurorasoft.replicator.factory;
 import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.geo.GeoModule;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public final class ReplicationObjectMapperFactoryTest {
     private final ReplicationObjectMapperFactory factory = new ReplicationObjectMapperFactory();
