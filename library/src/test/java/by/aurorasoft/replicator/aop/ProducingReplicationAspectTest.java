@@ -3,6 +3,7 @@ package by.aurorasoft.replicator.aop;
 import by.aurorasoft.replicator.aop.ProducingReplicationAspect.ReplicationCallback;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.factory.SaveProducedReplicationFactory;
+import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
@@ -21,12 +22,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
+import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNullElse;
+import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
@@ -71,7 +72,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     }
 
     @Test
-    public void saveShouldNotBeProducedBecauseNoProducer() {
+    public void saveShouldNotBeProducedBecauseOfNoProducer() {
         TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
 
         assertThrows(IllegalStateException.class, () -> repository.save(givenEntity));
@@ -90,7 +91,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     }
 
     @Test
-    public void saveAndFlushShouldNotBeProducedBecauseNoProducer() {
+    public void saveAndFlushShouldNotBeProducedBecauseOfNoProducer() {
         TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
 
         assertThrows(IllegalStateException.class, () -> repository.saveAndFlush(givenEntity));
@@ -111,174 +112,255 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         verifyProducing(givenProducer, firstGivenReplication, secondGivenReplication);
     }
 
-//    @Test
-//    public void createAllByV1ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
-//
-//        assertThrows(IllegalStateException.class, () -> v1Service.saveAll(givenDtos));
-//    }
-//
-//    @Test
-//    public void createAllByV2ServiceShouldBeProduced() {
-//        TestV2Dto firstGivenDto = new TestV2Dto(255L);
-//        TestV2Dto secondGivenDto = new TestV2Dto(256L);
-//        List<TestV2Dto> givenDtos = List.of(firstGivenDto, secondGivenDto);
-//        SaveProducedReplication firstGivenReplication = mockSaveReplicationFor(firstGivenDto);
-//        SaveProducedReplication secondGivenReplication = mockSaveReplicationFor(secondGivenDto);
-//        ReplicationProducer givenProducer = mockProducerFor(v2Service);
-//
-//        List<TestV2Dto> actual = v2Service.saveAll(givenDtos);
-//        assertEquals(givenDtos, actual);
-//
-//        verifyProducing(givenProducer, firstGivenReplication, secondGivenReplication);
-//    }
-//
-//    @Test
-//    public void createAllByV2ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        List<TestV2Dto> givenDtos = List.of(new TestV2Dto(255L), new TestV2Dto(256L));
-//
-//        assertThrows(IllegalStateException.class, () -> v2Service.saveAll(givenDtos));
-//    }
-//
-//    @Test
-//    public void updateByV1ServiceShouldBeProduced() {
-//        TestV1Dto givenDto = new TestV1Dto(255L);
-//        SaveProducedReplication givenReplication = mockSaveReplicationFor(givenDto);
-//        ReplicationProducer givenProducer = mockProducerFor(v1Service);
-//
-//        TestV1Dto actual = v1Service.update(givenDto);
-//        assertSame(givenDto, actual);
-//
-//        verifyProducing(givenProducer, givenReplication);
-//    }
-//
-//    @Test
-//    public void updateByV1ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        TestV1Dto givenDto = new TestV1Dto(255L);
-//
-//        assertThrows(IllegalStateException.class, () -> v1Service.update(givenDto));
-//    }
-//
-//    @Test
-//    public void updateByV2ServiceShouldBeProduced() {
-//        TestV2Dto givenDto = new TestV2Dto(255L);
-//        SaveProducedReplication givenReplication = mockSaveReplicationFor(givenDto);
-//        ReplicationProducer givenProducer = mockProducerFor(v2Service);
-//
-//        TestV2Dto actual = v2Service.update(givenDto);
-//        assertSame(givenDto, actual);
-//
-//        verifyProducing(givenProducer, givenReplication);
-//    }
-//
-//    @Test
-//    public void updateByV2ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        TestV2Dto givenDto = new TestV2Dto(255L);
-//
-//        assertThrows(IllegalStateException.class, () -> v2Service.update(givenDto));
-//    }
-//
-//    @Test
-//    public void partialUpdateByV1ServiceShouldBeProduced() {
-//        Long givenId = 255L;
-//        Object givenPartial = new Object();
-//        SaveProducedReplication givenReplication = mockSaveReplicationFor(new TestV1Dto(givenId));
-//        ReplicationProducer givenProducer = mockProducerFor(v1Service);
-//
-//        TestV1Dto actual = v1Service.updatePartial(givenId, givenPartial);
-//        TestV1Dto expected = new TestV1Dto(givenId);
-//        assertEquals(expected, actual);
-//
-//        verifyProducing(givenProducer, givenReplication);
-//    }
-//
-//    @Test
-//    public void partialUpdateByV1ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        Long givenId = 255L;
-//        Object givenPartial = new Object();
-//
-//        assertThrows(IllegalStateException.class, () -> v1Service.updatePartial(givenId, givenPartial));
-//    }
-//
-//    @Test
-//    public void partialUpdateByV2ServiceShouldBeProduced() {
-//        Long givenId = 255L;
-//        Object givenPartial = new Object();
-//        SaveProducedReplication givenReplication = mockSaveReplicationFor(new TestV2Dto(givenId));
-//        ReplicationProducer givenProducer = mockProducerFor(v2Service);
-//
-//        TestV2Dto actual = v2Service.updatePartial(givenId, givenPartial);
-//        TestV2Dto expected = new TestV2Dto(givenId);
-//        assertEquals(expected, actual);
-//
-//        verifyProducing(givenProducer, givenReplication);
-//    }
-//
-//    @Test
-//    public void partialUpdateByV2ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        Long givenId = 255L;
-//        Object givenPartial = new Object();
-//
-//        assertThrows(IllegalStateException.class, () -> v2Service.updatePartial(givenId, givenPartial));
-//    }
-//
-//    @Test
-//    public void deleteByIdByV1ServiceShouldBeProduced() {
-//        Long givenId = 255L;
-//        ReplicationProducer givenProducer = mockProducerFor(v1Service);
-//
-//        v1Service.deleteById(givenId);
-//
-//        verifyProducing(givenProducer, new DeleteProducedReplication(givenId));
-//    }
-//
-//    @Test
-//    public void deleteByIdByV1ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        Long givenId = 255L;
-//
-//        assertThrows(IllegalStateException.class, () -> v1Service.deleteById(givenId));
-//    }
-//
-//    @Test
-//    public void deleteByIdByV2ServiceShouldBeProduced() {
-//        Long givenId = 255L;
-//        ReplicationProducer givenProducer = mockProducerFor(v2Service);
-//
-//        v2Service.delete(givenId);
-//
-//        verifyProducing(givenProducer, new DeleteProducedReplication(givenId));
-//    }
-//
-//    @Test
-//    public void deleteByIdByV2ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        Long givenId = 255L;
-//
-//        assertThrows(IllegalStateException.class, () -> v2Service.delete(givenId));
-//    }
-//
-//    @Test
-//    public void deleteAllByV1ServiceShouldBeProduced() {
-//        Long firstGivenDtoId = 255L;
-//        Long secondGivenDtoId = 256L;
-//        List<TestV1Dto> givenDtos = List.of(new TestV1Dto(firstGivenDtoId), new TestV1Dto(secondGivenDtoId));
-//
-//        ReplicationProducer givenProducer = mockProducerFor(v1Service);
-//
-//        v1Service.deleteAll(givenDtos);
-//
-//        verifyProducing(
-//                givenProducer,
-//                new DeleteProducedReplication(firstGivenDtoId),
-//                new DeleteProducedReplication(secondGivenDtoId)
-//        );
-//    }
-//
-//    @Test
-//    public void deleteAllByV1ServiceShouldNotBeProducedBecauseOfNoReplicationProducerForService() {
-//        List<TestV1Dto> givenDtos = List.of(new TestV1Dto(255L), new TestV1Dto(256L));
-//
-//        assertThrows(IllegalStateException.class, () -> v1Service.deleteAll(givenDtos));
-//    }
+    @Test
+    public void saveAllShouldNotBeProducedBecauseOfNoProducer() {
+        TestEntity firstGivenEntity = new TestEntity(255L, "first-value", "second-value");
+        TestEntity secondGivenEntity = new TestEntity(256L, "third-value", "fourth-value");
+        List<TestEntity> givenEntities = List.of(firstGivenEntity, secondGivenEntity);
+
+        assertThrows(IllegalStateException.class, () -> repository.saveAll(givenEntities));
+    }
+
+    @Test
+    public void saveAllAndFlushShouldBeProduced() {
+        TestEntity firstGivenEntity = new TestEntity(255L, "first-value", "second-value");
+        TestEntity secondGivenEntity = new TestEntity(256L, "third-value", "fourth-value");
+        List<TestEntity> givenEntities = List.of(firstGivenEntity, secondGivenEntity);
+        SaveProducedReplication firstGivenReplication = mockSaveReplicationFor(firstGivenEntity);
+        SaveProducedReplication secondGivenReplication = mockSaveReplicationFor(secondGivenEntity);
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        List<TestEntity> actual = repository.saveAllAndFlush(givenEntities);
+        assertEquals(givenEntities, actual);
+
+        verifyProducing(givenProducer, firstGivenReplication, secondGivenReplication);
+    }
+
+    @Test
+    public void saveAllAndFlushShouldNotBeProducedBecauseOfNoProducer() {
+        TestEntity firstGivenEntity = new TestEntity(255L, "first-value", "second-value");
+        TestEntity secondGivenEntity = new TestEntity(256L, "third-value", "fourth-value");
+        List<TestEntity> givenEntities = List.of(firstGivenEntity, secondGivenEntity);
+
+        assertThrows(IllegalStateException.class, () -> repository.saveAllAndFlush(givenEntities));
+    }
+
+    @Test
+    public void deleteByIdShouldBeProduced() {
+        Long givenId = 255L;
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.deleteById(givenId);
+
+        verifyProducing(givenProducer, new DeleteProducedReplication(givenId));
+    }
+
+    @Test
+    public void deleteByIdShouldNotBeProducedBecauseOfNoProducer() {
+        Long givenId = 255L;
+
+        assertThrows(IllegalStateException.class, () -> repository.deleteById(givenId));
+    }
+
+    @Test
+    public void deleteShouldBeProduced() {
+        Long givenId = 255L;
+        TestEntity givenEntity = TestEntity.builder()
+                .id(givenId)
+                .build();
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.delete(givenEntity);
+
+        verifyProducing(givenProducer, new DeleteProducedReplication(givenId));
+    }
+
+    @Test
+    public void deleteShouldNotBeProducedBecauseOfNoProducer() {
+        TestEntity givenEntity = TestEntity.builder()
+                .id(255L)
+                .build();
+
+        assertThrows(IllegalStateException.class, () -> repository.delete(givenEntity));
+    }
+
+    @Test
+    public void deleteByIdsShouldBeProduced() {
+        Long firstGivenId = 255L;
+        Long secondGivenId = 256L;
+        Long thirdGivenId = 257L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId, thirdGivenId);
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.deleteAllById(givenIds);
+
+        verifyProducing(
+                givenProducer,
+                new DeleteProducedReplication(firstGivenId),
+                new DeleteProducedReplication(secondGivenId),
+                new DeleteProducedReplication(thirdGivenId)
+        );
+    }
+
+    @Test
+    public void deleteByIdsShouldNotBeProducedBecauseOfNoProducer() {
+        Iterable<Long> givenIds = List.of(255L, 256L, 257L);
+
+        assertThrows(IllegalStateException.class, () -> repository.deleteAllById(givenIds));
+    }
+
+    @Test
+    public void deleteByIdsInBatchShouldBeProduced() {
+        Long firstGivenId = 255L;
+        Long secondGivenId = 256L;
+        Long thirdGivenId = 257L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId, thirdGivenId);
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.deleteAllByIdInBatch(givenIds);
+
+        verifyProducing(
+                givenProducer,
+                new DeleteProducedReplication(firstGivenId),
+                new DeleteProducedReplication(secondGivenId),
+                new DeleteProducedReplication(thirdGivenId)
+        );
+    }
+
+    @Test
+    public void deleteByIdsInBatchShouldNotBeProducedBecauseOfNoProducer() {
+        Iterable<Long> givenIds = List.of(255L, 256L, 257L);
+
+        assertThrows(IllegalStateException.class, () -> repository.deleteAllByIdInBatch(givenIds));
+    }
+
+    @Test
+    public void deleteIterableShouldBeProduced() {
+        Long firstGivenId = 255L;
+        Long secondGivenId = 256L;
+        Long thirdGivenId = 257L;
+        Iterable<TestEntity> givenEntities = List.of(
+                TestEntity.builder()
+                        .id(firstGivenId)
+                        .build(),
+                TestEntity.builder()
+                        .id(secondGivenId)
+                        .build(),
+                TestEntity.builder()
+                        .id(thirdGivenId)
+                        .build()
+        );
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.deleteAll(givenEntities);
+
+        verifyProducing(
+                givenProducer,
+                new DeleteProducedReplication(firstGivenId),
+                new DeleteProducedReplication(secondGivenId),
+                new DeleteProducedReplication(thirdGivenId)
+        );
+    }
+
+    @Test
+    public void deleteIterableShouldNotBeProducedBecauseOfNoProducer() {
+        Iterable<TestEntity> givenEntities = List.of(
+                TestEntity.builder()
+                        .id(255L)
+                        .build(),
+                TestEntity.builder()
+                        .id(256L)
+                        .build(),
+                TestEntity.builder()
+                        .id(257L)
+                        .build()
+        );
+
+        assertThrows(IllegalStateException.class, () -> repository.deleteAll(givenEntities));
+    }
+
+    @Test
+    public void deleteIterableInBatchShouldBeProduced() {
+        Long firstGivenId = 255L;
+        Long secondGivenId = 256L;
+        Long thirdGivenId = 257L;
+        Iterable<TestEntity> givenEntities = List.of(
+                TestEntity.builder()
+                        .id(firstGivenId)
+                        .build(),
+                TestEntity.builder()
+                        .id(secondGivenId)
+                        .build(),
+                TestEntity.builder()
+                        .id(thirdGivenId)
+                        .build()
+        );
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.deleteAllInBatch(givenEntities);
+
+        verifyProducing(
+                givenProducer,
+                new DeleteProducedReplication(firstGivenId),
+                new DeleteProducedReplication(secondGivenId),
+                new DeleteProducedReplication(thirdGivenId)
+        );
+    }
+
+    @Test
+    public void deleteIterableInBatchShouldNotBeProducedBecauseOfNoProducer() {
+        Iterable<TestEntity> givenEntities = List.of(
+                TestEntity.builder()
+                        .id(255L)
+                        .build(),
+                TestEntity.builder()
+                        .id(256L)
+                        .build(),
+                TestEntity.builder()
+                        .id(257L)
+                        .build()
+        );
+
+        assertThrows(IllegalStateException.class, () -> repository.deleteAllInBatch(givenEntities));
+    }
+
+    @Test
+    public void deleteAllShouldBeProduced() {
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.deleteAll();
+
+        verifyProducing(
+                givenProducer,
+                new DeleteProducedReplication(512L),
+                new DeleteProducedReplication(513L),
+                new DeleteProducedReplication(514L)
+        );
+    }
+
+    @Test
+    public void deleteAllShouldNotBeProducedBecauseOfNoProducer() {
+        assertThrows(IllegalStateException.class, () -> repository.deleteAll());
+    }
+
+    @Test
+    public void deleteAllInBatchShouldBeProduced() {
+        ReplicationProducer givenProducer = mockProducerForRepository();
+
+        repository.deleteAllInBatch();
+
+        verifyProducing(
+                givenProducer,
+                new DeleteProducedReplication(512L),
+                new DeleteProducedReplication(513L),
+                new DeleteProducedReplication(514L)
+        );
+    }
+
+    @Test
+    public void deleteAllInBatchShouldNotBeProducedBecauseOfNoProducer() {
+        assertThrows(IllegalStateException.class, () -> repository.deleteAllInBatch());
+    }
 
     private SaveProducedReplication mockSaveReplicationFor(TestEntity entity) {
         SaveProducedReplication replication = mock(SaveProducedReplication.class);
@@ -306,14 +388,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
     private List<ReplicationCallback> createCallbacks(ReplicationProducer producer,
                                                       ProducedReplication<?>... replications) {
-        return Arrays.stream(replications)
+        return stream(replications)
                 .map(replication -> new ReplicationCallback(producer, replication))
                 .toList();
     }
 
     private void checkEquals(List<ReplicationCallback> expected, List<ReplicationCallback> actual) {
         assertEquals(expected.size(), actual.size());
-        IntStream.range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
+        range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 
     private void checkEquals(ReplicationCallback expected, ReplicationCallback actual) {

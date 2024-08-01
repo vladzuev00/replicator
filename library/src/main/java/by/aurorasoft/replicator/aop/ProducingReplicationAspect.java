@@ -40,7 +40,7 @@ public class ProducingReplicationAspect {
             pointcut = "replicatedRepository() && (saveAll() || saveAllAndFlush())",
             returning = "savedEntities"
     )
-    public void produceSaveAll(JoinPoint joinPoint, List<Object> savedEntities) {
+    public void produceSaveAll(JoinPoint joinPoint, List<?> savedEntities) {
         savedEntities.forEach(entity -> produceSaveReplication(entity, joinPoint));
     }
 
