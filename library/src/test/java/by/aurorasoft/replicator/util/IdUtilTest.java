@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.util;
 
-import by.aurorasoft.replicator.util.IdUtil.NoIdGetterException;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.junit.Test;
@@ -19,8 +18,8 @@ public final class IdUtilTest {
         assertSame(givenId, actual);
     }
 
-    @Test(expected = NoIdGetterException.class)
-    public void idShouldNotBeGotBecauseOfNoSuitableGetter() {
+    @Test(expected = NullPointerException.class)
+    public void idShouldNotBeGotBecauseOfNoGetter() {
         Object givenId = new Object();
         SecondTestObject givenObject = new SecondTestObject(givenId);
 
