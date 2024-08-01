@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import static org.springframework.kafka.config.TopicBuilder.name;
 
 @Component
-public final class ReplicationTopicFactory {
+public final class ReplicationNewTopicFactory {
 
     public NewTopic create(Topic config) {
         return name(config.name())

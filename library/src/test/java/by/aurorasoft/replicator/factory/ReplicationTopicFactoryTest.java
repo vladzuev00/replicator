@@ -8,7 +8,7 @@ import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfi
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class ReplicationTopicFactoryTest {
-    private final ReplicationTopicFactory factory = new ReplicationTopicFactory();
+    private final ReplicationNewTopicFactory factory = new ReplicationNewTopicFactory();
 
     @Test
     public void topicShouldBeCreated() {
