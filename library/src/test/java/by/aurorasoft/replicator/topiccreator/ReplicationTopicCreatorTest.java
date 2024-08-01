@@ -5,13 +5,13 @@ import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.testrepository.FirstTestRepository;
 import by.aurorasoft.replicator.testrepository.SecondTestRepository;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,10 +20,10 @@ import org.springframework.kafka.core.KafkaAdmin;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class ReplicationTopicCreatorTest {
 
     @Mock
@@ -43,7 +43,7 @@ public final class ReplicationTopicCreatorTest {
     @Captor
     private ArgumentCaptor<ApplicationEvent> eventArgumentCaptor;
 
-    @Before
+    @BeforeEach
     public void initializeCreator() {
         creator = new ReplicationTopicCreator(mockedRepositoryRegistry, mockedKafkaAdmin, mockedEventPublisher);
     }
