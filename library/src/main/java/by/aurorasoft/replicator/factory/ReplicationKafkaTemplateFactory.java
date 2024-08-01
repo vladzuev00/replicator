@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+//TODO: remove
 @Component
 @RequiredArgsConstructor
 public final class ReplicationKafkaTemplateFactory {
@@ -21,16 +22,11 @@ public final class ReplicationKafkaTemplateFactory {
 
     public KafkaTemplate<Object, ProducedReplication<?>> create(Producer config) {
         Map<String, Object> configsByKeys = configsFactory.create(config);
-        Serializer<Object> keySerializer = createKeySerializer(config);
+//        Serializer<Object> keySerializer = createKeySerializer(config);
         JsonSerializer<ProducedReplication<?>> valueSerializer = createValueSerializer();
-        var producerFactory = new DefaultKafkaProducerFactory<>(configsByKeys, keySerializer, valueSerializer);
-        return new KafkaTemplate<>(producerFactory);
-    }
-
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
-    private Serializer<Object> createKeySerializer(Producer config) {
-        return (Serializer<Object>) config.idSerializer().getConstructor().newInstance();
+//        var producerFactory = new DefaultKafkaProducerFactory<>(configsByKeys, keySerializer, valueSerializer);
+//        return new KafkaTemplate<>(producerFactory);
+        return null;
     }
 
     private JsonSerializer<ProducedReplication<?>> createValueSerializer() {
