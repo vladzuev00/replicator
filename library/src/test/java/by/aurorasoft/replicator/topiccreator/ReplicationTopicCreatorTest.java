@@ -79,25 +79,25 @@ public final class ReplicationTopicCreatorTest {
 
         creator.createTopics();
 
-        List<Topic> expectedConfigs = List.of(
+        List<Topic> expectedTopicConfigs = List.of(
                 createTopicConfig("first-topic", 1, 1),
                 createTopicConfig("second-topic", 2, 2)
         );
-        verifyConfigs(expectedConfigs);
+        verifyTopicConfigs(expectedTopicConfigs);
 
         List<NewTopic> expectedNewTopics = List.of(firstGivenNewTopic, secondGivenNewTopic);
-        verifyCreation(expectedNewTopics);
+        verifyTopicsCreation(expectedNewTopics);
 
         verifySuccessEventPublishing();
     }
 
-    private void verifyConfigs(List<Topic> expected) {
+    private void verifyTopicConfigs(List<Topic> expected) {
         verify(mockedNewTopicFactory, times(expected.size())).create(topicConfigArgumentCaptor.capture());
         List<Topic> actual = topicConfigArgumentCaptor.getAllValues();
         range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 
-    private void verifyCreation(List<NewTopic> expected) {
+    private void verifyTopicsCreation(List<NewTopic> expected) {
         verify(mockedKafkaAdmin, times(expected.size())).createOrModifyTopics(newTopicArgumentCaptor.capture());
         List<NewTopic> actual = newTopicArgumentCaptor.getAllValues();
         assertEquals(expected, actual);
