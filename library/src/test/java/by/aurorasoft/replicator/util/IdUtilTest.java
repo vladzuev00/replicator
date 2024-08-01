@@ -2,10 +2,11 @@ package by.aurorasoft.replicator.util;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static by.aurorasoft.replicator.util.IdUtil.getId;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class IdUtilTest {
 
@@ -18,12 +19,12 @@ public final class IdUtilTest {
         assertSame(givenId, actual);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void idShouldNotBeGotBecauseOfNoGetter() {
         Object givenId = new Object();
         SecondTestObject givenObject = new SecondTestObject(givenId);
 
-        getId(givenObject);
+        assertThrows(NullPointerException.class, () -> getId(givenObject));
     }
 
     @Value
