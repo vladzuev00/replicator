@@ -3,9 +3,7 @@
 //import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 //import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 //import by.aurorasoft.replicator.factory.ReplicationTopicFactory;
-//import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
-//import by.aurorasoft.replicator.v1.service.FirstTestV1CRUDService;
-//import by.aurorasoft.replicator.v2.service.SecondTestV2CRUDService;
+//import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 //import org.apache.kafka.clients.admin.NewTopic;
 //import org.junit.Before;
 //import org.junit.Test;
@@ -16,6 +14,7 @@
 //import org.mockito.junit.MockitoJUnitRunner;
 //import org.springframework.context.ApplicationEvent;
 //import org.springframework.context.ApplicationEventPublisher;
+//import org.springframework.data.jpa.repository.JpaRepository;
 //import org.springframework.kafka.core.KafkaAdmin;
 //
 //import java.util.LinkedHashSet;
@@ -32,7 +31,7 @@
 //public final class ReplicationTopicCreatorTest {
 //
 //    @Mock
-//    private ReplicatedServiceRegistry mockedServiceRegistry;
+//    private ReplicatedRepositoryRegistry mockedRepositoryRegistry;
 //
 //    @Mock
 //    private ReplicationTopicFactory mockedTopicFactory;
@@ -57,7 +56,7 @@
 //    @Before
 //    public void initializeCreator() {
 //        creator = new ReplicationTopicCreator(
-//                mockedServiceRegistry,
+//                mockedRepositoryRegistry,
 //                mockedTopicFactory,
 //                mockedKafkaAdmin,
 //                mockedEventPublisher
@@ -66,10 +65,10 @@
 //
 //    @Test
 //    public void topicsShouldBeCreated() {
-//        Object firstGivenService = new FirstTestV1CRUDService();
+//        JpaRepository<?, ?> firstGivenRepository = new FirstTestV1CRUDService();
 //        Object secondGivenService = new SecondTestV2CRUDService();
-//        Set<Object> givenServices = new LinkedHashSet<>(List.of(firstGivenService, secondGivenService));
-//        when(mockedServiceRegistry.getServices()).thenReturn(givenServices);
+//        Set<Object> givenServices = new LinkedHashSet<>(List.of(firstGivenRepository, secondGivenService));
+//        when(mockedRepositoryRegistry.getServices()).thenReturn(givenServices);
 //
 //        NewTopic firstGivenTopic = mock(NewTopic.class);
 //        NewTopic secondGivenTopic = mock(NewTopic.class);

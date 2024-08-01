@@ -1,10 +1,6 @@
 package by.aurorasoft.replicator.testrepository;
 
-import by.aurorasoft.replicator.annotation.ReplicatedRepository;
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.replicator.testentity.TestEntity;
-import org.apache.kafka.common.serialization.LongSerializer;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +14,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @SuppressWarnings("NullableProblems")
-@ReplicatedRepository(producer = @Producer(idSerializer = LongSerializer.class), topic = @Topic(name = "test-topic"))
-public class TestRepository implements JpaRepository<TestEntity, Long> {
+public abstract class TestRepository implements JpaRepository<TestEntity, Long> {
     private static final List<TestEntity> STORED_ENTITIES = List.of(
             new TestEntity(512L, "first-value", "second-value"),
             new TestEntity(513L, "third-value", "fourth-value"),

@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.registry;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.testrepository.TestRepository;
+import by.aurorasoft.replicator.testrepository.FirstTestRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerRegistryTest {
-    private static final JpaRepository<?, ?> GIVEN_REPOSITORY = new TestRepository();
+    private static final JpaRepository<?, ?> GIVEN_REPOSITORY = new FirstTestRepository();
     private static final ReplicationProducer GIVEN_PRODUCER = mock(ReplicationProducer.class);
     private static final ReplicationProducerRegistry GIVEN_REGISTRY = new ReplicationProducerRegistry(
             Map.of(GIVEN_REPOSITORY, GIVEN_PRODUCER)

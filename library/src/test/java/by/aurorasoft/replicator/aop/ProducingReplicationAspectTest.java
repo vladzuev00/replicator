@@ -9,7 +9,7 @@ import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplicati
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.testentity.TestEntity;
-import by.aurorasoft.replicator.testrepository.TestRepository;
+import by.aurorasoft.replicator.testrepository.FirstTestRepository;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     private SaveProducedReplicationFactory mockedSaveReplicationFactory;
 
     @Autowired
-    private TestRepository repository;
+    private FirstTestRepository repository;
 
     private MockedStatic<TransactionSynchronizationManager> mockedTransactionManager;
 

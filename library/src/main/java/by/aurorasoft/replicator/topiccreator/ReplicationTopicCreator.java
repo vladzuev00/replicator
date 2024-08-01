@@ -9,20 +9,21 @@ import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public final class ReplicationTopicCreator {
-    private final ReplicatedRepositoryRegistry serviceRegistry;
+    private final ReplicatedRepositoryRegistry repositoryRegistry;
     private final ReplicationTopicFactory topicFactory;
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
     @EventListener(PipelinesValidatedEvent.class)
     public void createTopics() {
-        serviceRegistry.getRepositories()
+        repositoryRegistry.getRepositories()
                 .stream()
                 .map(this::getTopicConfig)
                 .map(topicFactory::create)
@@ -30,8 +31,8 @@ public final class ReplicationTopicCreator {
         publishSuccessEvent();
     }
 
-    private Topic getTopicConfig(Object service) {
-        return service.getClass()
+    private Topic getTopicConfig(JpaRepository<?, ?> repository) {
+        return repository.getClass()
                 .getAnnotation(ReplicatedRepository.class)
                 .topic();
     }
