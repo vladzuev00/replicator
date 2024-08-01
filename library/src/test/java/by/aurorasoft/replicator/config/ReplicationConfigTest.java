@@ -8,10 +8,10 @@ import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.retry.support.RetryTemplate;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
