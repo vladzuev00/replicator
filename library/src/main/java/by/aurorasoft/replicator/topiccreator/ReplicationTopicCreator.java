@@ -4,9 +4,9 @@ import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
-import by.aurorasoft.replicator.factory.ReplicationNewTopicFactory;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public final class ReplicationTopicCreator {
     private final ReplicatedRepositoryRegistry repositoryRegistry;
-    private final ReplicationNewTopicFactory newTopicFactory;
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -26,7 +25,7 @@ public final class ReplicationTopicCreator {
         repositoryRegistry.getRepositories()
                 .stream()
                 .map(this::getTopicConfig)
-                .map(newTopicFactory::create)
+                .map(this::createNewTopic)
                 .forEach(kafkaAdmin::createOrModifyTopics);
         publishSuccessEvent();
     }
@@ -35,6 +34,10 @@ public final class ReplicationTopicCreator {
         return repository.getClass()
                 .getAnnotation(ReplicatedRepository.class)
                 .topic();
+    }
+
+    private NewTopic createNewTopic(Topic config) {
+        return new NewTopic(config.name(), config.partitionCount(), config.replicationFactor());
     }
 
     private void publishSuccessEvent() {

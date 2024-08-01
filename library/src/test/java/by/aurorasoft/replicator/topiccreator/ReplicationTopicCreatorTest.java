@@ -1,8 +1,6 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
-import by.aurorasoft.replicator.factory.ReplicationNewTopicFactory;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.testrepository.FirstTestRepository;
 import by.aurorasoft.replicator.testrepository.SecondTestRepository;
@@ -22,9 +20,6 @@ import org.springframework.kafka.core.KafkaAdmin;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static by.aurorasoft.replicator.testutil.TopicConfigUtil.checkEquals;
-import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
-import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -35,18 +30,12 @@ public final class ReplicationTopicCreatorTest {
     private ReplicatedRepositoryRegistry mockedRepositoryRegistry;
 
     @Mock
-    private ReplicationNewTopicFactory mockedNewTopicFactory;
-
-    @Mock
     private KafkaAdmin mockedKafkaAdmin;
 
     @Mock
     private ApplicationEventPublisher mockedEventPublisher;
 
     private ReplicationTopicCreator creator;
-
-    @Captor
-    private ArgumentCaptor<Topic> topicConfigArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<NewTopic> newTopicArgumentCaptor;
@@ -56,12 +45,7 @@ public final class ReplicationTopicCreatorTest {
 
     @Before
     public void initializeCreator() {
-        creator = new ReplicationTopicCreator(
-                mockedRepositoryRegistry,
-                mockedNewTopicFactory,
-                mockedKafkaAdmin,
-                mockedEventPublisher
-        );
+        creator = new ReplicationTopicCreator(mockedRepositoryRegistry, mockedKafkaAdmin, mockedEventPublisher);
     }
 
     @Test
@@ -71,30 +55,15 @@ public final class ReplicationTopicCreatorTest {
         var givenRepositories = new LinkedHashSet<>(List.of(firstGivenRepository, secondGivenRepository));
         when(mockedRepositoryRegistry.getRepositories()).thenReturn(givenRepositories);
 
-        NewTopic firstGivenNewTopic = mock(NewTopic.class);
-        NewTopic secondGivenNewTopic = mock(NewTopic.class);
-        when(mockedNewTopicFactory.create(any(Topic.class)))
-                .thenReturn(firstGivenNewTopic)
-                .thenReturn(secondGivenNewTopic);
-
         creator.createTopics();
 
-        List<Topic> expectedTopicConfigs = List.of(
-                createTopicConfig("first-topic", 1, 1),
-                createTopicConfig("second-topic", 2, 2)
+        List<NewTopic> expectedNewTopics = List.of(
+                new NewTopic("first-topic", 1, (short) 1),
+                new NewTopic("second-topic", 2, (short) 2)
         );
-        verifyTopicConfigs(expectedTopicConfigs);
-
-        List<NewTopic> expectedNewTopics = List.of(firstGivenNewTopic, secondGivenNewTopic);
         verifyTopicsCreation(expectedNewTopics);
 
         verifySuccessEventPublishing();
-    }
-
-    private void verifyTopicConfigs(List<Topic> expected) {
-        verify(mockedNewTopicFactory, times(expected.size())).create(topicConfigArgumentCaptor.capture());
-        List<Topic> actual = topicConfigArgumentCaptor.getAllValues();
-        range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 
     private void verifyTopicsCreation(List<NewTopic> expected) {
