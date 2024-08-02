@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
+import static by.aurorasoft.replicator.util.AnnotationUtil.getAnnotation;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toMap;
@@ -26,7 +27,7 @@ public final class ReplicationProducerRegistryFactory {
     }
 
     private ReplicationProducer createProducer(JpaRepository<?, ?> repository) {
-        ReplicatedRepository repositoryConfig = repository.getClass().getAnnotation(ReplicatedRepository.class);
+        var repositoryConfig = getAnnotation(repository.getClass(), ReplicatedRepository.class);
         String topicName = repositoryConfig.topic().name();
         Producer producerConfig = repositoryConfig.producer();
         return producerFactory.create(topicName, producerConfig);

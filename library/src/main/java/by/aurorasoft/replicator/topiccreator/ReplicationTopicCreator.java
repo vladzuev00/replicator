@@ -13,6 +13,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Component;
 
+import static by.aurorasoft.replicator.util.AnnotationUtil.getAnnotation;
+
 @Component
 @RequiredArgsConstructor
 public final class ReplicationTopicCreator {
@@ -31,9 +33,7 @@ public final class ReplicationTopicCreator {
     }
 
     private Topic getTopicConfig(JpaRepository<?, ?> repository) {
-        return repository.getClass()
-                .getAnnotation(ReplicatedRepository.class)
-                .topic();
+        return getAnnotation(repository.getClass(), ReplicatedRepository.class).topic();
     }
 
     private NewTopic createNewTopic(Topic config) {

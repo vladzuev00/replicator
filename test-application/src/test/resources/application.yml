@@ -22,8 +22,8 @@ spring:
 replication:
   consume:
     topic:
-      person: sync-person
-      address: sync-address
+      person: person-sync
+      address: address-sync
     retry:
       time-lapse-ms: 1000
       max-attempts: 10
