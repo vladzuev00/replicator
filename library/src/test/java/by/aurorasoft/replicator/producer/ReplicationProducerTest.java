@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerTest {
-    private static final String GIVEN_TOPIC_NAME = "sync-dto";
+    private static final String GIVEN_TOPIC_NAME = "test-topic";
 
     @Mock
     private KafkaTemplate<Object, ProducedReplication<?>> mockedKafkaTemplate;

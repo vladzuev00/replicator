@@ -7,13 +7,13 @@ import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.testrepository.FirstTestRepository;
 import by.aurorasoft.replicator.testrepository.SecondTestRepository;
 import org.apache.kafka.common.serialization.LongSerializer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.LinkedHashSet;
@@ -24,10 +24,10 @@ import static by.aurorasoft.replicator.testutil.ProducerConfigUtil.checkEquals;
 import static by.aurorasoft.replicator.testutil.ProducerConfigUtil.createProducerConfig;
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static java.util.stream.IntStream.range;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerRegistryFactoryTest {
     private static final String FIELD_NAME_PRODUCERS_BY_REPOSITORIES = "producersByRepositories";
 
@@ -42,7 +42,7 @@ public final class ReplicationProducerRegistryFactoryTest {
     @Captor
     private ArgumentCaptor<Producer> producerConfigArgumentCaptor;
 
-    @Before
+    @BeforeEach
     public void initializeRegistryFactory() {
         registryFactory = new ReplicationProducerRegistryFactory(mockedRepositoryRegistry, mockedProducerFactory);
     }

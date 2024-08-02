@@ -3,8 +3,8 @@ package by.aurorasoft.replicator.testutil;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.EntityView;
 import lombok.experimental.UtilityClass;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

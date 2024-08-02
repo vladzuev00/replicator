@@ -7,23 +7,23 @@ import by.aurorasoft.replicator.model.view.EntityJsonView;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import by.aurorasoft.replicator.testrepository.SecondTestRepository;
 import org.aspectj.lang.JoinPoint;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static by.aurorasoft.replicator.testutil.ViewConfigUtil.checkEquals;
 import static by.aurorasoft.replicator.testutil.ViewConfigUtil.createViewConfig;
 import static java.util.stream.IntStream.range;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public final class SaveProducedReplicationFactoryTest {
     private static final String FIELD_NAME_REPLICATION_BODY = "body";
 
@@ -35,7 +35,7 @@ public final class SaveProducedReplicationFactoryTest {
     @Captor
     private ArgumentCaptor<EntityView[]> entityViewConfigsArgumentCaptor;
 
-    @Before
+    @BeforeEach
     public void initializeReplicationFactory() {
         replicationFactory = new SaveProducedReplicationFactory(mockedEntityJsonViewFactory);
     }
