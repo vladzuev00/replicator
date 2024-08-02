@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import static java.util.stream.IntStream.range;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UtilityClass
 public final class EntityUtil {

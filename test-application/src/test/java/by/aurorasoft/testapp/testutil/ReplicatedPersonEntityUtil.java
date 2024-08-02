@@ -3,7 +3,7 @@ package by.aurorasoft.testapp.testutil;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import lombok.experimental.UtilityClass;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UtilityClass
 public final class ReplicatedPersonEntityUtil {
