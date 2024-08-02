@@ -7,7 +7,6 @@ import java.lang.annotation.Annotation;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
-//TODO: test
 @UtilityClass
 public final class AnnotationUtil {
 
