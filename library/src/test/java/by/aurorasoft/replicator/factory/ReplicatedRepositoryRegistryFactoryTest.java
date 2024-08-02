@@ -17,7 +17,6 @@ import java.util.Set;
 
 import static by.aurorasoft.replicator.util.ProxyUtil.unProxy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
