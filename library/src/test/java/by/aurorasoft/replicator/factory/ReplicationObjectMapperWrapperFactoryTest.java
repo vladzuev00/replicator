@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapperWrapper;
+import by.aurorasoft.replicator.mapperwrapper.ReplicationObjectMapperWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.Test;

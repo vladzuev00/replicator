@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.objectmapper;
+package by.aurorasoft.replicator.mapperwrapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
