@@ -27,7 +27,7 @@ public final class ReplicationProducerRegistryFactory {
     }
 
     private ReplicationProducer createProducer(JpaRepository<?, ?> repository) {
-        var repositoryConfig = getAnnotation(repository.getClass(), ReplicatedRepository.class);
+        ReplicatedRepository repositoryConfig = getAnnotation(repository.getClass(), ReplicatedRepository.class);
         String topicName = repositoryConfig.topic().name();
         Producer producerConfig = repositoryConfig.producer();
         return producerFactory.create(topicName, producerConfig);
