@@ -1,10 +1,10 @@
 package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.factory.ReplicatedRepositoryRegistryFactory;
-import by.aurorasoft.replicator.factory.ReplicationObjectMapperFactory;
+import by.aurorasoft.replicator.factory.ReplicationObjectMapperWrapperFactory;
 import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
+import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapperWrapper;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,14 +53,14 @@ public final class ReplicationConfigTest {
     }
 
     @Test
-    public void replicationObjectMapperShouldBeCreated() {
-        ReplicationObjectMapperFactory givenFactory = mock(ReplicationObjectMapperFactory.class);
+    public void replicationObjectMapperWrapperShouldBeCreated() {
+        ReplicationObjectMapperWrapperFactory givenFactory = mock(ReplicationObjectMapperWrapperFactory.class);
         ObjectMapper givenSource = mock(ObjectMapper.class);
 
-        ReplicationObjectMapper givenMapper = mock(ReplicationObjectMapper.class);
-        when(givenFactory.create(same(givenSource))).thenReturn(givenMapper);
+        ReplicationObjectMapperWrapper givenWrapper = mock(ReplicationObjectMapperWrapper.class);
+        when(givenFactory.create(same(givenSource))).thenReturn(givenWrapper);
 
-        ReplicationObjectMapper actual = config.replicationObjectMapper(givenFactory, givenSource);
-        assertSame(givenMapper, actual);
+        ReplicationObjectMapperWrapper actual = config.replicationObjectMapperWrapper(givenFactory, givenSource);
+        assertSame(givenWrapper, actual);
     }
 }
