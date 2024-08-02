@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
-import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapper;
+import by.aurorasoft.replicator.objectmapper.ReplicationObjectMapperWrapper;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,13 +16,13 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 public final class ProducedReplicationTest extends AbstractSpringBootTest {
 
     @Autowired
-    private ReplicationObjectMapper objectMapper;
+    private ReplicationObjectMapperWrapper mapperWrapper;
 
     @ParameterizedTest
     @MethodSource("provideReplicationAndExpectedJson")
     public void replicationShouldBeSerializedToJson(ProducedReplication<?> givenReplication, String expected)
             throws Exception {
-        String actual = objectMapper.writeValueAsString(givenReplication);
+        String actual = mapperWrapper.getMapper().writeValueAsString(givenReplication);
         assertEquals(expected, actual, true);
     }
 
