@@ -28,6 +28,7 @@ import static by.aurorasoft.testapp.testutil.AddressEntityUtil.checkEquals;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+//TODO: remove all not from jupiter
 @Import(ReplicationIT.ReplicationDeliveryBarrier.class)
 public final class ReplicationIT extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
