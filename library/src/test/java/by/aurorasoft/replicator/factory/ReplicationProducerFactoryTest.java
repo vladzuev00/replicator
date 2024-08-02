@@ -15,7 +15,6 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.Map;
 
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -67,7 +66,11 @@ public final class ReplicationProducerFactoryTest {
 
         ProducerFactory<?, ?> actualProducerFactory = getKafkaTemplate(actual).getProducerFactory();
 
-        throw new UnsupportedOperationException();
+        Serializer<?> actualKeySerializer = actualProducerFactory.getKeySerializer();
+        assertSame(givenKeySerializer, actualKeySerializer);
+
+        Serializer<?> actualValueSerializer = actualProducerFactory.getValueSerializer();
+        assertSame(givenValueSerializer, actualValueSerializer);
     }
 
     private String getTopicName(ReplicationProducer producer) {
