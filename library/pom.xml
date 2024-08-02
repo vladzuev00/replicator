@@ -11,7 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>6.1.4</spring.version>
-        <spring-data-jpa.version>3.3.2</spring-data-jpa.version>
+        <spring-data-jpa.version>3.2.3</spring-data-jpa.version>
         <kafka-vars.version>1.0.19-spring-6</kafka-vars.version>
         <lombok.version>1.18.26</lombok.version>
         <junit.version>RELEASE</junit.version>
