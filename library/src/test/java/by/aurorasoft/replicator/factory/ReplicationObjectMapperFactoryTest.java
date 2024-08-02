@@ -22,7 +22,7 @@ public final class ReplicationObjectMapperFactoryTest {
 
         ReplicationObjectMapper actual = factory.create(givenSource);
         Set<Object> actualModuleIds = actual.getRegisteredModuleIds();
-        Set<Object> expectedModuleIds = Set.of("Spring Data Geo Mixins", "SimpleModule-1", "json-view");
+        Set<Object> expectedModuleIds = Set.of("Spring Data Geo Mixins", "SimpleModule-2", "json-view");
         assertEquals(expectedModuleIds, actualModuleIds);
     }
 }

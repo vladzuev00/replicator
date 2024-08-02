@@ -11,12 +11,12 @@ import static org.mockito.Mockito.when;
 @UtilityClass
 public final class ProducerConfigUtil {
 
+    public static Producer createProducerConfig(Class<?> idSerializer) {
+        return createProducerConfig(idSerializer, 0, 0, 0);
+    }
+
     public static Producer createProducerConfig(int batchSize, int lingerMs, int deliveryTimeoutMs) {
-        Producer config = mock(Producer.class);
-        when(config.batchSize()).thenReturn(batchSize);
-        when(config.lingerMs()).thenReturn(lingerMs);
-        when(config.deliveryTimeoutMs()).thenReturn(deliveryTimeoutMs);
-        return config;
+        return createProducerConfig(null, batchSize, lingerMs, deliveryTimeoutMs);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -24,8 +24,11 @@ public final class ProducerConfigUtil {
                                                 int batchSize,
                                                 int lingerMs,
                                                 int deliveryTimeoutMs) {
-        Producer config = createProducerConfig(batchSize, lingerMs, deliveryTimeoutMs);
+        Producer config = mock(Producer.class);
         when(config.idSerializer()).thenReturn(idSerializer);
+        when(config.batchSize()).thenReturn(batchSize);
+        when(config.lingerMs()).thenReturn(lingerMs);
+        when(config.deliveryTimeoutMs()).thenReturn(deliveryTimeoutMs);
         return config;
     }
 
