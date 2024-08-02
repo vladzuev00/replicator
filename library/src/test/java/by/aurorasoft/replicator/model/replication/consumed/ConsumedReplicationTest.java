@@ -2,11 +2,11 @@ package by.aurorasoft.replicator.model.replication.consumed;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
-import by.aurorasoft.replicator.mapperwrapper.ReplicationObjectMapperWrapper;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
     private static final String UNIQUE_VIOLATION_SQL_STATE = "23505";
 
     @Autowired
-    private ReplicationObjectMapperWrapper objectMapperWrapper;
+    private ObjectMapper objectMapper;
 
     @Test
     public void replicationShouldBeExecuted() {
@@ -64,7 +64,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
     @SneakyThrows(JsonProcessingException.class)
     private ConsumedReplication<TestEntity, Long> deserialize(String json) {
-        return objectMapperWrapper.getMapper().readValue(
+        return objectMapper.readValue(
                 json,
                 new TypeReference<>() {
                 }
