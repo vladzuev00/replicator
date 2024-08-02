@@ -1,17 +1,13 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Map;
 
 import static org.apache.kafka.streams.StreamsConfig.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public final class ReplicationStreamsConfigFactoryTest {
     private static final String GIVEN_BOOTSTRAP_ADDRESS = "127.0.0.1:9092";
@@ -34,14 +30,8 @@ public final class ReplicationStreamsConfigFactoryTest {
         assertEquals(expected, actual);
     }
 
-    @SuppressWarnings({"unchecked", "SameParameterValue"})
+    @SuppressWarnings({"SameParameterValue"})
     private ReplicationConsumePipeline<?, ?> createPipeline(String topic) {
-        return new ReplicationConsumePipeline<Object, Object>(
-                topic,
-                mock(Deserializer.class),
-                new TypeReference<>() {
-                },
-                mock(JpaRepository.class)
-        );
+        return new ReplicationConsumePipeline<>(topic, null, null, null);
     }
 }
