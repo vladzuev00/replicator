@@ -25,12 +25,11 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.util.List;
 import java.util.Optional;
 
+import static by.aurorasoft.replicator.util.ProxyUtil.unProxy;
 import static java.util.Arrays.stream;
-import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.aop.framework.AopProxyUtils.getSingletonTarget;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
 
 public final class ProducingReplicationAspectTest extends AbstractSpringBootTest {
@@ -375,7 +374,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     }
 
     private JpaRepository<?, ?> unProxyRepository() {
-        return (JpaRepository<?, ?>) requireNonNullElse(getSingletonTarget(repository), repository);
+        return (JpaRepository<?, ?>) unProxy(repository);
     }
 
     private void verifyProducing(ReplicationProducer producer, ProducedReplication<?>... replications) {
