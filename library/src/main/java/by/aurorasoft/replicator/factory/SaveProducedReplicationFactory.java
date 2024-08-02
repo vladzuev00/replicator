@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public final class SaveProducedReplicationFactory {
-    private final EntityJsonViewFactory dtoJsonViewFactory;
+    private final EntityJsonViewFactory entityJsonViewFactory;
 
-    public SaveProducedReplication create(Object savedDto, JoinPoint joinPoint) {
-        EntityView[] viewConfigs = joinPoint.getTarget()
+    public SaveProducedReplication create(Object savedEntity, JoinPoint joinPoint) {
+        EntityView[] entityViewConfigs = joinPoint.getTarget()
                 .getClass()
                 .getAnnotation(ReplicatedRepository.class)
                 .entityViews();
-        EntityJsonView<Object> dtoJsonView = dtoJsonViewFactory.create(savedDto, viewConfigs);
-        return new SaveProducedReplication(dtoJsonView);
+        EntityJsonView<Object> entityJsonView = entityJsonViewFactory.create(savedEntity, entityViewConfigs);
+        return new SaveProducedReplication(entityJsonView);
     }
 }
