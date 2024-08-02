@@ -1,13 +1,11 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedRepository;
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.View;
+import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.registry.ReplicatedServiceRegistry;
+import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.v1.service.FirstTestV1CRUDService;
-import by.aurorasoft.replicator.v2.dto.TestV2Dto;
-import by.aurorasoft.replicator.v2.service.SecondTestV2CRUDService;
+import by.aurorasoft.replicator.testrepository.FirstTestRepository;
+import by.aurorasoft.replicator.testrepository.SecondTestRepository;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,28 +14,25 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import static by.aurorasoft.replicator.testutil.ProducerConfigUtil.checkEquals;
 import static by.aurorasoft.replicator.testutil.ProducerConfigUtil.createProducerConfig;
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
-import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.checkEquals;
-import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.createReplicatedService;
-import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
-import static by.aurorasoft.replicator.testutil.ViewConfigUtil.createViewConfig;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public final class ReplicationProducerRegistryFactoryTest {
-    private static final String FIELD_NAME_PRODUCERS_BY_SERVICES = "producersByServices";
+    private static final String FIELD_NAME_PRODUCERS_BY_REPOSITORIES = "producersByRepositories";
 
     @Mock
-    private ReplicatedServiceRegistry mockedServiceRegistry;
+    private ReplicatedRepositoryRegistry mockedRepositoryRegistry;
 
     @Mock
     private ReplicationProducerFactory mockedProducerFactory;
@@ -45,68 +40,53 @@ public final class ReplicationProducerRegistryFactoryTest {
     private ReplicationProducerRegistryFactory registryFactory;
 
     @Captor
-    private ArgumentCaptor<ReplicatedRepository> replicatedServiceArgumentCaptor;
+    private ArgumentCaptor<Producer> producerConfigArgumentCaptor;
 
     @Before
     public void initializeRegistryFactory() {
-        registryFactory = new ReplicationProducerRegistryFactory(mockedServiceRegistry, mockedProducerFactory);
+        registryFactory = new ReplicationProducerRegistryFactory(mockedRepositoryRegistry, mockedProducerFactory);
     }
 
     @Test
     public void registryShouldBeCreated() {
-        Object firstGivenService = new FirstTestV1CRUDService();
-        Object secondGivenService = new SecondTestV2CRUDService();
-        Set<Object> givenServices = new LinkedHashSet<>(List.of(firstGivenService, secondGivenService));
-        when(mockedServiceRegistry.getServices()).thenReturn(givenServices);
+        JpaRepository<?, ?> firstGivenRepository = new FirstTestRepository();
+        JpaRepository<?, ?> secondGivenRepository = new SecondTestRepository();
+        var givenRepositories = new LinkedHashSet<>(List.of(firstGivenRepository, secondGivenRepository));
+        when(mockedRepositoryRegistry.getRepositories()).thenReturn(givenRepositories);
 
-        ReplicationProducer firstGivenProducer = mock(ReplicationProducer.class);
-        ReplicationProducer secondGivenProducer = mock(ReplicationProducer.class);
-        when(mockedProducerFactory.create(any(ReplicatedRepository.class)))
-                .thenReturn(firstGivenProducer)
-                .thenReturn(secondGivenProducer);
+        ReplicationProducer firstGivenProducer = mockProducerCreation("first-topic");
+        ReplicationProducer secondGivenProducer = mockProducerCreation("second-topic");
 
         ReplicationProducerRegistry actual = registryFactory.create();
-        Map<Object, ReplicationProducer> actualProducersByServices = getProducersByServices(actual);
-        Map<Object, ReplicationProducer> expectedProducersByServices = Map.of(
-                firstGivenService, firstGivenProducer,
-                secondGivenService, secondGivenProducer
+        Map<Object, ReplicationProducer> actualProducersByRepositories = getProducersByRepositories(actual);
+        Map<Object, ReplicationProducer> expectedProducersByRepositories = Map.of(
+                firstGivenRepository, firstGivenProducer,
+                secondGivenRepository, secondGivenProducer
         );
-        assertEquals(expectedProducersByServices, actualProducersByServices);
+        assertEquals(expectedProducersByRepositories, actualProducersByRepositories);
 
-        List<ReplicatedRepository> expectedReplicatedServices = List.of(
-                createReplicatedService(
-                        createProducerConfig(LongSerializer.class, 10, 500, 100000),
-                        createTopicConfig("first-topic", 1, 1),
-                        new View[]{}
-                ),
-                createReplicatedService(
-                        createProducerConfig(LongSerializer.class, 15, 515, 110000),
-                        createTopicConfig("second-topic", 2, 2),
-                        new View[]{
-                                createViewConfig(
-                                        TestV2Dto.class,
-                                        new String[]{"first-field"},
-                                        new String[]{"second-field"}
-                                ),
-                                createViewConfig(
-                                        TestV2Dto.class,
-                                        new String[]{"third-field", "fourth-field"},
-                                        new String[]{"fifth-field", "sixth-field", "seventh-field"}
-                                )
-                        }
-                )
+        List<Producer> expectedProducerConfigs = List.of(
+                createProducerConfig(LongSerializer.class, 10, 500, 100000),
+                createProducerConfig(LongSerializer.class, 15, 515, 110000)
         );
-        verifyReplicatedServices(expectedReplicatedServices);
+        verifyProducerConfigs(expectedProducerConfigs);
+    }
+
+    private ReplicationProducer mockProducerCreation(String topicName) {
+        ReplicationProducer producer = mock(ReplicationProducer.class);
+        when(mockedProducerFactory.create(eq(topicName), any(Producer.class))).thenReturn(producer);
+        return producer;
     }
 
     @SuppressWarnings("unchecked")
-    private Map<Object, ReplicationProducer> getProducersByServices(ReplicationProducerRegistry registry) {
-        return getFieldValue(registry, FIELD_NAME_PRODUCERS_BY_SERVICES, Map.class);
+    private Map<Object, ReplicationProducer> getProducersByRepositories(ReplicationProducerRegistry registry) {
+        return getFieldValue(registry, FIELD_NAME_PRODUCERS_BY_REPOSITORIES, Map.class);
     }
 
-    private void verifyReplicatedServices(List<ReplicatedRepository> expected) {
-        verify(mockedProducerFactory, times(expected.size())).create(replicatedServiceArgumentCaptor.capture());
-        List<ReplicatedRepository> actual = replicatedServiceArgumentCaptor.getAllValues();
+    private void verifyProducerConfigs(List<Producer> expected) {
+        verify(mockedProducerFactory, times(expected.size()))
+                .create(anyString(), producerConfigArgumentCaptor.capture());
+        List<Producer> actual = producerConfigArgumentCaptor.getAllValues();
         range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 }
