@@ -13,7 +13,7 @@ import java.util.Objects;
 
 import static by.aurorasoft.replicator.util.TransportNameUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
+import static org.springframework.core.NestedExceptionUtils.getRootCause;
 
 @JsonTypeInfo(use = NAME, property = TYPE)
 @JsonSubTypes(
