@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.provider.ReplicationConsumePipeline;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

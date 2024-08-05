@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.provider.ReplicationConsumePipeline;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.jupiter.api.Test;
 

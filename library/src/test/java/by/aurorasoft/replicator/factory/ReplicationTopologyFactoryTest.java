@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.model.pipeline.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.provider.ReplicationConsumePipeline;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
 import by.aurorasoft.replicator.testentity.TestEntity;
