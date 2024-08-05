@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationConsumeStarter {
-    private final List<ReplicationConsumerConfig<?, ?>> pipelines;
+    private final List<ReplicationConsumerSetting<?, ?>> pipelines;
     private final ReplicationConsumePipelineStarter pipelineStarter;
 
     @EventListener(ReplicationTopicsCreatedEvent.class)

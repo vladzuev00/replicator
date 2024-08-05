@@ -1,7 +1,7 @@
 package by.aurorasoft.testapp.config;
 
 import by.aurorasoft.replicator.annotation.EnableReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import by.aurorasoft.testapp.crud.entity.ReplicatedAddressEntity;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
 public class ReplicationConsumeConfig {
 
     @Bean
-    public ReplicationConsumerConfig<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
-                                                                                  ReplicatedPersonRepository repository) {
-        return new ReplicationConsumerConfig<>(
+    public ReplicationConsumerSetting<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
+                                                                                   ReplicatedPersonRepository repository) {
+        return new ReplicationConsumerSetting<>(
                 topic,
                 new LongDeserializer(),
                 new TypeReference<>() {
@@ -29,9 +29,9 @@ public class ReplicationConsumeConfig {
     }
 
     @Bean
-    public ReplicationConsumerConfig<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
-                                                                                    ReplicatedAddressRepository repository) {
-        return new ReplicationConsumerConfig<>(
+    public ReplicationConsumerSetting<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
+                                                                                     ReplicatedAddressRepository repository) {
+        return new ReplicationConsumerSetting<>(
                 topic,
                 new LongDeserializer(),
                 new TypeReference<>() {

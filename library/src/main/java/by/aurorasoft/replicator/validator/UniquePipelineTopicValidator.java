@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.event.ComponentssValidatedEvent;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -24,7 +24,7 @@ public final class UniquePipelineTopicValidator {
     private static final String VIOLATION_MESSAGE_TEMPLATE = "Duplicated pipeline's topics were found: %s";
     private static final String VIOLATION_MESSAGE_TOPICS_DELIMITER = ", ";
 
-    private final List<ReplicationConsumerConfig<?, ?>> pipelines;
+    private final List<ReplicationConsumerSetting<?, ?>> pipelines;
     private final ApplicationEventPublisher eventPublisher;
 
     @EventListener(ContextRefreshedEvent.class)
@@ -39,7 +39,7 @@ public final class UniquePipelineTopicValidator {
 
     private Set<String> findDuplicatedTopics() {
         return pipelines.stream()
-                .map(ReplicationConsumerConfig::getTopic)
+                .map(ReplicationConsumerSetting::getTopic)
                 .collect(groupingBy(identity(), LinkedHashMap::new, counting()))
                 .entrySet()
                 .stream()

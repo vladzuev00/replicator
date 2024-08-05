@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public final class ReplicationStreamsConfigFactoryTest {
     @Test
     public void configShouldBeCreated() {
         String givenTopic = "test-topic";
-        ReplicationConsumerConfig<?, ?> givenPipeline = createPipeline(givenTopic);
+        ReplicationConsumerSetting<?, ?> givenPipeline = createPipeline(givenTopic);
 
         StreamsConfig actual = factory.create(givenPipeline);
         StreamsConfig expected = new StreamsConfig(
@@ -31,7 +31,7 @@ public final class ReplicationStreamsConfigFactoryTest {
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    private ReplicationConsumerConfig<?, ?> createPipeline(String topic) {
-        return new ReplicationConsumerConfig<>(topic, null, null, null);
+    private ReplicationConsumerSetting<?, ?> createPipeline(String topic) {
+        return new ReplicationConsumerSetting<>(topic, null, null, null);
     }
 }

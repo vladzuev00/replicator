@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import org.apache.kafka.streams.StreamsConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public final class ReplicationStreamsConfigFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public StreamsConfig create(ReplicationConsumerConfig<?, ?> pipeline) {
+    public StreamsConfig create(ReplicationConsumerSetting<?, ?> pipeline) {
         Map<String, Object> configsByNames = Map.of(
                 APPLICATION_ID_CONFIG, pipeline.getTopic(),
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,

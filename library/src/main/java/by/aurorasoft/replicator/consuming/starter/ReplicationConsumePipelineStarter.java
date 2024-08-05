@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public final class ReplicationConsumePipelineStarter {
     private final ReplicationKafkaStreamsFactory streamsFactory;
 
-    public void start(ReplicationConsumerConfig<?, ?> pipeline) {
+    public void start(ReplicationConsumerSetting<?, ?> pipeline) {
         streamsFactory.create(pipeline).start();
     }
 }
