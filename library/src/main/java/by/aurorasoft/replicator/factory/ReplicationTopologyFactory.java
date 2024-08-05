@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.serde.ConsumingSerde;
-import by.aurorasoft.replicator.model.config.component.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;

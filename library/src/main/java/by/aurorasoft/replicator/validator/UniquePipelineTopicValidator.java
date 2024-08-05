@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.event.ComponentssValidatedEvent;
-import by.aurorasoft.replicator.model.config.component.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ContextRefreshedEvent;

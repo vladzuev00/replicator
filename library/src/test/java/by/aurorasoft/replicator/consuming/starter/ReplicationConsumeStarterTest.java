@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.model.config.component.ReplicationConsumerConfig;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
