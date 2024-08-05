@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.validator;
 
-import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
+import by.aurorasoft.replicator.event.ComponentssValidatedEvent;
 import by.aurorasoft.replicator.model.component.ReplicationConsumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -49,7 +49,7 @@ public final class UniquePipelineTopicValidator {
     }
 
     private void publishSuccessEvent() {
-        eventPublisher.publishEvent(new PipelinesValidatedEvent(this));
+        eventPublisher.publishEvent(new ComponentssValidatedEvent(this));
     }
 
     private void throwConstraintViolationException(Set<String> duplicatedTopics) {

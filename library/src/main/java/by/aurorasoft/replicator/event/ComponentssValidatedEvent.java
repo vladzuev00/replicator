@@ -3,9 +3,9 @@ package by.aurorasoft.replicator.event;
 import by.aurorasoft.replicator.validator.UniquePipelineTopicValidator;
 import org.springframework.context.ApplicationEvent;
 
-public final class PipelinesValidatedEvent extends ApplicationEvent {
+public final class ComponentssValidatedEvent extends ApplicationEvent {
 
-    public PipelinesValidatedEvent(UniquePipelineTopicValidator source) {
+    public ComponentssValidatedEvent(UniquePipelineTopicValidator source) {
         super(source);
     }
 }

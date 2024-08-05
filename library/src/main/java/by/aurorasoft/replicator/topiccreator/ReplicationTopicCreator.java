@@ -1,8 +1,6 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.annotation.ReplicatedRepository;
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.Topic;
-import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
+import by.aurorasoft.replicator.event.ComponentssValidatedEvent;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,7 @@ public final class ReplicationTopicCreator {
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
-    @EventListener(PipelinesValidatedEvent.class)
+    @EventListener(ComponentssValidatedEvent.class)
     public void createTopics() {
         repositoryRegistry.getRepositories()
                 .stream()
