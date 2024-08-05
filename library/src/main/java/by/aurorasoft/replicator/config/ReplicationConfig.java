@@ -11,12 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.retry.support.RetryTemplate;
 
 @Configuration
 @ComponentScan("by.aurorasoft.replicator")
-@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ReplicationConfig {
 
     @Bean
