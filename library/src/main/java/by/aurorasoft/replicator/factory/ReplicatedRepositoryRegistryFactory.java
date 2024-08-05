@@ -20,7 +20,7 @@ public final class ReplicatedRepositoryRegistryFactory {
         return context.getBeansWithAnnotation(ReplicatedRepository.class)
                 .values()
                 .stream()
-                .map(ProxyUtil::unProxy)
+//                .map(ProxyUtil::unProxy)
                 .map(object -> (JpaRepository<?, ?>) object)
                 .collect(collectingAndThen(toUnmodifiableSet(), ReplicatedRepositoryRegistry::new));
     }

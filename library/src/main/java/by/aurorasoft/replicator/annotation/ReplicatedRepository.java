@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.annotation;
 
 import org.apache.kafka.common.serialization.Serializer;
-import org.springframework.stereotype.Repository;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -10,8 +9,8 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+//TODO try remove @Inherited
 @Inherited
-@Repository
 @Target(TYPE)
 @Retention(RUNTIME)
 public @interface ReplicatedRepository {

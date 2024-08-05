@@ -29,7 +29,8 @@ public class ProducingReplicationAspect {
     private final SaveProducedReplicationFactory saveReplicationFactory;
 
     @AfterReturning(
-            pointcut = "replicatedRepository() && (save() || saveAndFlush())",
+//            pointcut = "replicatedRepository() && (save() || saveAndFlush())",
+            pointcut = "(save() || saveAndFlush())",
             returning = "savedEntity"
     )
     public void produceSave(JoinPoint joinPoint, Object savedEntity) {
@@ -106,7 +107,10 @@ public class ProducingReplicationAspect {
         return repository.findAll();
     }
 
-    @Pointcut("@target(by.aurorasoft.replicator.annotation.ReplicatedRepository)")
+    @Pointcut(
+            "within(org.springframework.data.jpa.repository.JpaRepository) "
+                    + "&& @within(by.aurorasoft.replicator.annotation.ReplicatedRepository)"
+    )
     private void replicatedRepository() {
 
     }
