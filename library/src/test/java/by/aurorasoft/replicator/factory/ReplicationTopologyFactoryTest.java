@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.model.provider.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.component.ReplicationConsumer;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
 import by.aurorasoft.replicator.testentity.TestEntity;
@@ -52,7 +52,7 @@ public final class ReplicationTopologyFactoryTest {
     @SuppressWarnings("unchecked")
     public void topologyShouldBeCreatedAndReplicationShouldBeProducedAndConsumed() {
         JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
-        ReplicationConsumePipeline<TestEntity, Long> givenPipeline = createPipeline(givenRepository);
+        ReplicationConsumer<TestEntity, Long> givenPipeline = createPipeline(givenRepository);
 
         TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
         ConsumedReplication<TestEntity, Long> givenReplication = new SaveConsumedReplication<>(givenEntity);
@@ -64,8 +64,8 @@ public final class ReplicationTopologyFactoryTest {
         }
     }
 
-    private ReplicationConsumePipeline<TestEntity, Long> createPipeline(JpaRepository<TestEntity, Long> repository) {
-        return new ReplicationConsumePipeline<>(
+    private ReplicationConsumer<TestEntity, Long> createPipeline(JpaRepository<TestEntity, Long> repository) {
+        return new ReplicationConsumer<>(
                 GIVEN_TOPIC,
                 new LongDeserializer(),
                 new TypeReference<>() {
@@ -74,7 +74,7 @@ public final class ReplicationTopologyFactoryTest {
         );
     }
 
-    private TopologyTestDriver createDriver(ReplicationConsumePipeline<TestEntity, Long> pipeline) {
+    private TopologyTestDriver createDriver(ReplicationConsumer<TestEntity, Long> pipeline) {
         Topology topology = topologyFactory.create(pipeline);
         Properties properties = createDriverProperties();
         return new TopologyTestDriver(topology, properties);

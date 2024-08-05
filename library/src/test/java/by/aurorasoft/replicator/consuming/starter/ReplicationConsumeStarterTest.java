@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.model.provider.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.component.ReplicationConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,10 +19,10 @@ import static org.mockito.Mockito.verify;
 public final class ReplicationConsumeStarterTest {
 
     @Mock
-    private ReplicationConsumePipeline<?, ?> firstMockedPipeline;
+    private ReplicationConsumer<?, ?> firstMockedPipeline;
 
     @Mock
-    private ReplicationConsumePipeline<?, ?> secondMockedPipeline;
+    private ReplicationConsumer<?, ?> secondMockedPipeline;
 
     @Mock
     private ReplicationConsumePipelineStarter mockedPipelineStarter;
@@ -30,7 +30,7 @@ public final class ReplicationConsumeStarterTest {
     private ReplicationConsumeStarter starter;
 
     @Captor
-    private ArgumentCaptor<ReplicationConsumePipeline<?, ?>> pipelineArgumentCaptor;
+    private ArgumentCaptor<ReplicationConsumer<?, ?>> pipelineArgumentCaptor;
 
     @BeforeEach
     public void initializeStarter() {

@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.event.PipelinesValidatedEvent;
-import by.aurorasoft.replicator.model.provider.ReplicationConsumePipeline;
+import by.aurorasoft.replicator.model.component.ReplicationConsumer;
 import by.aurorasoft.replicator.validator.UniquePipelineTopicValidator.DuplicateReplicationTopicException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -58,8 +58,8 @@ public final class UniquePipelineTopicValidatorTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static ReplicationConsumePipeline<?, ?> createPipeline(String topic) {
-        return new ReplicationConsumePipeline<Object, Object>(
+    private static ReplicationConsumer<?, ?> createPipeline(String topic) {
+        return new ReplicationConsumer<Object, Object>(
                 topic,
                 mock(Deserializer.class),
                 new TypeReference<>() {
@@ -68,7 +68,7 @@ public final class UniquePipelineTopicValidatorTest {
         );
     }
 
-    private UniquePipelineTopicValidator createValidator(ReplicationConsumePipeline<?, ?>... pipelines) {
+    private UniquePipelineTopicValidator createValidator(ReplicationConsumer<?, ?>... pipelines) {
         return new UniquePipelineTopicValidator(Arrays.asList(pipelines), mockedEventPublisher);
     }
 

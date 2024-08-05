@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.provider;
+package by.aurorasoft.replicator.model.component;
 
 import by.aurorasoft.replicator.model.config.EntityViewConfig;
 import by.aurorasoft.replicator.model.config.ProducerConfig;
