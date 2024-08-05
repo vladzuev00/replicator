@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedRepository;
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
-import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public final class ReplicationProducerRegistryFactory {
                 .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerRegistry::new));
     }
 
-    private KafkaReplicationProducer createProducer(JpaRepository<?, ?> repository) {
+    private ReplicationProducer createProducer(JpaRepository<?, ?> repository) {
         ReplicatedRepository repositoryConfig = getAnnotation(repository.getClass(), ReplicatedRepository.class);
         String topicName = repositoryConfig.topic().name();
         Producer producerConfig = repositoryConfig.producer();

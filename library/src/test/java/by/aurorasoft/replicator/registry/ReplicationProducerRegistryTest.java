@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.registry;
 
-import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
+import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.testrepository.FirstTestRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,16 +17,16 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerRegistryTest {
     private static final JpaRepository<?, ?> GIVEN_REPOSITORY = new FirstTestRepository();
-    private static final KafkaReplicationProducer GIVEN_PRODUCER = mock(KafkaReplicationProducer.class);
+    private static final ReplicationProducer GIVEN_PRODUCER = mock(ReplicationProducer.class);
     private static final ReplicationProducerRegistry GIVEN_REGISTRY = new ReplicationProducerRegistry(
             Map.of(GIVEN_REPOSITORY, GIVEN_PRODUCER)
     );
 
     @Test
     public void producerShouldBeGotByRepository() {
-        Optional<KafkaReplicationProducer> optionalActual = GIVEN_REGISTRY.get(GIVEN_REPOSITORY);
+        Optional<ReplicationProducer> optionalActual = GIVEN_REGISTRY.get(GIVEN_REPOSITORY);
         assertTrue(optionalActual.isPresent());
-        KafkaReplicationProducer actual = optionalActual.get();
+        ReplicationProducer actual = optionalActual.get();
         assertSame(GIVEN_PRODUCER, actual);
     }
 
@@ -34,7 +34,7 @@ public final class ReplicationProducerRegistryTest {
     public void producerShouldNotBeGotByRepository() {
         JpaRepository<?, ?> secondGivenRepository = mock(JpaRepository.class);
 
-        Optional<KafkaReplicationProducer> optionalActual = GIVEN_REGISTRY.get(secondGivenRepository);
+        Optional<ReplicationProducer> optionalActual = GIVEN_REGISTRY.get(secondGivenRepository);
         assertTrue(optionalActual.isEmpty());
     }
 }
