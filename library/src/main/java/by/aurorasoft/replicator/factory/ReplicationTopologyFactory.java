@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.consuming.serde.ConsumingSerde;
-import by.aurorasoft.replicator.model.config.component.ReplicationConsumer;
+import by.aurorasoft.replicator.model.config.component.ReplicationConsumerConfig;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
@@ -24,7 +24,7 @@ public final class ReplicationTopologyFactory {
         this.retryTemplate = retryTemplate;
     }
 
-    public <E, ID> Topology create(ReplicationConsumer<E, ID> pipeline) {
+    public <E, ID> Topology create(ReplicationConsumerConfig<E, ID> pipeline) {
         StreamsBuilder builder = new StreamsBuilder();
         builder
                 .stream(pipeline.getTopic(), with(getIdSerde(pipeline), getReplicationSerde(pipeline)))
@@ -32,11 +32,11 @@ public final class ReplicationTopologyFactory {
         return builder.build();
     }
 
-    private <ID> ConsumingSerde<ID> getIdSerde(ReplicationConsumer<?, ID> pipeline) {
+    private <ID> ConsumingSerde<ID> getIdSerde(ReplicationConsumerConfig<?, ID> pipeline) {
         return new ConsumingSerde<>(pipeline.getIdDeserializer());
     }
 
-    private <E, ID> ConsumingSerde<ConsumedReplication<E, ID>> getReplicationSerde(ReplicationConsumer<E, ID> pipeline) {
+    private <E, ID> ConsumingSerde<ConsumedReplication<E, ID>> getReplicationSerde(ReplicationConsumerConfig<E, ID> pipeline) {
         return new ConsumingSerde<>(new JsonDeserializer<>(pipeline.getReplicationTypeReference(), false));
     }
 

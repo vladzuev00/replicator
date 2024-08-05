@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.model.config.component.ReplicationConsumer;
+import by.aurorasoft.replicator.model.config.component.ReplicationConsumerConfig;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
@@ -40,7 +40,7 @@ public final class ReplicationKafkaStreamsFactoryTest {
 
     @Test
     public void streamsShouldBeCreated() {
-        ReplicationConsumer<?, ?> givenPipeline = mock(ReplicationConsumer.class);
+        ReplicationConsumerConfig<?, ?> givenPipeline = mock(ReplicationConsumerConfig.class);
 
         Topology givenTopology = mock(Topology.class);
         when(mockedTopologyFactory.create(same(givenPipeline))).thenReturn(givenTopology);

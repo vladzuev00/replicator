@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
-import by.aurorasoft.replicator.model.config.component.ReplicationConsumer;
+import by.aurorasoft.replicator.model.config.component.ReplicationConsumerConfig;
 import org.apache.kafka.streams.KafkaStreams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public final class ReplicationConsumePipelineStarterTest {
 
     @Test
     public void pipelineShouldBeStarted() {
-        ReplicationConsumer<?, ?> givenPipeline = mock(ReplicationConsumer.class);
+        ReplicationConsumerConfig<?, ?> givenPipeline = mock(ReplicationConsumerConfig.class);
 
         KafkaStreams givenStreams = mock(KafkaStreams.class);
         when(mockedStreamsFactory.create(same(givenPipeline))).thenReturn(givenStreams);

@@ -1,7 +1,7 @@
 package by.aurorasoft.testapp.config;
 
 import by.aurorasoft.replicator.annotation.EnableReplication;
-import by.aurorasoft.replicator.model.config.component.ReplicationConsumer;
+import by.aurorasoft.replicator.model.config.component.ReplicationConsumerConfig;
 import by.aurorasoft.testapp.crud.entity.ReplicatedAddressEntity;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
 public class ReplicationConsumeConfig {
 
     @Bean
-    public ReplicationConsumer<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
-                                                                            ReplicatedPersonRepository repository) {
-        return new ReplicationConsumer<>(
+    public ReplicationConsumerConfig<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
+                                                                                  ReplicatedPersonRepository repository) {
+        return new ReplicationConsumerConfig<>(
                 topic,
                 new LongDeserializer(),
                 new TypeReference<>() {
@@ -29,9 +29,9 @@ public class ReplicationConsumeConfig {
     }
 
     @Bean
-    public ReplicationConsumer<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
-                                                                              ReplicatedAddressRepository repository) {
-        return new ReplicationConsumer<>(
+    public ReplicationConsumerConfig<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
+                                                                                    ReplicatedAddressRepository repository) {
+        return new ReplicationConsumerConfig<>(
                 topic,
                 new LongDeserializer(),
                 new TypeReference<>() {
