@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.mapperwrapper.ReplicationObjectMapperWrapper;
+import by.aurorasoft.replicator.mapperwrapper.ProducedReplicationMapperWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.web.config.SpringDataJacksonConfiguration.PageModule;
@@ -17,7 +17,7 @@ public final class ReplicationObjectMapperWrapperFactoryTest {
     public void wrapperShouldBeCreated() {
         ObjectMapper givenSource = new ObjectMapper().registerModule(new PageModule());
 
-        ReplicationObjectMapperWrapper actual = factory.create(givenSource);
+        ProducedReplicationMapperWrapper actual = factory.create(givenSource);
         Set<Object> actualModuleIds = actual.getMapper().getRegisteredModuleIds();
         Set<Object> expectedModuleIds = Set.of(
                 "org.springframework.data.web.config.SpringDataJacksonConfiguration$PageModule",

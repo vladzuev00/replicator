@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.factory.ReplicatedRepositoryRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationObjectMapperWrapperFactory;
 import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.mapperwrapper.ReplicationObjectMapperWrapper;
+import by.aurorasoft.replicator.mapperwrapper.ProducedReplicationMapperWrapper;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,10 +57,10 @@ public final class ReplicationConfigTest {
         ReplicationObjectMapperWrapperFactory givenFactory = mock(ReplicationObjectMapperWrapperFactory.class);
         ObjectMapper givenSource = mock(ObjectMapper.class);
 
-        ReplicationObjectMapperWrapper givenWrapper = mock(ReplicationObjectMapperWrapper.class);
+        ProducedReplicationMapperWrapper givenWrapper = mock(ProducedReplicationMapperWrapper.class);
         when(givenFactory.create(same(givenSource))).thenReturn(givenWrapper);
 
-        ReplicationObjectMapperWrapper actual = config.replicationObjectMapperWrapper(givenFactory, givenSource);
+        ProducedReplicationMapperWrapper actual = config.replicationObjectMapperWrapper(givenFactory, givenSource);
         assertSame(givenWrapper, actual);
     }
 }

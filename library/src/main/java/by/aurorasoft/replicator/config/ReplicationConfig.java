@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.factory.ReplicatedRepositoryRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationObjectMapperWrapperFactory;
 import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.mapperwrapper.ReplicationObjectMapperWrapper;
+import by.aurorasoft.replicator.mapperwrapper.ProducedReplicationMapperWrapper;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,8 +33,8 @@ public class ReplicationConfig {
     }
 
     @Bean
-    public ReplicationObjectMapperWrapper replicationObjectMapperWrapper(ReplicationObjectMapperWrapperFactory factory,
-                                                                         ObjectMapper source) {
+    public ProducedReplicationMapperWrapper replicationObjectMapperWrapper(ReplicationObjectMapperWrapperFactory factory,
+                                                                           ObjectMapper source) {
         return factory.create(source);
     }
 }

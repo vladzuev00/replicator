@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.mapperwrapper.ReplicationObjectMapperWrapper;
+import by.aurorasoft.replicator.mapperwrapper.ProducedReplicationMapperWrapper;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Serializer;
@@ -22,7 +22,7 @@ public final class ReplicationProducerValueSerializerFactoryTest {
     private static final String FIELD_NAME_OBJECT_MAPPER = "objectMapper";
 
     @Mock
-    private ReplicationObjectMapperWrapper mockedMapperWrapper;
+    private ProducedReplicationMapperWrapper mockedMapperWrapper;
 
     private ReplicationProducerValueSerializerFactory factory;
 

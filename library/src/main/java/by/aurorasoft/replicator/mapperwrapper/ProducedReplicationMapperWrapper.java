@@ -6,6 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public final class ReplicationObjectMapperWrapper {
+public final class ProducedReplicationMapperWrapper {
     private final ObjectMapper mapper;
 }
