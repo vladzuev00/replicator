@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.component;
+package by.aurorasoft.replicator.model.config.component;
 
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,7 +7,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Getter
-public final class ReplicationConsumer<E, ID> extends ReplicationComponent<E, ID> {
+public final class ReplicationConsumer<E, ID> extends ReplicationComponentConfig<E, ID> {
     private final Deserializer<ID> idDeserializer;
     private final TypeReference<ConsumedReplication<E, ID>> replicationTypeReference;
 

@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.model.component.ReplicationConsumer;
+import by.aurorasoft.replicator.model.config.component.ReplicationConsumer;
 import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

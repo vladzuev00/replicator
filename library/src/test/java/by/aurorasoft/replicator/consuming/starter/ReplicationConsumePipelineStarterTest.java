@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
-import by.aurorasoft.replicator.model.component.ReplicationConsumer;
+import by.aurorasoft.replicator.model.config.component.ReplicationConsumer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

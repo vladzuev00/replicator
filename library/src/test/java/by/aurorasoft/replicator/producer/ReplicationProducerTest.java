@@ -25,14 +25,14 @@ public final class ReplicationProducerTest {
     @Mock
     private KafkaTemplate<Object, ProducedReplication<?>> mockedKafkaTemplate;
 
-    private ReplicationProducer producer;
+    private KafkaReplicationProducer producer;
 
     @Captor
     private ArgumentCaptor<ProducerRecord<Object, ProducedReplication<?>>> recordArgumentCaptor;
 
     @BeforeEach
     public void initializeProducer() {
-        producer = new ReplicationProducer(GIVEN_TOPIC_NAME, mockedKafkaTemplate);
+        producer = new KafkaReplicationProducer(GIVEN_TOPIC_NAME, mockedKafkaTemplate);
     }
 
     @Test

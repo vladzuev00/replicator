@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.factory.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -84,12 +84,12 @@ public class ProducingReplicationAspect {
 
     private void produceReplication(ProducedReplication<?> replication, JoinPoint joinPoint) {
         JpaRepository<?, ?> repository = (JpaRepository<?, ?>) joinPoint.getTarget();
-        ReplicationProducer producer = getProducer(repository);
+        KafkaReplicationProducer producer = getProducer(repository);
         ReplicationCallback callback = new ReplicationCallback(producer, replication);
         registerSynchronization(callback);
     }
 
-    private ReplicationProducer getProducer(JpaRepository<?, ?> repository) {
+    private KafkaReplicationProducer getProducer(JpaRepository<?, ?> repository) {
         return producerRegistry.get(repository).orElseThrow(() -> createNoProducerException(repository));
     }
 
@@ -182,7 +182,7 @@ public class ProducingReplicationAspect {
     @RequiredArgsConstructor
     @Getter
     static final class ReplicationCallback implements TransactionSynchronization {
-        private final ReplicationProducer producer;
+        private final KafkaReplicationProducer producer;
         private final ProducedReplication<?> replication;
 
         @Override

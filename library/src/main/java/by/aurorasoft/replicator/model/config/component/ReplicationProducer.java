@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.model.component;
+package by.aurorasoft.replicator.model.config.component;
 
 import by.aurorasoft.replicator.model.config.EntityViewConfig;
 import by.aurorasoft.replicator.model.config.ProducerConfig;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Getter
-public final class ReplicationProducer<E, ID> extends ReplicationComponent<E, ID> {
+public final class ReplicationProducer<E, ID> extends ReplicationComponentConfig<E, ID> {
     private final ProducerConfig config;
     private final EntityViewConfig[] entityViewConfigs;
 

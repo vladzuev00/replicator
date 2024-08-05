@@ -6,7 +6,7 @@ import by.aurorasoft.replicator.factory.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import by.aurorasoft.replicator.testrepository.FirstTestRepository;
@@ -62,7 +62,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     public void saveShouldBeProduced() {
         TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
         SaveProducedReplication givenReplication = mockSaveReplicationFor(givenEntity);
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         TestEntity actual = repository.save(givenEntity);
         assertSame(givenEntity, actual);
@@ -81,7 +81,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     public void saveAndFlushShouldBeProduced() {
         TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
         SaveProducedReplication givenReplication = mockSaveReplicationFor(givenEntity);
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         TestEntity actual = repository.saveAndFlush(givenEntity);
         assertSame(givenEntity, actual);
@@ -103,7 +103,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         List<TestEntity> givenEntities = List.of(firstGivenEntity, secondGivenEntity);
         SaveProducedReplication firstGivenReplication = mockSaveReplicationFor(firstGivenEntity);
         SaveProducedReplication secondGivenReplication = mockSaveReplicationFor(secondGivenEntity);
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         List<TestEntity> actual = repository.saveAll(givenEntities);
         assertEquals(givenEntities, actual);
@@ -127,7 +127,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         List<TestEntity> givenEntities = List.of(firstGivenEntity, secondGivenEntity);
         SaveProducedReplication firstGivenReplication = mockSaveReplicationFor(firstGivenEntity);
         SaveProducedReplication secondGivenReplication = mockSaveReplicationFor(secondGivenEntity);
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         List<TestEntity> actual = repository.saveAllAndFlush(givenEntities);
         assertEquals(givenEntities, actual);
@@ -147,7 +147,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     @Test
     public void deleteByIdShouldBeProduced() {
         Long givenId = 255L;
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteById(givenId);
 
@@ -167,7 +167,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         TestEntity givenEntity = TestEntity.builder()
                 .id(givenId)
                 .build();
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.delete(givenEntity);
 
@@ -189,7 +189,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         Long secondGivenId = 256L;
         Long thirdGivenId = 257L;
         Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId, thirdGivenId);
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllById(givenIds);
 
@@ -214,7 +214,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         Long secondGivenId = 256L;
         Long thirdGivenId = 257L;
         Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId, thirdGivenId);
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllByIdInBatch(givenIds);
 
@@ -249,7 +249,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
                         .id(thirdGivenId)
                         .build()
         );
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAll(givenEntities);
 
@@ -294,7 +294,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
                         .id(thirdGivenId)
                         .build()
         );
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllInBatch(givenEntities);
 
@@ -325,7 +325,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
     @Test
     public void deleteAllShouldBeProduced() {
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAll();
 
@@ -344,7 +344,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
     @Test
     public void deleteAllInBatchShouldBeProduced() {
-        ReplicationProducer givenProducer = mockProducerForRepository();
+        KafkaReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllInBatch();
 
@@ -367,8 +367,8 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         return replication;
     }
 
-    private ReplicationProducer mockProducerForRepository() {
-        ReplicationProducer producer = mock(ReplicationProducer.class);
+    private KafkaReplicationProducer mockProducerForRepository() {
+        KafkaReplicationProducer producer = mock(KafkaReplicationProducer.class);
         when(mockedProducerRegistry.get(same(unProxyRepository()))).thenReturn(Optional.of(producer));
         return producer;
     }
@@ -377,7 +377,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         return (JpaRepository<?, ?>) unProxy(repository);
     }
 
-    private void verifyProducing(ReplicationProducer producer, ProducedReplication<?>... replications) {
+    private void verifyProducing(KafkaReplicationProducer producer, ProducedReplication<?>... replications) {
         mockedTransactionManager
                 .verify(() -> registerSynchronization(callbackArgumentCaptor.capture()), times(replications.length));
         List<ReplicationCallback> actual = callbackArgumentCaptor.getAllValues();
@@ -385,7 +385,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         checkEquals(expected, actual);
     }
 
-    private List<ReplicationCallback> createCallbacks(ReplicationProducer producer,
+    private List<ReplicationCallback> createCallbacks(KafkaReplicationProducer producer,
                                                       ProducedReplication<?>... replications) {
         return stream(replications)
                 .map(replication -> new ReplicationCallback(producer, replication))

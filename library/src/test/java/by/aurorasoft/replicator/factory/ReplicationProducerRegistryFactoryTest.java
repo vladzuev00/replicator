@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
-import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.testrepository.FirstTestRepository;
@@ -54,12 +54,12 @@ public final class ReplicationProducerRegistryFactoryTest {
         var givenRepositories = new LinkedHashSet<>(List.of(firstGivenRepository, secondGivenRepository));
         when(mockedRepositoryRegistry.getRepositories()).thenReturn(givenRepositories);
 
-        ReplicationProducer firstGivenProducer = mockProducerCreation("first-topic");
-        ReplicationProducer secondGivenProducer = mockProducerCreation("second-topic");
+        KafkaReplicationProducer firstGivenProducer = mockProducerCreation("first-topic");
+        KafkaReplicationProducer secondGivenProducer = mockProducerCreation("second-topic");
 
         ReplicationProducerRegistry actual = registryFactory.create();
-        Map<Object, ReplicationProducer> actualProducersByRepositories = getProducersByRepositories(actual);
-        Map<Object, ReplicationProducer> expectedProducersByRepositories = Map.of(
+        Map<Object, KafkaReplicationProducer> actualProducersByRepositories = getProducersByRepositories(actual);
+        Map<Object, KafkaReplicationProducer> expectedProducersByRepositories = Map.of(
                 firstGivenRepository, firstGivenProducer,
                 secondGivenRepository, secondGivenProducer
         );
@@ -72,14 +72,14 @@ public final class ReplicationProducerRegistryFactoryTest {
         verifyProducerConfigs(expectedProducerConfigs);
     }
 
-    private ReplicationProducer mockProducerCreation(String topicName) {
-        ReplicationProducer producer = mock(ReplicationProducer.class);
+    private KafkaReplicationProducer mockProducerCreation(String topicName) {
+        KafkaReplicationProducer producer = mock(KafkaReplicationProducer.class);
         when(mockedProducerFactory.create(eq(topicName), any(Producer.class))).thenReturn(producer);
         return producer;
     }
 
     @SuppressWarnings("unchecked")
-    private Map<Object, ReplicationProducer> getProducersByRepositories(ReplicationProducerRegistry registry) {
+    private Map<Object, KafkaReplicationProducer> getProducersByRepositories(ReplicationProducerRegistry registry) {
         return getFieldValue(registry, FIELD_NAME_PRODUCERS_BY_REPOSITORIES, Map.class);
     }
 

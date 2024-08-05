@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.producer.KafkaReplicationProducer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ public final class ReplicationProducerFactoryTest {
         @SuppressWarnings("unchecked") Serializer<ProducedReplication<?>> givenValueSerializer = mock(Serializer.class);
         when(mockedValueSerializerFactory.create()).thenReturn(givenValueSerializer);
 
-        ReplicationProducer actual = producerFactory.create(givenTopicName, givenConfig);
+        KafkaReplicationProducer actual = producerFactory.create(givenTopicName, givenConfig);
 
         String actualTopicName = getTopicName(actual);
         assertSame(givenTopicName, actualTopicName);
@@ -73,11 +73,11 @@ public final class ReplicationProducerFactoryTest {
         assertSame(givenValueSerializer, actualValueSerializer);
     }
 
-    private String getTopicName(ReplicationProducer producer) {
+    private String getTopicName(KafkaReplicationProducer producer) {
         return getFieldValue(producer, FIELD_NAME_TOPIC_NAME, String.class);
     }
 
-    private KafkaTemplate<?, ?> getKafkaTemplate(ReplicationProducer producer) {
+    private KafkaTemplate<?, ?> getKafkaTemplate(KafkaReplicationProducer producer) {
         return getFieldValue(producer, FIELD_NAME_KAFKA_TEMPLATE, KafkaTemplate.class);
     }
 }
