@@ -21,7 +21,7 @@ public final class SaveConsumedReplication<E, ID> extends ConsumedReplication<E,
     }
 
     @Override
-    public void executeInternal(JpaRepository<E, ID> repository) {
+    protected void executeInternal(JpaRepository<E, ID> repository) {
         repository.save(entity);
     }
 }
