@@ -10,9 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationProducerValueSerializerFactory {
-    private final ProducedReplicationMapperWrapper mapperWrapper;
+//    private final ProducedReplicationMapperWrapper mapperWrapper;
 
     public Serializer<ProducedReplication<?>> create() {
-        return new JsonSerializer<>(mapperWrapper.getMapper());
+        return null;
+//        return new JsonSerializer<>(mapperWrapper.getMapper());
     }
 }

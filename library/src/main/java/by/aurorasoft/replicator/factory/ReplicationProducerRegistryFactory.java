@@ -1,7 +1,5 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.annotation.ReplicatedRepository;
-import by.aurorasoft.replicator.annotation.ReplicatedRepository.Producer;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
@@ -18,7 +16,7 @@ import static java.util.stream.Collectors.toMap;
 @RequiredArgsConstructor
 public final class ReplicationProducerRegistryFactory {
     private final ReplicatedRepositoryRegistry repositoryRegistry;
-    private final ReplicationProducerFactory producerFactory;
+//    private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
         return repositoryRegistry.getRepositories()
@@ -27,9 +25,10 @@ public final class ReplicationProducerRegistryFactory {
     }
 
     private ReplicationProducer createProducer(JpaRepository<?, ?> repository) {
-        ReplicatedRepository repositoryConfig = getAnnotation(repository.getClass(), ReplicatedRepository.class);
-        String topicName = repositoryConfig.topic().name();
-        Producer producerConfig = repositoryConfig.producer();
-        return producerFactory.create(topicName, producerConfig);
+        return null;
+//        ReplicatedRepository repositoryConfig = getAnnotation(repository.getClass(), ReplicatedRepository.class);
+//        String topicName = repositoryConfig.topic().name();
+//        Producer producerConfig = repositoryConfig.producer();
+//        return producerFactory.create(topicName, producerConfig);
     }
 }

@@ -22,20 +22,12 @@ public final class ReplicationTopicCreator {
 
     @EventListener(ComponentssValidatedEvent.class)
     public void createTopics() {
-        repositoryRegistry.getRepositories()
-                .stream()
-                .map(this::getTopicConfig)
-                .map(this::createNewTopic)
-                .forEach(kafkaAdmin::createOrModifyTopics);
+//        repositoryRegistry.getRepositories()
+//                .stream()
+//                .map(this::getTopicConfig)
+//                .map(this::createNewTopic)
+//                .forEach(kafkaAdmin::createOrModifyTopics);
         publishSuccessEvent();
-    }
-
-    private Topic getTopicConfig(JpaRepository<?, ?> repository) {
-        return getAnnotation(repository.getClass(), ReplicatedRepository.class).topic();
-    }
-
-    private NewTopic createNewTopic(Topic config) {
-        return new NewTopic(config.name(), config.partitionCount(), config.replicationFactor());
     }
 
     private void publishSuccessEvent() {

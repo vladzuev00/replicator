@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+//TODO: remove
 @RequiredArgsConstructor
 @Getter
 public final class ProducedReplicationMapperWrapper {
