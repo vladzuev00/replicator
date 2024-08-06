@@ -4,6 +4,10 @@ replication:
       time-lapse-ms: 3000
       max-attempts: 3
 
+spring:
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+
 
 
 

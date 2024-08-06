@@ -10,9 +10,11 @@ import com.monitorjbl.json.JsonViewModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.retry.support.RetryTemplate;
 
 @Configuration
+@EnableAspectJAutoProxy
 @ComponentScan("by.aurorasoft.replicator")
 public class ReplicationConfig {
 
