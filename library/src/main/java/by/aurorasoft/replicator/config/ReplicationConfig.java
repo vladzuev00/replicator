@@ -1,10 +1,10 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.ReplicatedRepositoryRegistryFactory;
-import by.aurorasoft.replicator.factory.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.factory.DeleteReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
-import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.factory.SaveReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.registry.DeleteReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.SaveReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monitorjbl.json.JsonViewModule;
 import org.springframework.context.annotation.Bean;
@@ -23,17 +23,17 @@ public class ReplicationConfig {
     }
 
     @Bean
-    public ReplicatedRepositoryRegistry replicatedRepositoryRegistry(ReplicatedRepositoryRegistryFactory factory) {
-        return factory.create();
-    }
-
-    @Bean
-    public ReplicationProducerRegistry replicationProducerRegistry(ReplicationProducerRegistryFactory factory) {
-        return factory.create();
-    }
-
-    @Bean
     public RetryTemplate replicationRetryTemplate(ReplicationRetryTemplateFactory factory) {
+        return factory.create();
+    }
+
+    @Bean
+    public SaveReplicationProducerRegistry saveReplicationProducerRegistry(SaveReplicationProducerRegistryFactory factory) {
+        return factory.create();
+    }
+
+    @Bean
+    public DeleteReplicationProducerRegistry deleteReplicationProducerRegistry(DeleteReplicationProducerRegistryFactory factory) {
         return factory.create();
     }
 }
