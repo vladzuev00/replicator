@@ -6,14 +6,13 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 public final class DeleteReplicationProducer extends ReplicationProducer<Object> {
 
-
     public DeleteReplicationProducer(String topicName, KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate) {
         super(topicName, kafkaTemplate);
     }
 
     @Override
     protected Object getEntityId(Object model) {
-        return null;
+        return model;
     }
 
     @Override
