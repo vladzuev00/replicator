@@ -10,10 +10,10 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
 @RequiredArgsConstructor
-public final class ReplicationProducerRegistry {
-    private final Map<JpaRepository<?, ?>, ReplicationProducer> producersByRepositories;
+public abstract class ReplicationProducerRegistry<P extends ReplicationProducer<?>> {
+    private final Map<JpaRepository<?, ?>, P> producersByRepositories;
 
-    public Optional<ReplicationProducer> get(JpaRepository<?, ?> repository) {
+    public Optional<P> get(JpaRepository<?, ?> repository) {
         return ofNullable(producersByRepositories.get(repository));
     }
 }

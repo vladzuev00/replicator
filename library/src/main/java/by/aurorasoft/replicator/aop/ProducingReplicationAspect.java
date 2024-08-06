@@ -1,12 +1,10 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.factory.SaveProducedReplicationFactory;
-import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
-import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
+import by.aurorasoft.replicator.producer.DeleteReplicationProducer;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.registry.EntityViewSettingRegistry;
-import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.producer.SaveReplicationProducer;
+import by.aurorasoft.replicator.registry.DeleteReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.SaveReplicationProducerRegistry;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.util.List;
+import java.util.Optional;
 
 import static by.aurorasoft.replicator.util.IdUtil.getId;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
@@ -26,74 +25,66 @@ import static org.springframework.transaction.support.TransactionSynchronization
 @Component
 @RequiredArgsConstructor
 public class ProducingReplicationAspect {
-    private final ReplicationProducerRegistry producerRegistry;
-    private final EntityViewSettingRegistry entityViewSettingRegistry;
-    private final SaveProducedReplicationFactory saveReplicationFactory;
+    private final SaveReplicationProducerRegistry saveProducerRegistry;
+    private final DeleteReplicationProducerRegistry deleteProducerRegistry;
 
     @AfterReturning(pointcut = "save() || saveAndFlush()", returning = "savedEntity")
     public void produceSave(JoinPoint joinPoint, Object savedEntity) {
-        JpaRepository<?, ?> repository = (JpaRepository<?, ?>) joinPoint.getTarget();
-        producerRegistry.get(repository).ifPresent();
-        produceSaveReplication(savedEntity, joinPoint);
+        getSaveProducer(joinPoint).ifPresent(producer -> produceAfterCommit(producer, savedEntity));
     }
 
-    @AfterReturning(
-            pointcut = "replicatedRepository() && (saveAll() || saveAllAndFlush())",
-            returning = "savedEntities"
-    )
+    @AfterReturning(pointcut = "saveAll() || saveAllAndFlush()", returning = "savedEntities")
     public void produceSaveAll(JoinPoint joinPoint, List<?> savedEntities) {
-        savedEntities.forEach(entity -> produceSaveReplication(entity, joinPoint));
+        getSaveProducer(joinPoint).ifPresent(producer -> savedEntities.forEach(savedEntity -> produceAfterCommit(producer, savedEntity)));
     }
 
-    @AfterReturning("replicatedRepository() && deleteById()")
+    @AfterReturning("deleteById()")
     public void produceDeleteById(JoinPoint joinPoint) {
-        Object entityId = joinPoint.getArgs()[0];
-        produceDeleteReplication(entityId, joinPoint);
+        getDeleteProducer(joinPoint).ifPresent(producer -> produceAfterCommit(producer, joinPoint.getArgs()[0]));
     }
 
-    @AfterReturning("replicatedRepository() && delete()")
+    @AfterReturning("delete()")
     public void produceDelete(JoinPoint joinPoint) {
-        Object entity = joinPoint.getArgs()[0];
-        produceDeleteReplication(getId(entity), joinPoint);
+        getDeleteProducer(joinPoint).ifPresent(producer -> produceAfterCommit(producer, getId(joinPoint.getArgs()[0])));
     }
 
-    @AfterReturning("replicatedRepository() && (deleteByIds() || deleteByIdsInBatch())")
+    @AfterReturning("deleteByIds() || deleteByIdsInBatch()")
     public void produceDeleteByIds(JoinPoint joinPoint) {
-        getIterableFirstArgument(joinPoint).forEach(id -> produceDeleteReplication(id, joinPoint));
+        getDeleteProducer(joinPoint).ifPresent(producer -> getIterableFirstArgument(joinPoint).forEach(entityId -> produceAfterCommit(producer, entityId)));
     }
 
-    @AfterReturning("replicatedRepository() && (deleteIterable() || deleteIterableInBatch())")
+    @AfterReturning("deleteIterable() || deleteIterableInBatch()")
     public void produceDeleteIterable(JoinPoint joinPoint) {
-        getIterableFirstArgument(joinPoint).forEach(entity -> produceDeleteReplication(getId(entity), joinPoint));
+        getDeleteProducer(joinPoint).ifPresent(producer -> getIterableFirstArgument(joinPoint).forEach(entity -> produceAfterCommit(producer, getId(entity))));
     }
 
-    @AfterReturning("replicatedRepository() && (deleteAll() || deleteAllInBatch())")
+    @AfterReturning("deleteAll() || deleteAllInBatch()")
     public void produceDeleteAll(JoinPoint joinPoint) {
-        findAllEntities(joinPoint).forEach(entity -> produceDeleteReplication(getId(entity), joinPoint));
+        getDeleteProducer(joinPoint).ifPresent(producer -> findAllEntities(joinPoint).forEach(entity -> produceAfterCommit(producer, getId(entity))));
     }
 
-    private void produceSaveReplication(Object savedEntity, ReplicationProducer producer) {
-        SaveProducedReplication replication = saveReplicationFactory.create(savedEntity, joinPoint);
-        produceReplication(replication, joinPoint);
+    private Optional<SaveReplicationProducer> getSaveProducer(JoinPoint joinPoint) {
+        return saveProducerRegistry.get(getRepository(joinPoint));
     }
 
-    private void produceDeleteReplication(Object entityId, JoinPoint joinPoint) {
-        DeleteProducedReplication replication = new DeleteProducedReplication(entityId);
-        produceReplication(replication, joinPoint);
+    private Optional<DeleteReplicationProducer> getDeleteProducer(JoinPoint joinPoint) {
+        return deleteProducerRegistry.get(getRepository(joinPoint));
     }
 
-    private void produceReplication(ProducedReplication<?> replication, JpaRepository<?, ?> repository) {
-        producerRegistry.get(repository).ifPresent(producer -> registerSynchronization(new ReplicationCallback(producer, replication)));
+    private JpaRepository<?, ?> getRepository(JoinPoint joinPoint) {
+        return (JpaRepository<?, ?>) joinPoint.getTarget();
     }
 
-    @SuppressWarnings("unchecked")
-    private Iterable<Object> getIterableFirstArgument(JoinPoint joinPoint) {
-        return (Iterable<Object>) joinPoint.getArgs()[0];
+    private void produceAfterCommit(ReplicationProducer<?> producer, Object model) {
+        registerSynchronization(new ReplicationCallback(producer, model));
+    }
+
+    private Iterable<?> getIterableFirstArgument(JoinPoint joinPoint) {
+        return (Iterable<?>) joinPoint.getArgs()[0];
     }
 
     private List<?> findAllEntities(JoinPoint joinPoint) {
-        JpaRepository<?, ?> repository = (JpaRepository<?, ?>) joinPoint.getTarget();
-        return repository.findAll();
+        return getRepository(joinPoint).findAll();
     }
 
     @Pointcut("execution(public Object+ org.springframework.data.jpa.repository.JpaRepository+.save(Object+))")
@@ -163,12 +154,12 @@ public class ProducingReplicationAspect {
     @RequiredArgsConstructor
     @Getter
     static final class ReplicationCallback implements TransactionSynchronization {
-        private final ReplicationProducer producer;
-        private final ProducedReplication<?> replication;
+        private final ReplicationProducer<?> producer;
+        private final Object model;
 
         @Override
         public void afterCommit() {
-            producer.send(replication);
+            producer.send(model);
         }
     }
 }
