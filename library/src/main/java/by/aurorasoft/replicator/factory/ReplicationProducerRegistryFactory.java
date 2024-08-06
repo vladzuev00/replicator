@@ -19,9 +19,10 @@ public final class ReplicationProducerRegistryFactory {
 //    private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
-        return repositoryRegistry.getRepositories()
-                .stream()
-                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerRegistry::new));
+        return null;
+//        return repositoryRegistry.getRepositories()
+//                .stream()
+//                .collect(collectingAndThen(toMap(identity(), this::createProducer), ReplicationProducerRegistry::new));
     }
 
     private ReplicationProducer createProducer(JpaRepository<?, ?> repository) {

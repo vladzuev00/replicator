@@ -3,12 +3,10 @@ package by.aurorasoft.replicator.model.replication.consumed;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
-import by.aurorasoft.replicator.testentity.TestEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -33,7 +31,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
     @Test
     public void replicationShouldBeExecuted() {
-        TestEntity givenEntity = TestEntity.builder().build();
+        TestEntity givenEntity = mock(TestEntity.class);
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
         @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
@@ -53,7 +51,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
     @ParameterizedTest
     @MethodSource("provideCauseAndExpectedExceptionType")
     public void replicationShouldNotBeExecuted(Exception givenCause, Class<? extends Exception> expected) {
-        TestEntity givenEntity = TestEntity.builder().build();
+        TestEntity givenEntity = mock(TestEntity.class);
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
         @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
@@ -129,6 +127,18 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
     private static RuntimeException createSqlExceptionWrappingByRuntime(String sqlState) {
         return new RuntimeException(new SQLException(GIVEN_SQL_EXCEPTION_REASON, sqlState));
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    @EqualsAndHashCode
+    @ToString
+    private final static class TestEntity {
+        private Long id;
+        private String firstProperty;
+        private String secondProperty;
     }
 
     @RequiredArgsConstructor
