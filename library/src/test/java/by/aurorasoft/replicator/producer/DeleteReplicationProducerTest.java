@@ -12,10 +12,10 @@ public final class DeleteReplicationProducerTest {
 
     @Test
     public void entityIdShouldBeGot() {
-        Object givenModel = new Object();
+        Object givenEntityId = new Object();
 
-        Object actual = producer.getEntityId(givenModel);
-        assertSame(givenModel, actual);
+        Object actual = producer.getEntityId(givenEntityId);
+        assertSame(givenEntityId, actual);
     }
 
     @Test

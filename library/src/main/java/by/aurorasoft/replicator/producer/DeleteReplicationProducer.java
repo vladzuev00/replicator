@@ -11,8 +11,8 @@ public final class DeleteReplicationProducer extends ReplicationProducer<Object>
     }
 
     @Override
-    protected Object getEntityId(Object model) {
-        return model;
+    protected Object getEntityId(Object entityId) {
+        return entityId;
     }
 
     @Override
