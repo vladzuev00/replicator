@@ -11,6 +11,11 @@ public final class SaveReplicationProducer extends ReplicationProducer<EntityJso
     }
 
     @Override
+    protected Object getEntityId(Object model) {
+        return null;
+    }
+
+    @Override
     protected EntityJsonView<?> createReplicationBody(Object entity) {
         return null;
     }

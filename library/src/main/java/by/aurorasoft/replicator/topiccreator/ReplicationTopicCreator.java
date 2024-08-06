@@ -1,7 +1,5 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.event.ReplicationComponentsValidatedEvent;
-import by.aurorasoft.replicator.event.ReplicationTopicsCreatedEvent;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -16,7 +14,7 @@ public final class ReplicationTopicCreator {
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
-    @EventListener(ReplicationComponentsValidatedEvent.class)
+//    @EventListener(ReplicationComponentsValidatedEvent.class)
     public void createTopics() {
 //        repositoryRegistry.getRepositories()
 //                .stream()
@@ -27,6 +25,6 @@ public final class ReplicationTopicCreator {
     }
 
     private void publishSuccessEvent() {
-        eventPublisher.publishEvent(new ReplicationTopicsCreatedEvent(this));
+//        eventPublisher.publishEvent(new ReplicationTopicsCreatedEvent(this));
     }
 }
