@@ -1,56 +1,64 @@
-//package by.aurorasoft.replicator.model.replication.produced;
-//
-//import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-//import by.aurorasoft.replicator.model.view.EntityJsonView;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import org.junit.jupiter.params.ParameterizedTest;
-//import org.junit.jupiter.params.provider.Arguments;
-//import org.junit.jupiter.params.provider.MethodSource;
-//import org.springframework.beans.factory.annotation.Autowired;
-//
-//import java.util.stream.Stream;
-//
-//import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-//
-//public final class ProducedReplicationTest extends AbstractSpringBootTest {
-//
-//    @Autowired
-//    private ObjectMapper objectMapper;
-//
-//    @ParameterizedTest
-//    @MethodSource("provideReplicationAndExpectedJson")
-//    public void replicationShouldBeSerializedToJson(ProducedReplication<?> givenReplication, String expected)
-//            throws Exception {
-//        String actual = objectMapper.writeValueAsString(givenReplication);
-//        assertEquals(expected, actual, true);
-//    }
-//
-//    private static Stream<Arguments> provideReplicationAndExpectedJson() {
-//        return Stream.of(
-//                Arguments.of(
-//                        new SaveProducedReplication(
-//                                new EntityJsonView<>(
-//                                        new TestEntity(255L, "first-value", "second-value")
-//                                )
-//                        ),
-//                        """
-//                                {
-//                                  "type": "save",
-//                                  "body": {
-//                                    "id": 255,
-//                                    "firstProperty": "first-value",
-//                                    "secondProperty": "second-value"
-//                                  }
-//                                }"""
-//                ),
-//                Arguments.of(
-//                        new DeleteProducedReplication(255L),
-//                        """
-//                                {
-//                                  "type": "delete",
-//                                  "body": 255
-//                                }"""
-//                )
-//        );
-//    }
-//}
+package by.aurorasoft.replicator.model.replication.produced;
+
+import by.aurorasoft.replicator.base.AbstractSpringBootTest;
+import by.aurorasoft.replicator.model.view.EntityJsonView;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Value;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.stream.Stream;
+
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+
+public final class ProducedReplicationTest extends AbstractSpringBootTest {
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @ParameterizedTest
+    @MethodSource("provideReplicationAndExpectedJson")
+    public void replicationShouldBeSerializedToJson(ProducedReplication<?> givenReplication, String expected)
+            throws Exception {
+        String actual = objectMapper.writeValueAsString(givenReplication);
+        assertEquals(expected, actual, true);
+    }
+
+    private static Stream<Arguments> provideReplicationAndExpectedJson() {
+        return Stream.of(
+                Arguments.of(
+                        new SaveProducedReplication(
+                                new EntityJsonView<>(
+                                        new TestEntity(255L, "first-value", "second-value")
+                                )
+                        ),
+                        """
+                                {
+                                  "type": "save",
+                                  "body": {
+                                    "id": 255,
+                                    "firstProperty": "first-value",
+                                    "secondProperty": "second-value"
+                                  }
+                                }"""
+                ),
+                Arguments.of(
+                        new DeleteProducedReplication(255L),
+                        """
+                                {
+                                  "type": "delete",
+                                  "body": 255
+                                }"""
+                )
+        );
+    }
+
+    @Value
+    private static class TestEntity {
+        Long id;
+        String firstProperty;
+        String secondProperty;
+    }
+}
