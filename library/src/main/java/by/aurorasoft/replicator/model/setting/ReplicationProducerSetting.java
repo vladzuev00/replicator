@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.model.setting;
 
 import lombok.Getter;
-import lombok.Value;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -28,9 +28,10 @@ public final class ReplicationProducerSetting<E, ID> extends ReplicationComponen
         this.entityViewSettings = entityViewSettings;
     }
 
-    @Value
-    public static class EntityViewSetting {
-        Class<?> type;
-        String[] excludedFields;
+    @RequiredArgsConstructor
+    @Getter
+    public final static class EntityViewSetting {
+        private final Class<?> type;
+        private final String[] excludedFields;
     }
 }
