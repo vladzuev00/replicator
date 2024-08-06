@@ -7,7 +7,7 @@ public final class DeleteProducedReplication extends ProducedReplication<Object>
     }
 
     @Override
-    protected Object getEntityId(Object entityId) {
+    protected Object getEntityIdInternal(Object entityId) {
         return entityId;
     }
 }

@@ -18,7 +18,7 @@ public final class SaveProducedReplicationTest {
         EntityJsonView<?> givenEntityJsonView = new EntityJsonView<>(givenEntity);
         SaveProducedReplication givenReplication = new SaveProducedReplication(null);
 
-        Object actual = givenReplication.getEntityId(givenEntityJsonView);
+        Object actual = givenReplication.getEntityIdInternal(givenEntityJsonView);
         assertSame(givenId, actual);
     }
 }

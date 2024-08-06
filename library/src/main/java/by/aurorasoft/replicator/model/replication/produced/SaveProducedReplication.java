@@ -11,7 +11,7 @@ public final class SaveProducedReplication extends ProducedReplication<EntityJso
     }
 
     @Override
-    protected Object getEntityId(EntityJsonView<?> entityJsonView) {
+    protected Object getEntityIdInternal(EntityJsonView<?> entityJsonView) {
         return getId(entityJsonView.getEntity());
     }
 }

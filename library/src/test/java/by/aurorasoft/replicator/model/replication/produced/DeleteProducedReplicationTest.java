@@ -12,7 +12,7 @@ public final class DeleteProducedReplicationTest {
         Object givenEntityId = new Object();
         DeleteProducedReplication givenReplication = new DeleteProducedReplication(null);
 
-        Object actual = givenReplication.getEntityId(givenEntityId);
+        Object actual = givenReplication.getEntityIdInternal(givenEntityId);
         assertSame(givenEntityId, actual);
     }
 }

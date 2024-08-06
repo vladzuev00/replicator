@@ -29,8 +29,8 @@ public abstract class ProducedReplication<B> {
 
     @JsonIgnore
     public final Object getEntityId() {
-        return getEntityId(body);
+        return getEntityIdInternal(body);
     }
 
-    protected abstract Object getEntityId(B body);
+    protected abstract Object getEntityIdInternal(B body);
 }
