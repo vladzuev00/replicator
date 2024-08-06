@@ -8,9 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class ConsumingSerdeTest {
-    private static final Deserializer<Long> GIVEN_DESERIALIZER = new LongDeserializer();
-
-    private final ConsumingSerde<Long> serde = new ConsumingSerde<>(GIVEN_DESERIALIZER);
+    private final Deserializer<Long> givenDeserializer = new LongDeserializer();
+    private final ConsumingSerde<Long> serde = new ConsumingSerde<>(givenDeserializer);
 
     @Test
     public void serializerShouldNotBeGot() {
@@ -20,6 +19,6 @@ public final class ConsumingSerdeTest {
     @Test
     public void deserializerShouldBeGot() {
         Deserializer<Long> actual = serde.deserializer();
-        assertSame(GIVEN_DESERIALIZER, actual);
+        assertSame(givenDeserializer, actual);
     }
 }
