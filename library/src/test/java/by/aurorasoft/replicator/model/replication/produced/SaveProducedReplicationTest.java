@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public final class SaveProducedReplicationTest {
 
     @Test
-    public void entityIdShouldBeGot() {
+    public void entityIdShouldBeGotInternally() {
         Long givenId = 255L;
         TestEntity givenEntity = TestEntity.builder()
                 .id(givenId)
