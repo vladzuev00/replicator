@@ -19,24 +19,24 @@ import static org.mockito.Mockito.verify;
 public final class ReplicationConsumeStarterTest {
 
     @Mock
-    private ReplicationConsumerSetting<?, ?> firstMockedPipeline;
+    private ReplicationConsumerSetting<?, ?> firstMockedConsumerSetting;
 
     @Mock
-    private ReplicationConsumerSetting<?, ?> secondMockedPipeline;
+    private ReplicationConsumerSetting<?, ?> secondMockedConsumerSetting;
 
     @Mock
-    private ReplicationConsumePipelineStarter mockedPipelineStarter;
+    private ReplicationConsumerStarter mockedConsumerStarter;
 
     private ReplicationConsumeStarter starter;
 
     @Captor
-    private ArgumentCaptor<ReplicationConsumerSetting<?, ?>> pipelineArgumentCaptor;
+    private ArgumentCaptor<ReplicationConsumerSetting<?, ?>> consumerSettingCaptor;
 
     @BeforeEach
     public void initializeStarter() {
         starter = new ReplicationConsumeStarter(
-                List.of(firstMockedPipeline, secondMockedPipeline),
-                mockedPipelineStarter
+                List.of(firstMockedConsumerSetting, secondMockedConsumerSetting),
+                mockedConsumerStarter
         );
     }
 
@@ -44,9 +44,9 @@ public final class ReplicationConsumeStarterTest {
     public void consumingShouldBeStarted() {
         starter.start();
 
-        var expectedStartedPipelines = List.of(firstMockedPipeline, secondMockedPipeline);
-        verify(mockedPipelineStarter, times(expectedStartedPipelines.size())).start(pipelineArgumentCaptor.capture());
-        var actualStartedPipelines = pipelineArgumentCaptor.getAllValues();
-        assertEquals(expectedStartedPipelines, actualStartedPipelines);
+        var expectedConsumerSettings = List.of(firstMockedConsumerSetting, secondMockedConsumerSetting);
+        verify(mockedConsumerStarter, times(expectedConsumerSettings.size())).start(consumerSettingCaptor.capture());
+        var actualConsumerSettings = consumerSettingCaptor.getAllValues();
+        assertEquals(expectedConsumerSettings, actualConsumerSettings);
     }
 }

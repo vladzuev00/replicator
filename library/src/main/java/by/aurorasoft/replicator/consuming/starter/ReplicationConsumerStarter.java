@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public final class ReplicationConsumePipelineStarter {
+public final class ReplicationConsumerStarter {
     private final ReplicationKafkaStreamsFactory streamsFactory;
 
     public void start(ReplicationConsumerSetting<?, ?> pipeline) {

@@ -17,11 +17,11 @@ public final class ReplicationConsumePipelineStarterTest {
     @Mock
     private ReplicationKafkaStreamsFactory mockedStreamsFactory;
 
-    private ReplicationConsumePipelineStarter starter;
+    private ReplicationConsumerStarter starter;
 
     @BeforeEach
     public void initializeStarter() {
-        starter = new ReplicationConsumePipelineStarter(mockedStreamsFactory);
+        starter = new ReplicationConsumerStarter(mockedStreamsFactory);
     }
 
     @Test
