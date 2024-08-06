@@ -5,6 +5,7 @@ import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplica
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.registry.EntityViewSettingRegistry;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +27,13 @@ import static org.springframework.transaction.support.TransactionSynchronization
 @RequiredArgsConstructor
 public class ProducingReplicationAspect {
     private final ReplicationProducerRegistry producerRegistry;
+    private final EntityViewSettingRegistry entityViewSettingRegistry;
     private final SaveProducedReplicationFactory saveReplicationFactory;
 
-    @AfterReturning(
-//            pointcut = "replicatedRepository() && (save() || saveAndFlush())",
-            pointcut = "(save() || saveAndFlush())",
-            returning = "savedEntity"
-    )
+    @AfterReturning(pointcut = "save() || saveAndFlush()", returning = "savedEntity")
     public void produceSave(JoinPoint joinPoint, Object savedEntity) {
+        JpaRepository<?, ?> repository = (JpaRepository<?, ?>) joinPoint.getTarget();
+        producerRegistry.get(repository).ifPresent();
         produceSaveReplication(savedEntity, joinPoint);
     }
 
@@ -72,7 +72,7 @@ public class ProducingReplicationAspect {
         findAllEntities(joinPoint).forEach(entity -> produceDeleteReplication(getId(entity), joinPoint));
     }
 
-    private void produceSaveReplication(Object savedEntity, JoinPoint joinPoint) {
+    private void produceSaveReplication(Object savedEntity, ReplicationProducer producer) {
         SaveProducedReplication replication = saveReplicationFactory.create(savedEntity, joinPoint);
         produceReplication(replication, joinPoint);
     }
@@ -82,19 +82,8 @@ public class ProducingReplicationAspect {
         produceReplication(replication, joinPoint);
     }
 
-    private void produceReplication(ProducedReplication<?> replication, JoinPoint joinPoint) {
-        JpaRepository<?, ?> repository = (JpaRepository<?, ?>) joinPoint.getTarget();
-        ReplicationProducer producer = getProducer(repository);
-        ReplicationCallback callback = new ReplicationCallback(producer, replication);
-        registerSynchronization(callback);
-    }
-
-    private ReplicationProducer getProducer(JpaRepository<?, ?> repository) {
-        return producerRegistry.get(repository).orElseThrow(() -> createNoProducerException(repository));
-    }
-
-    private IllegalStateException createNoProducerException(JpaRepository<?, ?> repository) {
-        return new IllegalStateException("There is no producer for %s".formatted(repository.getClass().getName()));
+    private void produceReplication(ProducedReplication<?> replication, JpaRepository<?, ?> repository) {
+        producerRegistry.get(repository).ifPresent(producer -> registerSynchronization(new ReplicationCallback(producer, replication)));
     }
 
     @SuppressWarnings("unchecked")
@@ -105,14 +94,6 @@ public class ProducingReplicationAspect {
     private List<?> findAllEntities(JoinPoint joinPoint) {
         JpaRepository<?, ?> repository = (JpaRepository<?, ?>) joinPoint.getTarget();
         return repository.findAll();
-    }
-
-    @Pointcut(
-            "within(org.springframework.data.jpa.repository.JpaRepository) "
-                    + "&& @within(by.aurorasoft.replicator.annotation.ReplicatedRepository)"
-    )
-    private void replicatedRepository() {
-
     }
 
     @Pointcut("execution(public Object+ org.springframework.data.jpa.repository.JpaRepository+.save(Object+))")

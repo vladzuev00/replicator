@@ -2,9 +2,8 @@ package by.aurorasoft.replicator.factory;
 
 
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.model.view.EntityJsonView;
+import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting.EntityViewSetting;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.JoinPoint;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 public final class SaveProducedReplicationFactory {
     private final EntityJsonViewFactory entityJsonViewFactory;
 
-    public SaveProducedReplication create(Object savedEntity, JoinPoint joinPoint) {
+    public SaveProducedReplication create(Object savedEntity, EntityViewSetting[] entityViewSettings) {
         return null;
 //        EntityView[] entityViewConfigs = joinPoint.getTarget()
 //                .getClass()
