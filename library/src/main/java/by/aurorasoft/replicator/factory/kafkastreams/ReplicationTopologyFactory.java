@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.factory.kafkastreams;
 
 import by.aurorasoft.replicator.consuming.serde.ConsumingSerde;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;

@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.consuming.starter;
 
-import by.aurorasoft.replicator.factory.ReplicationKafkaStreamsFactory;
+import by.aurorasoft.replicator.factory.kafkastreams.ReplicationKafkaStreamsFactory;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.KafkaStreams;
