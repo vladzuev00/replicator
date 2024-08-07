@@ -7,13 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-//TODO use everywhere
+@Component
 @SuppressWarnings("NullableProblems")
 public class TestRepository implements JpaRepository<TestEntity, Long> {
     private static final List<TestEntity> STORED_ENTITIES = List.of(

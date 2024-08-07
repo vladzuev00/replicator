@@ -14,13 +14,5 @@ public abstract class AbstractSpringBootTest {
 
     //TODO: remove
     @MockBean
-    private SaveReplicationProducerRegistry saveReplicationProducerRegistry;
-
-    //TODO: remove
-    @MockBean
-    private DeleteReplicationProducerRegistry deleteReplicationProducerRegistry;
-
-    //TODO: remove
-    @MockBean
     private ReplicatedRepositoryRegistry replicatedRepositoryRegistry;
 }

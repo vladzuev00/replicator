@@ -72,7 +72,7 @@ public class ProducingReplicationAspect {
     }
 
     private JpaRepository<?, ?> getRepository(JoinPoint joinPoint) {
-        return (JpaRepository<?, ?>) joinPoint.getTarget();
+        return (JpaRepository<?, ?>) joinPoint.getThis();
     }
 
     private void produceAfterCommit(ReplicationProducer<?> producer, Object model) {
