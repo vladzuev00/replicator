@@ -8,7 +8,7 @@ public final class DeleteProducedReplicationTest {
 
     @Test
     public void entityIdShouldBeGotInternally() {
-        Object givenEntityId = new Object();
+        Long givenEntityId = 255L;
         DeleteProducedReplication givenReplication = new DeleteProducedReplication(null);
 
         Object actual = givenReplication.getEntityIdInternal(givenEntityId);

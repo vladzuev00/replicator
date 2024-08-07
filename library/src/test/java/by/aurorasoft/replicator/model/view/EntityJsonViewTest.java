@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.model.view;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
+import by.aurorasoft.replicator.testentity.TestEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,17 +31,10 @@ public final class EntityJsonViewTest extends AbstractSpringBootTest {
 
     @Test
     public void entityShouldBeGot() {
-        Object givenEntity = new Object();
+        TestEntity givenEntity = new TestEntity();
         EntityJsonView<?> givenJsonView = new EntityJsonView<>(givenEntity);
 
         Object actual = givenJsonView.getEntity();
         assertSame(givenEntity, actual);
-    }
-
-    @Value
-    private static class TestEntity {
-        Long id;
-        String firstProperty;
-        String secondProperty;
     }
 }

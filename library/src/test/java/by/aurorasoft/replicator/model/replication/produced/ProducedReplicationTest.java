@@ -2,8 +2,8 @@ package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
+import by.aurorasoft.replicator.testentity.TestEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Value;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -53,12 +53,5 @@ public final class ProducedReplicationTest extends AbstractSpringBootTest {
                                 }"""
                 )
         );
-    }
-
-    @Value
-    private static class TestEntity {
-        Long id;
-        String firstProperty;
-        String secondProperty;
     }
 }
