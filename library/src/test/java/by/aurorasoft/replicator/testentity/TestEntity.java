@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.testentity;
 
 import lombok.*;
 
-//TODO: use everywhere
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

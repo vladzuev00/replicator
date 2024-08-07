@@ -24,10 +24,11 @@ public final class SaveReplicationProducerTest {
 
     @Test
     public void replicationBodyShouldBeCreated() {
-        TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
-
-        EntityJsonView<?> actual = producer.createReplicationBody(givenEntity);
-        EntityJsonView<?> expected = new EntityJsonView<>();
+        throw new RuntimeException();
+//        TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
+//
+//        EntityJsonView<?> actual = producer.createReplicationBody(givenEntity);
+//        EntityJsonView<?> expected = new EntityJsonView<>();
     }
 
     @Value

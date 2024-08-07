@@ -3,6 +3,7 @@ package by.aurorasoft.replicator.model.replication.consumed;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
+import by.aurorasoft.replicator.testentity.TestEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -127,18 +128,6 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
     private static RuntimeException createSqlExceptionWrappingByRuntime(String sqlState) {
         return new RuntimeException(new SQLException(GIVEN_SQL_EXCEPTION_REASON, sqlState));
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Setter
-    @Getter
-    @EqualsAndHashCode
-    @ToString
-    private final static class TestEntity {
-        private Long id;
-        private String firstProperty;
-        private String secondProperty;
     }
 
     @RequiredArgsConstructor
