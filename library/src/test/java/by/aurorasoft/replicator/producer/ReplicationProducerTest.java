@@ -35,7 +35,7 @@ public final class ReplicationProducerTest {
 
     @Test
     public void replicationShouldBeSent() {
-        Object givenEntityId = 255L;
+        Long givenEntityId = 255L;
 
         producer.send(givenEntityId);
 
