@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.DeleteReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.factory.registry.DeleteReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.factory.SaveReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.factory.registry.SaveReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
 import by.aurorasoft.replicator.registry.replicationproducer.SaveReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;

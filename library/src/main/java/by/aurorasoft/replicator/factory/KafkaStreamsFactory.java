@@ -21,7 +21,7 @@ public final class KafkaStreamsFactory {
         }
     }
 
-    private static void closeOnShutdown(KafkaStreams streams) {
+    private void closeOnShutdown(KafkaStreams streams) {
         getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }

@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.factory;
+package by.aurorasoft.replicator.factory.registry;
 
 import by.aurorasoft.replicator.registry.replicationproducer.SaveReplicationProducerRegistry;
 import org.springframework.stereotype.Component;
