@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -21,16 +20,16 @@ public final class ReplicationProducerTest {
     private static final String GIVEN_TOPIC_NAME = "test-topic";
 
     @Mock
-    private KafkaTemplate<Object, ProducedReplication<?>> mockedKafkaTemplate;
+    private KafkaTemplate<Object, ProducedReplication<Object>> mockedKafkaTemplate;
 
     private ReplicationProducer<Object> producer;
 
     @Captor
-    private ArgumentCaptor<ProducerRecord<Object, ProducedReplication<?>>> recordCaptor;
+    private ArgumentCaptor<ProducerRecord<Object, ProducedReplication<Object>>> recordCaptor;
 
     @BeforeEach
     public void initializeProducer() {
-        producer = new TestReplicationProducer(GIVEN_TOPIC_NAME, mockedKafkaTemplate);
+        producer = new TestReplicationProducer(mockedKafkaTemplate, GIVEN_TOPIC_NAME);
     }
 
     @Test
@@ -40,25 +39,8 @@ public final class ReplicationProducerTest {
         producer.send(givenEntityId);
 
         verify(mockedKafkaTemplate, times(1)).send(recordCaptor.capture());
-        ProducerRecord<Object, ProducedReplication<?>> actual = recordCaptor.getValue();
+        ProducerRecord<Object, ProducedReplication<Object>> actual = recordCaptor.getValue();
         var expected = new ProducerRecord<>(GIVEN_TOPIC_NAME, givenEntityId, new TestProducedReplication(givenEntityId));
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void modelShouldBeConvertedToTransportable() {
-        Object givenModel = new Object();
-
-        Object actual = producer.convertModelToTransportable(givenModel);
-        assertSame(givenModel, actual);
-    }
-
-    @Test
-    public void transportableShouldBeConvertedToTopicValue() {
-        Object givenTransportable = new Object();
-
-        ProducedReplication<?> actual = producer.convertTransportableToTopicValue(givenTransportable);
-        ProducedReplication<?> expected = new TestProducedReplication(givenTransportable);
         assertEquals(expected, actual);
     }
 
@@ -76,8 +58,9 @@ public final class ReplicationProducerTest {
 
     private static final class TestReplicationProducer extends ReplicationProducer<Object> {
 
-        public TestReplicationProducer(String topicName, KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate) {
-            super(topicName, kafkaTemplate);
+        public TestReplicationProducer(KafkaTemplate<Object, ProducedReplication<Object>> kafkaTemplate,
+                                       String topicName) {
+            super(kafkaTemplate, topicName);
         }
 
         @Override
@@ -91,7 +74,7 @@ public final class ReplicationProducerTest {
         }
 
         @Override
-        protected ProducedReplication<?> createReplication(Object body) {
+        protected ProducedReplication<Object> createReplication(Object body) {
             return new TestProducedReplication(body);
         }
     }
