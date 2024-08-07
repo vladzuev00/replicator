@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.model.setting;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.serialization.Serializer;
@@ -13,6 +14,7 @@ public final class ReplicationProducerSetting<E, ID> extends ReplicationComponen
     private final int deliveryTimeoutMs;
     private final EntityViewSetting[] entityViewSettings;
 
+    @Builder
     public ReplicationProducerSetting(String topic,
                                       JpaRepository<E, ID> repository,
                                       Class<? extends Serializer<?>> idSerializer,
