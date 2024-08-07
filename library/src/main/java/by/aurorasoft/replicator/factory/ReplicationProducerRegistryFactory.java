@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import by.aurorasoft.replicator.registry.replicationproducer.ReplicationProducerRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +11,7 @@ import static java.util.stream.Collectors.toMap;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationProducerRegistryFactory {
-    private final ReplicatedRepositoryRegistry repositoryRegistry;
+//    private final ReplicatedRepositoryRegistry repositoryRegistry;
 //    private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
