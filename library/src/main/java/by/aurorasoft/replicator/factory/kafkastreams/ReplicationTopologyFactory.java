@@ -24,20 +24,20 @@ public final class ReplicationTopologyFactory {
         this.retryTemplate = retryTemplate;
     }
 
-    public <E, ID> Topology create(ReplicationConsumerSetting<E, ID> pipeline) {
+    public <E, ID> Topology create(ReplicationConsumerSetting<E, ID> setting) {
         StreamsBuilder builder = new StreamsBuilder();
         builder
-                .stream(pipeline.getTopic(), with(getIdSerde(pipeline), getReplicationSerde(pipeline)))
-                .foreach((id, replication) -> executeRetrying(replication, pipeline.getRepository()));
+                .stream(setting.getTopic(), with(getIdSerde(setting), getReplicationSerde(setting)))
+                .foreach((id, replication) -> executeRetrying(replication, setting.getRepository()));
         return builder.build();
     }
 
-    private <ID> ConsumingSerde<ID> getIdSerde(ReplicationConsumerSetting<?, ID> pipeline) {
-        return new ConsumingSerde<>(pipeline.getIdDeserializer());
+    private <ID> ConsumingSerde<ID> getIdSerde(ReplicationConsumerSetting<?, ID> setting) {
+        return new ConsumingSerde<>(setting.getIdDeserializer());
     }
 
-    private <E, ID> ConsumingSerde<ConsumedReplication<E, ID>> getReplicationSerde(ReplicationConsumerSetting<E, ID> pipeline) {
-        return new ConsumingSerde<>(new JsonDeserializer<>(pipeline.getReplicationTypeReference(), false));
+    private <E, ID> ConsumingSerde<ConsumedReplication<E, ID>> getReplicationSerde(ReplicationConsumerSetting<E, ID> setting) {
+        return new ConsumingSerde<>(new JsonDeserializer<>(setting.getReplicationTypeReference(), false));
     }
 
     private <E, ID> void executeRetrying(ConsumedReplication<E, ID> replication, JpaRepository<E, ID> repository) {
