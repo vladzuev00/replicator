@@ -6,9 +6,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.Map;
 
-public final class KafkaTemplateRegistry extends Registry<JpaRepository<?, ?>, KafkaTemplate<Object, ProducedReplication<?>>> {
+public final class ReplicationKafkaTemplateRegistry extends Registry<JpaRepository<?, ?>, KafkaTemplate<Object, ProducedReplication<?>>> {
 
-    public KafkaTemplateRegistry(Map<JpaRepository<?, ?>, KafkaTemplate<Object, ProducedReplication<?>>> valuesByKeys) {
+    public ReplicationKafkaTemplateRegistry(Map<JpaRepository<?, ?>, KafkaTemplate<Object, ProducedReplication<?>>> valuesByKeys) {
         super(valuesByKeys);
     }
 }
