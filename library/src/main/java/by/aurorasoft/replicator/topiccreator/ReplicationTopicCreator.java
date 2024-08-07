@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.topiccreator;
 
-import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationTopicCreator {
-    private final ReplicatedRepositoryRegistry repositoryRegistry;
+//    private final ReplicatedRepositoryRegistry repositoryRegistry;
     private final KafkaAdmin kafkaAdmin;
     private final ApplicationEventPublisher eventPublisher;
 
