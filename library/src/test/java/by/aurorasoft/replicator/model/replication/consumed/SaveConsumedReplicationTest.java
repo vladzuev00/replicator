@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.model.replication.consumed;
 
+import by.aurorasoft.replicator.testentity.TestEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,9 +10,9 @@ public final class SaveConsumedReplicationTest {
 
     @Test
     public void replicationShouldBeExecutedInternally() {
-        Object givenEntity = new Object();
-        SaveConsumedReplication<Object, Long> givenReplication = new SaveConsumedReplication<>(givenEntity);
-        @SuppressWarnings("unchecked") JpaRepository<Object, Long> givenRepository = mock(JpaRepository.class);
+        TestEntity givenEntity = new TestEntity();
+        SaveConsumedReplication<TestEntity, Long> givenReplication = new SaveConsumedReplication<>(givenEntity);
+        @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
         givenReplication.executeInternal(givenRepository);
 
