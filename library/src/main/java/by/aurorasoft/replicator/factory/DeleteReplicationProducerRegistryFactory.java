@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory;
 
-import by.aurorasoft.replicator.registry.DeleteReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
 import org.springframework.stereotype.Component;
 
 @Component

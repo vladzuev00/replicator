@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.config;
 import by.aurorasoft.replicator.factory.DeleteReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.factory.SaveReplicationProducerRegistryFactory;
-import by.aurorasoft.replicator.registry.DeleteReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
 import by.aurorasoft.replicator.registry.SaveReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
