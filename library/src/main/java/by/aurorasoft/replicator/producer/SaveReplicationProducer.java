@@ -29,7 +29,7 @@ public final class SaveReplicationProducer extends ReplicationProducer<EntityJso
     protected EntityJsonView<?> createReplicationBody(Object entity) {
         EntityJsonView<Object> entityJsonView = new EntityJsonView<>(entity);
         applyEntityViewSetting(entityJsonView);
-        return new EntityJsonView<>(entity);
+        return entityJsonView;
     }
 
     @Override
