@@ -1,15 +1,14 @@
 package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting.EntityViewSetting;
-import by.aurorasoft.replicator.model.view.EntityJsonView;
-import lombok.Value;
+import by.aurorasoft.replicator.testentity.TestEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public final class SaveReplicationProducerTest {
     private final EntityViewSetting[] givenEntityViewSettings = new EntityViewSetting[]{
-            new EntityViewSetting(TestEntity.class, new String[]{"first-property"})
+            new EntityViewSetting(TestEntity.class, new String[]{"firstProperty"})
     };
     private final SaveReplicationProducer producer = new SaveReplicationProducer(null, null, givenEntityViewSettings);
 
@@ -29,12 +28,5 @@ public final class SaveReplicationProducerTest {
 //
 //        EntityJsonView<?> actual = producer.createReplicationBody(givenEntity);
 //        EntityJsonView<?> expected = new EntityJsonView<>();
-    }
-
-    @Value
-    public static class TestEntity {
-        Long id;
-        String firstProperty;
-        String secondProperty;
     }
 }
