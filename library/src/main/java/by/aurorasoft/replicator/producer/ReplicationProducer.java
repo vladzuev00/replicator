@@ -1,33 +1,26 @@
 package by.aurorasoft.replicator.producer;
 
-import by.aurorasoft.kafka.producer.KafkaProducerAbstract;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
+import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 
-public abstract class ReplicationProducer<BODY> extends KafkaProducerAbstract<Object, ProducedReplication<?>, BODY, Object> {
+@RequiredArgsConstructor
+public abstract class ReplicationProducer<BODY> {
+    private final KafkaTemplate<Object, ProducedReplication<BODY>> kafkaTemplate;
+    private final String topicName;
 
-    public ReplicationProducer(String topicName, KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate) {
-        super(topicName, kafkaTemplate);
-    }
-
-    @Override
     public final void send(Object model) {
-        sendModel(getEntityId(model), model);
-    }
-
-    @Override
-    protected final BODY convertModelToTransportable(Object model) {
-        return createReplicationBody(model);
-    }
-
-    @Override
-    protected final ProducedReplication<?> convertTransportableToTopicValue(BODY body) {
-        return createReplication(body);
+        Object entityId = getEntityId(model);
+        BODY body = createBody(model);
+        ProducedReplication<BODY> replication = createReplication(body);
+        var record = new ProducerRecord<>(topicName, entityId, replication);
+        kafkaTemplate.send(record);
     }
 
     protected abstract Object getEntityId(Object model);
 
-    protected abstract BODY createReplicationBody(Object model);
+    protected abstract BODY createBody(Object model);
 
-    protected abstract ProducedReplication<?> createReplication(BODY body);
+    protected abstract ProducedReplication<BODY> createReplication(BODY body);
 }

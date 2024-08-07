@@ -13,10 +13,10 @@ import static java.util.Arrays.stream;
 public final class SaveReplicationProducer extends ReplicationProducer<EntityJsonView<?>> {
     private final EntityViewSetting[] entityViewSettings;
 
-    public SaveReplicationProducer(String topicName,
-                                   KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate,
+    public SaveReplicationProducer(KafkaTemplate<Object, ProducedReplication<EntityJsonView<?>>> kafkaTemplate,
+                                   String topicName,
                                    EntityViewSetting[] entityViewSettings) {
-        super(topicName, kafkaTemplate);
+        super(kafkaTemplate, topicName);
         this.entityViewSettings = entityViewSettings;
     }
 
@@ -26,14 +26,14 @@ public final class SaveReplicationProducer extends ReplicationProducer<EntityJso
     }
 
     @Override
-    protected EntityJsonView<?> createReplicationBody(Object entity) {
+    protected EntityJsonView<?> createBody(Object entity) {
         EntityJsonView<Object> entityJsonView = new EntityJsonView<>(entity);
         applyEntityViewSetting(entityJsonView);
         return entityJsonView;
     }
 
     @Override
-    protected ProducedReplication<?> createReplication(EntityJsonView<?> entityJsonView) {
+    protected ProducedReplication<EntityJsonView<?>> createReplication(EntityJsonView<?> entityJsonView) {
         return new SaveProducedReplication(entityJsonView);
     }
 

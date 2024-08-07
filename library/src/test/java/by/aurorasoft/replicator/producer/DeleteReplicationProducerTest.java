@@ -22,7 +22,7 @@ public final class DeleteReplicationProducerTest {
     public void replicationBodyShouldBeCreated() {
         Long givenEntityId = 255L;
 
-        Object actual = producer.createReplicationBody(givenEntityId);
+        Object actual = producer.createBody(givenEntityId);
         assertSame(givenEntityId, actual);
     }
 

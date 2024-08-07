@@ -86,7 +86,7 @@ public final class ReplicationProducerTest {
         }
 
         @Override
-        protected Object createReplicationBody(Object model) {
+        protected Object createBody(Object model) {
             return model;
         }
 

@@ -35,7 +35,7 @@ public final class SaveReplicationProducerTest {
     public void replicationBodyShouldBeCreated() {
         TestEntity givenEntity = new TestEntity(255L, "first-value", "second-value");
 
-        EntityJsonView<?> actual = producer.createReplicationBody(givenEntity);
+        EntityJsonView<?> actual = producer.createBody(givenEntity);
 
         Object actualEntity = actual.getEntity();
         assertSame(givenEntity, actualEntity);
