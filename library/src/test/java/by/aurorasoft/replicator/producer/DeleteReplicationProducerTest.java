@@ -12,7 +12,7 @@ public final class DeleteReplicationProducerTest {
 
     @Test
     public void entityIdShouldBeGot() {
-        Object givenEntityId = new Object();
+        Long givenEntityId = 255L;
 
         Object actual = producer.getEntityId(givenEntityId);
         assertSame(givenEntityId, actual);
@@ -20,7 +20,7 @@ public final class DeleteReplicationProducerTest {
 
     @Test
     public void replicationBodyShouldBeCreated() {
-        Object givenEntityId = new Object();
+        Long givenEntityId = 255L;
 
         Object actual = producer.createReplicationBody(givenEntityId);
         assertSame(givenEntityId, actual);
@@ -28,7 +28,7 @@ public final class DeleteReplicationProducerTest {
 
     @Test
     public void replicationShouldBeCreated() {
-        Object givenEntityId = new Object();
+        Long givenEntityId = 255L;
 
         ProducedReplication<?> actual = producer.createReplication(givenEntityId);
         ProducedReplication<?> expected = new DeleteProducedReplication(givenEntityId);
