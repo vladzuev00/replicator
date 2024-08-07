@@ -17,9 +17,9 @@ public final class ReplicationStreamsConfigFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public StreamsConfig create(ReplicationConsumerSetting<?, ?> pipeline) {
+    public StreamsConfig create(ReplicationConsumerSetting<?, ?> setting) {
         Map<String, Object> configsByNames = Map.of(
-                APPLICATION_ID_CONFIG, pipeline.getTopic(),
+                APPLICATION_ID_CONFIG, setting.getTopic(),
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 PROCESSING_GUARANTEE_CONFIG, EXACTLY_ONCE_V2
         );
