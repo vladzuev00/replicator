@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.factory.DeleteReplicationProducerRegistryFactory
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.factory.SaveReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
-import by.aurorasoft.replicator.registry.SaveReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.replicationproducer.SaveReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monitorjbl.json.JsonViewModule;
 import org.springframework.context.annotation.Bean;

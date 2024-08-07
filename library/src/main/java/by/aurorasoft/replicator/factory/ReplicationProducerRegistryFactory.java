@@ -2,14 +2,11 @@ package by.aurorasoft.replicator.factory;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicatedRepositoryRegistry;
-import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.replicationproducer.ReplicationProducerRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import static by.aurorasoft.replicator.util.AnnotationUtil.getAnnotation;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toMap;
 
 @Component
