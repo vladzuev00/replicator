@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.factory.kafkastreams;
 
 import by.aurorasoft.replicator.consuming.serde.ConsumingSerde;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +44,7 @@ public final class ReplicationTopologyFactory {
         retryTemplate.execute(context -> execute(replication, repository));
     }
 
-    private <E, ID> Optional<?> execute(ConsumedReplication<E, ID> replication, JpaRepository<E, ID> repository) {
+    private <E, ID> Optional<Void> execute(ConsumedReplication<E, ID> replication, JpaRepository<E, ID> repository) {
         replication.execute(repository);
         return empty();
     }
