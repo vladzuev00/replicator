@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
-//TODO: test
 @RequiredArgsConstructor
 public final class ReplicationProducerRegistry {
     private final Map<JpaRepository<?, ?>, ReplicationProducer> producersByRepositories;
