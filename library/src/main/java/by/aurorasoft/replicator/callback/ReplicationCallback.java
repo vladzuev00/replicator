@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.aop.callback;
+package by.aurorasoft.replicator.callback;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import lombok.RequiredArgsConstructor;
