@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+//TODO: ReplicationComponentSettingValidator
 @Component
 @RequiredArgsConstructor
 public final class ReplicationConsumeStarter {

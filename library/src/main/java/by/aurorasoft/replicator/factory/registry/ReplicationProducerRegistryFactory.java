@@ -11,6 +11,7 @@ import java.util.List;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toMap;
 
+//TODO: ReplicationComponentSettingValidator
 @Component
 @RequiredArgsConstructor
 public final class ReplicationProducerRegistryFactory {
