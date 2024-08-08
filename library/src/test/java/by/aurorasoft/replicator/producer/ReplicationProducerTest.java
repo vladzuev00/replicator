@@ -18,6 +18,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import static com.monitorjbl.json.Match.match;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -53,6 +54,12 @@ public final class ReplicationProducerTest {
         expectedEntityJsonView.onClass(TestEntity.class, match().exclude(EXCLUDED_FIELD_NAME));
         SaveProducedReplication expectedReplication = new SaveProducedReplication(expectedEntityJsonView);
         verifyProducing(givenEntityId, expectedReplication);
+
+        @SuppressWarnings("unchecked") var actualEntityJsonView = (EntityJsonView<TestEntity>) recordCaptor.getValue()
+                .value()
+                .getBody();
+        TestEntity actualEntity = actualEntityJsonView.getEntity();
+        assertSame(givenEntity, actualEntity);
     }
 
     @Test
