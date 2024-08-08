@@ -12,7 +12,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>6.1.4</spring.version>
         <spring-data-jpa.version>3.2.3</spring-data-jpa.version>
-        <kafka-vars.version>1.0.19-spring-6</kafka-vars.version>
         <lombok.version>1.18.26</lombok.version>
         <junit.version>RELEASE</junit.version>
         <springboot.version>3.2.3</springboot.version>
@@ -21,6 +20,10 @@
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <java.version>17</java.version>
         <joor.version>0.9.15</joor.version>
+        <kafka-clients.version>3.8.0</kafka-clients.version>
+        <spring-kafka.version>3.2.2</spring-kafka.version>
+        <jackson.version>2.17.2</jackson.version>
+        <kafka-streams.version>3.6.2</kafka-streams.version>
         <kafka-streams-test-utils.version>3.6.2</kafka-streams-test-utils.version>
     </properties>
 
@@ -64,18 +67,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.NikolayNN</groupId>
-            <artifactId>kafka-vars</artifactId>
-            <version>${kafka-vars.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
             <version>${auto-service.version}</version>
@@ -93,6 +84,30 @@
             <groupId>com.monitorjbl</groupId>
             <artifactId>json-view</artifactId>
             <version>${json-view.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-clients.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>${spring-kafka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>${kafka-streams.version}</version>
         </dependency>
 
         <dependency>
