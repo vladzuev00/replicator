@@ -39,4 +39,6 @@ public class PersonEntity extends Entity {
     @JoinColumn(name = "address_id")
     @ToString.Exclude
     private AddressEntity address;
+
+    //TODO: add lazy field
 }
