@@ -1,6 +1,8 @@
 package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
+import by.aurorasoft.replicator.factory.registry.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monitorjbl.json.JsonViewModule;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,11 @@ public class ReplicationConfig {
 
     @Bean
     public RetryTemplate replicationRetryTemplate(ReplicationRetryTemplateFactory factory) {
+        return factory.create();
+    }
+
+    @Bean
+    public ReplicationProducerRegistry replicationProducerRegistry(ReplicationProducerRegistryFactory factory) {
         return factory.create();
     }
 }
