@@ -1,6 +1,8 @@
 package by.aurorasoft.replicator.aop;
 
+import by.aurorasoft.replicator.producer.DeleteReplicationProducer;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.producer.SaveReplicationProducer;
 import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
 import by.aurorasoft.replicator.registry.replicationproducer.SaveReplicationProducerRegistry;
 import lombok.Getter;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.util.List;
-import java.util.Optional;
 
 import static by.aurorasoft.replicator.util.IdUtil.getId;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
