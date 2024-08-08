@@ -1,19 +1,16 @@
 package by.aurorasoft.replicator.producer;
 
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
 import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting.EntityViewSetting;
-import by.aurorasoft.replicator.util.IdUtil;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import static by.aurorasoft.replicator.util.IdUtil.getId;
-
 @RequiredArgsConstructor
+@Getter
 public final class ReplicationProducer {
     private final KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate;
-    private final String topicName;
+    private final String topic;
     private final EntityViewSetting[] entityViewSettings;
 
     public void produceSave(Object savedEntity) {
