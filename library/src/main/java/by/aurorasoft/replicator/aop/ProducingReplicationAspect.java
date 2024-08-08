@@ -1,8 +1,6 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.producer.DeleteReplicationProducer;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.producer.SaveReplicationProducer;
 import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
 import by.aurorasoft.replicator.registry.replicationproducer.SaveReplicationProducerRegistry;
 import lombok.Getter;

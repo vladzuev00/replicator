@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.registry.replicationproducer;
 
-import by.aurorasoft.replicator.producer.DeleteReplicationProducer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Map;

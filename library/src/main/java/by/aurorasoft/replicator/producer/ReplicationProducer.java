@@ -6,21 +6,13 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @RequiredArgsConstructor
-public abstract class ReplicationProducer<BODY> {
-    private final KafkaTemplate<Object, ProducedReplication<BODY>> kafkaTemplate;
+public final class ReplicationProducer {
+    private final KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate;
     private final String topicName;
 
-    public final void send(Object model) {
-        Object entityId = getEntityId(model);
-        BODY body = createBody(model);
-        ProducedReplication<BODY> replication = createReplication(body);
-        var record = new ProducerRecord<>(topicName, entityId, replication);
+    public void send(ProducedReplication<?> replication) {
+        Object entityId = replication.getEntityId();
+        ProducerRecord<Object, ProducedReplication<?>> record = new ProducerRecord<>(topicName, entityId, replication);
         kafkaTemplate.send(record);
     }
-
-    protected abstract Object getEntityId(Object model);
-
-    protected abstract BODY createBody(Object model);
-
-    protected abstract ProducedReplication<BODY> createReplication(BODY body);
 }
