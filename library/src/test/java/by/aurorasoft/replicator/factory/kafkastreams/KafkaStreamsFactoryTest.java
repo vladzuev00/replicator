@@ -64,7 +64,7 @@ public final class KafkaStreamsFactoryTest {
             Topology givenTopology = mock(Topology.class);
             StreamsConfig givenConfig = mock(StreamsConfig.class);
 
-            mockExceptionOnAddingShutdownHook();
+            mockAddingShutdownHookException();
 
             createStreamsVerifyingException(givenTopology, givenConfig);
 
@@ -100,7 +100,7 @@ public final class KafkaStreamsFactoryTest {
         verify(mockedRuntime, times(1)).addShutdownHook(threadArgumentCaptor.capture());
     }
 
-    private void mockExceptionOnAddingShutdownHook() {
+    private void mockAddingShutdownHookException() {
         doThrow(TestException.class)
                 .when(mockedRuntime)
                 .addShutdownHook(any(Thread.class));
