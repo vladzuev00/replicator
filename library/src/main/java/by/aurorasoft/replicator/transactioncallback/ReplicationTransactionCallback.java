@@ -1,11 +1,13 @@
-package by.aurorasoft.replicator.callback;
+package by.aurorasoft.replicator.transactioncallback;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.support.TransactionSynchronization;
 
 @RequiredArgsConstructor
-public abstract class ReplicationCallback implements TransactionSynchronization {
+@Getter
+public abstract class ReplicationTransactionCallback implements TransactionSynchronization {
     private final Object body;
     private final ReplicationProducer producer;
 

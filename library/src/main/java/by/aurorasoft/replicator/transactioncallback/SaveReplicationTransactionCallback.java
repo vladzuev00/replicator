@@ -1,10 +1,10 @@
-package by.aurorasoft.replicator.callback;
+package by.aurorasoft.replicator.transactioncallback;
 
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 
-public final class SaveReplicationCallback extends ReplicationCallback {
+public final class SaveReplicationTransactionCallback extends ReplicationTransactionCallback {
 
-    public SaveReplicationCallback(Object savedEntity, ReplicationProducer producer) {
+    public SaveReplicationTransactionCallback(Object savedEntity, ReplicationProducer producer) {
         super(savedEntity, producer);
     }
 

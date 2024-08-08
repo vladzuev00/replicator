@@ -1,10 +1,6 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.registry.DeleteReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.factory.registry.SaveReplicationProducerRegistryFactory;
-import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
-import by.aurorasoft.replicator.registry.replicationproducer.SaveReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monitorjbl.json.JsonViewModule;
 import org.springframework.context.annotation.Bean;
@@ -24,16 +20,6 @@ public class ReplicationConfig {
 
     @Bean
     public RetryTemplate replicationRetryTemplate(ReplicationRetryTemplateFactory factory) {
-        return factory.create();
-    }
-
-    @Bean
-    public SaveReplicationProducerRegistry saveReplicationProducerRegistry(SaveReplicationProducerRegistryFactory factory) {
-        return factory.create();
-    }
-
-    @Bean
-    public DeleteReplicationProducerRegistry deleteReplicationProducerRegistry(DeleteReplicationProducerRegistryFactory factory) {
         return factory.create();
     }
 }

@@ -1,8 +1,9 @@
 package by.aurorasoft.replicator.aop;
 
+import by.aurorasoft.replicator.transactioncallback.DeleteReplicationTransactionCallback;
+import by.aurorasoft.replicator.transactioncallback.SaveReplicationTransactionCallback;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -10,7 +11,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,12 +41,12 @@ public class ProducingReplicationAspect {
 
     @AfterReturning("deleteById()")
     public void produceDeleteById(JoinPoint joinPoint) {
-        getProducer(joinPoint).ifPresent(producer -> produceDeleteAfterCommit(producer, joinPoint.getArgs()[0]));
+        getProducer(joinPoint).ifPresent(producer -> produceDeleteAfterCommit(joinPoint.getArgs()[0], producer));
     }
 
     @AfterReturning("delete()")
     public void produceDelete(JoinPoint joinPoint) {
-        getProducer(joinPoint).ifPresent(producer -> produceDeleteAfterCommit(producer, getId(joinPoint.getArgs()[0])));
+        getProducer(joinPoint).ifPresent(producer -> produceDeleteAfterCommit(getId(joinPoint.getArgs()[0]), producer));
     }
 
     @AfterReturning("deleteByIds() || deleteByIdsInBatch()")
@@ -55,7 +55,7 @@ public class ProducingReplicationAspect {
                 .ifPresent(
                         producer -> getIterableFirstArgument(joinPoint)
                                 .forEach(
-                                        entityId -> produceDeleteAfterCommit(producer, entityId)
+                                        entityId -> produceDeleteAfterCommit(entityId, producer)
                                 )
                 );
     }
@@ -66,7 +66,7 @@ public class ProducingReplicationAspect {
                 .ifPresent(
                         producer -> getIterableFirstArgument(joinPoint)
                                 .forEach(
-                                        entity -> produceDeleteAfterCommit(producer, getId(entity))
+                                        entity -> produceDeleteAfterCommit(getId(entity), producer)
                                 )
                 );
     }
@@ -77,7 +77,7 @@ public class ProducingReplicationAspect {
                 .ifPresent(
                         producer -> findAllEntities(joinPoint)
                                 .forEach(
-                                        entity -> produceDeleteAfterCommit(producer, getId(entity))
+                                        entity -> produceDeleteAfterCommit(getId(entity), producer)
                                 )
                 );
     }
@@ -91,15 +91,11 @@ public class ProducingReplicationAspect {
     }
 
     private void produceSaveAfterCommit(Object savedEntity, ReplicationProducer producer) {
-
+        registerSynchronization(new SaveReplicationTransactionCallback(savedEntity, producer));
     }
 
-    private void produceDeleteAfterCommit(ReplicationProducer producer, Object entityId) {
-
-    }
-
-    private void produceAfterCommit(ReplicationProducer<?> producer, Object model) {
-        registerSynchronization(new ReplicationCallback(producer, model));
+    private void produceDeleteAfterCommit(Object entityId, ReplicationProducer producer) {
+        registerSynchronization(new DeleteReplicationTransactionCallback(entityId, producer));
     }
 
     private Iterable<?> getIterableFirstArgument(JoinPoint joinPoint) {
@@ -172,43 +168,5 @@ public class ProducingReplicationAspect {
     )
     private void deleteAllInBatch() {
 
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    static abstract class ReplicationCallback implements TransactionSynchronization {
-        private final Object body;
-        private final ReplicationProducer producer;
-
-        @Override
-        public final void afterCommit() {
-            produce(body, producer);
-        }
-
-        protected abstract void produce(Object body, ReplicationProducer producer);
-    }
-
-    static final class SaveReplicationCallback extends ReplicationCallback {
-
-        public SaveReplicationCallback(Object savedEntity, ReplicationProducer producer) {
-            super(savedEntity, producer);
-        }
-
-        @Override
-        protected void produce(Object savedEntity, ReplicationProducer producer) {
-            producer.produceSave(savedEntity);
-        }
-    }
-
-    static final class DeleteReplicationCallback extends ReplicationCallback {
-
-        public DeleteReplicationCallback(Object entityId, ReplicationProducer producer) {
-            super(entityId, producer);
-        }
-
-        @Override
-        protected void produce(Object entityId, ReplicationProducer producer) {
-            producer.produceDelete(entityId);
-        }
     }
 }

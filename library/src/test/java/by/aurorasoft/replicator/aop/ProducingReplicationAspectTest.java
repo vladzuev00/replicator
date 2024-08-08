@@ -1,14 +1,12 @@
 package by.aurorasoft.replicator.aop;
 
-import by.aurorasoft.replicator.aop.ProducingReplicationAspect.ReplicationCallback;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.producer.DeleteReplicationProducer;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.producer.SaveReplicationProducer;
-import by.aurorasoft.replicator.registry.replicationproducer.DeleteReplicationProducerRegistry;
-import by.aurorasoft.replicator.registry.replicationproducer.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.registry.replicationproducer.SaveReplicationProducerRegistry;
+import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.transactioncallback.DeleteReplicationTransactionCallback;
+import by.aurorasoft.replicator.transactioncallback.ReplicationTransactionCallback;
+import by.aurorasoft.replicator.transactioncallback.SaveReplicationTransactionCallback;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +30,7 @@ import static org.springframework.transaction.support.TransactionSynchronization
 public final class ProducingReplicationAspectTest extends AbstractSpringBootTest {
 
     @MockBean
-    private SaveReplicationProducerRegistry mockedSaveProducerRegistry;
-
-    @MockBean
-    private DeleteReplicationProducerRegistry mockedDeleteProducerRegistry;
+    private ReplicationProducerRegistry mockedProducerRegistry;
 
     @Autowired
     private JpaRepository<TestEntity, Long> repository;
@@ -43,7 +38,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     private MockedStatic<TransactionSynchronizationManager> mockedTransactionManager;
 
     @Captor
-    private ArgumentCaptor<ReplicationCallback> callbackCaptor;
+    private ArgumentCaptor<ReplicationTransactionCallback> callbackCaptor;
 
     @BeforeEach
     public void mockTransactionManager() {
@@ -60,12 +55,12 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         TestEntity givenEntity = TestEntity.builder()
                 .id(255L)
                 .build();
-        SaveReplicationProducer givenProducer = mockSaveProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         TestEntity actual = repository.save(givenEntity);
         assertSame(givenEntity, actual);
 
-        verifyCallbacks(new ReplicationCallback(givenProducer, givenEntity));
+        verifyCallbacks(new SaveReplicationTransactionCallback(givenEntity, givenProducer));
     }
 
     @Test
@@ -85,12 +80,12 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         TestEntity givenEntity = TestEntity.builder()
                 .id(255L)
                 .build();
-        SaveReplicationProducer givenProducer = mockSaveProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         TestEntity actual = repository.saveAndFlush(givenEntity);
         assertSame(givenEntity, actual);
 
-        verifyCallbacks(new ReplicationCallback(givenProducer, givenEntity));
+        verifyCallbacks(new SaveReplicationTransactionCallback(givenEntity, givenProducer));
     }
 
     @Test
@@ -114,14 +109,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
                 .id(256L)
                 .build();
         List<TestEntity> givenEntities = List.of(firstGivenEntity, secondGivenEntity);
-        SaveReplicationProducer givenProducer = mockSaveProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         List<TestEntity> actual = repository.saveAll(givenEntities);
         assertEquals(givenEntities, actual);
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, firstGivenEntity),
-                new ReplicationCallback(givenProducer, secondGivenEntity)
+                new SaveReplicationTransactionCallback(firstGivenEntity, givenProducer),
+                new SaveReplicationTransactionCallback(secondGivenEntity, givenProducer)
         );
     }
 
@@ -150,14 +145,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
                 .id(256L)
                 .build();
         List<TestEntity> givenEntities = List.of(firstGivenEntity, secondGivenEntity);
-        SaveReplicationProducer givenProducer = mockSaveProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         List<TestEntity> actual = repository.saveAllAndFlush(givenEntities);
         assertEquals(givenEntities, actual);
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, firstGivenEntity),
-                new ReplicationCallback(givenProducer, secondGivenEntity)
+                new SaveReplicationTransactionCallback(firstGivenEntity, givenProducer),
+                new SaveReplicationTransactionCallback(secondGivenEntity, givenProducer)
         );
     }
 
@@ -180,11 +175,11 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
     @Test
     public void deleteByIdShouldBeProduced() {
         Long givenId = 255L;
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteById(givenId);
 
-        verifyCallbacks(new ReplicationCallback(givenProducer, givenId));
+        verifyCallbacks(new DeleteReplicationTransactionCallback(givenId, givenProducer));
     }
 
     @Test
@@ -202,11 +197,11 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         TestEntity givenEntity = TestEntity.builder()
                 .id(givenId)
                 .build();
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.delete(givenEntity);
 
-        verifyCallbacks(new ReplicationCallback(givenProducer, givenId));
+        verifyCallbacks(new DeleteReplicationTransactionCallback(givenId, givenProducer));
     }
 
     @Test
@@ -226,14 +221,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         Long secondGivenId = 256L;
         Long thirdGivenId = 257L;
         Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId, thirdGivenId);
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllById(givenIds);
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, firstGivenId),
-                new ReplicationCallback(givenProducer, secondGivenId),
-                new ReplicationCallback(givenProducer, thirdGivenId)
+                new DeleteReplicationTransactionCallback(firstGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(secondGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(thirdGivenId, givenProducer)
         );
     }
 
@@ -252,14 +247,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         Long secondGivenId = 256L;
         Long thirdGivenId = 257L;
         Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId, thirdGivenId);
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllByIdInBatch(givenIds);
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, firstGivenId),
-                new ReplicationCallback(givenProducer, secondGivenId),
-                new ReplicationCallback(givenProducer, thirdGivenId)
+                new DeleteReplicationTransactionCallback(firstGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(secondGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(thirdGivenId, givenProducer)
         );
     }
 
@@ -288,14 +283,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
                         .id(thirdGivenId)
                         .build()
         );
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAll(givenEntities);
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, firstGivenId),
-                new ReplicationCallback(givenProducer, secondGivenId),
-                new ReplicationCallback(givenProducer, thirdGivenId)
+                new DeleteReplicationTransactionCallback(firstGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(secondGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(thirdGivenId, givenProducer)
         );
     }
 
@@ -334,14 +329,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
                         .id(thirdGivenId)
                         .build()
         );
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllInBatch(givenEntities);
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, firstGivenId),
-                new ReplicationCallback(givenProducer, secondGivenId),
-                new ReplicationCallback(givenProducer, thirdGivenId)
+                new DeleteReplicationTransactionCallback(firstGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(secondGivenId, givenProducer),
+                new DeleteReplicationTransactionCallback(thirdGivenId, givenProducer)
         );
     }
 
@@ -366,14 +361,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
     @Test
     public void deleteAllShouldBeProduced() {
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAll();
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, 512L),
-                new ReplicationCallback(givenProducer, 513L),
-                new ReplicationCallback(givenProducer, 514L)
+                new DeleteReplicationTransactionCallback(512L, givenProducer),
+                new DeleteReplicationTransactionCallback(513L, givenProducer),
+                new DeleteReplicationTransactionCallback(514L, givenProducer)
         );
     }
 
@@ -386,14 +381,14 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
     @Test
     public void deleteAllInBatchShouldBeProduced() {
-        DeleteReplicationProducer givenProducer = mockDeleteProducerForRepository();
+        ReplicationProducer givenProducer = mockProducerForRepository();
 
         repository.deleteAllInBatch();
 
         verifyCallbacks(
-                new ReplicationCallback(givenProducer, 512L),
-                new ReplicationCallback(givenProducer, 513L),
-                new ReplicationCallback(givenProducer, 514L)
+                new DeleteReplicationTransactionCallback(512L, givenProducer),
+                new DeleteReplicationTransactionCallback(513L, givenProducer),
+                new DeleteReplicationTransactionCallback(514L, givenProducer)
         );
     }
 
@@ -404,26 +399,17 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         verifyNoCallbacks();
     }
 
-    private SaveReplicationProducer mockSaveProducerForRepository() {
-        return mockProducerForRepository(mockedSaveProducerRegistry, SaveReplicationProducer.class);
-    }
-
-    private DeleteReplicationProducer mockDeleteProducerForRepository() {
-        return mockProducerForRepository(mockedDeleteProducerRegistry, DeleteReplicationProducer.class);
-    }
-
-    private <P extends ReplicationProducer<?>> P mockProducerForRepository(ReplicationProducerRegistry<P> registry,
-                                                                           Class<P> producerType) {
-        P producer = mock(producerType);
-        when(registry.get(same(repository))).thenReturn(Optional.of(producer));
+    private ReplicationProducer mockProducerForRepository() {
+        ReplicationProducer producer = mock(ReplicationProducer.class);
+        when(mockedProducerRegistry.get(same(repository))).thenReturn(Optional.of(producer));
         return producer;
     }
 
-    private void verifyCallbacks(ReplicationCallback... callbacks) {
+    private void verifyCallbacks(ReplicationTransactionCallback... callbacks) {
         mockedTransactionManager
                 .verify(() -> registerSynchronization(callbackCaptor.capture()), times(callbacks.length));
-        List<ReplicationCallback> actual = callbackCaptor.getAllValues();
-        List<ReplicationCallback> expected = List.of(callbacks);
+        List<ReplicationTransactionCallback> actual = callbackCaptor.getAllValues();
+        List<ReplicationTransactionCallback> expected = List.of(callbacks);
         checkEquals(expected, actual);
     }
 
@@ -431,13 +417,15 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
         mockedTransactionManager.verifyNoInteractions();
     }
 
-    private void checkEquals(List<ReplicationCallback> expected, List<ReplicationCallback> actual) {
+    private void checkEquals(List<ReplicationTransactionCallback> expected,
+                             List<ReplicationTransactionCallback> actual) {
         assertEquals(expected.size(), actual.size());
         range(0, expected.size()).forEach(i -> checkEquals(expected.get(i), actual.get(i)));
     }
 
-    private void checkEquals(ReplicationCallback expected, ReplicationCallback actual) {
-        assertSame(expected.getProducer(), actual.getProducer());
+    private void checkEquals(ReplicationTransactionCallback expected, ReplicationTransactionCallback actual) {
+        assertSame(expected.getClass(), actual.getClass());
         assertEquals(expected.getBody(), actual.getBody());
+        assertSame(expected.getProducer(), actual.getProducer());
     }
 }
