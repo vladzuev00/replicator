@@ -36,7 +36,7 @@ public final class ReplicationProducerTest {
     public void replicationShouldBeSent() {
         Long givenEntityId = 255L;
 
-        producer.send(givenEntityId);
+        producer.produceSave(givenEntityId);
 
         verify(mockedKafkaTemplate, times(1)).send(recordCaptor.capture());
         ProducerRecord<Object, ProducedReplication<Object>> actual = recordCaptor.getValue();

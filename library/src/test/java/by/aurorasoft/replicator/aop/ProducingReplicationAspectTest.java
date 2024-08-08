@@ -438,6 +438,6 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
     private void checkEquals(ReplicationCallback expected, ReplicationCallback actual) {
         assertSame(expected.getProducer(), actual.getProducer());
-        assertEquals(expected.getModel(), actual.getModel());
+        assertEquals(expected.getBody(), actual.getBody());
     }
 }
