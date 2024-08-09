@@ -1,16 +1,19 @@
 package by.aurorasoft.replicator.config;
 
-import by.aurorasoft.replicator.factory.retrytemplate.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.factory.registry.ReplicationProducerRegistryFactory;
+import by.aurorasoft.replicator.factory.retrytemplate.ReplicationRetryTemplateFactory;
+import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.retry.support.RetryTemplate;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,11 +42,12 @@ public final class ReplicationConfigTest {
     @Test
     public void replicationProducerRegistryShouldBeCreated() {
         ReplicationProducerRegistryFactory givenFactory = mock(ReplicationProducerRegistryFactory.class);
+        @SuppressWarnings("unchecked") List<ReplicationProducerSetting<?, ?>> givenSettings = mock(List.class);
 
         ReplicationProducerRegistry givenRegistry = mock(ReplicationProducerRegistry.class);
-        when(givenFactory.create()).thenReturn(givenRegistry);
+        when(givenFactory.create(same(givenSettings))).thenReturn(givenRegistry);
 
-        ReplicationProducerRegistry actual = config.replicationProducerRegistry(givenFactory);
+        ReplicationProducerRegistry actual = config.replicationProducerRegistry(givenFactory, givenSettings);
         assertSame(givenRegistry, actual);
     }
 }
