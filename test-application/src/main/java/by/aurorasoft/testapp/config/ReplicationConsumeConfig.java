@@ -21,10 +21,10 @@ public class ReplicationConsumeConfig {
                                                                                    ReplicatedPersonRepository repository) {
         return new ReplicationConsumerSetting<>(
                 topic,
+                repository,
                 new LongDeserializer(),
                 new TypeReference<>() {
-                },
-                repository
+                }
         );
     }
 
@@ -33,10 +33,10 @@ public class ReplicationConsumeConfig {
                                                                                      ReplicatedAddressRepository repository) {
         return new ReplicationConsumerSetting<>(
                 topic,
+                repository,
                 new LongDeserializer(),
                 new TypeReference<>() {
-                },
-                repository
+                }
         );
     }
 }
