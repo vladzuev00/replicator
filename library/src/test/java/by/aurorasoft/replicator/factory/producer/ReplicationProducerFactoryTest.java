@@ -5,6 +5,9 @@ import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
+import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testrepository.TestRepository;
+import org.apache.kafka.common.serialization.LongSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,8 +40,10 @@ public final class ReplicationProducerFactoryTest {
                 new EntityViewSetting(Object.class, new String[]{"firstProperty", "secondProperty"}),
                 new EntityViewSetting(Integer.class, new String[]{"value"}),
         };
-        ReplicationProduceSetting<?, ?> givenSetting = ReplicationProduceSetting.builder()
+        ReplicationProduceSetting<TestEntity, Long> givenSetting = ReplicationProduceSetting.<TestEntity, Long>builder()
                 .topic(givenTopic)
+                .repository(new TestRepository())
+                .idSerializer(LongSerializer.class)
                 .entityViewSettings(givenEntityViewSettings)
                 .build();
 
