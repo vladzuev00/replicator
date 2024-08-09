@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
 public final class ReplicationUniqueRepositoryCheckerTest {
-    private static final String GIVEN_TOPIC = "test-topic";
-
     private final ReplicationUniqueRepositoryChecker checker = new ReplicationUniqueRepositoryChecker();
 
     @Test
@@ -22,6 +20,7 @@ public final class ReplicationUniqueRepositoryCheckerTest {
     }
 
     private static final class TestReplicationSetting extends ReplicationSetting<Object, Object> {
+        private static final String GIVEN_TOPIC = "test-topic";
 
         public TestReplicationSetting(JpaRepository<Object, Object> repository) {
             super(GIVEN_TOPIC, repository);
