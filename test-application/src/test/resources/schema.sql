@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS phones;
 DROP TABLE IF EXISTS persons;
 DROP TABLE IF EXISTS addresses;
 DROP TABLE IF EXISTS replicated_persons;
@@ -29,18 +28,6 @@ ALTER TABLE persons
     ADD CONSTRAINT fk_persons_to_addresses
         FOREIGN KEY (address_id)
             REFERENCES addresses (id);
-
-CREATE TABLE phones
-(
-    id        SERIAL PRIMARY KEY,
-    number    VARCHAR(9) NOT NULL,
-    person_id INTEGER    NOT NULL
-);
-
-ALTER TABLE persons
-    ADD CONSTRAINT fk_phones_to_persons
-        FOREIGN KEY (person_id)
-            REFERENCES persons (id);
 
 CREATE TABLE replicated_addresses
 (
