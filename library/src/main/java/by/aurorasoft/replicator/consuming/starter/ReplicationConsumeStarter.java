@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.factory.kafkastreams.ReplicationKafkaStreamsFactory;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
+import by.aurorasoft.replicator.validator.ReplicationUniqueComponentCheckingManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.KafkaStreams;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -10,16 +11,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-//TODO: ReplicationComponentSettingValidator
 @Component
 @RequiredArgsConstructor
 public final class ReplicationConsumeStarter {
-    private final List<ReplicationConsumerSetting<?, ?>> consumerSettings;
+    private final ReplicationUniqueComponentCheckingManager uniqueComponentCheckingManager;
     private final ReplicationKafkaStreamsFactory kafkaStreamsFactory;
+    private final List<ReplicationConsumerSetting<?, ?>> settings;
 
     @EventListener(ContextRefreshedEvent.class)
     public void start() {
-        consumerSettings.stream()
+        uniqueComponentCheckingManager.check(settings);
+        settings.stream()
                 .map(kafkaStreamsFactory::create)
                 .forEach(KafkaStreams::start);
     }
