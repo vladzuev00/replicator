@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Configuration;
 public class ReplicationConsumeConfig {
 
     @Bean
-    public ReplicationConsumeSetting<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
-                                                                                  ReplicatedPersonRepository repository) {
+    public ReplicationConsumeSetting<ReplicatedPersonEntity, Long> personReplicationConsumeSetting(@Value("${replication.consume.topic.person}") String topic,
+                                                                                                   ReplicatedPersonRepository repository) {
         return new ReplicationConsumeSetting<>(
                 topic,
                 repository,
@@ -29,8 +29,8 @@ public class ReplicationConsumeConfig {
     }
 
     @Bean
-    public ReplicationConsumeSetting<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
-                                                                                    ReplicatedAddressRepository repository) {
+    public ReplicationConsumeSetting<ReplicatedAddressEntity, Long> addressReplicationConsumeSetting(@Value("${replication.consume.topic.address}") String topic,
+                                                                                                     ReplicatedAddressRepository repository) {
         return new ReplicationConsumeSetting<>(
                 topic,
                 repository,

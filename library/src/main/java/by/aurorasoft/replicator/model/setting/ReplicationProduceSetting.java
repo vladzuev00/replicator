@@ -6,8 +6,16 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 @Getter
 public final class ReplicationProduceSetting<E, ID> extends ReplicationSetting<E, ID> {
+    private static final Integer DEFAULT_BATCH_SIZE = 10;
+    private static final Integer DEFAULT_LINGER_MS = 500;
+    private static final Integer DEFAULT_DELIVERY_TIMEOUT_MS = 100000;
+    private static final EntityViewSetting[] DEFAULT_ENTITY_VIEW_SETTINGS = {};
+
     private final Class<? extends Serializer<?>> idSerializer;
     private final int batchSize;
     private final int lingerMs;
@@ -18,16 +26,16 @@ public final class ReplicationProduceSetting<E, ID> extends ReplicationSetting<E
     public ReplicationProduceSetting(String topic,
                                      JpaRepository<E, ID> repository,
                                      Class<? extends Serializer<?>> idSerializer,
-                                     int batchSize,
-                                     int lingerMs,
-                                     int deliveryTimeoutMs,
+                                     Integer batchSize,
+                                     Integer lingerMs,
+                                     Integer deliveryTimeoutMs,
                                      EntityViewSetting[] entityViewSettings) {
         super(topic, repository);
-        this.idSerializer = idSerializer;
-        this.batchSize = batchSize;
-        this.lingerMs = lingerMs;
-        this.deliveryTimeoutMs = deliveryTimeoutMs;
-        this.entityViewSettings = entityViewSettings;
+        this.idSerializer = requireNonNull(idSerializer);
+        this.batchSize = requireNonNullElse(batchSize, DEFAULT_BATCH_SIZE);
+        this.lingerMs = requireNonNullElse(lingerMs, DEFAULT_LINGER_MS);
+        this.deliveryTimeoutMs = requireNonNullElse(deliveryTimeoutMs, DEFAULT_DELIVERY_TIMEOUT_MS);
+        this.entityViewSettings = requireNonNullElse(entityViewSettings, DEFAULT_ENTITY_VIEW_SETTINGS);
     }
 
     @RequiredArgsConstructor
