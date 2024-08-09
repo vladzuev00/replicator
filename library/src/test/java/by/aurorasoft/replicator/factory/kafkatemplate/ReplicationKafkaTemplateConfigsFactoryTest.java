@@ -26,7 +26,7 @@ public final class ReplicationKafkaTemplateConfigsFactoryTest extends AbstractSp
         ReplicationProduceSetting<TestEntity, Long> givenSetting = ReplicationProduceSetting.<TestEntity, Long>builder()
                 .topic("test-topic")
                 .repository(new TestRepository())
-                .idSerializer(LongSerializer.class)
+                .idSerializer(new LongSerializer())
                 .batchSize(givenBatchSize)
                 .lingerMs(givenLingerMs)
                 .deliveryTimeoutMs(givenDeliveryTimeoutMs)

@@ -16,7 +16,7 @@ public final class ReplicationProduceSetting<E, ID> extends ReplicationSetting<E
     static final Integer DEFAULT_DELIVERY_TIMEOUT_MS = 100000;
     static final EntityViewSetting[] DEFAULT_ENTITY_VIEW_SETTINGS = {};
 
-    private final Class<? extends Serializer<?>> idSerializer;
+    private final Serializer<ID> idSerializer;
     private final int batchSize;
     private final int lingerMs;
     private final int deliveryTimeoutMs;
@@ -25,7 +25,7 @@ public final class ReplicationProduceSetting<E, ID> extends ReplicationSetting<E
     @Builder
     public ReplicationProduceSetting(String topic,
                                      JpaRepository<E, ID> repository,
-                                     Class<? extends Serializer<?>> idSerializer,
+                                     Serializer<ID> idSerializer,
                                      Integer batchSize,
                                      Integer lingerMs,
                                      Integer deliveryTimeoutMs,

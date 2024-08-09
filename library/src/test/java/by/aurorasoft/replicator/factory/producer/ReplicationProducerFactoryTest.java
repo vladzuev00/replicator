@@ -43,7 +43,7 @@ public final class ReplicationProducerFactoryTest {
         ReplicationProduceSetting<TestEntity, Long> givenSetting = ReplicationProduceSetting.<TestEntity, Long>builder()
                 .topic(givenTopic)
                 .repository(new TestRepository())
-                .idSerializer(LongSerializer.class)
+                .idSerializer(new LongSerializer())
                 .entityViewSettings(givenEntityViewSettings)
                 .build();
 

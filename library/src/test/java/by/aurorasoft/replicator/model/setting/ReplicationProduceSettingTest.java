@@ -1,5 +1,7 @@
 package by.aurorasoft.replicator.model.setting;
 
+import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testrepository.TestRepository;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.junit.jupiter.api.Test;
@@ -7,24 +9,23 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import static by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 public final class ReplicationProduceSettingTest {
 
     @Test
     public void settingShouldBeCreated() {
         String givenTopic = "test-topic";
-        @SuppressWarnings("unchecked") JpaRepository<Object, Object> givenRepository = mock(JpaRepository.class);
-        Class<? extends Serializer<?>> givenIdSerializer = LongSerializer.class;
+        JpaRepository<TestEntity, Long> givenRepository = new TestRepository();
+        Serializer<Long> givenIdSerializer = new LongSerializer();
         Integer givenBatchSize = 10;
         Integer givenLingerMs = 11;
         Integer givenDeliveryTimeoutMs = 12;
         EntityViewSetting[] givenEntityViewSettings = new EntityViewSetting[]{
-                new EntityViewSetting(Object.class, new String[]{"firstProperty"}),
-                new EntityViewSetting(Object.class, new String[]{"secondProperty", "thirdProperty"})
+                new EntityViewSetting(TestEntity.class, new String[]{"firstProperty"}),
+                new EntityViewSetting(TestEntity.class, new String[]{"secondProperty", "thirdProperty"})
         };
 
-        ReplicationProduceSetting<Object, Object> actual = new ReplicationProduceSetting<>(
+        ReplicationProduceSetting<TestEntity, Long> actual = new ReplicationProduceSetting<>(
                 givenTopic,
                 givenRepository,
                 givenIdSerializer,
@@ -37,10 +38,10 @@ public final class ReplicationProduceSettingTest {
         String actualTopic = actual.getTopic();
         assertSame(givenTopic, actualTopic);
 
-        JpaRepository<Object, Object> actualRepository = actual.getRepository();
+        JpaRepository<TestEntity, Long> actualRepository = actual.getRepository();
         assertSame(givenRepository, actualRepository);
 
-        Class<? extends Serializer<?>> actualIdSerializer = actual.getIdSerializer();
+        Serializer<Long> actualIdSerializer = actual.getIdSerializer();
         assertSame(givenIdSerializer, actualIdSerializer);
 
         int actualBatchSize = actual.getBatchSize();
@@ -59,10 +60,10 @@ public final class ReplicationProduceSettingTest {
     @Test
     public void settingShouldBeCreatedWithDefaultProperties() {
         String givenTopic = "test-topic";
-        @SuppressWarnings("unchecked") JpaRepository<Object, Object> givenRepository = mock(JpaRepository.class);
-        Class<? extends Serializer<?>> givenIdSerializer = LongSerializer.class;
+        JpaRepository<TestEntity, Long> givenRepository = new TestRepository();
+        Serializer<Long> givenIdSerializer = new LongSerializer();
 
-        ReplicationProduceSetting<Object, Object> actual = ReplicationProduceSetting.builder()
+        ReplicationProduceSetting<TestEntity, Long> actual = ReplicationProduceSetting.<TestEntity, Long>builder()
                 .topic(givenTopic)
                 .repository(givenRepository)
                 .idSerializer(givenIdSerializer)
@@ -71,10 +72,10 @@ public final class ReplicationProduceSettingTest {
         String actualTopic = actual.getTopic();
         assertSame(givenTopic, actualTopic);
 
-        JpaRepository<Object, Object> actualRepository = actual.getRepository();
+        JpaRepository<TestEntity, Long> actualRepository = actual.getRepository();
         assertSame(givenRepository, actualRepository);
 
-        Class<? extends Serializer<?>> actualIdSerializer = actual.getIdSerializer();
+        Serializer<Long> actualIdSerializer = actual.getIdSerializer();
         assertSame(givenIdSerializer, actualIdSerializer);
 
         int actualBatchSize = actual.getBatchSize();
@@ -93,11 +94,11 @@ public final class ReplicationProduceSettingTest {
     @Test
     public void settingShouldNotBeCreatedBecauseOfIdSerializerIsNull() {
         String givenTopic = "test-topic";
-        @SuppressWarnings("unchecked") JpaRepository<Object, Object> givenRepository = mock(JpaRepository.class);
+       JpaRepository<TestEntity, Long> givenRepository = new TestRepository();
 
         assertThrows(
                 NullPointerException.class,
-                () -> ReplicationProduceSetting.builder()
+                () -> ReplicationProduceSetting.<TestEntity, Long>builder()
                         .topic(givenTopic)
                         .repository(givenRepository)
                         .build()
