@@ -2,6 +2,10 @@ package by.aurorasoft.replicator.factory.kafkastreams;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
+import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testrepository.TestRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +23,13 @@ public final class ReplicationStreamsConfigFactoryTest extends AbstractSpringBoo
     @Test
     public void configShouldBeCreated() {
         String givenTopic = "test-topic";
-        ReplicationConsumeSetting<?, ?> givenSetting = ReplicationConsumeSetting.builder()
-                .topic(givenTopic)
-                .build();
+        ReplicationConsumeSetting<TestEntity, Long> givenSetting = new ReplicationConsumeSetting<>(
+                givenTopic,
+                new TestRepository(),
+                new LongDeserializer(),
+                new TypeReference<>() {
+                }
+        );
 
         StreamsConfig actual = factory.create(givenSetting);
         StreamsConfig expected = new StreamsConfig(
