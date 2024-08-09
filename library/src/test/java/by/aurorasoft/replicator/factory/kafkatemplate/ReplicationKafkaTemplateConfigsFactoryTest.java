@@ -2,6 +2,9 @@ package by.aurorasoft.replicator.factory.kafkatemplate;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
+import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testrepository.TestRepository;
+import org.apache.kafka.common.serialization.LongSerializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +23,10 @@ public final class ReplicationKafkaTemplateConfigsFactoryTest extends AbstractSp
         int givenBatchSize = 10;
         int givenLingerMs = 11;
         int givenDeliveryTimeoutMs = 12;
-        ReplicationProduceSetting<?, ?> givenSetting = ReplicationProduceSetting.builder()
+        ReplicationProduceSetting<TestEntity, Long> givenSetting = ReplicationProduceSetting.<TestEntity, Long>builder()
+                .topic("test-topic")
+                .repository(new TestRepository())
+                .idSerializer(LongSerializer.class)
                 .batchSize(givenBatchSize)
                 .lingerMs(givenLingerMs)
                 .deliveryTimeoutMs(givenDeliveryTimeoutMs)
