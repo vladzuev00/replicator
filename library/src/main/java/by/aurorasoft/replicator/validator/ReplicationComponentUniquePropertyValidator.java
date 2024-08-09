@@ -13,19 +13,18 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
 @RequiredArgsConstructor
-public abstract class ReplicationComponentUniquePropertyValidator<S extends ReplicationComponentSetting<?, ?>, P> {
+public abstract class ReplicationComponentUniquePropertyValidator<P> {
     private final String violationMessage;
 
-    public final void validate(List<S> settings) {
-        Set<P> duplicatedProperties = findDuplicatedProperties(settings);
-        if (!duplicatedProperties.isEmpty()) {
+    public final <S extends ReplicationComponentSetting<?, ?>> void validate(List<S> settings) {
+        if (!findDuplicatedProperties(settings).isEmpty()) {
             throw new IllegalStateException(violationMessage);
         }
     }
 
-    protected abstract P getProperty(S setting);
+    protected abstract <S extends ReplicationComponentSetting<?, ?>> P getProperty(S setting);
 
-    private Set<P> findDuplicatedProperties(List<S> settings) {
+    private <S extends ReplicationComponentSetting<?, ?>> Set<P> findDuplicatedProperties(List<S> settings) {
         return settings.stream()
                 .map(this::getProperty)
                 .collect(groupingBy(identity(), LinkedHashMap::new, counting()))
