@@ -2,8 +2,8 @@ package by.aurorasoft.replicator.factory.producer;
 
 import by.aurorasoft.replicator.factory.kafkatemplate.ReplicationKafkaTemplateFactory;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting.EntityViewSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public final class ReplicationProducerFactoryTest {
                 new EntityViewSetting(Object.class, new String[]{"firstProperty", "secondProperty"}),
                 new EntityViewSetting(Integer.class, new String[]{"value"}),
         };
-        ReplicationProducerSetting<?, ?> givenSetting = ReplicationProducerSetting.builder()
+        ReplicationProduceSetting<?, ?> givenSetting = ReplicationProduceSetting.builder()
                 .topic(givenTopic)
                 .entityViewSettings(givenEntityViewSettings)
                 .build();

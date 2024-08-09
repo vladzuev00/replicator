@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.producer;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting.EntityViewSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.factory.kafkastreams;
 
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongDeserializer;
@@ -51,7 +51,7 @@ public final class ReplicationTopologyFactoryTest {
     @Test
     public void topologyShouldBeCreatedAndReplicationShouldBeProducedAndConsumed() {
         @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
-        ReplicationConsumerSetting<TestEntity, Long> givenSetting = createSetting(givenRepository);
+        ReplicationConsumeSetting<TestEntity, Long> givenSetting = createSetting(givenRepository);
 
         TestEntity givenEntity = TestEntity.builder()
                 .id(255L)
@@ -65,8 +65,8 @@ public final class ReplicationTopologyFactoryTest {
         }
     }
 
-    private ReplicationConsumerSetting<TestEntity, Long> createSetting(JpaRepository<TestEntity, Long> repository) {
-        return new ReplicationConsumerSetting<>(
+    private ReplicationConsumeSetting<TestEntity, Long> createSetting(JpaRepository<TestEntity, Long> repository) {
+        return new ReplicationConsumeSetting<>(
                 GIVEN_TOPIC,
                 repository,
                 new LongDeserializer(),
@@ -75,7 +75,7 @@ public final class ReplicationTopologyFactoryTest {
         );
     }
 
-    private TopologyTestDriver createDriver(ReplicationConsumerSetting<TestEntity, Long> setting) {
+    private TopologyTestDriver createDriver(ReplicationConsumeSetting<TestEntity, Long> setting) {
         Topology topology = topologyFactory.create(setting);
         Properties properties = createDriverProperties();
         return new TopologyTestDriver(topology, properties);

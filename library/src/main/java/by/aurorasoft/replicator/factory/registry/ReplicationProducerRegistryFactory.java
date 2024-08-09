@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory.registry;
 
 import by.aurorasoft.replicator.factory.producer.ReplicationProducerFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.validator.ReplicationUniqueComponentCheckingManager;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public final class ReplicationProducerRegistryFactory {
     private final ReplicationUniqueComponentCheckingManager uniqueComponentCheckingManager;
     private final ReplicationProducerFactory producerFactory;
 
-    public ReplicationProducerRegistry create(List<ReplicationProducerSetting<?, ?>> settings) {
+    public ReplicationProducerRegistry create(List<ReplicationProduceSetting<?, ?>> settings) {
         uniqueComponentCheckingManager.check(settings);
         return settings.stream()
                 .collect(
                         collectingAndThen(
-                                toMap(ReplicationProducerSetting::getRepository, producerFactory::create),
+                                toMap(ReplicationProduceSetting::getRepository, producerFactory::create),
                                 ReplicationProducerRegistry::new
                         )
                 );

@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.factory.registry.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.retrytemplate.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public final class ReplicationConfigTest {
     @Test
     public void replicationProducerRegistryShouldBeCreated() {
         ReplicationProducerRegistryFactory givenFactory = mock(ReplicationProducerRegistryFactory.class);
-        @SuppressWarnings("unchecked") List<ReplicationProducerSetting<?, ?>> givenSettings = mock(List.class);
+        @SuppressWarnings("unchecked") List<ReplicationProduceSetting<?, ?>> givenSettings = mock(List.class);
 
         ReplicationProducerRegistry givenRegistry = mock(ReplicationProducerRegistry.class);
         when(givenFactory.create(same(givenSettings))).thenReturn(givenRegistry);

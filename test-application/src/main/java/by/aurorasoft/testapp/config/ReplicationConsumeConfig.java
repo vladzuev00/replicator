@@ -1,7 +1,7 @@
 package by.aurorasoft.testapp.config;
 
 import by.aurorasoft.replicator.annotation.EnableReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
 import by.aurorasoft.testapp.crud.entity.ReplicatedAddressEntity;
 import by.aurorasoft.testapp.crud.entity.ReplicatedPersonEntity;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
 public class ReplicationConsumeConfig {
 
     @Bean
-    public ReplicationConsumerSetting<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
-                                                                                   ReplicatedPersonRepository repository) {
-        return new ReplicationConsumerSetting<>(
+    public ReplicationConsumeSetting<ReplicatedPersonEntity, Long> personPipeline(@Value("${replication.consume.topic.person}") String topic,
+                                                                                  ReplicatedPersonRepository repository) {
+        return new ReplicationConsumeSetting<>(
                 topic,
                 repository,
                 new LongDeserializer(),
@@ -29,9 +29,9 @@ public class ReplicationConsumeConfig {
     }
 
     @Bean
-    public ReplicationConsumerSetting<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
-                                                                                     ReplicatedAddressRepository repository) {
-        return new ReplicationConsumerSetting<>(
+    public ReplicationConsumeSetting<ReplicatedAddressEntity, Long> addressPipeline(@Value("${replication.consume.topic.address}") String topic,
+                                                                                    ReplicatedAddressRepository repository) {
+        return new ReplicationConsumeSetting<>(
                 topic,
                 repository,
                 new LongDeserializer(),

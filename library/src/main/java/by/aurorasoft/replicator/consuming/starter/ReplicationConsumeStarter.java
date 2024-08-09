@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.factory.kafkastreams.ReplicationKafkaStreamsFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
 import by.aurorasoft.replicator.validator.ReplicationUniqueComponentCheckingManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.KafkaStreams;
@@ -16,7 +16,7 @@ import java.util.List;
 public final class ReplicationConsumeStarter {
     private final ReplicationUniqueComponentCheckingManager uniqueComponentCheckingManager;
     private final ReplicationKafkaStreamsFactory kafkaStreamsFactory;
-    private final List<ReplicationConsumerSetting<?, ?>> settings;
+    private final List<ReplicationConsumeSetting<?, ?>> settings;
 
     @EventListener(ContextRefreshedEvent.class)
     public void start() {

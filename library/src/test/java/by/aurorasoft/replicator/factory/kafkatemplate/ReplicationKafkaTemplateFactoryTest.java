@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory.kafkatemplate;
 
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import org.apache.kafka.common.serialization.Serializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ public final class ReplicationKafkaTemplateFactoryTest {
 
     @Test
     public void kafkaTemplateShouldBeCreated() {
-        ReplicationProducerSetting<?, ?> givenSetting = mock(ReplicationProducerSetting.class);
+        ReplicationProduceSetting<?, ?> givenSetting = mock(ReplicationProduceSetting.class);
 
         Map<String, Object> givenConfigsByKeys = Map.of(
                 "1", 1,

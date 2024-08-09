@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory.kafkastreams;
 
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
@@ -14,7 +14,7 @@ public final class ReplicationKafkaStreamsFactory {
     private final ReplicationStreamsConfigFactory configFactory;
     private final KafkaStreamsFactory streamsFactory;
 
-    public KafkaStreams create(ReplicationConsumerSetting<?, ?> setting) {
+    public KafkaStreams create(ReplicationConsumeSetting<?, ?> setting) {
         Topology topology = topologyFactory.create(setting);
         StreamsConfig config = configFactory.create(setting);
         return streamsFactory.create(topology, config);

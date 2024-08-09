@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.consuming.starter;
 
 import by.aurorasoft.replicator.factory.kafkastreams.ReplicationKafkaStreamsFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
 import by.aurorasoft.replicator.validator.ReplicationUniqueComponentCheckingManager;
 import org.apache.kafka.streams.KafkaStreams;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +24,10 @@ public final class ReplicationConsumeStarterTest {
     private ReplicationKafkaStreamsFactory mockedKafkaStreamsFactory;
 
     @Mock
-    private ReplicationConsumerSetting<?, ?> firstMockedSetting;
+    private ReplicationConsumeSetting<?, ?> firstMockedSetting;
 
     @Mock
-    private ReplicationConsumerSetting<?, ?> secondMockedSetting;
+    private ReplicationConsumeSetting<?, ?> secondMockedSetting;
 
     private ReplicationConsumeStarter starter;
 
@@ -52,11 +52,11 @@ public final class ReplicationConsumeStarterTest {
         verify(secondGivenKafkaStreams, times(1)).start();
     }
 
-    private List<ReplicationConsumerSetting<?, ?>> getGivenSettings() {
+    private List<ReplicationConsumeSetting<?, ?>> getGivenSettings() {
         return List.of(firstMockedSetting, secondMockedSetting);
     }
 
-    private KafkaStreams mockKafkaStreamsFor(ReplicationConsumerSetting<?, ?> setting) {
+    private KafkaStreams mockKafkaStreamsFor(ReplicationConsumeSetting<?, ?> setting) {
         KafkaStreams kafkaStreams = mock(KafkaStreams.class);
         when(mockedKafkaStreamsFactory.create(same(setting))).thenReturn(kafkaStreams);
         return kafkaStreams;

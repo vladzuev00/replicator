@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory.kafkatemplate;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +20,7 @@ public final class ReplicationKafkaTemplateConfigsFactoryTest extends AbstractSp
         int givenBatchSize = 10;
         int givenLingerMs = 11;
         int givenDeliveryTimeoutMs = 12;
-        ReplicationProducerSetting<?, ?> givenSetting = ReplicationProducerSetting.builder()
+        ReplicationProduceSetting<?, ?> givenSetting = ReplicationProduceSetting.builder()
                 .batchSize(givenBatchSize)
                 .lingerMs(givenLingerMs)
                 .deliveryTimeoutMs(givenDeliveryTimeoutMs)

@@ -7,7 +7,7 @@ import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Getter
-public final class ReplicationProducerSetting<E, ID> extends ReplicationSetting<E, ID> {
+public final class ReplicationProduceSetting<E, ID> extends ReplicationSetting<E, ID> {
     private final Class<? extends Serializer<?>> idSerializer;
     private final int batchSize;
     private final int lingerMs;
@@ -15,13 +15,13 @@ public final class ReplicationProducerSetting<E, ID> extends ReplicationSetting<
     private final EntityViewSetting[] entityViewSettings;
 
     @Builder
-    public ReplicationProducerSetting(String topic,
-                                      JpaRepository<E, ID> repository,
-                                      Class<? extends Serializer<?>> idSerializer,
-                                      int batchSize,
-                                      int lingerMs,
-                                      int deliveryTimeoutMs,
-                                      EntityViewSetting[] entityViewSettings) {
+    public ReplicationProduceSetting(String topic,
+                                     JpaRepository<E, ID> repository,
+                                     Class<? extends Serializer<?>> idSerializer,
+                                     int batchSize,
+                                     int lingerMs,
+                                     int deliveryTimeoutMs,
+                                     EntityViewSetting[] entityViewSettings) {
         super(topic, repository);
         this.idSerializer = idSerializer;
         this.batchSize = batchSize;

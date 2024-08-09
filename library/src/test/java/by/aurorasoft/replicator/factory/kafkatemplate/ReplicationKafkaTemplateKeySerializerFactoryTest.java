@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory.kafkatemplate;
 
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ public final class ReplicationKafkaTemplateKeySerializerFactoryTest {
     @Test
     public void serializerShouldBeCreated() {
         Class<? extends Serializer<?>> givenIdSerializer = LongSerializer.class;
-        ReplicationProducerSetting<?, ?> givenSetting = ReplicationProducerSetting.builder()
+        ReplicationProduceSetting<?, ?> givenSetting = ReplicationProduceSetting.builder()
                 .idSerializer(givenIdSerializer)
                 .build();
 

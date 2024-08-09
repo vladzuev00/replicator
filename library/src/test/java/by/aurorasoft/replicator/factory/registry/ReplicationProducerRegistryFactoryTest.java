@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory.registry;
 
 import by.aurorasoft.replicator.factory.producer.ReplicationProducerFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.validator.ReplicationUniqueComponentCheckingManager;
@@ -43,9 +43,9 @@ public final class ReplicationProducerRegistryFactoryTest {
 
     @Test
     public void registryShouldBeCreated() {
-        ReplicationProducerSetting<?, ?> firstGivenSetting = mock(ReplicationProducerSetting.class);
-        ReplicationProducerSetting<?, ?> secondGivenSetting = mock(ReplicationProducerSetting.class);
-        List<ReplicationProducerSetting<?, ?>> givenSettings = List.of(firstGivenSetting, secondGivenSetting);
+        ReplicationProduceSetting<?, ?> firstGivenSetting = mock(ReplicationProduceSetting.class);
+        ReplicationProduceSetting<?, ?> secondGivenSetting = mock(ReplicationProduceSetting.class);
+        List<ReplicationProduceSetting<?, ?>> givenSettings = List.of(firstGivenSetting, secondGivenSetting);
 
         JpaRepository<?, ?> firstGivenRepository = mockRepositoryFor(firstGivenSetting);
         JpaRepository<?, ?> secondGivenRepository = mockRepositoryFor(secondGivenSetting);
@@ -64,13 +64,13 @@ public final class ReplicationProducerRegistryFactoryTest {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private JpaRepository<?, ?> mockRepositoryFor(ReplicationProducerSetting<?, ?> setting) {
+    private JpaRepository<?, ?> mockRepositoryFor(ReplicationProduceSetting<?, ?> setting) {
         JpaRepository repository = mock(JpaRepository.class);
         when(setting.getRepository()).thenReturn(repository);
         return repository;
     }
 
-    private ReplicationProducer mockProducerFor(ReplicationProducerSetting<?, ?> setting) {
+    private ReplicationProducer mockProducerFor(ReplicationProduceSetting<?, ?> setting) {
         ReplicationProducer producer = mock(ReplicationProducer.class);
         when(mockedProducerFactory.create(same(setting))).thenReturn(producer);
         return producer;

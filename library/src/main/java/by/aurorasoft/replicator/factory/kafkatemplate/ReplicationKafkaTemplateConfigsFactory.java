@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory.kafkatemplate;
 
-import by.aurorasoft.replicator.model.setting.ReplicationProducerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ public final class ReplicationKafkaTemplateConfigsFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public Map<String, Object> create(ReplicationProducerSetting<?, ?> setting) {
+    public Map<String, Object> create(ReplicationProduceSetting<?, ?> setting) {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
                 BATCH_SIZE_CONFIG, setting.getBatchSize(),

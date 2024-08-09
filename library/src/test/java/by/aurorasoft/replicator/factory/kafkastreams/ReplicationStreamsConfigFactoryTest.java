@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.factory.kafkastreams;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.model.setting.ReplicationConsumerSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public final class ReplicationStreamsConfigFactoryTest extends AbstractSpringBoo
     @Test
     public void configShouldBeCreated() {
         String givenTopic = "test-topic";
-        ReplicationConsumerSetting<?, ?> givenSetting = ReplicationConsumerSetting.builder()
+        ReplicationConsumeSetting<?, ?> givenSetting = ReplicationConsumeSetting.builder()
                 .topic(givenTopic)
                 .build();
 
