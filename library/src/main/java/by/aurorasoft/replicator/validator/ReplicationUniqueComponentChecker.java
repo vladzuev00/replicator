@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.validator;
 
-import by.aurorasoft.replicator.model.setting.ReplicationComponentSetting;
+import by.aurorasoft.replicator.model.setting.ReplicationSetting;
 import lombok.RequiredArgsConstructor;
 
 import java.util.LinkedHashMap;
@@ -13,18 +13,18 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
 @RequiredArgsConstructor
-public abstract class ReplicationComponentUniquePropertyValidator<P> {
+public abstract class ReplicationUniqueComponentChecker<P> {
     private final String violationMessage;
 
-    public final <S extends ReplicationComponentSetting<?, ?>> void validate(List<S> settings) {
+    public final <S extends ReplicationSetting<?, ?>> void check(List<S> settings) {
         if (!findDuplicatedProperties(settings).isEmpty()) {
             throw new IllegalStateException(violationMessage);
         }
     }
 
-    protected abstract <S extends ReplicationComponentSetting<?, ?>> P getProperty(S setting);
+    protected abstract <S extends ReplicationSetting<?, ?>> P getProperty(S setting);
 
-    private <S extends ReplicationComponentSetting<?, ?>> Set<P> findDuplicatedProperties(List<S> settings) {
+    private <S extends ReplicationSetting<?, ?>> Set<P> findDuplicatedProperties(List<S> settings) {
         return settings.stream()
                 .map(this::getProperty)
                 .collect(groupingBy(identity(), LinkedHashMap::new, counting()))

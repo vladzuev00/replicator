@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @RequiredArgsConstructor
 @Getter
-public abstract class ReplicationComponentSetting<E, ID> {
+public abstract class ReplicationSetting<E, ID> {
     private final String topic;
     private final JpaRepository<E, ID> repository;
 }

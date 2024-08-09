@@ -7,7 +7,7 @@ import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Getter
-public final class ReplicationProducerSetting<E, ID> extends ReplicationComponentSetting<E, ID> {
+public final class ReplicationProducerSetting<E, ID> extends ReplicationSetting<E, ID> {
     private final Class<? extends Serializer<?>> idSerializer;
     private final int batchSize;
     private final int lingerMs;
