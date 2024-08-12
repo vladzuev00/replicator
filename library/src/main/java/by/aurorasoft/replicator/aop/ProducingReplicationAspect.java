@@ -26,6 +26,7 @@ public class ProducingReplicationAspect {
 
     @AfterReturning(pointcut = "save() || saveAndFlush()", returning = "savedEntity")
     public void produceSave(JoinPoint joinPoint, Object savedEntity) {
+        //TODO: there is no transaction to register callback in it tests
         getProducer(joinPoint).ifPresent(producer -> produceSaveAfterCommit(savedEntity, producer));
     }
 
