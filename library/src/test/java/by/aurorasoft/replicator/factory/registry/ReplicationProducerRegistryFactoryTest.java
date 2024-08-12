@@ -18,8 +18,7 @@ import java.util.Map;
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerRegistryFactoryTest {
@@ -61,6 +60,8 @@ public final class ReplicationProducerRegistryFactoryTest {
                 secondGivenRepository, secondGivenProducer
         );
         assertEquals(expectedProducersByRepositories, actualProducersByRepositories);
+
+        verify(mockedUniqueComponentCheckingManager, times(1)).check(same(givenSettings));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
