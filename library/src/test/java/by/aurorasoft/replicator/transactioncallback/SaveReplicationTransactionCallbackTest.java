@@ -15,6 +15,6 @@ public final class SaveReplicationTransactionCallbackTest {
 
         callback.produce(givenSavedEntity, givenProducer);
 
-        verify(givenProducer, times(1)).produceSave(same(givenSavedEntity));
+        verify(givenProducer, times(1)).produceSaveAfterCommit(same(givenSavedEntity));
     }
 }

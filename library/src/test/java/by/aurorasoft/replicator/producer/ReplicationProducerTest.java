@@ -48,7 +48,7 @@ public final class ReplicationProducerTest {
         Long givenEntityId = 255L;
         TestEntity givenEntity = new TestEntity(givenEntityId, "first-value", "second-value");
 
-        producer.produceSave(givenEntity);
+        producer.produceSaveAfterCommit(givenEntity);
 
         EntityJsonView<TestEntity> expectedEntityJsonView = new EntityJsonView<>(givenEntity);
         expectedEntityJsonView.onClass(TestEntity.class, match().exclude(EXCLUDED_FIELD_NAME));
@@ -66,7 +66,7 @@ public final class ReplicationProducerTest {
     public void deleteShouldBeProduced() {
         Long givenEntityId = 255L;
 
-        producer.produceDelete(givenEntityId);
+        producer.produceDeleteAfterCommit(givenEntityId);
 
         verifyProducing(givenEntityId, new DeleteProducedReplication(givenEntityId));
     }

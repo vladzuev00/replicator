@@ -10,6 +10,6 @@ public final class SaveReplicationTransactionCallback extends ReplicationTransac
 
     @Override
     protected void produce(Object savedEntity, ReplicationProducer producer) {
-        producer.produceSave(savedEntity);
+        producer.produceSaveAfterCommit(savedEntity);
     }
 }

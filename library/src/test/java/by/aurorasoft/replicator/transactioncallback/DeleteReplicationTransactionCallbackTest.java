@@ -18,6 +18,6 @@ public final class DeleteReplicationTransactionCallbackTest {
 
         callback.produce(givenEntityId, givenProducer);
 
-        verify(givenProducer, times(1)).produceDelete(same(givenEntityId));
+        verify(givenProducer, times(1)).produceDeleteAfterCommit(same(givenEntityId));
     }
 }

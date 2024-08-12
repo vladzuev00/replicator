@@ -10,6 +10,6 @@ public final class DeleteReplicationTransactionCallback extends ReplicationTrans
 
     @Override
     protected void produce(Object entityId, ReplicationProducer producer) {
-        producer.produceDelete(entityId);
+        producer.produceDeleteAfterCommit(entityId);
     }
 }

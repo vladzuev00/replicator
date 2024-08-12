@@ -9,6 +9,7 @@ import by.aurorasoft.testapp.crud.repository.PersonRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
+import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,13 +21,19 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static by.aurorasoft.testapp.testutil.AddressEntityUtil.checkEquals;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.springframework.core.NestedExceptionUtils.getRootCause;
 
 //TODO: remove all not from jupiter
 @Import(ReplicationIT.ReplicationDeliveryBarrier.class)
@@ -71,15 +78,18 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyReplicationFor(actual);
     }
 
-//    @Test
-//    public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
-//        ADDRESS givenAddress = createAddress("Russia", "Moscow");
-//
-//        executeExpectingUniqueViolation(() -> save(givenAddress));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
+    @Test
+    public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
+        AddressEntity givenAddress = AddressEntity.builder()
+                .country("Russia")
+                .city("Moscow")
+                .build();
+
+        executeExpectingUniqueViolation(() -> addressRepository.save(givenAddress));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
 //    @Test
 //    public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
 //        PERSON givenPerson = createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L);
@@ -496,39 +506,39 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
     }
 
-//    private void executeExpectingUniqueViolation(Runnable task) {
-//        executeExpectingSqlConstraintViolation(task, UNIQUE_VIOLATION_SQL_STATE);
-//    }
-//
-//    private void executeExpectingForeignKeyViolation(Runnable task) {
-//        executeExpectingSqlConstraintViolation(task, FOREIGN_KEY_VIOLATION_SQL_STATE);
-//    }
-//
-//    private void executeExpectingSqlConstraintViolation(Runnable task, String sqlState) {
-//        executeExpectingMatchingException(task, exception -> Objects.equals(sqlState, getSqlState(exception)));
-//    }
-//
-//    private void executeExpectingNoSuchEntityException(Runnable task) {
-//        executeExpectingMatchingException(task, exception -> getRootCause(exception).getClass() == EntityNotFoundException.class);
-//    }
-//
-//    private void executeExpectingMatchingException(Runnable task, Predicate<Throwable> predicate) {
-//        boolean exceptionArisen;
-//        try {
-//            task.run();
-//            exceptionArisen = false;
-//        } catch (Throwable exception) {
-//            exceptionArisen = true;
-//            assertTrue(predicate.test(exception));
-//        }
-//        assertTrue(exceptionArisen);
-//    }
-//
-//    private String getSqlState(Throwable exception) {
-//        return ((SQLException) getRootCause(exception)).getSQLState();
-//    }
-//
-//    private void verifyDatabase(List<AddressEntity> expectedAddresses,
+    private void executeExpectingUniqueViolation(Runnable task) {
+        executeExpectingSqlConstraintViolation(task, UNIQUE_VIOLATION_SQL_STATE);
+    }
+
+    private void executeExpectingForeignKeyViolation(Runnable task) {
+        executeExpectingSqlConstraintViolation(task, FOREIGN_KEY_VIOLATION_SQL_STATE);
+    }
+
+    private void executeExpectingSqlConstraintViolation(Runnable task, String sqlState) {
+        executeExpectingMatchingException(task, exception -> Objects.equals(sqlState, getSqlState(exception)));
+    }
+
+    private void executeExpectingNoSuchEntityException(Runnable task) {
+        executeExpectingMatchingException(task, exception -> getRootCause(exception).getClass() == EntityNotFoundException.class);
+    }
+
+    private void executeExpectingMatchingException(Runnable task, Predicate<Throwable> predicate) {
+        boolean exceptionArisen;
+        try {
+            task.run();
+            exceptionArisen = false;
+        } catch (Throwable exception) {
+            exceptionArisen = true;
+            assertTrue(predicate.test(exception));
+        }
+        assertTrue(exceptionArisen);
+    }
+
+    private String getSqlState(Throwable exception) {
+        return ((SQLException) getRootCause(exception)).getSQLState();
+    }
+
+    //    private void verifyDatabase(List<AddressEntity> expectedAddresses,
 //                                List<PersonEntity> expectedPersons,
 //                                List<ReplicatedAddressEntity> expectedReplicatedAddresses,
 //                                List<ReplicatedPersonEntity> expectedReplicatedPersons) {
@@ -582,10 +592,10 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 //        checkEquals(expected, actual, equalChecker);
 //    }
 //
-//    private void verifyNoReplicationRepositoryMethodCall() {
-//        verifyNoInteractions(replicatedAddressRepository, replicatedPersonRepository);
-//    }
-//
+    private void verifyNoReplicationRepositoryMethodCall() {
+        verifyNoInteractions(replicatedAddressRepository, replicatedPersonRepository);
+    }
+
 //    private void deleteAddressInRollBackedTransaction(Long id) {
 //        transactionTemplate.execute(
 //                status -> {

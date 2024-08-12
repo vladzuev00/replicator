@@ -15,7 +15,7 @@ public final class ReplicationTransactionCallbackTest {
 
         givenCallback.afterCommit();
 
-        verify(givenProducer, times(1)).produceSave(same(givenBody));
+        verify(givenProducer, times(1)).produceSaveAfterCommit(same(givenBody));
     }
 
     private static final class TestReplicationTransactionCallback extends ReplicationTransactionCallback {
@@ -26,7 +26,7 @@ public final class ReplicationTransactionCallbackTest {
 
         @Override
         protected void produce(Object body, ReplicationProducer producer) {
-            producer.produceSave(body);
+            producer.produceSaveAfterCommit(body);
         }
     }
 }
