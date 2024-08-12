@@ -33,12 +33,13 @@ public class ProducingReplicationAspect {
 
     @AfterReturning("deleteById()")
     public void produceDeleteById(JoinPoint joinPoint) {
-        getProducer(joinPoint).ifPresent(producer -> producer.produceDeleteAfterCommit(joinPoint.getArgs()[0]));
+        getProducer(joinPoint).ifPresent(producer -> producer.produceDeleteAfterCommit(getFirstArgument(joinPoint)));
     }
 
     @AfterReturning("delete()")
     public void produceDelete(JoinPoint joinPoint) {
-        getProducer(joinPoint).ifPresent(producer -> producer.produceDeleteAfterCommit(getId(joinPoint.getArgs()[0])));
+        getProducer(joinPoint)
+                .ifPresent(producer -> producer.produceDeleteAfterCommit(getId(getFirstArgument(joinPoint))));
     }
 
     @AfterReturning("deleteByIds() || deleteByIdsInBatch()")
@@ -75,6 +76,10 @@ public class ProducingReplicationAspect {
 
     private Iterable<?> getIterableFirstArgument(JoinPoint joinPoint) {
         return (Iterable<?>) joinPoint.getArgs()[0];
+    }
+
+    private Object getFirstArgument(JoinPoint joinPoint) {
+        return joinPoint.getArgs()[0];
     }
 
     private List<?> findAllEntities(JoinPoint joinPoint) {
