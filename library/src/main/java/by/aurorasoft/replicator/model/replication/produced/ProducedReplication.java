@@ -27,4 +27,6 @@ public abstract class ProducedReplication<B> {
 
     @JsonProperty(BODY)
     private final B body;
+
+    //TODO: getEntityId
 }
