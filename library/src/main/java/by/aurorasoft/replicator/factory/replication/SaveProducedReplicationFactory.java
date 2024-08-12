@@ -8,21 +8,20 @@ import org.springframework.stereotype.Component;
 import static com.monitorjbl.json.Match.match;
 import static java.util.Arrays.stream;
 
-//TODO: test
 @Component
 public final class SaveProducedReplicationFactory {
 
-    public SaveProducedReplication create(Object savedEntity, EntityViewSetting[] entityViewSettings) {
-        EntityJsonView<?> entityJsonView = new EntityJsonView<>(savedEntity);
-        applyEntityViewSetting(entityJsonView, entityViewSettings);
-        return new SaveProducedReplication(entityJsonView);
+    public SaveProducedReplication create(Object savedEntity, EntityViewSetting[] viewSettings) {
+        EntityJsonView<?> view = new EntityJsonView<>(savedEntity);
+        applySettings(view, viewSettings);
+        return new SaveProducedReplication(view);
     }
 
-    private void applyEntityViewSetting(EntityJsonView<?> view, EntityViewSetting[] entityViewSettings) {
-        stream(entityViewSettings).forEach(setting -> applyEntityViewSetting(view, setting));
+    private void applySettings(EntityJsonView<?> view, EntityViewSetting[] settings) {
+        stream(settings).forEach(setting -> applySetting(view, setting));
     }
 
-    private void applyEntityViewSetting(EntityJsonView<?> view, EntityViewSetting setting) {
+    private void applySetting(EntityJsonView<?> view, EntityViewSetting setting) {
         view.onClass(setting.getType(), match().exclude(setting.getExcludedFields()));
     }
 }

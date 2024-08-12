@@ -61,9 +61,6 @@
 //            EntityJsonView<TestEntity> expectedEntityJsonView = new EntityJsonView<>(givenEntity);
 //            expectedEntityJsonView.onClass(TestEntity.class, match().exclude(EXCLUDED_FIELD_NAME));
 //            SaveProducedReplication expectedReplication = new SaveProducedReplication(expectedEntityJsonView);
-//
-//
-//
 //            verifyProducing(givenEntityId, expectedReplication);
 //
 //            @SuppressWarnings("unchecked") var actualEntityJsonView = (EntityJsonView<TestEntity>) recordCaptor.getValue()
