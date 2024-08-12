@@ -5,11 +5,11 @@ import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
-import by.aurorasoft.replicator.transactioncallback.SaveReplicationTransactionCallback;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
 
 import static by.aurorasoft.replicator.util.IdUtil.getId;
 import static com.monitorjbl.json.Match.match;
@@ -50,9 +50,23 @@ public final class ReplicationProducer {
 
     private void produceAfterCommit(Object entityId, ProducedReplication<?> replication) {
         ProducerRecord<Object, ProducedReplication<?>> record = new ProducerRecord<>(topic, entityId, replication);
+        TransactionCallback transactionCallback = new TransactionCallback(kafkaTemplate, record);
         if (isActualTransactionActive()) {
-//            registerSynchronization(new SaveReplicationTransactionCallback());
+            registerSynchronization(transactionCallback);
+        } else {
+            transactionCallback.afterCommit();
         }
-        kafkaTemplate.send(record);
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    static final class TransactionCallback implements TransactionSynchronization {
+        private final KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate;
+        private final ProducerRecord<Object, ProducedReplication<?>> record;
+
+        @Override
+        public void afterCommit() {
+            kafkaTemplate.send(record);
+        }
     }
 }

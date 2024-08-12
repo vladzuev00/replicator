@@ -5,6 +5,7 @@ import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
+import by.aurorasoft.replicator.producer.ReplicationProducer.TransactionCallback;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +16,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static com.monitorjbl.json.Match.match;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerTest {
@@ -36,6 +37,9 @@ public final class ReplicationProducerTest {
     private ReplicationProducer producer;
 
     @Captor
+    private ArgumentCaptor<TransactionCallback> transactionCallbackCaptor;
+
+    @Captor
     private ArgumentCaptor<ProducerRecord<Object, ProducedReplication<?>>> recordCaptor;
 
     @BeforeEach
@@ -44,23 +48,57 @@ public final class ReplicationProducerTest {
     }
 
     @Test
-    public void saveShouldBeProduced() {
-        Long givenEntityId = 255L;
-        TestEntity givenEntity = new TestEntity(givenEntityId, "first-value", "second-value");
+    public void saveShouldBeProducedInCaseTransactionIsActive() {
+        try (var mockedTransactionSynchronizationManager = mockStatic(TransactionSynchronizationManager.class)) {
+            Long givenEntityId = 255L;
+            TestEntity givenEntity = new TestEntity(givenEntityId, "first-value", "second-value");
 
-        producer.produceSaveAfterCommit(givenEntity);
+            mockedTransactionSynchronizationManager
+                    .when(TransactionSynchronizationManager::isActualTransactionActive)
+                    .thenReturn(true);
 
-        EntityJsonView<TestEntity> expectedEntityJsonView = new EntityJsonView<>(givenEntity);
-        expectedEntityJsonView.onClass(TestEntity.class, match().exclude(EXCLUDED_FIELD_NAME));
-        SaveProducedReplication expectedReplication = new SaveProducedReplication(expectedEntityJsonView);
-        verifyProducing(givenEntityId, expectedReplication);
+            producer.produceSaveAfterCommit(givenEntity);
 
-        @SuppressWarnings("unchecked") var actualEntityJsonView = (EntityJsonView<TestEntity>) recordCaptor.getValue()
-                .value()
-                .getBody();
-        TestEntity actualEntity = actualEntityJsonView.getEntity();
-        assertSame(givenEntity, actualEntity);
+            EntityJsonView<TestEntity> expectedEntityJsonView = new EntityJsonView<>(givenEntity);
+            expectedEntityJsonView.onClass(TestEntity.class, match().exclude(EXCLUDED_FIELD_NAME));
+            SaveProducedReplication expectedReplication = new SaveProducedReplication(expectedEntityJsonView);
+
+
+
+            verifyProducing(givenEntityId, expectedReplication);
+
+            @SuppressWarnings("unchecked") var actualEntityJsonView = (EntityJsonView<TestEntity>) recordCaptor.getValue()
+                    .value()
+                    .getBody();
+            TestEntity actualEntity = actualEntityJsonView.getEntity();
+            assertSame(givenEntity, actualEntity);
+        }
     }
+
+//    @Test
+//    public void saveShouldBeProducedInCaseTransactionIsActive() {
+//        try (var mockedTransactionSynchronizationManager = mockStatic(TransactionSynchronizationManager.class)) {
+//            Long givenEntityId = 255L;
+//            TestEntity givenEntity = new TestEntity(givenEntityId, "first-value", "second-value");
+//
+//            mockedTransactionSynchronizationManager
+//                    .when(TransactionSynchronizationManager::isActualTransactionActive)
+//                    .thenReturn(true);
+//
+//            producer.produceSaveAfterCommit(givenEntity);
+//
+//            EntityJsonView<TestEntity> expectedEntityJsonView = new EntityJsonView<>(givenEntity);
+//            expectedEntityJsonView.onClass(TestEntity.class, match().exclude(EXCLUDED_FIELD_NAME));
+//            SaveProducedReplication expectedReplication = new SaveProducedReplication(expectedEntityJsonView);
+//            verifyProducing(givenEntityId, expectedReplication);
+//
+//            @SuppressWarnings("unchecked") var actualEntityJsonView = (EntityJsonView<TestEntity>) recordCaptor.getValue()
+//                    .value()
+//                    .getBody();
+//            TestEntity actualEntity = actualEntityJsonView.getEntity();
+//            assertSame(givenEntity, actualEntity);
+//        }
+//    }
 
     @Test
     public void deleteShouldBeProduced() {
