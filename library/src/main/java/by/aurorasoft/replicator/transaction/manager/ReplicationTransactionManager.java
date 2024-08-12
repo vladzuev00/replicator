@@ -9,7 +9,7 @@ import static org.springframework.transaction.support.TransactionSynchronization
 @Component
 public final class ReplicationTransactionManager {
 
-    public void executeAfterCommit(ProduceReplicationTransactionCallback callback) {
+    public void callAfterCommit(ProduceReplicationTransactionCallback callback) {
         if (isActualTransactionActive()) {
             registerSynchronization(callback);
         } else {

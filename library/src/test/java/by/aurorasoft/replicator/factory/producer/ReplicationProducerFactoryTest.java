@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -24,6 +25,11 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerFactoryTest {
+    private static final String FIELD_NAME_SAVE_REPLICATION_FACTORY = "saveReplicationFactory";
+    private static final String FIELD_NAME_KAFKA_TEMPLATE = "kafkaTemplate";
+    private static final String FIELD_NAME_TRANSACTION_MANAGER = "transactionManager";
+    private static final String FIELD_NAME_TOPIC = "topic";
+    private static final String FIELD_NAME_ENTITY_VIEW_SETTINGS = "entityViewSettings";
 
     @Mock
     private ReplicationKafkaTemplateFactory mockedKafkaTemplateFactory;
@@ -66,19 +72,39 @@ public final class ReplicationProducerFactoryTest {
 
         ReplicationProducer actual = producerFactory.create(givenSetting);
 
-        SaveProducedReplicationFactory actualSaveReplicationFactory = actual.getSaveReplicationFactory();
+        SaveProducedReplicationFactory actualSaveReplicationFactory = getSaveReplicationFactory(actual);
         assertSame(mockedSaveReplicationFactory, actualSaveReplicationFactory);
 
-        KafkaTemplate<Object, ProducedReplication<?>> actualKafkaTemplate = actual.getKafkaTemplate();
+        KafkaTemplate<?, ?> actualKafkaTemplate = getKafkaTemplate(actual);
         assertSame(givenKafkaTemplate, actualKafkaTemplate);
 
-        ReplicationTransactionManager actualTransactionManager = actual.getTransactionManager();
+        ReplicationTransactionManager actualTransactionManager = getTransactionManager(actual);
         assertSame(mockedTransactionManager, actualTransactionManager);
 
-        String actualTopic = actual.getTopic();
+        String actualTopic = getTopic(actual);
         assertSame(givenTopic, actualTopic);
 
-        EntityViewSetting[] actualEntityViewSettings = actual.getEntityViewSettings();
+        EntityViewSetting[] actualEntityViewSettings = getEntityViewSettings(actual);
         assertSame(givenEntityViewSettings, actualEntityViewSettings);
+    }
+
+    private SaveProducedReplicationFactory getSaveReplicationFactory(ReplicationProducer producer) {
+        return getFieldValue(producer, FIELD_NAME_SAVE_REPLICATION_FACTORY, SaveProducedReplicationFactory.class);
+    }
+
+    private KafkaTemplate<?, ?> getKafkaTemplate(ReplicationProducer producer) {
+        return getFieldValue(producer, FIELD_NAME_KAFKA_TEMPLATE, KafkaTemplate.class);
+    }
+
+    private ReplicationTransactionManager getTransactionManager(ReplicationProducer producer) {
+        return getFieldValue(producer, FIELD_NAME_TRANSACTION_MANAGER, ReplicationTransactionManager.class);
+    }
+
+    private String getTopic(ReplicationProducer producer) {
+        return getFieldValue(producer, FIELD_NAME_TOPIC, String.class);
+    }
+
+    private EntityViewSetting[] getEntityViewSettings(ReplicationProducer producer) {
+        return getFieldValue(producer, FIELD_NAME_ENTITY_VIEW_SETTINGS, EntityViewSetting[].class);
     }
 }

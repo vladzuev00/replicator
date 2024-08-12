@@ -7,12 +7,10 @@ import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplicati
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.transaction.callback.ProduceReplicationTransactionCallback;
 import by.aurorasoft.replicator.transaction.manager.ReplicationTransactionManager;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @RequiredArgsConstructor
-@Getter
 public final class ReplicationProducer {
     private final SaveProducedReplicationFactory saveReplicationFactory;
     private final KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate;
@@ -32,6 +30,6 @@ public final class ReplicationProducer {
 
     private void produceAfterCommit(ProducedReplication<?> replication) {
         var transactionCallback = new ProduceReplicationTransactionCallback(kafkaTemplate, replication, topic);
-        transactionManager.executeAfterCommit(transactionCallback);
+        transactionManager.callAfterCommit(transactionCallback);
     }
 }

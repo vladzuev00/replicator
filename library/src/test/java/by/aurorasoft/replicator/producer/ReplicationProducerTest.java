@@ -69,7 +69,7 @@ public final class ReplicationProducerTest {
 
         producer.produceSaveAfterCommit(givenSavedEntity);
 
-        verify(mockedTransactionManager, times(1)).executeAfterCommit(callbackCaptor.capture());
+        verify(mockedTransactionManager, times(1)).callAfterCommit(callbackCaptor.capture());
         ProduceReplicationTransactionCallback capturedCallback = callbackCaptor.getValue();
 
         KafkaTemplate<Object, ProducedReplication<?>> actualKafkaTemplate = getKafkaTemplate(capturedCallback);
@@ -88,7 +88,7 @@ public final class ReplicationProducerTest {
 
         producer.produceDeleteAfterCommit(givenEntityId);
 
-        verify(mockedTransactionManager, times(1)).executeAfterCommit(callbackCaptor.capture());
+        verify(mockedTransactionManager, times(1)).callAfterCommit(callbackCaptor.capture());
         ProduceReplicationTransactionCallback capturedCallback = callbackCaptor.getValue();
 
         KafkaTemplate<Object, ProducedReplication<?>> actualKafkaTemplate = getKafkaTemplate(capturedCallback);
