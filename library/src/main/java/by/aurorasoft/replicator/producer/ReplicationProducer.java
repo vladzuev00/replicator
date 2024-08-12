@@ -5,14 +5,11 @@ import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplica
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
-import by.aurorasoft.replicator.transaction.callback.ReplicationTransactionCallback;
+import by.aurorasoft.replicator.transaction.callback.ProduceReplicationTransactionCallback;
 import by.aurorasoft.replicator.transaction.manager.ReplicationTransactionManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
-
-import static by.aurorasoft.replicator.util.IdUtil.getId;
 
 @RequiredArgsConstructor
 @Getter
@@ -25,17 +22,16 @@ public final class ReplicationProducer {
 
     public void produceSaveAfterCommit(Object savedEntity) {
         SaveProducedReplication replication = saveReplicationFactory.create(savedEntity, entityViewSettings);
-        produceAfterCommit(getId(savedEntity), replication);
+        produceAfterCommit(replication);
     }
 
     public void produceDeleteAfterCommit(Object entityId) {
         DeleteProducedReplication replication = new DeleteProducedReplication(entityId);
-        produceAfterCommit(entityId, replication);
+        produceAfterCommit(replication);
     }
 
-    private void produceAfterCommit(Object entityId, ProducedReplication<?> replication) {
-        ProducerRecord<Object, ProducedReplication<?>> record = new ProducerRecord<>(topic, entityId, replication);
-        ReplicationTransactionCallback transactionCallback = new ReplicationTransactionCallback(kafkaTemplate, record);
-        transactionManager.register(transactionCallback);
+    private void produceAfterCommit(ProducedReplication<?> replication) {
+        var transactionCallback = new ProduceReplicationTransactionCallback(kafkaTemplate, replication, topic);
+        transactionManager.executeAfterCommit(transactionCallback);
     }
 }
