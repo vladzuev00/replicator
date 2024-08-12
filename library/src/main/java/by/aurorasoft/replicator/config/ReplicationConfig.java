@@ -3,6 +3,7 @@ package by.aurorasoft.replicator.config;
 import by.aurorasoft.replicator.factory.registry.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.retrytemplate.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
+import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monitorjbl.json.JsonViewModule;
@@ -24,8 +25,9 @@ public class ReplicationConfig {
     }
 
     @Bean
-    public RetryTemplate replicationRetryTemplate(ReplicationRetryTemplateFactory factory) {
-        return factory.create();
+    public RetryTemplate replicationRetryTemplate(ReplicationRetryTemplateFactory factory,
+                                                  ReplicationRetryConsumeProperty property) {
+        return factory.create(property);
     }
 
     @Bean

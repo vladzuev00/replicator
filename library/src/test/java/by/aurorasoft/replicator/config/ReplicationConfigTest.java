@@ -3,6 +3,7 @@ package by.aurorasoft.replicator.config;
 import by.aurorasoft.replicator.factory.registry.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.retrytemplate.ReplicationRetryTemplateFactory;
 import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
+import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -31,11 +32,12 @@ public final class ReplicationConfigTest {
     @Test
     public void replicationRetryTemplateShouldBeCreated() {
         ReplicationRetryTemplateFactory givenFactory = mock(ReplicationRetryTemplateFactory.class);
+        ReplicationRetryConsumeProperty givenProperty = mock(ReplicationRetryConsumeProperty.class);
 
         RetryTemplate givenRetryTemplate = mock(RetryTemplate.class);
-        when(givenFactory.create()).thenReturn(givenRetryTemplate);
+        when(givenFactory.create(same(givenProperty))).thenReturn(givenRetryTemplate);
 
-        RetryTemplate actual = config.replicationRetryTemplate(givenFactory);
+        RetryTemplate actual = config.replicationRetryTemplate(givenFactory, givenProperty);
         assertSame(givenRetryTemplate, actual);
     }
 
