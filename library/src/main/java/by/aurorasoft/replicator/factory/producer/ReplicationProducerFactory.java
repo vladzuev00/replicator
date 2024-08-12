@@ -14,7 +14,8 @@ public final class ReplicationProducerFactory {
     private final ReplicationKafkaTemplateFactory kafkaTemplateFactory;
 
     public ReplicationProducer create(ReplicationProduceSetting<?, ?> setting) {
-        KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate = kafkaTemplateFactory.create(setting);
-        return new ReplicationProducer(kafkaTemplate, setting.getTopic(), setting.getEntityViewSettings());
+        throw new UnsupportedOperationException();
+//        KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate = kafkaTemplateFactory.create(setting);
+//        return new ReplicationProducer(kafkaTemplate, setting.getTopic(), setting.getEntityViewSettings());
     }
 }
