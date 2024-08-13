@@ -30,7 +30,7 @@ public abstract class ReplicationUniqueComponentChecker<P> {
                 .collect(groupingBy(identity(), LinkedHashMap::new, counting()))
                 .entrySet()
                 .stream()
-                .filter(frequencyByTopic -> frequencyByTopic.getValue() > 1)
+                .filter(frequencyByProperty -> frequencyByProperty.getValue() > 1)
                 .map(Entry::getKey)
                 .collect(toCollection(LinkedHashSet::new));
     }
