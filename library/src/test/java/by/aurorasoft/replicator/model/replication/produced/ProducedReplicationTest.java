@@ -4,6 +4,7 @@ import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 public final class ProducedReplicationTest extends AbstractSpringBootTest {
@@ -24,6 +26,15 @@ public final class ProducedReplicationTest extends AbstractSpringBootTest {
             throws Exception {
         String actual = objectMapper.writeValueAsString(givenReplication);
         assertEquals(expected, actual, true);
+    }
+
+    @Test
+    public void entityIdShouldBeGot() {
+        Object givenBody = new Object();
+        TestProducedReplication givenReplication = new TestProducedReplication(givenBody);
+
+        Object actual = givenReplication.getEntityId();
+        assertSame(givenBody, actual);
     }
 
     private static Stream<Arguments> provideReplicationAndExpectedJson() {
@@ -53,5 +64,17 @@ public final class ProducedReplicationTest extends AbstractSpringBootTest {
                                 }"""
                 )
         );
+    }
+
+    private static final class TestProducedReplication extends ProducedReplication<Object> {
+
+        public TestProducedReplication(Object body) {
+            super(body);
+        }
+
+        @Override
+        protected Object getEntityIdInternal(Object body) {
+            return body;
+        }
     }
 }

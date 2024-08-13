@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -28,6 +29,7 @@ public abstract class ProducedReplication<B> {
     @JsonProperty(BODY)
     private final B body;
 
+    @JsonIgnore
     public final Object getEntityId() {
         return getEntityIdInternal(body);
     }
