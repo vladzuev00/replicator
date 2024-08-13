@@ -3,8 +3,11 @@ package by.aurorasoft.replicator.aop;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -57,13 +60,11 @@ public class ProducingReplicationAspect {
                 );
     }
 
-    @AfterReturning("deleteAll() || deleteAllInBatch()")
-    public void produceDeleteAll(JoinPoint joinPoint) {
-        getProducer(joinPoint)
-                .ifPresent(
-                        producer -> findAllEntities(joinPoint)
-                                .forEach(entity -> producer.produceDeleteAfterCommit(getId(entity)))
-                );
+    @Around("deleteAll() || deleteAllInBatch()")
+    public Object produceDeleteAll(ProceedingJoinPoint joinPoint) {
+        return getProducer(joinPoint)
+                .map(producer -> proceedProducingDeleteForEachEntity(joinPoint, producer))
+                .orElseGet(() -> proceed(joinPoint));
     }
 
     private Optional<ReplicationProducer> getProducer(JoinPoint joinPoint) {
@@ -82,8 +83,16 @@ public class ProducingReplicationAspect {
         return joinPoint.getArgs()[0];
     }
 
-    private List<?> findAllEntities(JoinPoint joinPoint) {
-        return getRepository(joinPoint).findAll();
+    private Object proceedProducingDeleteForEachEntity(ProceedingJoinPoint joinPoint, ReplicationProducer producer) {
+        List<?> entities = getRepository(joinPoint).findAll();
+        Object result = proceed(joinPoint);
+        entities.forEach(entity -> producer.produceDeleteAfterCommit(getId(entity)));
+        return result;
+    }
+
+    @SneakyThrows
+    private Object proceed(ProceedingJoinPoint joinPoint) {
+        return joinPoint.proceed();
     }
 
     @Pointcut("execution(public Object+ org.springframework.data.jpa.repository.JpaRepository+.save(Object+))")
