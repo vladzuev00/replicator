@@ -3,11 +3,13 @@ package by.aurorasoft.testapp.it;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.entity.AddressEntity;
+import by.aurorasoft.testapp.crud.entity.PersonEntity;
 import by.aurorasoft.testapp.crud.entity.ReplicatedAddressEntity;
 import by.aurorasoft.testapp.crud.repository.AddressRepository;
 import by.aurorasoft.testapp.crud.repository.PersonRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
+import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -19,11 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -31,11 +36,11 @@ import java.util.function.Supplier;
 import static by.aurorasoft.testapp.testutil.AddressEntityUtil.checkEquals;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.core.NestedExceptionUtils.getRootCause;
 
-//TODO: remove all not from jupiter
 @Import(ReplicationIT.ReplicationDeliveryBarrier.class)
 public final class ReplicationIT extends AbstractSpringBootTest {
     private static final String FOREIGN_KEY_VIOLATION_SQL_STATE = "23503";
@@ -90,159 +95,432 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicationRepositoryMethodCall();
     }
 
-//    @Test
-//    public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
-//        PERSON givenPerson = createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L);
-//
-//        executeExpectingForeignKeyViolation(() -> save(givenPerson));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressesShouldBeSaved() {
-//        String firstGivenCountry = "China";
-//        String secondGivenCountry = "China";
-//        String firstGivenCity = "Fuyang";
-//        String secondGivenCity = "Hefei";
-//        List<ADDRESS> givenAddresses = List.of(
-//                createAddress(firstGivenCountry, firstGivenCity),
-//                createAddress(secondGivenCountry, secondGivenCity)
-//        );
-//
-//        List<ADDRESS> actual = executeWaitingReplication(
-//                () -> saveAddresses(givenAddresses),
-//                givenAddresses.size(),
-//                0,
-//                false
-//        );
-//        List<ADDRESS> expected = List.of(
-//                createAddress(1L, firstGivenCountry, firstGivenCity),
-//                createAddress(2L, secondGivenCountry, secondGivenCity)
-//        );
-//        assertEquals(expected, actual);
-//
-//        verifyReplicationsFor(actual);
-//    }
-//
-//    @Test
-//    public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
-//        List<ADDRESS> givenAddresses = List.of(
-//                createAddress("Belarus", "Minsk"),
-//                createAddress("Russia", "Moscow")
-//        );
-//
-//        executeExpectingUniqueViolation(() -> saveAddresses(givenAddresses));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
-//        List<PERSON> givenPersons = List.of(
-//                createPerson("Avdifaks", "Kuznetsov", "Vasilievich", LocalDate.of(1995, 7, 2), 255L),
-//                createPerson("Harry", "Potter", "Sergeevich", LocalDate.of(1990, 8, 4), 254L)
-//        );
-//
-//        executeExpectingForeignKeyViolation(() -> savePersons(givenPersons));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressShouldBeUpdated() {
-//        ADDRESS givenAddress = createAddress(255L, "Belarus", "Minsk");
-//
-//        ADDRESS actual = executeWaitingReplication(() -> update(givenAddress), 1, 0, false);
-//        assertEquals(givenAddress, actual);
-//
-//        verifyReplicationFor(actual);
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeUpdatedBecauseOfUniqueViolation() {
-//        ADDRESS givenAddress = createAddress(256L, "Russia", "Moscow");
-//
-//        executeExpectingUniqueViolation(() -> update(givenAddress));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personShouldNotBeUpdatedBecauseOfNoSuchAddress() {
-//        PERSON givenPerson = createPerson(255L, "Vlad", "Zuev", "Sergeevich", LocalDate.of(2000, 2, 18), 254L);
-//
-//        executeExpectingNoSuchEntityException(() -> update(givenPerson));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressShouldBeUpdatedPartially() {
-//        Long givenId = 255L;
-//        AddressName givenNewName = new AddressName("Belarus", "Minsk");
-//
-//        ADDRESS actual = executeWaitingReplication(
-//                () -> updateAddressPartial(givenId, givenNewName),
-//                1,
-//                0,
-//                false
-//        );
-//        ADDRESS expected = createAddress(givenId, givenNewName.getCountry(), givenNewName.getCity());
-//        assertEquals(expected, actual);
-//
-//        verifyReplicationFor(actual);
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeUpdatedPartiallyBecauseOfUniqueViolation() {
-//        Long givenId = 256L;
-//        AddressName givenNewName = new AddressName("Russia", "Moscow");
-//
-//        executeExpectingUniqueViolation(() -> updateAddressPartial(givenId, givenNewName));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personShouldNotBeUpdatedPartiallyBecauseOfNoSuchAddress() {
-//        Long givenId = 255L;
-//        PersonAddress givenNewAddress = new PersonAddress(createAddress(254L));
-//
-//        executeExpectingNoSuchEntityException(() -> updatePersonPartial(givenId, givenNewAddress));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressShouldBeDeleted() {
-//        Long givenId = 262L;
-//
-//        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, false);
-//
-//        assertFalse(isAddressExist(givenId));
-//        assertFalse(replicatedAddressRepository.existsById(givenId));
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedByNotExistId() {
-//        Long givenId = MAX_VALUE;
-//
-//        executeWaitingReplication(() -> deleteAddress(givenId), 1, 0, true);
-//
-//        verify(replicatedAddressRepository, times(1)).deleteById(eq(givenId));
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
-//        Long givenId = 255L;
-//
-//        executeExpectingForeignKeyViolation(() -> deleteAddress(givenId));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
+    @Test
+    public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
+        PersonEntity givenPerson = PersonEntity.builder()
+                .name("Harry")
+                .surname("Potter")
+                .patronymic("Sergeevich")
+                .birthDate(LocalDate.of(1990, 8, 4))
+                .address(
+                        AddressEntity.builder()
+                                .id(254L)
+                                .build()
+                )
+                .build();
+
+        executeExpectingForeignKeyViolation(() -> personRepository.save(givenPerson));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressShouldBeSavedAndFlushed() {
+        String givenCountry = "Belarus";
+        String givenCity = "Minsk";
+        AddressEntity givenAddress = AddressEntity.builder()
+                .country(givenCountry)
+                .city(givenCity)
+                .build();
+
+        AddressEntity actual = executeWaitingReplication(() -> addressRepository.saveAndFlush(givenAddress), 1, 0, false);
+        AddressEntity expected = new AddressEntity(1L, givenCountry, givenCity);
+        checkEquals(expected, actual);
+
+        verifyReplicationFor(actual);
+    }
+
+    @Test
+    public void addressShouldNotBeSavedAndFlushBecauseOfUniqueViolation() {
+        AddressEntity givenAddress = AddressEntity.builder()
+                .country("Russia")
+                .city("Moscow")
+                .build();
+
+        executeExpectingUniqueViolation(() -> addressRepository.saveAndFlush(givenAddress));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void personShouldNotBeSavedAndFlushBecauseOfForeignKeyViolation() {
+        PersonEntity givenPerson = PersonEntity.builder()
+                .name("Harry")
+                .surname("Potter")
+                .patronymic("Sergeevich")
+                .birthDate(LocalDate.of(1990, 8, 4))
+                .address(
+                        AddressEntity.builder()
+                                .id(254L)
+                                .build()
+                )
+                .build();
+
+        executeExpectingForeignKeyViolation(() -> personRepository.saveAndFlush(givenPerson));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressesShouldBeSaved() {
+        String firstGivenCountry = "China";
+        String secondGivenCountry = "China";
+        String firstGivenCity = "Fuyang";
+        String secondGivenCity = "Hefei";
+        List<AddressEntity> givenAddresses = List.of(
+                AddressEntity.builder()
+                        .country(firstGivenCountry)
+                        .city(firstGivenCity)
+                        .build(),
+                AddressEntity.builder()
+                        .country(secondGivenCountry)
+                        .city(secondGivenCity)
+                        .build()
+        );
+
+        List<AddressEntity> actual = executeWaitingReplication(
+                () -> addressRepository.saveAll(givenAddresses),
+                givenAddresses.size(),
+                0,
+                false
+        );
+        List<AddressEntity> expected = List.of(
+                new AddressEntity(1L, firstGivenCountry, firstGivenCity),
+                new AddressEntity(2L, secondGivenCountry, secondGivenCity)
+        );
+        AddressEntityUtil.checkEquals(expected, actual);
+
+        verifyReplicationsFor(actual);
+    }
+
+    @Test
+    public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
+        List<AddressEntity> givenAddresses = List.of(
+                AddressEntity.builder()
+                        .country("Belarus")
+                        .city("Minsk")
+                        .build(),
+                AddressEntity.builder()
+                        .country("Russia")
+                        .city("Moscow")
+                        .build()
+        );
+
+        executeExpectingUniqueViolation(() -> addressRepository.saveAll(givenAddresses));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
+        List<PersonEntity> givenPersons = List.of(
+                PersonEntity.builder()
+                        .name("Avdifaks")
+                        .surname("Kuznetsov")
+                        .patronymic("Vasilievich")
+                        .birthDate(LocalDate.of(1995, 7, 2))
+                        .address(
+                                AddressEntity.builder()
+                                        .id(255L)
+                                        .build()
+                        )
+                        .build(),
+                PersonEntity.builder()
+                        .name("Harry")
+                        .surname("Potter")
+                        .patronymic("Sergeevich")
+                        .birthDate(LocalDate.of(1990, 8, 4))
+                        .address(
+                                AddressEntity.builder()
+                                        .id(254L)
+                                        .build()
+                        )
+                        .build()
+        );
+
+        executeExpectingForeignKeyViolation(() -> personRepository.saveAll(givenPersons));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressesShouldBeSavedAndFlush() {
+        String firstGivenCountry = "China";
+        String secondGivenCountry = "China";
+        String firstGivenCity = "Fuyang";
+        String secondGivenCity = "Hefei";
+        List<AddressEntity> givenAddresses = List.of(
+                AddressEntity.builder()
+                        .country(firstGivenCountry)
+                        .city(firstGivenCity)
+                        .build(),
+                AddressEntity.builder()
+                        .country(secondGivenCountry)
+                        .city(secondGivenCity)
+                        .build()
+        );
+
+        List<AddressEntity> actual = executeWaitingReplication(
+                () -> addressRepository.saveAllAndFlush(givenAddresses),
+                givenAddresses.size(),
+                0,
+                false
+        );
+        List<AddressEntity> expected = List.of(
+                new AddressEntity(1L, firstGivenCountry, firstGivenCity),
+                new AddressEntity(2L, secondGivenCountry, secondGivenCity)
+        );
+        AddressEntityUtil.checkEquals(expected, actual);
+
+        verifyReplicationsFor(actual);
+    }
+
+    @Test
+    public void addressesShouldNotBeSavedAndFlushBecauseOfUniqueViolation() {
+        List<AddressEntity> givenAddresses = List.of(
+                AddressEntity.builder()
+                        .country("Belarus")
+                        .city("Minsk")
+                        .build(),
+                AddressEntity.builder()
+                        .country("Russia")
+                        .city("Moscow")
+                        .build()
+        );
+
+        executeExpectingUniqueViolation(() -> addressRepository.saveAllAndFlush(givenAddresses));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void personsShouldNotBeSavedAndFlushBecauseOfForeignKeyViolation() {
+        List<PersonEntity> givenPersons = List.of(
+                PersonEntity.builder()
+                        .name("Avdifaks")
+                        .surname("Kuznetsov")
+                        .patronymic("Vasilievich")
+                        .birthDate(LocalDate.of(1995, 7, 2))
+                        .address(
+                                AddressEntity.builder()
+                                        .id(255L)
+                                        .build()
+                        )
+                        .build(),
+                PersonEntity.builder()
+                        .name("Harry")
+                        .surname("Potter")
+                        .patronymic("Sergeevich")
+                        .birthDate(LocalDate.of(1990, 8, 4))
+                        .address(
+                                AddressEntity.builder()
+                                        .id(254L)
+                                        .build()
+                        )
+                        .build()
+        );
+
+        executeExpectingForeignKeyViolation(() -> personRepository.saveAllAndFlush(givenPersons));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressShouldBeDeletedById() {
+        Long givenId = 262L;
+
+        executeWaitingReplication(() -> addressRepository.deleteById(givenId), 1, 0, false);
+
+        assertFalse(addressRepository.existsById(givenId));
+        assertFalse(replicatedAddressRepository.existsById(givenId));
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedByIdBecauseOfForeignKeyViolation() {
+        Long givenId = 255L;
+
+        executeExpectingForeignKeyViolation(() -> addressRepository.deleteById(givenId));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressShouldBeDeleted() {
+        Long givenId = 262L;
+        AddressEntity givenAddress = AddressEntity.builder()
+                .id(givenId)
+                .build();
+
+        executeWaitingReplication(() -> addressRepository.delete(givenAddress), 1, 0, false);
+
+        assertFalse(addressRepository.existsById(givenId));
+        assertFalse(replicatedAddressRepository.existsById(givenId));
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
+        Long givenId = 255L;
+        AddressEntity givenAddress = AddressEntity.builder()
+                .id(givenId)
+                .build();
+
+        executeExpectingForeignKeyViolation(() -> addressRepository.delete(givenAddress));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressesShouldBeDeletedByIds() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 263L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
+
+        executeWaitingReplication(() -> addressRepository.deleteAllById(givenIds), 2, 0, false);
+
+        assertFalse(addressRepository.existsById(firstGivenId));
+        assertFalse(addressRepository.existsById(secondGivenId));
+        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
+        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
+    }
+
+    @Test
+    public void addressesShouldNotBeDeletedByIdsBecauseOfForeignKeyViolation() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 255L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
+
+        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAllById(givenIds));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressesShouldBeDeletedByIdsInBatch() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 263L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
+
+        executeWaitingReplication(() -> addressRepository.deleteAllByIdInBatch(givenIds), 2, 0, false);
+
+        assertFalse(addressRepository.existsById(firstGivenId));
+        assertFalse(addressRepository.existsById(secondGivenId));
+        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
+        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
+    }
+
+    @Test
+    public void addressesShouldNotBeDeletedByIdsInBatchBecauseOfForeignKeyViolation() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 255L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
+
+        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAllByIdInBatch(givenIds));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressesShouldBeDeleted() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 263L;
+        Iterable<AddressEntity> givenEntities = List.of(
+                AddressEntity.builder()
+                        .id(firstGivenId)
+                        .build(),
+                AddressEntity.builder()
+                        .id(secondGivenId)
+                        .build()
+        );
+
+        executeWaitingReplication(() -> addressRepository.deleteAll(givenEntities), 2, 0, false);
+
+        assertFalse(addressRepository.existsById(firstGivenId));
+        assertFalse(addressRepository.existsById(secondGivenId));
+        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
+        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
+    }
+
+    @Test
+    public void addressesShouldNotBeDeletedBecauseOfForeignKeyViolation() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 255L;
+        Iterable<AddressEntity> givenEntities = List.of(
+                AddressEntity.builder()
+                        .id(firstGivenId)
+                        .build(),
+                AddressEntity.builder()
+                        .id(secondGivenId)
+                        .build()
+        );
+
+        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAll(givenEntities));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressesShouldBeDeletedInBatch() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 263L;
+        Iterable<AddressEntity> givenEntities = List.of(
+                AddressEntity.builder()
+                        .id(firstGivenId)
+                        .build(),
+                AddressEntity.builder()
+                        .id(secondGivenId)
+                        .build()
+        );
+
+        executeWaitingReplication(() -> addressRepository.deleteAllInBatch(givenEntities), 2, 0, false);
+
+        assertFalse(addressRepository.existsById(firstGivenId));
+        assertFalse(addressRepository.existsById(secondGivenId));
+        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
+        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
+    }
+
+    @Test
+    public void addressesShouldNotBeDeletedInBatchBecauseOfForeignKeyViolation() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 255L;
+        Iterable<AddressEntity> givenEntities = List.of(
+                AddressEntity.builder()
+                        .id(firstGivenId)
+                        .build(),
+                AddressEntity.builder()
+                        .id(secondGivenId)
+                        .build()
+        );
+
+        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAllInBatch(givenEntities));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    @Sql(
+            statements = {
+                    "DELETE FROM replicated_persons",
+                    "DELETE FROM replicated_addresses",
+                    "DELETE FROM persons",
+                    "DELETE FROM addresses WHERE id NOT IN (262, 263)",
+            }
+    )
+    public void allAddressesShouldBeDeleted() {
+        executeWaitingReplication(() -> addressRepository.deleteAll(), 2, 0, false);
+
+        assertFalse(addressRepository.existsById(262L));
+        assertFalse(addressRepository.existsById(263L));
+        assertFalse(replicatedAddressRepository.existsById(262L));
+        assertFalse(replicatedAddressRepository.existsById(263L));
+    }
+
+    @Test
+    public void allAddressesShouldNotBeDeletedBecauseOfForeignKeyViolation() {
+        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAll());
+    }
+
+    //    @Test
 //    public void operationsShouldBeExecuted() {
 //        executeWaitingReplication(
 //                () -> {
@@ -426,20 +704,20 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 //        return createAddress(id, null, null);
 //    }
 //
-//    protected void executeWaitingReplication(Runnable operation,
-//                                             int addressCalls,
-//                                             @SuppressWarnings("SameParameterValue") int personCalls,
-//                                             boolean failedCallsCounted) {
-//        executeWaitingReplication(
-//                () -> {
-//                    operation.run();
-//                    return empty();
-//                },
-//                addressCalls,
-//                personCalls,
-//                failedCallsCounted
-//        );
-//    }
+    protected void executeWaitingReplication(Runnable operation,
+                                             int addressCalls,
+                                             @SuppressWarnings("SameParameterValue") int personCalls,
+                                             boolean failedCallsCounted) {
+        executeWaitingReplication(
+                () -> {
+                    operation.run();
+                    return Optional.empty();
+                },
+                addressCalls,
+                personCalls,
+                failedCallsCounted
+        );
+    }
 //
 //    private ADDRESS createAddress(String country, String city) {
 //        return createAddress(null, country, city);
