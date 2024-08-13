@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.transaction.callback;
 
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.support.TransactionSynchronization;
 
@@ -13,8 +14,7 @@ public final class ProduceReplicationTransactionCallback implements TransactionS
 
     @Override
     public void afterCommit() {
-        throw new UnsupportedOperationException();
-//        ProducerRecord<Object, ProducedReplication<?>> record = new ProducerRecord<>(topic, entityId, replication);
-//        kafkaTemplate.send(record);
+        var record = new ProducerRecord<Object, ProducedReplication<?>>(topic, replication.getEntityId(), replication);
+        kafkaTemplate.send(record);
     }
 }
