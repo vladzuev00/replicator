@@ -17,6 +17,7 @@ public final class ReplicatedSaveProcessor extends ReplicatedOperationProcessor 
     @Override
     protected boolean isValidInternal(ExecutableElement method) {
 //        method.getReturnType().
+//        return method.getParameters().size() == 1 && method.getReturnType();
         return false;
     }
 
