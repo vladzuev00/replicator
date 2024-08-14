@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +61,7 @@ public class ProducingReplicationAspect {
         getIterableFirstArgument(joinPoint).forEach(dto -> producer.produceDeleteAfterCommit(getId(dto)));
     }
 
-    @AfterReturning("@annotation(by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll)")
+    @Before("@annotation(by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll)")
     public void produceDeleteAll(JoinPoint joinPoint) {
         ReplicationProducer producer = getProducer(joinPoint);
         getRepository(joinPoint)
