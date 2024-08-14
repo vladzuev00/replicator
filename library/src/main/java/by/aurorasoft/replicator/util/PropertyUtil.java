@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.ReflectionUtils;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 
 import static java.util.Objects.requireNonNull;
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
@@ -22,7 +21,7 @@ public final class PropertyUtil {
                 .invoke(object);
     }
 
-    public static JpaRepository<?, ?> getRepository(Object object) {
+    public static JpaRepository<?, ?> getJpaRepository(Object object) {
         try {
             return (JpaRepository<?, ?>) ReflectionUtils.findField(object.getClass(), field -> field.getType() == JpaRepository.class).get(object);
         } catch (IllegalAccessException e) {

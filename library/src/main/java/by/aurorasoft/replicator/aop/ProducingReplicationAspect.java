@@ -7,12 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static by.aurorasoft.replicator.util.PropertyUtil.getId;
-import static by.aurorasoft.replicator.util.PropertyUtil.getRepository;
+import static by.aurorasoft.replicator.util.PropertyUtil.getJpaRepository;
 
 @Aspect
 @Component
@@ -62,7 +63,7 @@ public class ProducingReplicationAspect {
     @AfterReturning("@annotation(by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll)")
     public void produceDeleteAll(JoinPoint joinPoint) {
         ReplicationProducer producer = getProducer(joinPoint);
-        getRepository(getService(joinPoint))
+        getRepository(joinPoint)
                 .findAll()
                 .stream()
                 .map(PropertyUtil::getId)
@@ -88,5 +89,9 @@ public class ProducingReplicationAspect {
 
     private Object getFirstArgument(JoinPoint joinPoint) {
         return joinPoint.getArgs()[0];
+    }
+
+    private JpaRepository<?, ?> getRepository(JoinPoint joinPoint) {
+        return getJpaRepository(getService(joinPoint));
     }
 }
