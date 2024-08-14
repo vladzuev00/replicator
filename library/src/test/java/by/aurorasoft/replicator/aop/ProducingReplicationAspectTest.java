@@ -213,7 +213,7 @@ public final class ProducingReplicationAspectTest extends AbstractSpringBootTest
 
     private ReplicationProducer mockProducerForRepository() {
         ReplicationProducer producer = mock(ReplicationProducer.class);
-        when(mockedProducerRegistry.get(same(repository))).thenReturn(Optional.of(producer));
+        when(mockedProducerRegistry.getByRepository(same(repository))).thenReturn(Optional.of(producer));
         return producer;
     }
 }

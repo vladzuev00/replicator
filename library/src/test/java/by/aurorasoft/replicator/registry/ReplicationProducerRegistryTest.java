@@ -33,7 +33,7 @@ public final class ReplicationProducerRegistryTest {
 
     @Test
     public void producerShouldBeGot() {
-        Optional<ReplicationProducer> optionalActual = registry.get(mockedRepository);
+        Optional<ReplicationProducer> optionalActual = registry.getByRepository(mockedRepository);
         assertTrue(optionalActual.isPresent());
         ReplicationProducer actual = optionalActual.get();
         assertSame(mockedProducer, actual);
@@ -43,7 +43,7 @@ public final class ReplicationProducerRegistryTest {
     public void producerShouldNotBeGot() {
         JpaRepository<?, ?> givenRepository = mock(JpaRepository.class);
 
-        Optional<ReplicationProducer> optionalActual = registry.get(givenRepository);
+        Optional<ReplicationProducer> optionalActual = registry.getByRepository(givenRepository);
         assertTrue(optionalActual.isEmpty());
     }
 }

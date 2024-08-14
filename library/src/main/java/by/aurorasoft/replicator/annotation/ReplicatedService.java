@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.annotation;
 
 import org.springframework.core.serializer.Serializer;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -11,6 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Service
 @Target(TYPE)
+@Transactional
 @Retention(RUNTIME)
 public @interface ReplicatedService {
     ProducerConfig producerConfig();

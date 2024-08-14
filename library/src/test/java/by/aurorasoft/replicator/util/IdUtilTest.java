@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 
-import static by.aurorasoft.replicator.util.IdUtil.getId;
+import static by.aurorasoft.replicator.util.PropertyUtil.getId;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
