@@ -50,6 +50,6 @@ public abstract class ReplicateAnnotationProcessor extends AbstractProcessor {
 
     private String getErrorMessage() {
         String requirements = join(REQUIREMENTS_DELIMITER, getRequirements());
-        return ERROR_MESSAGE_TEMPLATE.formatted(annotation.getName(), requirements);
+        return ERROR_MESSAGE_TEMPLATE.formatted(annotation.getSimpleName(), requirements);
     }
 }
