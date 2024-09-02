@@ -1,6 +1,5 @@
 package by.aurorasoft.testapp.config;
 
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.testapp.crud.entity.AddressEntity;
 import by.aurorasoft.testapp.crud.entity.PersonEntity;
 import by.aurorasoft.testapp.crud.repository.AddressRepository;

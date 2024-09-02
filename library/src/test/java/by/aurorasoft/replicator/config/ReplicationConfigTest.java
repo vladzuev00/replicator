@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.config;
 
 import by.aurorasoft.replicator.factory.registry.ReplicationProducerRegistryFactory;
 import by.aurorasoft.replicator.factory.retrytemplate.ReplicationRetryTemplateFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;

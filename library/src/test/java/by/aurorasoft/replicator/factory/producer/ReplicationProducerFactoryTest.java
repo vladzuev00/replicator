@@ -3,8 +3,6 @@ package by.aurorasoft.replicator.factory.producer;
 import by.aurorasoft.replicator.factory.kafkatemplate.ReplicationKafkaTemplateFactory;
 import by.aurorasoft.replicator.factory.replication.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import by.aurorasoft.replicator.testrepository.TestRepository;

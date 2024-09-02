@@ -11,15 +11,13 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.lang.String.join;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.joining;
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @RequiredArgsConstructor
 public abstract class ReplicateAnnotationProcessor<E extends Element> extends AbstractProcessor {
-    private static final String ERROR_MESSAGE_TEMPLATE = "Element annotated by @%s should meet next requirements: %s";
-    private static final String REQUIREMENTS_DELIMITER = "\n\t";
-
     private final Class<? extends Annotation> annotation;
     private final Class<E> elementType;
 
@@ -53,11 +51,26 @@ public abstract class ReplicateAnnotationProcessor<E extends Element> extends Ab
     }
 
     private void alertError(E element) {
-        processingEnv.getMessager().printMessage(ERROR, getErrorMessage(), element);
+        ErrorMessage message = new ErrorMessage(annotation, getRequirements());
+        processingEnv.getMessager().printMessage(ERROR, message.getText(), element);
     }
 
-    private String getErrorMessage() {
-        String requirements = join(REQUIREMENTS_DELIMITER, getRequirements());
-        return ERROR_MESSAGE_TEMPLATE.formatted(annotation.getSimpleName(), requirements);
+    @RequiredArgsConstructor
+    static final class ErrorMessage {
+        private static final String TEXT_TEMPLATE = "Element annotated by @%s should match next requirements: %s";
+        private static final String REQUIREMENTS_DELIMITER = "\n\t";
+
+        private final Class<? extends Annotation> annotation;
+        private final Set<String> requirements;
+
+        public String getText() {
+            return requirements.stream()
+                    .collect(
+                            collectingAndThen(
+                                    joining(REQUIREMENTS_DELIMITER),
+                                    requirements -> TEXT_TEMPLATE.formatted(annotation.getSimpleName(), requirements)
+                            )
+                    );
+        }
     }
 }

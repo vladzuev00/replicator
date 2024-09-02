@@ -1,12 +1,10 @@
 package by.aurorasoft.replicator.producer;
 
+import by.aurorasoft.replicator.annotation.ReplicatedService;
 import by.aurorasoft.replicator.factory.replication.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.transaction.callback.ProduceReplicationTransactionCallback;
-import by.aurorasoft.replicator.transaction.manager.ReplicationTransactionManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 
@@ -17,11 +15,11 @@ public final class ReplicationProducer {
     private final SaveProducedReplicationFactory saveReplicationFactory;
     private final KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate;
     private final String topic;
-    private final EntityViewSetting[] entityViewSettings;
+    private final ReplicatedService.ViewConfig[] entityViewSettings;
 
     public void produceSaveAfterCommit(Object savedEntity) {
-        SaveProducedReplication replication = saveReplicationFactory.create(savedEntity, entityViewSettings);
-        produceAfterCommit(replication);
+//        SaveProducedReplication replication = saveReplicationFactory.create(savedEntity, entityViewSettings);
+//        produceAfterCommit(replication);
     }
 
     public void produceDeleteAfterCommit(Object entityId) {

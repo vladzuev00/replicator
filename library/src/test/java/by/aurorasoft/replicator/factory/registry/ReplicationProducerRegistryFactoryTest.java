@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory.registry;
 
 import by.aurorasoft.replicator.factory.producer.ReplicationProducerFactory;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
 import by.aurorasoft.replicator.validator.ReplicationUniqueComponentCheckingManager;

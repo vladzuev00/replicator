@@ -8,7 +8,7 @@ import javax.lang.model.element.ExecutableElement;
 import java.util.stream.Stream;
 
 @AutoService(Processor.class)
-public final class ReplicatedSaveProcessor extends ReplicatedOperationProcessor {
+public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationProcessor {
 
     public ReplicatedSaveProcessor() {
         super(ReplicatedSave.class);

@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory.kafkatemplate;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import by.aurorasoft.replicator.testrepository.TestRepository;
 import org.apache.kafka.common.serialization.LongSerializer;

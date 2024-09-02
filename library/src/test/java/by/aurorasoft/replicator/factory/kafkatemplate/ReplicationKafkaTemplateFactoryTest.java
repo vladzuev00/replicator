@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory.kafkatemplate;
 
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import org.apache.kafka.common.serialization.Serializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.factory.replication;
 
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting.EntityViewSetting;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
 import by.aurorasoft.replicator.testentity.TestEntity;
 import org.junit.jupiter.api.Test;

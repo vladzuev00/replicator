@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.factory.kafkatemplate;
 
-import by.aurorasoft.replicator.model.setting.ReplicationProduceSetting;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
