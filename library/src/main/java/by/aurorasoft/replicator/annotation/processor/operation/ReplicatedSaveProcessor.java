@@ -2,28 +2,19 @@ package by.aurorasoft.replicator.annotation.processor.operation;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import com.google.auto.service.AutoService;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TypesUtils;
-import org.springframework.asm.Type;
-import org.springframework.cglib.core.CodeEmitter;
-import org.springframework.cglib.core.FieldTypeCustomizer;
-import org.springframework.javapoet.FieldSpec;
-import org.springframework.javapoet.MethodSpec;
 
 import javax.annotation.processing.Processor;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
+import static by.aurorasoft.replicator.util.PropertyUtil.isContainId;
 import static java.util.Optional.empty;
-import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 
 @AutoService(Processor.class)
 public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String RETURN_TYPE_REQUIREMENT = "Return type should contain 'id' field";
+    private static final String RETURN_TYPE_REQUIREMENT = "Returned object should contain id";
 
     public ReplicatedSaveProcessor() {
         super(ReplicatedSave.class);
@@ -31,9 +22,7 @@ public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationPro
 
     @Override
     protected boolean isValidReturnType(TypeElement type) {
-        ElementUtils.findFieldInType(getTypeElement(type), )
-        //check if return type contain field 'id'
-        return false;
+        return isContainId(type);
     }
 
     @Override

@@ -5,14 +5,20 @@ import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.ReflectionUtils;
 
+import javax.lang.model.element.TypeElement;
 import java.beans.PropertyDescriptor;
 
 import static java.util.Objects.requireNonNull;
+import static org.checkerframework.javacutil.ElementUtils.findFieldInType;
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 
 @UtilityClass
 public final class PropertyUtil {
     private static final String FIELD_NAME_ID = "id";
+
+    public static boolean isContainId(TypeElement type) {
+        return findFieldInType(type, FIELD_NAME_ID) != null;
+    }
 
     @SneakyThrows
     public static Object getId(Object object) {
