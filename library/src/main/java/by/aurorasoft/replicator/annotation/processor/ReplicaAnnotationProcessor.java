@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.joining;
 import static javax.lang.model.SourceVersion.latestSupported;
+import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         return latestSupported();
     }
 
-    protected abstract boolean isValid(E element);
+    protected abstract boolean isValidInternal(E element);
 
     protected abstract Set<String> getRequirements();
 
@@ -48,6 +49,10 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         return env.getElementsAnnotatedWith(annotation)
                 .stream()
                 .map(elementType::cast);
+    }
+
+    private boolean isValid(E element) {
+        return element.getModifiers().contains(PUBLIC) && isValidInternal(element);
     }
 
     private void alertError(E element) {
