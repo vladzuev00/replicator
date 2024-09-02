@@ -6,6 +6,7 @@ import org.checkerframework.javacutil.TypesUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.ReflectionUtils;
 
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.beans.PropertyDescriptor;
@@ -23,6 +24,10 @@ public final class PropertyUtil {
 
     public static boolean isContainId(TypeMirror type) {
         return findFieldInType(getTypeElement(type), FIELD_NAME_ID) != null;
+    }
+
+    public static boolean isContainId(VariableElement element) {
+        return isContainId(element.asType());
     }
 
     public static boolean isList(TypeMirror mirror) {
