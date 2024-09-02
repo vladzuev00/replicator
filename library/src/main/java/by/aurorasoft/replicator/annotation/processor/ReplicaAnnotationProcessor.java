@@ -17,7 +17,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @RequiredArgsConstructor
-public abstract class ReplicateAnnotationProcessor<E extends Element> extends AbstractProcessor {
+public abstract class ReplicaAnnotationProcessor<E extends Element> extends AbstractProcessor {
     private final Class<? extends Annotation> annotation;
     private final Class<E> elementType;
 
