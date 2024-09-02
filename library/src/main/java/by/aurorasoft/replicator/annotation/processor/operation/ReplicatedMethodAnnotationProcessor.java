@@ -8,6 +8,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
@@ -27,18 +28,24 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     @Override
     protected final Stream<String> getRequirementsInternal() {
-        return Stream.of(CLASS_REQUIREMENT, getReturnTypeRequirement(), getParametersRequirement());
+        return Stream.of(getClassRequirement(), getReturnTypeRequirement(), getParametersRequirement())
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     protected abstract boolean isValidReturnType(TypeMirror type);
 
     protected abstract boolean isValidParameters(List<? extends VariableElement> parameters);
 
-    protected abstract String getReturnTypeRequirement();
+    protected abstract Optional<String> getReturnTypeRequirement();
 
-    protected abstract String getParametersRequirement();
+    protected abstract Optional<String> getParametersRequirement();
 
     private boolean isInsideReplicatedService(ExecutableElement method) {
         return method.getEnclosingElement().getAnnotation(ReplicatedService.class) != null;
+    }
+
+    private Optional<String> getClassRequirement() {
+        return Optional.of(CLASS_REQUIREMENT);
     }
 }
