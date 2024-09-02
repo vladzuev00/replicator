@@ -1,32 +1,27 @@
 package by.aurorasoft.replicator.annotation.processor.operation;
 
+import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
 import com.google.auto.service.AutoService;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.Processor;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
-import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Optional;
 
-import static org.checkerframework.javacutil.TypesUtils.getClassFromType;
+import static by.aurorasoft.replicator.util.PropertyUtil.*;
 
 @AutoService(Processor.class)
 public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String RETURN_TYPE_REQUIREMENT = "Returned object should contain id";
+    private static final String RETURN_TYPE_REQUIREMENT = "Returned objects should contain id";
 
-    public ReplicatedSaveAllProcessor(Class<? extends Annotation> annotation) {
-        super(annotation);
+    public ReplicatedSaveAllProcessor() {
+        super(ReplicatedSaveAll.class);
     }
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        Class<?> type = getClassFromType(mirror);
-        type.getGenericSuperclass()
-        return getClassFromType(mirror) == List.class && ElementUtils.();
+        return isList(mirror) && isContainId(getFirstGenericType(mirror));
     }
 
     @Override
