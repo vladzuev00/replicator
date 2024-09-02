@@ -11,14 +11,16 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.*;
+import static java.util.stream.Stream.concat;
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @RequiredArgsConstructor
 public abstract class ReplicaAnnotationProcessor<E extends Element> extends AbstractProcessor {
+    private static final String PUBLIC_MODIFIER_REQUIREMENT = "Element should be public";
+
     private final Class<? extends Annotation> annotation;
     private final Class<E> elementType;
 
@@ -43,7 +45,7 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
 
     protected abstract boolean isValidInternal(E element);
 
-    protected abstract Set<String> getRequirements();
+    protected abstract Stream<String> getRequirementsInternal();
 
     private Stream<E> getAnnotatedElements(TypeElement annotation, RoundEnvironment env) {
         return env.getElementsAnnotatedWith(annotation)
@@ -58,6 +60,10 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
     private void alertError(E element) {
         ErrorMessage message = new ErrorMessage(annotation, getRequirements());
         processingEnv.getMessager().printMessage(ERROR, message.getText(), element);
+    }
+
+    private Set<String> getRequirements() {
+        return concat(Stream.of(PUBLIC_MODIFIER_REQUIREMENT), getRequirementsInternal()).collect(toUnmodifiableSet());
     }
 
     @RequiredArgsConstructor

@@ -1,25 +1,17 @@
 package by.aurorasoft.replicator.annotation.processor.operation;
 
 import by.aurorasoft.replicator.annotation.processor.ReplicaAnnotationProcessor;
-import lombok.RequiredArgsConstructor;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import static javax.lang.model.SourceVersion.latestSupported;
-
-public class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
+public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
     private static final String TEMPLATE_CLASS_REQUIREMENT = "Method should be inside class annotated by @%s";
     private static final String MODIFIER_REQUIREMENT = "Method should be public";
 
-    public ReplicatedMethodAnnotationProcessor(Class<? extends Annotation> annotation, Class<ExecutableElement> elementType) {
-        super(annotation, elementType);
+    public ReplicatedMethodAnnotationProcessor(Class<? extends Annotation> annotation) {
+        super(annotation, ExecutableElement.class);
     }
 
     @Override
@@ -28,25 +20,10 @@ public class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProces
     }
 
     @Override
-    protected Set<String> getRequirements() {
+    protected Set<String> getRequirementsInternal() {
         return null;
     }
 
-
-//    @Override
-//    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-//        return false;
-//    }
-//
-//    @Override
-//    public final Set<String> getSupportedAnnotationTypes() {
-//        return Set.of(annotation.getName());
-//    }
-//
-//    @Override
-//    public final SourceVersion getSupportedSourceVersion() {
-//        return latestSupported();
-//    }
 
 //    public ReplicatedOperationProcessor(Class<? extends Annotation> annotation) {
 //        super(annotation, ExecutableElement.class);
