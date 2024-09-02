@@ -5,22 +5,22 @@ import by.aurorasoft.replicator.annotation.processor.ReplicaAnnotationProcessor;
 import javax.lang.model.element.ExecutableElement;
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
-    private static final String TEMPLATE_CLASS_REQUIREMENT = "Method should be inside class annotated by @%s";
-    private static final String MODIFIER_REQUIREMENT = "Method should be public";
+    private static final String TEMPLATE_CLASS_REQUIREMENT = "It should be inside class annotated by @%s";
 
     public ReplicatedMethodAnnotationProcessor(Class<? extends Annotation> annotation) {
         super(annotation, ExecutableElement.class);
     }
 
     @Override
-    protected boolean isValidInternal(ExecutableElement element) {
+    protected boolean isValidPublicElement(ExecutableElement element) {
         return false;
     }
 
     @Override
-    protected Set<String> getRequirementsInternal() {
+    protected Stream<String> getRequirementsInternal() {
         return null;
     }
 

@@ -19,7 +19,7 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 
 @RequiredArgsConstructor
 public abstract class ReplicaAnnotationProcessor<E extends Element> extends AbstractProcessor {
-    private static final String PUBLIC_MODIFIER_REQUIREMENT = "Element should be public";
+    private static final String PUBLIC_MODIFIER_REQUIREMENT = "It should be public";
 
     private final Class<? extends Annotation> annotation;
     private final Class<E> elementType;
@@ -43,7 +43,7 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         return latestSupported();
     }
 
-    protected abstract boolean isValidInternal(E element);
+    protected abstract boolean isValidPublicElement(E element);
 
     protected abstract Stream<String> getRequirementsInternal();
 
@@ -54,7 +54,7 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
     }
 
     private boolean isValid(E element) {
-        return element.getModifiers().contains(PUBLIC) && isValidInternal(element);
+        return element.getModifiers().contains(PUBLIC) && isValidPublicElement(element);
     }
 
     private void alertError(E element) {
