@@ -1,34 +1,37 @@
 package by.aurorasoft.replicator.annotation.processor.operation;
 
-import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import com.google.auto.service.AutoService;
+import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.PropertyUtil.isContainId;
-import static java.util.Optional.empty;
+import static org.checkerframework.javacutil.TypesUtils.getClassFromType;
 
 @AutoService(Processor.class)
-public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationProcessor {
+public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotationProcessor {
     private static final String RETURN_TYPE_REQUIREMENT = "Returned object should contain id";
 
-    public ReplicatedSaveProcessor() {
-        super(ReplicatedSave.class);
+    public ReplicatedSaveAllProcessor(Class<? extends Annotation> annotation) {
+        super(annotation);
     }
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isContainId(mirror);
+        Class<?> type = getClassFromType(mirror);
+        type.getGenericSuperclass()
+        return getClassFromType(mirror) == List.class && ElementUtils.();
     }
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> parameters) {
-        return true;
+        return false;
     }
 
     @Override
@@ -38,6 +41,6 @@ public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationPro
 
     @Override
     protected Optional<String> getParametersRequirement() {
-        return empty();
+        return Optional.empty();
     }
 }

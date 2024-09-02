@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.producer;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.factory.replication.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;

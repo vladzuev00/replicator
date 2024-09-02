@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.factory.registry;
 
-import by.aurorasoft.replicator.annotation.ReplicatedService;
+import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.factory.producer.ReplicationProducerFactory;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;

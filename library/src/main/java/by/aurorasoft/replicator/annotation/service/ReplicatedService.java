@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.annotation;
+package by.aurorasoft.replicator.annotation.service;
 
 import org.springframework.core.serializer.Serializer;
 import org.springframework.stereotype.Service;

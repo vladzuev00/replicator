@@ -2,10 +2,12 @@ package by.aurorasoft.replicator.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.checkerframework.javacutil.TypesUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.ReflectionUtils;
 
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.beans.PropertyDescriptor;
 
 import static java.util.Objects.requireNonNull;
@@ -16,8 +18,8 @@ import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 public final class PropertyUtil {
     private static final String FIELD_NAME_ID = "id";
 
-    public static boolean isContainId(TypeElement type) {
-        return findFieldInType(type, FIELD_NAME_ID) != null;
+    public static boolean isContainId(TypeMirror type) {
+        return findFieldInType(TypesUtils.getTypeElement(type), FIELD_NAME_ID) != null;
     }
 
     @SneakyThrows

@@ -25,9 +25,9 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
     private final Class<E> elementType;
 
     @Override
-    public final boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
+    public final boolean process(Set<? extends TypeElement> annotations, RoundEnvironment environment) {
         annotations.stream()
-                .flatMap(annotation -> getAnnotatedElements(annotation, env))
+                .flatMap(annotation -> getAnnotatedElements(annotation, environment))
                 .filter(element -> !isValid(element))
                 .forEach(this::alertError);
         return true;
@@ -47,8 +47,8 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
 
     protected abstract Stream<String> getRequirementsInternal();
 
-    private Stream<E> getAnnotatedElements(TypeElement annotation, RoundEnvironment env) {
-        return env.getElementsAnnotatedWith(annotation)
+    private Stream<E> getAnnotatedElements(TypeElement annotation, RoundEnvironment environment) {
+        return environment.getElementsAnnotatedWith(annotation)
                 .stream()
                 .map(elementType::cast);
     }
