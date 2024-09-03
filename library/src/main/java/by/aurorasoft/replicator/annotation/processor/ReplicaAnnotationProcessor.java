@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.annotation.processor;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -11,15 +12,18 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
+import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.getAnnotatedElements;
+import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.isPublic;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Stream.concat;
 import static javax.lang.model.SourceVersion.latestSupported;
-import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @RequiredArgsConstructor
 public abstract class ReplicaAnnotationProcessor<E extends Element> extends AbstractProcessor {
     private static final String PUBLIC_MODIFIER_REQUIREMENT = "It should be public";
+    private static final String REQUIREMENTS_DELIMITER = "\n\t";
 
     private final Class<? extends Annotation> annotation;
     private final Class<E> elementType;
@@ -27,9 +31,10 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
     @Override
     public final boolean process(Set<? extends TypeElement> annotations, RoundEnvironment environment) {
         annotations.stream()
-                .flatMap(annotation -> getAnnotatedElements(annotation, environment))
+                .flatMap(annotation -> getAnnotatedElements(annotation, environment, elementType))
                 .filter(element -> !isValid(element))
-                .forEach(this::alertError);
+                .map(this::createErrorMessage)
+                .forEach(this::alert);
         return true;
     }
 
@@ -47,41 +52,48 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
 
     protected abstract Stream<String> getRequirementsInternal();
 
-    private Stream<E> getAnnotatedElements(TypeElement annotation, RoundEnvironment environment) {
-        return environment.getElementsAnnotatedWith(annotation)
-                .stream()
-                .map(elementType::cast);
-    }
-
     private boolean isValid(E element) {
-        return element.getModifiers().contains(PUBLIC) && isValidPublicElement(element);
+        return isPublic(element) && isValidPublicElement(element);
     }
 
-    private void alertError(E element) {
-        ErrorMessage message = new ErrorMessage(annotation, getRequirements());
-        processingEnv.getMessager().printMessage(ERROR, message.getText(), element);
+    private ErrorMessage createErrorMessage(E element) {
+        return concat(Stream.of(PUBLIC_MODIFIER_REQUIREMENT), getRequirementsInternal())
+                .collect(
+                        collectingAndThen(
+                                joining(REQUIREMENTS_DELIMITER),
+                                requirements -> new ErrorMessage(element, annotation, requirements)
+                        )
+                );
     }
 
-    private Set<String> getRequirements() {
-        return concat(Stream.of(PUBLIC_MODIFIER_REQUIREMENT), getRequirementsInternal()).collect(toUnmodifiableSet());
+    private void alert(ErrorMessage message) {
+        processingEnv.getMessager().printMessage(ERROR, message.getText(), message.getElement());
     }
 
-    @RequiredArgsConstructor
-    static final class ErrorMessage {
-        private static final String TEXT_TEMPLATE = "Element annotated by @%s should match next requirements: %s";
-        private static final String REQUIREMENTS_DELIMITER = "\n\t";
-
-        private final Class<? extends Annotation> annotation;
-        private final Set<String> requirements;
-
-        public String getText() {
-            return requirements.stream()
-                    .collect(
-                            collectingAndThen(
-                                    joining(REQUIREMENTS_DELIMITER),
-                                    requirements -> TEXT_TEMPLATE.formatted(annotation.getSimpleName(), requirements)
-                            )
-                    );
-        }
+    @Value
+    static class ErrorMessage {
+        Element element;
+        Class<? extends Annotation> annotation;
+        String requirements;
     }
+
+//    @RequiredArgsConstructor
+//    static final class ErrorMessage {
+//        private static final String TEXT_TEMPLATE = "Element annotated by @%s should match next requirements: %s";
+//        private static final String REQUIREMENTS_DELIMITER = "\n\t";
+//
+//        private final Element element;
+//        private final Class<? extends Annotation> annotation;
+//        private final Set<String> requirements;
+//
+//        public String getText() {
+//            return requirements.stream()
+//                    .collect(
+//                            collectingAndThen(
+//                                    joining(REQUIREMENTS_DELIMITER),
+//                                    requirements -> TEXT_TEMPLATE.formatted(annotation.getSimpleName(), requirements)
+//                            )
+//                    );
+//        }
+//    }
 }

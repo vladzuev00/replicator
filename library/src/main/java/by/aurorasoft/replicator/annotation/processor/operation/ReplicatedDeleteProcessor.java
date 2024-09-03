@@ -2,14 +2,10 @@ package by.aurorasoft.replicator.annotation.processor.operation;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
 import com.google.auto.service.AutoService;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +15,7 @@ import static java.util.Optional.empty;
 @AutoService(Processor.class)
 public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationProcessor {
     private static final String PARAMETERS_REQUIREMENT = "Method should contain at least one parameter and "
-            + "this parameter should contain id";
+            + "this parameter should contain method to id's getter";
 
     public ReplicatedDeleteProcessor() {
         super(ReplicatedDelete.class);
@@ -37,8 +33,7 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-//        return elements.size() > 0 && isContainId(elements.get(0));
-        return elements.size() > 0 && !ElementUtils.findFieldsInTypeOrSuperType(elements.get(0).asType(), Collections.singleton("id")).isEmpty();
+        return elements.size() > 0 && isContainId(elements.get(0));
     }
 
     @Override

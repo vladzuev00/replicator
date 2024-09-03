@@ -2,10 +2,12 @@ package by.aurorasoft.replicator.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TypesUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.ReflectionUtils;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -29,6 +31,14 @@ public final class PropertyUtil {
 
     public static boolean isContainId(VariableElement element) {
         return isContainId(element.asType());
+    }
+
+    public static boolean isContainIdGetter(TypeMirror typeMirror) {
+        return false;
+    }
+
+    public static boolean isContainIdGetter(VariableElement element) {
+        return false;
     }
 
     public static boolean isContainRepository(TypeMirror mirror, Elements elements) {
