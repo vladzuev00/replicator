@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.util.PropertyUtil.isContainId;
+import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationProcessor {
@@ -18,6 +19,11 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
 
     public ReplicatedDeleteProcessor() {
         super(ReplicatedDelete.class);
+    }
+
+    @Override
+    protected boolean isValidReplicatedService(TypeMirror mirror) {
+        return true;
     }
 
     @Override
@@ -31,8 +37,13 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
     }
 
     @Override
+    protected Optional<String> getReplicatedServiceRequirement() {
+        return empty();
+    }
+
+    @Override
     protected Optional<String> getReturnTypeRequirement() {
-        return Optional.empty();
+        return empty();
     }
 
     @Override
