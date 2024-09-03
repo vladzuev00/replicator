@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TypesUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.ReflectionUtils;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.checkerframework.javacutil.ElementUtils.findFieldInType;
-import static org.checkerframework.javacutil.ElementUtils.getAllFieldsIn;
 import static org.checkerframework.javacutil.TypesUtils.getClassFromType;
 import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
@@ -46,7 +44,7 @@ public final class PropertyUtil {
         return getClassFromType(mirror) == List.class;
     }
 
-    public static TypeMirror getFirstGenericType(TypeMirror mirror) {
+    public static TypeMirror getFirstGenericParameterType(TypeMirror mirror) {
         return ((DeclaredType) TypesUtils.getTypeElement(mirror)).getTypeArguments().get(0);
     }
 

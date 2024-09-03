@@ -10,23 +10,34 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.util.PropertyUtil.*;
+import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String RETURN_TYPE_REQUIREMENT = "Returned objects should contain id";
+    private static final String RETURN_TYPE_REQUIREMENT = "Returned list's objects should contain id";
 
     public ReplicatedSaveAllProcessor() {
         super(ReplicatedSaveAll.class);
     }
 
     @Override
+    protected boolean isValidReplicatedService(TypeMirror mirror) {
+        return true;
+    }
+
+    @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isList(mirror) && isContainId(getFirstGenericType(mirror));
+        return isList(mirror) && isContainId(getFirstGenericParameterType(mirror));
     }
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> parameters) {
-        return false;
+        return true;
+    }
+
+    @Override
+    protected Optional<String> getReplicatedServiceRequirement() {
+        return empty();
     }
 
     @Override
@@ -36,6 +47,6 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected Optional<String> getParametersRequirement() {
-        return Optional.empty();
+        return empty();
     }
 }
