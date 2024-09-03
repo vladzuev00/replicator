@@ -2,21 +2,18 @@ package by.aurorasoft.replicator.annotation.processor.operation;
 
 import by.aurorasoft.replicator.annotation.processor.ReplicaAnnotationProcessor;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TypesUtils;
 
-import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Stream.concat;
+import static org.checkerframework.javacutil.AnnotationUtils.containsSameByClass;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
     private static final String INSIDE_REPLICATED_SERVICE_REQUIREMENT = "It should be inside class annotated by @"
@@ -28,10 +25,7 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     @Override
     protected final boolean isValidPublicElement(ExecutableElement element) {
-//        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "" + isValidEnclosingClass(element));
-//        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "" + isValidReturnType(element.getReturnType()));
-//        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "" + isValidParameters(element.getParameters()));
-        return isValidEnclosingClass(element)
+        return isValidEnclosingClass(element.getEnclosingElement())
                 && isValidReturnType(element.getReturnType())
                 && isValidParameters(element.getParameters());
     }
@@ -55,9 +49,9 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     protected abstract Optional<String> getParametersRequirement();
 
-    private boolean isValidEnclosingClass(ExecutableElement element) {
-        TypeMirror mirror = element.getEnclosingElement().asType();
-        return AnnotationUtils.containsSameByClass(element.getEnclosingElement().getAnnotationMirrors(), ReplicatedService.class) && isValidReplicatedService(mirror);
+    private boolean isValidEnclosingClass(Element element) {
+        return containsSameByClass(element.getAnnotationMirrors(), ReplicatedService.class)
+                && isValidReplicatedService(element.asType());
     }
 
     private Stream<Optional<String>> getEnclosingClassRequirement() {
