@@ -30,8 +30,7 @@ public class ReplicationConfig {
     }
 
     @Bean
-    public ReplicationProducerRegistry replicationProducerRegistry(ReplicationProducerRegistryFactory factory,
-                                                                   List<ReplicationProduceSetting<?, ?>> settings) {
-        return factory.create(settings);
+    public ReplicationProducerRegistry replicationProducerRegistry(ReplicationProducerRegistryFactory factory) {
+        return factory.create();
     }
 }

@@ -26,7 +26,8 @@ public final class ReplicationProducerRegistryFactory {
     }
 
     private ReplicationProducer createProducer(Object service) {
-        ReplicatedService annotation = service.getClass().getAnnotation(ReplicatedService.class);
-        return producerFactory.create(annotation);
+        return null;
+//        ReplicatedService annotation = service.getClass().getAnnotation(ReplicatedService.class);
+//        return producerFactory.create(annotation);
     }
 }

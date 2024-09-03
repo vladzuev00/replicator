@@ -15,12 +15,12 @@ public final class ReplicationKafkaTemplateConfigsFactory {
         this.bootstrapAddress = bootstrapAddress;
     }
 
-    public Map<String, Object> create(ReplicationProduceSetting<?, ?> setting) {
+    public Map<String, Object> create() {
         return Map.of(
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
-                BATCH_SIZE_CONFIG, setting.getBatchSize(),
-                LINGER_MS_CONFIG, setting.getLingerMs(),
-                DELIVERY_TIMEOUT_MS_CONFIG, setting.getDeliveryTimeoutMs(),
+//                BATCH_SIZE_CONFIG, setting.getBatchSize(),
+//                LINGER_MS_CONFIG, setting.getLingerMs(),
+//                DELIVERY_TIMEOUT_MS_CONFIG, setting.getDeliveryTimeoutMs(),
                 ENABLE_IDEMPOTENCE_CONFIG, true
         );
     }

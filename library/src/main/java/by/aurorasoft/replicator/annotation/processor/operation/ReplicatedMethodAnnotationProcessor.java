@@ -2,10 +2,15 @@ package by.aurorasoft.replicator.annotation.processor.operation;
 
 import by.aurorasoft.replicator.annotation.processor.ReplicaAnnotationProcessor;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TypesUtils;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +28,9 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     @Override
     protected final boolean isValidPublicElement(ExecutableElement element) {
+//        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "" + isValidEnclosingClass(element));
+//        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "" + isValidReturnType(element.getReturnType()));
+//        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "" + isValidParameters(element.getParameters()));
         return isValidEnclosingClass(element)
                 && isValidReturnType(element.getReturnType())
                 && isValidParameters(element.getParameters());
@@ -49,7 +57,7 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     private boolean isValidEnclosingClass(ExecutableElement element) {
         TypeMirror mirror = element.getEnclosingElement().asType();
-        return mirror.getAnnotation(ReplicatedService.class) != null && isValidReplicatedService(mirror);
+        return AnnotationUtils.containsSameByClass(element.getEnclosingElement().getAnnotationMirrors(), ReplicatedService.class) && isValidReplicatedService(mirror);
     }
 
     private Stream<Optional<String>> getEnclosingClassRequirement() {

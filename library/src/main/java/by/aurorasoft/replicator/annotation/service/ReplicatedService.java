@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.annotation.service;
 
-import org.springframework.core.serializer.Serializer;
+import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

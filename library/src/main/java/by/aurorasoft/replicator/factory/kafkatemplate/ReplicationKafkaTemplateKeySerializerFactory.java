@@ -9,7 +9,8 @@ public final class ReplicationKafkaTemplateKeySerializerFactory {
 
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    public Serializer<Object> create(ReplicationProduceSetting<?, ?> setting) {
-        return (Serializer<Object>) setting.getIdSerializer();
+    public Serializer<Object> create() {
+        return null;
+//        return (Serializer<Object>) setting.getIdSerializer();
     }
 }
