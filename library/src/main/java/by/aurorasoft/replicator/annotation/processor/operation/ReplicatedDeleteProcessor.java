@@ -33,7 +33,7 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return elements.size() > 1 && isContainId(elements.get(0));
+        return elements.size() > 0 && isContainId(elements.get(0));
     }
 
     @Override
