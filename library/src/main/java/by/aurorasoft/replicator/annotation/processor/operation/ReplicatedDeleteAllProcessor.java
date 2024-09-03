@@ -9,11 +9,20 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
+import static by.aurorasoft.replicator.util.PropertyUtil.isContainRepository;
+import static java.util.Optional.empty;
+
 @AutoService(Processor.class)
 public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotationProcessor {
+    private static final String REPLICATED_SERVICE_REQUIREMENT = "Service should contain repository";
 
     public ReplicatedDeleteAllProcessor() {
         super(ReplicatedDeleteAll.class);
+    }
+
+    @Override
+    protected boolean isValidReplicatedService(TypeMirror mirror) {
+        return isContainRepository(mirror, processingEnv.getElementUtils());
     }
 
     @Override
@@ -27,12 +36,17 @@ public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotati
     }
 
     @Override
+    protected Optional<String> getReplicatedServiceRequirement() {
+        return Optional.of(REPLICATED_SERVICE_REQUIREMENT);
+    }
+
+    @Override
     protected Optional<String> getReturnTypeRequirement() {
-        return Optional.empty();
+        return empty();
     }
 
     @Override
     protected Optional<String> getParametersRequirement() {
-        return Optional.empty();
+        return empty();
     }
 }
