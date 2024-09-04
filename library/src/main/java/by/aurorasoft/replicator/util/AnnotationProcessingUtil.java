@@ -3,11 +3,13 @@ package by.aurorasoft.replicator.util;
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
+import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.stream.Stream;
 
@@ -51,5 +53,10 @@ public final class AnnotationProcessingUtil {
 
     public static boolean isReplicatedService(TypeMirror mirror) {
         return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
+    }
+
+    public static boolean isIterable(VariableElement mirror) {
+        return true;
+//        return TypesUtils.getClassFromType(elements.get(0).asType()).isAssignableFrom(Iterable.class);
     }
 }
