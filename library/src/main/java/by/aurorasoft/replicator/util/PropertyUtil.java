@@ -34,7 +34,7 @@ public final class PropertyUtil {
         return isContainId(element.asType());
     }
 
-    public static boolean isContainIdGetter(TypeElement typeElement) {
+    public static boolean isContainIdGetter(TypeMirror typeMirror, ProcessingEnvironment environment) {
         return false;
     }
 
