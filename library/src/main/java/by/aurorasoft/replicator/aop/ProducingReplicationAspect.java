@@ -8,6 +8,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class ProducingReplicationAspect {
     @Before("@annotation(by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll)")
     public void produceDeleteAll(JoinPoint joinPoint) {
         ReplicationProducer producer = getProducer(joinPoint);
-        getJpaRepository(joinPoint.getTarget())
+        getRepository(joinPoint)
                 .findAll()
                 .stream()
                 .map(PropertyUtil::getId)
@@ -79,5 +80,9 @@ public class ProducingReplicationAspect {
 
     private IllegalStateException createNoProducerException(Object service) {
         return new IllegalStateException("There is no producer for %s".formatted(service.getClass().getName()));
+    }
+
+    private JpaRepository<?, ?> getRepository(JoinPoint joinPoint) {
+        return getJpaRepository(joinPoint.getTarget());
     }
 }
