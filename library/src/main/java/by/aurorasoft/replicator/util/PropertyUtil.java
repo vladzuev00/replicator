@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.ReflectionUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -33,7 +34,7 @@ public final class PropertyUtil {
         return isContainId(element.asType());
     }
 
-    public static boolean isContainIdGetter(TypeMirror typeMirror) {
+    public static boolean isContainIdGetter(TypeElement typeElement) {
         return false;
     }
 

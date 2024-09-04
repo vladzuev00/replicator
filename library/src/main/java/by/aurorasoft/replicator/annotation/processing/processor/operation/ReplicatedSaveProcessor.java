@@ -14,7 +14,7 @@ import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String RETURN_TYPE_REQUIREMENT = "Returned object should contain id";
+    private static final String RETURN_TYPE_REQUIREMENT = "Returned object should contain id's getter";
 
     public ReplicatedSaveProcessor() {
         super(ReplicatedSave.class);
@@ -27,6 +27,8 @@ public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationPro
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
+        processingEnv.getElementUtils()
+                .getAllMembers()
         return isContainId(mirror);
     }
 
