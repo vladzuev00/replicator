@@ -9,7 +9,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.PropertyUtil.isContainRepository;
+import static by.aurorasoft.replicator.util.AnnotationProcessUtil.isContainRepository;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
@@ -22,7 +22,7 @@ public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotati
 
     @Override
     protected boolean isValidReplicatedService(TypeMirror mirror) {
-        return isContainRepository(mirror, processingEnv);
+        return isContainRepository(mirror);
     }
 
     @Override

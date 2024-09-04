@@ -9,7 +9,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.PropertyUtil.*;
+import static by.aurorasoft.replicator.util.AnnotationProcessUtil.*;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
@@ -27,7 +27,7 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isList(mirror) && isContainId(getFirstGenericParameterType(mirror));
+        return isList(mirror) && isContainIdGetter(getFirstGenericParameterType(mirror));
     }
 
     @Override

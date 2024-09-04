@@ -26,43 +26,6 @@ import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 public final class PropertyUtil {
     private static final String FIELD_NAME_ID = "id";
 
-    public static boolean isContainId(TypeMirror type) {
-        return findFieldInType(getTypeElement(type), FIELD_NAME_ID) != null;
-    }
-
-    public static boolean isContainId(VariableElement element) {
-        return isContainId(element.asType());
-    }
-
-    public static boolean isContainIdGetter(TypeMirror typeMirror, ProcessingEnvironment environment) {
-        return false;
-    }
-
-    public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
-        return false;
-    }
-
-    public static boolean isContainRepository(TypeMirror mirror, ProcessingEnvironment environment) {
-        return false;
-//        getAllFieldsIn(getTypeElement(mirror), elements)
-//                .stream()
-//                .anyMatch(element -> elements.is)
-//                ;
-//        return findFieldInType(getTypeElement(mirror), FIELD_NAME_ID) != null;
-    }
-
-    public static boolean isList(TypeMirror mirror) {
-        return getClassFromType(mirror) == List.class;
-    }
-
-    public static TypeMirror getFirstGenericParameterType(TypeMirror mirror) {
-        return ((DeclaredType) TypesUtils.getTypeElement(mirror)).getTypeArguments().get(0);
-    }
-
-    public static TypeMirror getFirstGenericParameterType(VariableElement element) {
-        return ((DeclaredType) TypesUtils.getTypeElement(element.asType())).getTypeArguments().get(0);
-    }
-
     @SneakyThrows
     public static Object getId(Object object) {
         return getIdDescriptor(object.getClass())
