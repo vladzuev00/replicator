@@ -9,7 +9,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.isIterable;
+import static by.aurorasoft.replicator.util.AnnotationProcessUtil.isIterable;
 import static by.aurorasoft.replicator.util.PropertyUtil.*;
 import static java.util.Optional.empty;
 

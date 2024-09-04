@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.isReplicatedService;
+import static by.aurorasoft.replicator.util.AnnotationProcessUtil.isReplicatedService;
 import static java.util.stream.Stream.concat;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
