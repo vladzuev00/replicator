@@ -31,7 +31,7 @@ public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationPro
     }
 
     @Override
-    protected boolean isValidParameters(List<? extends VariableElement> parameters) {
+    protected boolean isValidParameters(List<? extends VariableElement> elements) {
         return true;
     }
 
