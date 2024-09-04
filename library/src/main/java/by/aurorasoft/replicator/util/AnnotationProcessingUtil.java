@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.util;
 
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
+import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -13,6 +14,7 @@ import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.joining;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.tools.Diagnostic.Kind.ERROR;
+import static org.checkerframework.javacutil.AnnotationUtils.containsSameByClass;
 
 @UtilityClass
 public final class AnnotationProcessingUtil {
@@ -44,5 +46,9 @@ public final class AnnotationProcessingUtil {
                         )
                 );
         environment.getMessager().printMessage(ERROR, text, error.getElement());
+    }
+
+    public static boolean isReplicatedService(Element element) {
+        return containsSameByClass(element.getAnnotationMirrors(), ReplicatedService.class);
     }
 }

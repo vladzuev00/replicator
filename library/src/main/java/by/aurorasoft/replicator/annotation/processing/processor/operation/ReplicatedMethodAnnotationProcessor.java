@@ -3,15 +3,17 @@ package by.aurorasoft.replicator.annotation.processing.processor.operation;
 import by.aurorasoft.replicator.annotation.processing.processor.ReplicaAnnotationProcessor;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.isReplicatedService;
 import static java.util.stream.Stream.concat;
-import static org.checkerframework.javacutil.AnnotationUtils.containsSameByClass;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
     private static final String INSIDE_REPLICATED_SERVICE_REQUIREMENT = "It should be inside class annotated by @"
@@ -48,8 +50,7 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
     protected abstract Optional<String> getParametersRequirement();
 
     private boolean isValidEnclosingClass(Element element) {
-        return containsSameByClass(element.getAnnotationMirrors(), ReplicatedService.class)
-                && isValidReplicatedService(element.asType());
+        return isReplicatedService(element) && isValidReplicatedService(element.asType());
     }
 
     private Stream<Optional<String>> getEnclosingClassRequirement() {
