@@ -3,7 +3,6 @@ package by.aurorasoft.replicator.util;
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
-import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
