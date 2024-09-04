@@ -1,8 +1,7 @@
-package by.aurorasoft.replicator.annotation.processor.operation;
+package by.aurorasoft.replicator.annotation.processing.operation;
 
-import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
+import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
 import com.google.auto.service.AutoService;
-import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.VariableElement;
@@ -10,14 +9,15 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
+import static by.aurorasoft.replicator.util.PropertyUtil.*;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
-public final class ReplicatedDeleteByIdsProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String PARAMETERS_REQUIREMENT = "";
+public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotationProcessor {
+    private static final String RETURN_TYPE_REQUIREMENT = "Returned list's objects should contain id";
 
-    public ReplicatedDeleteByIdsProcessor() {
-        super(ReplicatedDeleteByIds.class);
+    public ReplicatedSaveAllProcessor() {
+        super(ReplicatedSaveAll.class);
     }
 
     @Override
@@ -27,12 +27,12 @@ public final class ReplicatedDeleteByIdsProcessor extends ReplicatedMethodAnnota
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return true;
+        return isList(mirror) && isContainId(getFirstGenericParameterType(mirror));
     }
 
     @Override
-    protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return elements.size() > 0 && TypesUtils.getClassFromType(elements.get(0).asType()).isAssignableFrom(Iterable.class);
+    protected boolean isValidParameters(List<? extends VariableElement> parameters) {
+        return true;
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class ReplicatedDeleteByIdsProcessor extends ReplicatedMethodAnnota
 
     @Override
     protected Optional<String> getReturnTypeRequirement() {
-        return empty();
+        return Optional.of(RETURN_TYPE_REQUIREMENT);
     }
 
     @Override

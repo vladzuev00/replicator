@@ -1,6 +1,6 @@
-package by.aurorasoft.replicator.annotation.processor.operation;
+package by.aurorasoft.replicator.annotation.processing.operation;
 
-import by.aurorasoft.replicator.annotation.processor.ReplicaAnnotationProcessor;
+import by.aurorasoft.replicator.annotation.processing.ReplicaAnnotationProcessor;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 
 import javax.lang.model.element.*;

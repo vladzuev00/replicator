@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.annotation.processor.operation;
+package by.aurorasoft.replicator.annotation.processing.operation;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import com.google.auto.service.AutoService;

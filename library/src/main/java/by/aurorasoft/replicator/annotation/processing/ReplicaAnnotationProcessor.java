@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.annotation.processor;
+package by.aurorasoft.replicator.annotation.processing;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -74,7 +74,7 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
     static class ErrorMessage {
         Element element;
         Class<? extends Annotation> annotation;
-        String requirements;
+        Set<String> requirements;
     }
 
 //    @RequiredArgsConstructor

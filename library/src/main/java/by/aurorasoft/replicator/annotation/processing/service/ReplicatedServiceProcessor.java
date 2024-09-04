@@ -1,6 +1,6 @@
-package by.aurorasoft.replicator.annotation.processor.service;
+package by.aurorasoft.replicator.annotation.processing.service;
 
-import by.aurorasoft.replicator.annotation.processor.ReplicaAnnotationProcessor;
+import by.aurorasoft.replicator.annotation.processing.ReplicaAnnotationProcessor;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import com.google.auto.service.AutoService;
 
