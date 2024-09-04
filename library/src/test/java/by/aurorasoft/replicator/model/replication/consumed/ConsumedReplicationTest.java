@@ -33,7 +33,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
     @Test
     public void replicationShouldBeExecuted() {
-        TestEntity givenEntity = TestEntity.builder().build();
+        TestEntity givenEntity = new TestEntity();
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
         @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
@@ -53,7 +53,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
     @ParameterizedTest
     @MethodSource("provideCauseAndExpectedExceptionType")
     public void replicationShouldNotBeExecuted(Exception givenCause, Class<? extends Exception> expected) {
-        TestEntity givenEntity = TestEntity.builder().build();
+        TestEntity givenEntity = new TestEntity();
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
         @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
