@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.isIterable;
-import static by.aurorasoft.replicator.util.PropertyUtil.getFirstGenericParameterType;
-import static by.aurorasoft.replicator.util.PropertyUtil.isContainId;
+import static by.aurorasoft.replicator.util.PropertyUtil.*;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
@@ -37,7 +36,7 @@ public final class ReplicatedDeleteIterableProcessor extends ReplicatedMethodAnn
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
         return elements.size() > 0
                 && isIterable(elements.get(0))
-                && isContainId(getFirstGenericParameterType(elements.get(0)));
+                && isContainIdGetter(getFirstGenericParameterType(elements.get(0)), processingEnv);
     }
 
     @Override

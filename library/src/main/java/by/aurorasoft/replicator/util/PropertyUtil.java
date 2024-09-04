@@ -38,7 +38,7 @@ public final class PropertyUtil {
         return false;
     }
 
-    public static boolean isContainIdGetter(VariableElement element) {
+    public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
         return false;
     }
 
