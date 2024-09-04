@@ -42,7 +42,7 @@ public final class PropertyUtil {
         return false;
     }
 
-    public static boolean isContainRepository(TypeMirror mirror, Elements elements) {
+    public static boolean isContainRepository(TypeMirror mirror, ProcessingEnvironment environment) {
         return false;
 //        getAllFieldsIn(getTypeElement(mirror), elements)
 //                .stream()

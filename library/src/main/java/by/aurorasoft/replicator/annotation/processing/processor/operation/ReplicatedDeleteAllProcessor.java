@@ -22,7 +22,7 @@ public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotati
 
     @Override
     protected boolean isValidReplicatedService(TypeMirror mirror) {
-        return isContainRepository(mirror, processingEnv.getElementUtils());
+        return isContainRepository(mirror, processingEnv);
     }
 
     @Override
