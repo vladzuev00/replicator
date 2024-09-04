@@ -6,7 +6,6 @@ import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerCon
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.serialization.LongSerializer;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,8 @@ import java.util.List;
 )
 @RequiredArgsConstructor
 public class TestService {
+
+    @SuppressWarnings("unused")
     private final TestRepository repository;
 
     @ReplicatedSave
@@ -53,6 +54,6 @@ public class TestService {
 
     @ReplicatedDeleteAll
     public void deleteAll() {
-        
+
     }
 }

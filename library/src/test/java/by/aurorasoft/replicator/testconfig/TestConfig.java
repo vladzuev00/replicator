@@ -1,10 +1,10 @@
 package by.aurorasoft.replicator.testconfig;
 
 import by.aurorasoft.replicator.annotation.EnableReplication;
+import by.aurorasoft.replicator.testcrud.TestRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.kafka.core.KafkaAdmin;
 
 import static org.mockito.Mockito.mock;
@@ -21,5 +21,10 @@ public class TestConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
+    }
+
+    @Bean
+    public TestRepository testRepository() {
+        return mock(TestRepository.class);
     }
 }

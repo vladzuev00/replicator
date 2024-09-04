@@ -7,7 +7,8 @@ import by.aurorasoft.replicator.testcrud.TestEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,7 +33,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
     @Test
     public void replicationShouldBeExecuted() {
-        TestEntity givenEntity = mock(TestEntity.class);
+        TestEntity givenEntity = TestEntity.builder().build();
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
         @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
@@ -52,7 +53,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
     @ParameterizedTest
     @MethodSource("provideCauseAndExpectedExceptionType")
     public void replicationShouldNotBeExecuted(Exception givenCause, Class<? extends Exception> expected) {
-        TestEntity givenEntity = mock(TestEntity.class);
+        TestEntity givenEntity = TestEntity.builder().build();
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
         @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
 
@@ -63,11 +64,8 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
     @SneakyThrows(JsonProcessingException.class)
     private ConsumedReplication<TestEntity, Long> deserialize(String json) {
-        return objectMapper.readValue(
-                json,
-                new TypeReference<>() {
-                }
-        );
+        return objectMapper.readValue(json, new TypeReference<>() {
+        });
     }
 
     private void executeExpectingException(TestConsumedReplication replication,
