@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.annotation.processing;
 
+import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -12,18 +12,15 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.getAnnotatedElements;
-import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.isPublic;
+import static by.aurorasoft.replicator.util.AnnotationProcessingUtil.*;
 import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 import static java.util.stream.Stream.concat;
 import static javax.lang.model.SourceVersion.latestSupported;
-import static javax.tools.Diagnostic.Kind.ERROR;
 
 @RequiredArgsConstructor
 public abstract class ReplicaAnnotationProcessor<E extends Element> extends AbstractProcessor {
-    private static final String PUBLIC_MODIFIER_REQUIREMENT = "It should be public";
-    private static final String REQUIREMENTS_DELIMITER = "\n\t";
+    private static final String PUBLIC_MODIFIER_REQUIREMENT = "Element should be public";
 
     private final Class<? extends Annotation> annotation;
     private final Class<E> elementType;
@@ -33,8 +30,8 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         annotations.stream()
                 .flatMap(annotation -> getAnnotatedElements(annotation, environment, elementType))
                 .filter(element -> !isValid(element))
-                .map(this::createErrorMessage)
-                .forEach(this::alert);
+                .map(this::createError)
+                .forEach(error -> alert(error, processingEnv));
         return true;
     }
 
@@ -56,37 +53,13 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         return isPublic(element) && isValidPublicElement(element);
     }
 
-    private ErrorMessage createErrorMessage(E element) {
+    private AnnotationError createError(E element) {
         return concat(Stream.of(PUBLIC_MODIFIER_REQUIREMENT), getRequirementsInternal())
                 .collect(
                         collectingAndThen(
-                                joining(REQUIREMENTS_DELIMITER),
-                                requirements -> new ErrorMessage(element, annotation, requirements)
+                                toUnmodifiableSet(),
+                                requirements -> new AnnotationError(element, annotation, requirements)
                         )
                 );
     }
-
-    private void alert(ErrorMessage message) {
-        processingEnv.getMessager().printMessage(ERROR, message.getText(), message.getElement());
-    }
-
-//    @RequiredArgsConstructor
-//    static final class ErrorMessage {
-//        private static final String TEXT_TEMPLATE = "Element annotated by @%s should match next requirements: %s";
-//        private static final String REQUIREMENTS_DELIMITER = "\n\t";
-//
-//        private final Element element;
-//        private final Class<? extends Annotation> annotation;
-//        private final Set<String> requirements;
-//
-//        public String getText() {
-//            return requirements.stream()
-//                    .collect(
-//                            collectingAndThen(
-//                                    joining(REQUIREMENTS_DELIMITER),
-//                                    requirements -> TEXT_TEMPLATE.formatted(annotation.getSimpleName(), requirements)
-//                            )
-//                    );
-//        }
-//    }
 }
