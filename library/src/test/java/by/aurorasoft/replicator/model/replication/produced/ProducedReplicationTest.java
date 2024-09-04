@@ -2,7 +2,7 @@ package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.model.view.EntityJsonView;
-import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

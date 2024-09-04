@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.model.replication.consumed;
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
-import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

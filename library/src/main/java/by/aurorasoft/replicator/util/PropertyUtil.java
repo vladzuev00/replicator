@@ -14,6 +14,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -21,6 +22,7 @@ import static org.checkerframework.javacutil.ElementUtils.findFieldInType;
 import static org.checkerframework.javacutil.TypesUtils.getClassFromType;
 import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
+import static org.springframework.util.ReflectionUtils.findField;
 
 @UtilityClass
 public final class PropertyUtil {
@@ -34,10 +36,13 @@ public final class PropertyUtil {
     }
 
     public static JpaRepository<?, ?> getJpaRepository(Object object) {
+        Field field = requireNonNull(findField(object.getClass(), "repository"));
+        field.setAccessible(true);
         try {
-            return (JpaRepository<?, ?>) ReflectionUtils.findField(object.getClass(), field -> field.getType() == JpaRepository.class).get(object);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            Object value = org.springframework.util.ReflectionUtils.getField(field, object);
+            return (JpaRepository<?, ?>) value;
+        } finally {
+            field.setAccessible(false);
         }
     }
 

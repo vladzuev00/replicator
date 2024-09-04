@@ -4,8 +4,8 @@
 //import by.aurorasoft.replicator.factory.replication.SaveProducedReplicationFactory;
 //import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 //import by.aurorasoft.replicator.producer.ReplicationProducer;
-//import by.aurorasoft.replicator.testentity.TestEntity;
-//import by.aurorasoft.replicator.testrepository.TestRepository;
+//import by.aurorasoft.replicator.testcrud.TestEntity;
+//import by.aurorasoft.replicator.testcrud.TestRepository;
 //import by.aurorasoft.replicator.transaction.manager.ReplicationTransactionManager;
 //import org.apache.kafka.common.serialization.LongSerializer;
 //import org.junit.jupiter.api.BeforeEach;

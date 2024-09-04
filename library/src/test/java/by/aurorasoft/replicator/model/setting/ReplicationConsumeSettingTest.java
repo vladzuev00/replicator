@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.model.setting;
 
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
-import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.LongDeserializer;

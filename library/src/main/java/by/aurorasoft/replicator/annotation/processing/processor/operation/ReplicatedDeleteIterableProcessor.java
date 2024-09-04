@@ -34,9 +34,10 @@ public final class ReplicatedDeleteIterableProcessor extends ReplicatedMethodAnn
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return elements.size() > 0
-                && isIterable(elements.get(0))
-                && isContainIdGetter(getFirstGenericParameterType(elements.get(0)));
+        return true;
+//        return elements.size() > 0
+//                && isIterable(elements.get(0))
+//                && isContainIdGetter(getFirstGenericParameterType(elements.get(0)));
     }
 
     @Override

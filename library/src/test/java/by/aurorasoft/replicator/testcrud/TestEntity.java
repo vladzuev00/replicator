@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.testentity;
+package by.aurorasoft.replicator.testcrud;
 
 import lombok.*;
 

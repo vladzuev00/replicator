@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.factory.kafkastreams;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
-import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;

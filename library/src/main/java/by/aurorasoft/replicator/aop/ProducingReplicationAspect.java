@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static by.aurorasoft.replicator.util.AspectUtil.getFirstArgument;
+import static by.aurorasoft.replicator.util.AspectUtil.getIterableFirstArgument;
 import static by.aurorasoft.replicator.util.PropertyUtil.getId;
 import static by.aurorasoft.replicator.util.PropertyUtil.getJpaRepository;
 
@@ -72,27 +74,15 @@ public class ProducingReplicationAspect {
     }
 
     private ReplicationProducer getProducer(JoinPoint joinPoint) {
-        Object service = getService(joinPoint);
+        Object service = joinPoint.getThis();
         return producerRegistry.get(service).orElseThrow(() -> createNoProducerException(service));
-    }
-
-    private Object getService(JoinPoint joinPoint) {
-        return joinPoint.getThis();
     }
 
     private IllegalStateException createNoProducerException(Object service) {
         return new IllegalStateException("There is no producer for %s".formatted(service.getClass().getName()));
     }
 
-    private Iterable<?> getIterableFirstArgument(JoinPoint joinPoint) {
-        return (Iterable<?>) joinPoint.getArgs()[0];
-    }
-
-    private Object getFirstArgument(JoinPoint joinPoint) {
-        return joinPoint.getArgs()[0];
-    }
-
     private JpaRepository<?, ?> getRepository(JoinPoint joinPoint) {
-        return getJpaRepository(getService(joinPoint));
+        return getJpaRepository(joinPoint.getThis());
     }
 }

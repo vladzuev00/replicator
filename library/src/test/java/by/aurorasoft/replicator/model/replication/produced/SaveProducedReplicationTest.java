@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.model.view.EntityJsonView;
-import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;

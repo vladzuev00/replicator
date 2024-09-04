@@ -35,19 +35,23 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isPublic(Element element) {
-        return element.getModifiers().contains(PUBLIC);
+        return true;
+//        return element.getModifiers().contains(PUBLIC);
     }
 
     public static boolean isReplicatedService(TypeMirror mirror) {
-        return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
+        return true;
+//        return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
     }
 
     public static boolean isList(TypeMirror mirror) {
-        return isSame(mirror, List.class);
+        return true;
+//        return isSame(mirror, List.class);
     }
 
     public static boolean isIterable(VariableElement element) {
-        return isSame(element.asType(), Iterable.class);
+        return true;
+//        return isSame(element.asType(), Iterable.class);
     }
 
     public static TypeMirror getFirstGenericParameterType(TypeMirror mirror) {
@@ -59,11 +63,12 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isContainIdGetter(TypeMirror typeMirror) {
-        return getTypeElement(typeMirror).getEnclosedElements().stream()
-                .filter(element -> element.getKind() == ElementKind.METHOD)
-                .filter(element -> element.getSimpleName().contentEquals("getId"))
-                .filter(element -> element.getModifiers().contains(PUBLIC))
-                .findFirst().isPresent();
+        return true;
+//        return getTypeElement(typeMirror).getEnclosedElements().stream()
+//                .filter(element -> element.getKind() == ElementKind.METHOD)
+//                .filter(element -> element.getSimpleName().contentEquals("getId"))
+//                .filter(element -> element.getModifiers().contains(PUBLIC))
+//                .findFirst().isPresent();
     }
 
     public static boolean isContainIdGetter(VariableElement element) {
@@ -71,10 +76,11 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isContainRepository(TypeMirror mirror) {
-        return getTypeElement(mirror).getEnclosedElements().stream()
-                .filter(element -> element.getKind() == ElementKind.METHOD)
-                .filter(element -> getClassFromType(mirror) == JpaRepository.class)
-                .findFirst().isPresent();
+        return true;
+//        return getTypeElement(mirror).getEnclosedElements().stream()
+//                .filter(element -> element.getKind() == ElementKind.METHOD)
+//                .filter(element -> getClassFromType(mirror) == JpaRepository.class)
+//                .findFirst().isPresent();
     }
 
     private static boolean isSame(TypeMirror mirror, Class<?> type) {

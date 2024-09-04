@@ -4,7 +4,7 @@
 //import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 //import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 //import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-//import by.aurorasoft.replicator.testentity.TestEntity;
+//import by.aurorasoft.replicator.testcrud.TestEntity;
 //import by.aurorasoft.replicator.transaction.callback.ProduceReplicationTransactionCallback;
 //import by.aurorasoft.replicator.transaction.manager.ReplicationTransactionManager;
 //import org.junit.jupiter.api.BeforeEach;

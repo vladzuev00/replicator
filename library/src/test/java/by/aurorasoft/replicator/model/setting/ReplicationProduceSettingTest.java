@@ -1,7 +1,7 @@
 //package by.aurorasoft.replicator.model.setting;
 //
-//import by.aurorasoft.replicator.testentity.TestEntity;
-//import by.aurorasoft.replicator.testrepository.TestRepository;
+//import by.aurorasoft.replicator.testcrud.TestEntity;
+//import by.aurorasoft.replicator.testcrud.TestRepository;
 //import org.apache.kafka.common.serialization.LongSerializer;
 //import org.apache.kafka.common.serialization.Serializer;
 //import org.junit.jupiter.api.Test;

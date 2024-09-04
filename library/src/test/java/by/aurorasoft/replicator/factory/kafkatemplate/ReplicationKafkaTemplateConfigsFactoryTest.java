@@ -1,8 +1,8 @@
 //package by.aurorasoft.replicator.factory.kafkatemplate;
 //
 //import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-//import by.aurorasoft.replicator.testentity.TestEntity;
-//import by.aurorasoft.replicator.testrepository.TestRepository;
+//import by.aurorasoft.replicator.testcrud.TestEntity;
+//import by.aurorasoft.replicator.testcrud.TestRepository;
 //import org.apache.kafka.common.serialization.LongSerializer;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.model.view;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.testentity.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
