@@ -8,6 +8,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.collectingAndThen;
@@ -48,7 +49,7 @@ public final class AnnotationProcessingUtil {
         environment.getMessager().printMessage(ERROR, text, error.getElement());
     }
 
-    public static boolean isReplicatedService(Element element) {
-        return containsSameByClass(element.getAnnotationMirrors(), ReplicatedService.class);
+    public static boolean isReplicatedService(TypeMirror mirror) {
+        return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
     }
 }
