@@ -39,8 +39,7 @@ public final class PropertyUtil {
         Field field = requireNonNull(findField(object.getClass(), "repository"));
         field.setAccessible(true);
         try {
-            Object value = org.springframework.util.ReflectionUtils.getField(field, object);
-            return (JpaRepository<?, ?>) value;
+            return (JpaRepository<?, ?>) org.springframework.util.ReflectionUtils.getField(field, object);
         } finally {
             field.setAccessible(false);
         }
