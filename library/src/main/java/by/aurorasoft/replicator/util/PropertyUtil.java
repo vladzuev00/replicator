@@ -59,6 +59,10 @@ public final class PropertyUtil {
         return ((DeclaredType) TypesUtils.getTypeElement(mirror)).getTypeArguments().get(0);
     }
 
+    public static TypeMirror getFirstGenericParameterType(VariableElement element) {
+        return ((DeclaredType) TypesUtils.getTypeElement(element.asType())).getTypeArguments().get(0);
+    }
+
     @SneakyThrows
     public static Object getId(Object object) {
         return getIdDescriptor(object.getClass())
