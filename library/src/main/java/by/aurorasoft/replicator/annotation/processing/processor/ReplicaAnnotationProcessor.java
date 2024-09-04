@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.annotation.processing;
+package by.aurorasoft.replicator.annotation.processing.processor;
 
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,8 @@
-package by.aurorasoft.replicator.annotation.processing.operation;
+package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
+import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
 import com.google.auto.service.AutoService;
+import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.VariableElement;
@@ -9,16 +10,14 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.PropertyUtil.isContainId;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
-public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String PARAMETERS_REQUIREMENT = "Method should contain at least one parameter and "
-            + "this parameter should contain method to id's getter";
+public final class ReplicatedDeleteByIdsProcessor extends ReplicatedMethodAnnotationProcessor {
+    private static final String PARAMETERS_REQUIREMENT = "";
 
-    public ReplicatedDeleteProcessor() {
-        super(ReplicatedDelete.class);
+    public ReplicatedDeleteByIdsProcessor() {
+        super(ReplicatedDeleteByIds.class);
     }
 
     @Override
@@ -33,7 +32,7 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return elements.size() > 0 && isContainId(elements.get(0));
+        return elements.size() > 0 && TypesUtils.getClassFromType(elements.get(0).asType()).isAssignableFrom(Iterable.class);
     }
 
     @Override
@@ -48,6 +47,6 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
 
     @Override
     protected Optional<String> getParametersRequirement() {
-        return Optional.of(PARAMETERS_REQUIREMENT);
+        return empty();
     }
 }

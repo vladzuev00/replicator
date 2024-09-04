@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.annotation.processing.operation;
+package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
 import com.google.auto.service.AutoService;

@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.it.annotationprocessing;
 
-import by.aurorasoft.replicator.annotation.processing.operation.*;
-import by.aurorasoft.replicator.annotation.processing.service.ReplicatedServiceProcessor;
+import by.aurorasoft.replicator.annotation.processing.processor.operation.*;
+import by.aurorasoft.replicator.annotation.processing.processor.service.ReplicatedServiceProcessor;
 import org.joor.CompileOptions;
 import org.joor.Reflect;
 import org.junit.jupiter.params.ParameterizedTest;

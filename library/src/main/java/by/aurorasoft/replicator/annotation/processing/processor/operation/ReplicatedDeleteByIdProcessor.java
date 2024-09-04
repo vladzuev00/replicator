@@ -1,6 +1,6 @@
-package by.aurorasoft.replicator.annotation.processing.operation;
+package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
 import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.Processor;
@@ -9,15 +9,14 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.PropertyUtil.*;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
-public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String RETURN_TYPE_REQUIREMENT = "Returned list's objects should contain id";
+public final class ReplicatedDeleteByIdProcessor extends ReplicatedMethodAnnotationProcessor {
+    private static final String PARAMETERS_REQUIREMENT = "Method should have at least one parameter as id";
 
-    public ReplicatedSaveAllProcessor() {
-        super(ReplicatedSaveAll.class);
+    public ReplicatedDeleteByIdProcessor() {
+        super(ReplicatedDeleteById.class);
     }
 
     @Override
@@ -27,12 +26,12 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isList(mirror) && isContainId(getFirstGenericParameterType(mirror));
+        return true;
     }
 
     @Override
-    protected boolean isValidParameters(List<? extends VariableElement> parameters) {
-        return true;
+    protected boolean isValidParameters(List<? extends VariableElement> elements) {
+        return elements.size() > 1;
     }
 
     @Override
@@ -42,11 +41,11 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected Optional<String> getReturnTypeRequirement() {
-        return Optional.of(RETURN_TYPE_REQUIREMENT);
+        return empty();
     }
 
     @Override
     protected Optional<String> getParametersRequirement() {
-        return empty();
+        return Optional.of(PARAMETERS_REQUIREMENT);
     }
 }

@@ -1,6 +1,6 @@
-package by.aurorasoft.replicator.annotation.processing.operation;
+package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
 import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.Processor;
@@ -9,40 +9,40 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.PropertyUtil.isContainId;
+import static by.aurorasoft.replicator.util.PropertyUtil.isContainRepository;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
-public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String RETURN_TYPE_REQUIREMENT = "Returned object should contain id";
+public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotationProcessor {
+    private static final String REPLICATED_SERVICE_REQUIREMENT = "Service should contain repository";
 
-    public ReplicatedSaveProcessor() {
-        super(ReplicatedSave.class);
+    public ReplicatedDeleteAllProcessor() {
+        super(ReplicatedDeleteAll.class);
     }
 
     @Override
     protected boolean isValidReplicatedService(TypeMirror mirror) {
-        return true;
+        return isContainRepository(mirror, processingEnv.getElementUtils());
     }
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isContainId(mirror);
+        return true;
     }
 
     @Override
-    protected boolean isValidParameters(List<? extends VariableElement> parameters) {
+    protected boolean isValidParameters(List<? extends VariableElement> elements) {
         return true;
     }
 
     @Override
     protected Optional<String> getReplicatedServiceRequirement() {
-        return empty();
+        return Optional.of(REPLICATED_SERVICE_REQUIREMENT);
     }
 
     @Override
     protected Optional<String> getReturnTypeRequirement() {
-        return Optional.of(RETURN_TYPE_REQUIREMENT);
+        return empty();
     }
 
     @Override
