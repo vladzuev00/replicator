@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.annotation.processing.model;
+package by.aurorasoft.replicator.annotation.processing.error;
 
 import lombok.Value;
 
@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 @Value
-public class ErrorMessage {
+public class AnnotationError {
     Element element;
     Class<? extends Annotation> annotation;
     Set<String> requirements;

@@ -70,13 +70,6 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         processingEnv.getMessager().printMessage(ERROR, message.getText(), message.getElement());
     }
 
-    @Value
-    static class ErrorMessage {
-        Element element;
-        Class<? extends Annotation> annotation;
-        Set<String> requirements;
-    }
-
 //    @RequiredArgsConstructor
 //    static final class ErrorMessage {
 //        private static final String TEXT_TEMPLATE = "Element annotated by @%s should match next requirements: %s";
