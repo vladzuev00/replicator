@@ -1,10 +1,8 @@
 package by.aurorasoft.replicator.factory.replication;
 
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.model.view.EntityJsonView;
 import org.springframework.stereotype.Component;
 
-import static com.monitorjbl.json.Match.match;
 import static java.util.Arrays.stream;
 
 @Component

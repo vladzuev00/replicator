@@ -37,7 +37,7 @@ public final class ProduceReplicationTransactionCallbackTest {
     @Test
     public void callbackShouldBeCalled() {
         Object givenEntityId = new Object();
-        when(mockedReplication.getEntityId()).thenReturn(givenEntityId);
+        when(mockedReplication.getDtoId()).thenReturn(givenEntityId);
 
         callback.afterCommit();
 

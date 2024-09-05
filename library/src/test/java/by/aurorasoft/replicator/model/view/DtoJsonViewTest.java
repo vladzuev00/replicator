@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.model.view;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.testcrud.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
-public final class EntityJsonViewTest extends AbstractSpringBootTest {
+public final class DtoJsonViewTest extends AbstractSpringBootTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -17,7 +17,7 @@ public final class EntityJsonViewTest extends AbstractSpringBootTest {
     @Test
     public void viewShouldBeSerializedToJson()
             throws Exception {
-        var givenView = new EntityJsonView<>(new TestEntity(255L, "first-value", "second-value"));
+        var givenView = new DtoJsonView<>(new TestDto(255L, "first-value", "second-value"));
 
         String actual = objectMapper.writeValueAsString(givenView);
         String expected = """
@@ -30,11 +30,11 @@ public final class EntityJsonViewTest extends AbstractSpringBootTest {
     }
 
     @Test
-    public void entityShouldBeGot() {
-        TestEntity givenEntity = new TestEntity();
-        EntityJsonView<?> givenJsonView = new EntityJsonView<>(givenEntity);
+    public void dtoShouldBeGot() {
+        TestDto givenDto = TestDto.builder().build();
+        DtoJsonView<?> givenJsonView = new DtoJsonView<>(givenDto);
 
-        Object actual = givenJsonView.getEntity();
-        assertSame(givenEntity, actual);
+        Object actual = givenJsonView.getDto();
+        assertSame(givenDto, actual);
     }
 }

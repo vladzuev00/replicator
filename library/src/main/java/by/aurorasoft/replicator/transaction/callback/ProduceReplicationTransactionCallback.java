@@ -14,7 +14,7 @@ public final class ProduceReplicationTransactionCallback implements TransactionS
 
     @Override
     public void afterCommit() {
-        var record = new ProducerRecord<Object, ProducedReplication<?>>(topic, replication.getEntityId(), replication);
+        var record = new ProducerRecord<Object, ProducedReplication<?>>(topic, replication.getDtoId(), replication);
         kafkaTemplate.send(record);
     }
 }

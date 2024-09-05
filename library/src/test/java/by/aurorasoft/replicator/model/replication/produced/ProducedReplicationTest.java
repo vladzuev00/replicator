@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
 import by.aurorasoft.replicator.base.AbstractSpringBootTest;
-import by.aurorasoft.replicator.model.view.EntityJsonView;
-import by.aurorasoft.replicator.testcrud.TestEntity;
+import by.aurorasoft.replicator.model.view.DtoJsonView;
+import by.aurorasoft.replicator.testcrud.TestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,11 +29,11 @@ public final class ProducedReplicationTest extends AbstractSpringBootTest {
     }
 
     @Test
-    public void entityIdShouldBeGot() {
+    public void dtoIdShouldBeGot() {
         Object givenBody = new Object();
         TestProducedReplication givenReplication = new TestProducedReplication(givenBody);
 
-        Object actual = givenReplication.getEntityId();
+        Object actual = givenReplication.getDtoId();
         assertSame(givenBody, actual);
     }
 
@@ -41,8 +41,8 @@ public final class ProducedReplicationTest extends AbstractSpringBootTest {
         return Stream.of(
                 Arguments.of(
                         new SaveProducedReplication(
-                                new EntityJsonView<>(
-                                        new TestEntity(255L, "first-value", "second-value")
+                                new DtoJsonView<>(
+                                        new TestDto(255L, "first-value", "second-value")
                                 )
                         ),
                         """
@@ -73,7 +73,7 @@ public final class ProducedReplicationTest extends AbstractSpringBootTest {
         }
 
         @Override
-        protected Object getEntityIdInternal(Object body) {
+        protected Object getDtoIdInternal(Object body) {
             return body;
         }
     }

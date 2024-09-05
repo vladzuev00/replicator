@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public final class DeleteProducedReplicationTest {
 
     @Test
-    public void entityIdShouldBeGotInternally() {
-        Object givenEntityId = new Object();
+    public void dtoIdShouldBeGotInternally() {
+        Object givenDtoId = new Object();
         DeleteProducedReplication givenReplication = new DeleteProducedReplication(null);
 
-        Object actual = givenReplication.getEntityIdInternal(givenEntityId);
-        assertSame(givenEntityId, actual);
+        Object actual = givenReplication.getDtoIdInternal(givenDtoId);
+        assertSame(givenDtoId, actual);
     }
 }

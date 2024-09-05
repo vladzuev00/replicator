@@ -3,14 +3,14 @@ package by.aurorasoft.replicator.model.view;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monitorjbl.json.JsonView;
 
-public final class EntityJsonView<T> extends JsonView<T> {
+public final class DtoJsonView<T> extends JsonView<T> {
 
-    public EntityJsonView(T entity) {
+    public DtoJsonView(T entity) {
         super(entity);
     }
 
     @JsonIgnore
-    public T getEntity() {
+    public T getDto() {
         return value;
     }
 }

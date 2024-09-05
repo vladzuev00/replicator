@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import by.aurorasoft.replicator.model.view.EntityJsonView;
-import by.aurorasoft.replicator.testcrud.TestEntity;
+import by.aurorasoft.replicator.model.view.DtoJsonView;
+import by.aurorasoft.replicator.testcrud.TestDto;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -9,15 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public final class SaveProducedReplicationTest {
 
     @Test
-    public void entityIdShouldBeGotInternally() {
-        Long givenEntityId = 255L;
-        TestEntity givenEntity = TestEntity.builder()
-                .id(givenEntityId)
+    public void dtoIdShouldBeGotInternally() {
+        Long givenDtoId = 255L;
+        TestDto givenDto = TestDto.builder()
+                .id(givenDtoId)
                 .build();
-        EntityJsonView<?> givenEntityJsonView = new EntityJsonView<>(givenEntity);
-        SaveProducedReplication givenReplication = new SaveProducedReplication(givenEntityJsonView);
+        DtoJsonView<?> givenDtoJsonView = new DtoJsonView<>(givenDto);
+        SaveProducedReplication givenReplication = new SaveProducedReplication(givenDtoJsonView);
 
-        Object actual = givenReplication.getEntityIdInternal(givenEntityJsonView);
-        assertSame(givenEntityId, actual);
+        Object actual = givenReplication.getDtoIdInternal(givenDtoJsonView);
+        assertSame(givenDtoId, actual);
     }
 }

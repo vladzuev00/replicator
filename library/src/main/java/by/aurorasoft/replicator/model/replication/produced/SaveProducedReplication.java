@@ -1,17 +1,17 @@
 package by.aurorasoft.replicator.model.replication.produced;
 
-import by.aurorasoft.replicator.model.view.EntityJsonView;
+import by.aurorasoft.replicator.model.view.DtoJsonView;
 
 import static by.aurorasoft.replicator.util.PropertyUtil.getId;
 
-public final class SaveProducedReplication extends ProducedReplication<EntityJsonView<?>> {
+public final class SaveProducedReplication extends ProducedReplication<DtoJsonView<?>> {
 
-    public SaveProducedReplication(EntityJsonView<?> entityJsonView) {
-        super(entityJsonView);
+    public SaveProducedReplication(DtoJsonView<?> dtoJsonView) {
+        super(dtoJsonView);
     }
 
     @Override
-    protected Object getEntityIdInternal(EntityJsonView<?> entityJsonView) {
-        return getId(entityJsonView.getEntity());
+    protected Object getDtoIdInternal(DtoJsonView<?> dtoJsonView) {
+        return getId(dtoJsonView.getDto());
     }
 }
