@@ -5,7 +5,7 @@ import by.aurorasoft.replicator.factory.replication.SaveProducedReplicationFacto
 import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
-import by.aurorasoft.replicator.transaction.callback.ProduceReplicationTransactionCallback;
+import by.aurorasoft.replicator.transactioncallback.ProduceReplicationTransactionCallback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 
@@ -29,7 +29,7 @@ public final class ReplicationProducer {
     }
 
     private void produceAfterCommit(ProducedReplication<?> replication) {
-        var transactionCallback = new ProduceReplicationTransactionCallback(kafkaTemplate, replication, topic);
+        var transactionCallback = new ProduceReplicationTransactionCallback(topic, replication, kafkaTemplate);
         registerSynchronization(transactionCallback);
     }
 }

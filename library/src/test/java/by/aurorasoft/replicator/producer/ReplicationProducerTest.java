@@ -6,7 +6,7 @@ import by.aurorasoft.replicator.model.replication.produced.DeleteProducedReplica
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.model.replication.produced.SaveProducedReplication;
 import by.aurorasoft.replicator.testcrud.TestDto;
-import by.aurorasoft.replicator.transaction.callback.ProduceReplicationTransactionCallback;
+import by.aurorasoft.replicator.transactioncallback.ProduceReplicationTransactionCallback;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,9 +33,9 @@ public final class ReplicationProducerTest {
             mock(DtoViewConfig.class)
     };
 
-    private static final String FIELD_NAME_CALLBACK_KAFKA_TEMPLATE = "kafkaTemplate";
-    private static final String FIELD_NAME_CALLBACK_REPLICATION = "replication";
     private static final String FIELD_NAME_CALLBACK_TOPIC = "topic";
+    private static final String FIELD_NAME_CALLBACK_REPLICATION = "replication";
+    private static final String FIELD_NAME_CALLBACK_KAFKA_TEMPLATE = "kafkaTemplate";
 
     @Mock
     private SaveProducedReplicationFactory mockedSaveReplicationFactory;
@@ -73,14 +73,14 @@ public final class ReplicationProducerTest {
                     .verify(() -> registerSynchronization(callbackCaptor.capture()), times(1));
             ProduceReplicationTransactionCallback capturedCallback = callbackCaptor.getValue();
 
-            KafkaTemplate<?, ?> actualKafkaTemplate = getKafkaTemplate(capturedCallback);
-            assertSame(mockedKafkaTemplate, actualKafkaTemplate);
+            String actualTopic = getTopic(capturedCallback);
+            assertSame(GIVEN_TOPIC, actualTopic);
 
             ProducedReplication<?> actualReplication = getReplication(capturedCallback);
             assertSame(givenReplication, actualReplication);
 
-            String actualTopic = getTopic(capturedCallback);
-            assertSame(GIVEN_TOPIC, actualTopic);
+            KafkaTemplate<?, ?> actualKafkaTemplate = getKafkaTemplate(capturedCallback);
+            assertSame(mockedKafkaTemplate, actualKafkaTemplate);
         }
     }
 
@@ -95,27 +95,27 @@ public final class ReplicationProducerTest {
                     .verify(() -> registerSynchronization(callbackCaptor.capture()), times(1));
             ProduceReplicationTransactionCallback capturedCallback = callbackCaptor.getValue();
 
-            KafkaTemplate<?, ?> actualKafkaTemplate = getKafkaTemplate(capturedCallback);
-            assertSame(mockedKafkaTemplate, actualKafkaTemplate);
+            String actualTopic = getTopic(capturedCallback);
+            assertSame(GIVEN_TOPIC, actualTopic);
 
             ProducedReplication<?> actualReplication = getReplication(capturedCallback);
             ProducedReplication<?> expectedReplication = new DeleteProducedReplication(givenDtoId);
             assertEquals(expectedReplication, actualReplication);
 
-            String actualTopic = getTopic(capturedCallback);
-            assertSame(GIVEN_TOPIC, actualTopic);
+            KafkaTemplate<?, ?> actualKafkaTemplate = getKafkaTemplate(capturedCallback);
+            assertSame(mockedKafkaTemplate, actualKafkaTemplate);
         }
     }
 
-    private KafkaTemplate<?, ?> getKafkaTemplate(ProduceReplicationTransactionCallback callback) {
-        return getFieldValue(callback, FIELD_NAME_CALLBACK_KAFKA_TEMPLATE, KafkaTemplate.class);
+    private String getTopic(ProduceReplicationTransactionCallback callback) {
+        return getFieldValue(callback, FIELD_NAME_CALLBACK_TOPIC, String.class);
     }
 
     private ProducedReplication<?> getReplication(ProduceReplicationTransactionCallback callback) {
         return getFieldValue(callback, FIELD_NAME_CALLBACK_REPLICATION, ProducedReplication.class);
     }
 
-    private String getTopic(ProduceReplicationTransactionCallback callback) {
-        return getFieldValue(callback, FIELD_NAME_CALLBACK_TOPIC, String.class);
+    private KafkaTemplate<?, ?> getKafkaTemplate(ProduceReplicationTransactionCallback callback) {
+        return getFieldValue(callback, FIELD_NAME_CALLBACK_KAFKA_TEMPLATE, KafkaTemplate.class);
     }
 }
