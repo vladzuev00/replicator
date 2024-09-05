@@ -5,8 +5,8 @@ import com.monitorjbl.json.JsonView;
 
 public final class DtoJsonView<T> extends JsonView<T> {
 
-    public DtoJsonView(T entity) {
-        super(entity);
+    public DtoJsonView(T dto) {
+        super(dto);
     }
 
     @JsonIgnore
