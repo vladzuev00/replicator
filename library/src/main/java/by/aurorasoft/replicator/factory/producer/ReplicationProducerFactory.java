@@ -13,14 +13,13 @@ public final class ReplicationProducerFactory {
     private final ReplicationKafkaTemplateFactory kafkaTemplateFactory;
     private final SaveProducedReplicationFactory saveReplicationFactory;
 
-    public ReplicationProducer create(ReplicatedService.ProducerConfig config) {
-        throw new UnsupportedOperationException();
-//        KafkaTemplate<Object, ProducedReplication<?>> kafkaTemplate = kafkaTemplateFactory.create(service);
-//        return new ReplicationProducer(
-//                saveReplicationFactory,
-//                kafkaTemplate,
-//                service.topicConfig().name(),
-//                service.viewConfigs()
-//        );
+    public ReplicationProducer create(ReplicatedService service) {
+        var kafkaTemplate = kafkaTemplateFactory.create(service.producerConfig());
+        return new ReplicationProducer(
+                saveReplicationFactory,
+                kafkaTemplate,
+                service.topicConfig().name(),
+                service.dtoViewConfigs()
+        );
     }
 }
