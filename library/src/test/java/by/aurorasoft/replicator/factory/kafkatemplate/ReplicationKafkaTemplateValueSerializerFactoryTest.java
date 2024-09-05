@@ -33,11 +33,11 @@ public final class ReplicationKafkaTemplateValueSerializerFactoryTest {
         Serializer<ProducedReplication<?>> actual = factory.create();
         assertTrue(actual instanceof JsonSerializer);
 
-        ObjectMapper actualObjectMapper = getObjectMapper(((JsonSerializer<?>) actual));
+        ObjectMapper actualObjectMapper = getObjectMapper(actual);
         assertSame(mockedObjectMapper, actualObjectMapper);
     }
 
-    private ObjectMapper getObjectMapper(JsonSerializer<?> serializer) {
+    private ObjectMapper getObjectMapper(Serializer<?> serializer) {
         return getFieldValue(serializer, FIELD_NAME_OBJECT_MAPPER, ObjectMapper.class);
     }
 }
