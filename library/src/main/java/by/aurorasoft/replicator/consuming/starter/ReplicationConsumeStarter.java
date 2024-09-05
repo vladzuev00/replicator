@@ -20,7 +20,7 @@ public final class ReplicationConsumeStarter {
 
     @EventListener(ContextRefreshedEvent.class)
     public void start() {
-        uniqueComponentCheckingManager.check(settings);
+//        uniqueComponentCheckingManager.check(settings);
         settings.stream()
                 .map(kafkaStreamsFactory::create)
                 .forEach(KafkaStreams::start);

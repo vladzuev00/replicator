@@ -10,7 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import static java.util.Objects.requireNonNull;
 
 @Getter
-public final class ReplicationConsumeSetting<E, ID> extends ReplicationSetting<E, ID> {
+public final class ReplicationConsumeSetting<E, ID> {
+    private final String topic;
+    private final JpaRepository<E, ID> repository;
     private final Deserializer<ID> idDeserializer;
     private final TypeReference<ConsumedReplication<E, ID>> replicationTypeReference;
 
@@ -19,7 +21,8 @@ public final class ReplicationConsumeSetting<E, ID> extends ReplicationSetting<E
                                      JpaRepository<E, ID> repository,
                                      Deserializer<ID> idDeserializer,
                                      TypeReference<ConsumedReplication<E, ID>> replicationTypeReference) {
-        super(topic, repository);
+        this.topic = requireNonNull(topic);
+        this.repository = requireNonNull(repository);
         this.idDeserializer = requireNonNull(idDeserializer);
         this.replicationTypeReference = requireNonNull(replicationTypeReference);
     }

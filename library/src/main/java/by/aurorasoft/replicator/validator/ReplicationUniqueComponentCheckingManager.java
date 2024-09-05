@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.validator;
 
-import by.aurorasoft.replicator.model.setting.ReplicationSetting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +10,7 @@ import java.util.List;
 public final class ReplicationUniqueComponentCheckingManager {
     private final List<ReplicationUniqueComponentChecker<?>> checkers;
 
-    public <S extends ReplicationSetting<?, ?>> void check(List<S> settings) {
-        checkers.forEach(checker -> checker.check(settings));
-    }
+//    public <S extends ReplicationSetting<?, ?>> void check(List<S> settings) {
+//        checkers.forEach(checker -> checker.check(settings));
+//    }
 }

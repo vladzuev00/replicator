@@ -4,6 +4,7 @@ import by.aurorasoft.replicator.base.AbstractSpringBootTest;
 import by.aurorasoft.replicator.exception.RelatedReplicationNotDeliveredException;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.ReplicationExecutionException;
 import by.aurorasoft.replicator.testcrud.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +36,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
     public void replicationShouldBeExecuted() {
         TestEntity givenEntity = new TestEntity();
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
-        @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+        JpaRepository<TestEntity, Long> givenRepository = mock(TestRepository.class);
 
         givenReplication.execute(givenRepository);
 
@@ -55,7 +56,7 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
     public void replicationShouldNotBeExecuted(Exception givenCause, Class<? extends Exception> expected) {
         TestEntity givenEntity = new TestEntity();
         TestConsumedReplication givenReplication = new TestConsumedReplication(givenEntity);
-        @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+        JpaRepository<TestEntity, Long> givenRepository = mock(TestRepository.class);
 
         when(givenRepository.save(same(givenEntity))).thenThrow(givenCause);
 
