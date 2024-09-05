@@ -4,6 +4,7 @@ import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.replication.consumed.SaveConsumedReplication;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
 import by.aurorasoft.replicator.testcrud.TestEntity;
+import by.aurorasoft.replicator.testcrud.TestRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
@@ -31,28 +32,26 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationTopologyFactoryTest {
     private static final String GIVEN_TOPIC = "test-topic";
-
-    private static final String DRIVER_APPLICATION_ID = "test-application";
-    private static final String DRIVER_BOOTSTRAP_ADDRESS = "127.0.0.1:9092";
+    private static final String GIVEN_DRIVER_APPLICATION_ID = "test-application";
+    private static final String GIVEN_DRIVER_BOOTSTRAP_ADDRESS = "127.0.0.1:9092";
 
     @Mock
     private RetryTemplate mockedRetryTemplate;
 
-    private ReplicationTopologyFactory topologyFactory;
+    private ReplicationTopologyFactory factory;
 
     @Captor
     private ArgumentCaptor<RetryCallback<?, RuntimeException>> callbackCaptor;
 
     @BeforeEach
     public void initializeFactory() {
-        topologyFactory = new ReplicationTopologyFactory(mockedRetryTemplate);
+        factory = new ReplicationTopologyFactory(mockedRetryTemplate);
     }
 
     @Test
     public void topologyShouldBeCreatedAndReplicationShouldBeProducedAndConsumed() {
-        @SuppressWarnings("unchecked") JpaRepository<TestEntity, Long> givenRepository = mock(JpaRepository.class);
+        JpaRepository<TestEntity, Long> givenRepository = mock(TestRepository.class);
         ReplicationConsumeSetting<TestEntity, Long> givenSetting = createSetting(givenRepository);
-
         TestEntity givenEntity = TestEntity.builder()
                 .id(255L)
                 .build();
@@ -76,15 +75,15 @@ public final class ReplicationTopologyFactoryTest {
     }
 
     private TopologyTestDriver createDriver(ReplicationConsumeSetting<TestEntity, Long> setting) {
-        Topology topology = topologyFactory.create(setting);
+        Topology topology = factory.create(setting);
         Properties properties = createDriverProperties();
         return new TopologyTestDriver(topology, properties);
     }
 
     private Properties createDriverProperties() {
         Properties properties = new Properties();
-        properties.put(APPLICATION_ID_CONFIG, DRIVER_APPLICATION_ID);
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, DRIVER_BOOTSTRAP_ADDRESS);
+        properties.put(APPLICATION_ID_CONFIG, GIVEN_DRIVER_APPLICATION_ID);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, GIVEN_DRIVER_BOOTSTRAP_ADDRESS);
         return properties;
     }
 
@@ -94,8 +93,7 @@ public final class ReplicationTopologyFactoryTest {
 
     private void verifySave(JpaRepository<TestEntity, Long> repository, TestEntity entity) {
         verify(mockedRetryTemplate, times(1)).execute(callbackCaptor.capture());
-        RetryCallback<?, RuntimeException> capturedCallback = callbackCaptor.getValue();
-        capturedCallback.doWithRetry(null);
+        callbackCaptor.getValue().doWithRetry(null);
         verify(repository, times(1)).save(eq(entity));
     }
 }
