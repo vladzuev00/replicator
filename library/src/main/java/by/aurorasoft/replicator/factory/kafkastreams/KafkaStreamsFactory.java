@@ -5,7 +5,7 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.springframework.stereotype.Component;
 
-import static java.lang.Runtime.getRuntime;
+import static by.aurorasoft.replicator.util.ShutdownHookUtil.addShutdownHook;
 
 @Component
 public final class KafkaStreamsFactory {
@@ -13,15 +13,11 @@ public final class KafkaStreamsFactory {
     public KafkaStreams create(Topology topology, StreamsConfig config) {
         KafkaStreams streams = new KafkaStreams(topology, config);
         try {
-            closeOnShutdown(streams);
+            addShutdownHook(streams::close);
             return streams;
         } catch (Exception exception) {
             streams.close();
             throw exception;
         }
-    }
-
-    private void closeOnShutdown(KafkaStreams streams) {
-        getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }

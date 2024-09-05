@@ -1,8 +1,11 @@
 package by.aurorasoft.replicator.factory.kafkastreams;
 
-import by.aurorasoft.replicator.consuming.serde.ConsumingSerde;
 import by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
+import lombok.RequiredArgsConstructor;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,5 +50,20 @@ public final class ReplicationTopologyFactory {
     private <E, ID> Optional<Void> execute(ConsumedReplication<E, ID> replication, JpaRepository<E, ID> repository) {
         replication.execute(repository);
         return empty();
+    }
+
+    @RequiredArgsConstructor
+    private static final class ConsumingSerde<T> implements Serde<T> {
+        private final Deserializer<T> deserializer;
+
+        @Override
+        public Serializer<T> serializer() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Deserializer<T> deserializer() {
+            return deserializer;
+        }
     }
 }

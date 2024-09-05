@@ -1,47 +1,28 @@
 package by.aurorasoft.replicator.factory.kafkastreams;
 
+import by.aurorasoft.replicator.util.ShutdownHookUtil;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
 
 import java.util.List;
 
+import static by.aurorasoft.replicator.util.ShutdownHookUtil.addShutdownHook;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public final class KafkaStreamsFactoryTest {
     private final KafkaStreamsFactory factory = new KafkaStreamsFactory();
 
-    private MockedStatic<Runtime> mockedStaticRuntime;
-
-    @Mock
-    private Runtime mockedRuntime;
-
-    @Captor
-    private ArgumentCaptor<Thread> threadArgumentCaptor;
-
-    @BeforeEach
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void mockRuntime() {
-        mockedStaticRuntime = mockStatic(Runtime.class);
-        mockedStaticRuntime.when(Runtime::getRuntime).thenReturn(mockedRuntime);
-    }
-
-    @AfterEach
-    public void closeMockedStaticRuntime() {
-        mockedStaticRuntime.close();
-    }
-
     @Test
     public void streamsShouldBeCreated() {
-        try (MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class)) {
+        try (MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class);
+             MockedStatic<ShutdownHookUtil> mockedShutdownHookUtil = mockStatic(ShutdownHookUtil.class)) {
             Topology givenTopology = mock(Topology.class);
             StreamsConfig givenConfig = mock(StreamsConfig.class);
 
@@ -53,18 +34,18 @@ public final class KafkaStreamsFactoryTest {
 
             assertSame(constructedStream, actual);
 
-            verifyNotClosed(actual);
-            verifyClosingShutdownHook(actual);
+            verifySuccessPlanningClosure(actual, mockedShutdownHookUtil);
         }
     }
 
     @Test
     public void streamsShouldNotBeCreatedBecauseOfFailedAddingShutdownHook() {
-        try (MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class)) {
+        try (MockedConstruction<KafkaStreams> mockedConstruction = mockConstruction(KafkaStreams.class);
+             MockedStatic<ShutdownHookUtil> mockedShutdownHookUtil = mockStatic(ShutdownHookUtil.class)) {
             Topology givenTopology = mock(Topology.class);
             StreamsConfig givenConfig = mock(StreamsConfig.class);
 
-            mockAddingShutdownHookException();
+            mockFailedAddingShutdownHook(mockedShutdownHookUtil);
 
             createStreamsVerifyingException(givenTopology, givenConfig);
 
@@ -72,38 +53,33 @@ public final class KafkaStreamsFactoryTest {
             assertEquals(1, constructedStreams.size());
             KafkaStreams constructedStream = constructedStreams.get(0);
 
-            verifyClosed(constructedStream);
-            verifyAddShutdownHook();
+            verifyFailedPlanningClosure(constructedStream, mockedShutdownHookUtil);
         }
     }
 
-    private void verifyNotClosed(KafkaStreams streams) {
-        verifyCallingClose(streams, 0);
+    private void verifySuccessPlanningClosure(KafkaStreams streams, MockedStatic<ShutdownHookUtil> hookUtil) {
+        verifyPlanningClosure(streams, hookUtil, 1);
     }
 
-    private void verifyClosed(KafkaStreams streams) {
-        verifyCallingClose(streams, 1);
+    private void verifyFailedPlanningClosure(KafkaStreams streams, MockedStatic<ShutdownHookUtil> hookUtil) {
+        verifyPlanningClosure(streams, hookUtil, 2);
     }
 
-    private void verifyCallingClose(KafkaStreams streams, int times) {
-        verify(streams, times(times)).close();
+    private void verifyPlanningClosure(KafkaStreams streams,
+                                       MockedStatic<ShutdownHookUtil> hookUtil,
+                                       int closureTimes) {
+        captureClosingTask(hookUtil).run();
+        verify(streams, times(closureTimes)).close();
     }
 
-    private void verifyClosingShutdownHook(KafkaStreams streams) {
-        verifyAddShutdownHook();
-        Runnable capturedThread = threadArgumentCaptor.getValue();
-        capturedThread.run();
-        verifyClosed(streams);
+    private Runnable captureClosingTask(MockedStatic<ShutdownHookUtil> hookUtil) {
+        ArgumentCaptor<Runnable> taskCaptor = forClass(Runnable.class);
+        hookUtil.verify(() -> addShutdownHook(taskCaptor.capture()), times(1));
+        return taskCaptor.getValue();
     }
 
-    private void verifyAddShutdownHook() {
-        verify(mockedRuntime, times(1)).addShutdownHook(threadArgumentCaptor.capture());
-    }
-
-    private void mockAddingShutdownHookException() {
-        doThrow(TestException.class)
-                .when(mockedRuntime)
-                .addShutdownHook(any(Thread.class));
+    private void mockFailedAddingShutdownHook(MockedStatic<ShutdownHookUtil> hookUtil) {
+        hookUtil.when(() -> addShutdownHook(any(Runnable.class))).thenThrow(TestException.class);
     }
 
     private void createStreamsVerifyingException(Topology topology, StreamsConfig config) {

@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consuming.starter;
+package by.aurorasoft.replicator.consumingstarter;
 
 import by.aurorasoft.replicator.factory.kafkastreams.ReplicationKafkaStreamsFactory;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public final class ReplicationConsumeStarter {
+public final class ReplicationConsumingStarter {
     private final ReplicationUniqueComponentCheckingManager uniqueComponentCheckingManager;
     private final ReplicationKafkaStreamsFactory kafkaStreamsFactory;
     private final List<ReplicationConsumeSetting<?, ?>> settings;
