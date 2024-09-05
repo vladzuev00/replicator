@@ -16,4 +16,11 @@ public final class ProducerConfigUtil {
         when(config.deliveryTimeoutMs()).thenReturn(deliveryTimeoutMs);
         return config;
     }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static ProducerConfig createProducerConfig(Class idSerializerType) {
+        ProducerConfig config = mock(ProducerConfig.class);
+        when(config.idSerializer()).thenReturn(idSerializerType);
+        return config;
+    }
 }
