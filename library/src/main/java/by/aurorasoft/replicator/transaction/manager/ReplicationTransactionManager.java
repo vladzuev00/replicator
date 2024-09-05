@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
 
+//TODO: remove
 @Component
 public final class ReplicationTransactionManager {
 

@@ -19,7 +19,7 @@ public @interface ReplicatedService {
 
     TopicConfig topicConfig();
 
-    ViewConfig[] viewConfigs() default {};
+    DtoViewConfig[] dtoViewConfigs() default {};
 
     @interface ProducerConfig {
         Class<? extends Serializer<?>> idSerializer();
@@ -39,7 +39,7 @@ public @interface ReplicatedService {
         short replicationFactor() default 1;
     }
 
-    @interface ViewConfig {
+    @interface DtoViewConfig {
         Class<?> type();
 
         String[] includedFields() default {};
