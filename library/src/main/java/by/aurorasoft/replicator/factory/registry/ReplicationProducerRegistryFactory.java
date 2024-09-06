@@ -18,6 +18,7 @@ public final class ReplicationProducerRegistryFactory {
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
+        //TODO: validate unique topics
         return applicationContext.getBeansWithAnnotation(ReplicatedService.class)
                 .values()
                 .stream()
