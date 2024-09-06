@@ -1,14 +1,12 @@
 package by.aurorasoft.replicator.factory.producer;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConfig;
+import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.factory.kafkatemplate.ReplicationKafkaTemplateFactory;
 import by.aurorasoft.replicator.factory.replication.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.testcrud.TestEntity;
-import by.aurorasoft.replicator.testcrud.TestRepository;
-import by.aurorasoft.replicator.transaction.manager.ReplicationTransactionManager;
-import org.apache.kafka.common.serialization.LongSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.createReplicatedService;
+import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -24,10 +24,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerFactoryTest {
-    private static final String FIELD_NAME_SAVE_REPLICATION_FACTORY = "saveReplicationFactory";
-    private static final String FIELD_NAME_KAFKA_TEMPLATE = "kafkaTemplate";
-    private static final String FIELD_NAME_TOPIC = "topic";
-    private static final String FIELD_NAME_DTO_VIEW_CONFIGS = "dtoViewConfigs";
+    private static final String FIELD_NAME_PRODUCER_SAVE_REPLICATION_FACTORY = "saveReplicationFactory";
+    private static final String FIELD_NAME_PRODUCER_KAFKA_TEMPLATE = "kafkaTemplate";
+    private static final String FIELD_NAME_PRODUCER_TOPIC = "topic";
+    private static final String FIELD_NAME_PRODUCER_DTO_VIEW_CONFIGS = "dtoViewConfigs";
 
     @Mock
     private ReplicationKafkaTemplateFactory mockedKafkaTemplateFactory;
@@ -44,25 +44,22 @@ public final class ReplicationProducerFactoryTest {
 
     @Test
     public void producerShouldBeCreated() {
-        String givenTopic = "test-topic";
+        ProducerConfig givenProducerConfig = mock(ProducerConfig.class);
+        String givenTopicName = "test-topic";
+        TopicConfig givenTopicConfig = createTopicConfig(givenTopicName);
         DtoViewConfig[] givenDtoViewConfigs = {
                 mock(DtoViewConfig.class),
                 mock(DtoViewConfig.class),
                 mock(DtoViewConfig.class)
         };
-        ReplicationProduceSetting<TestEntity, Long> givenSetting = ReplicationProduceSetting.<TestEntity, Long>builder()
-                .topic(givenTopic)
-                .repository(new TestRepository())
-                .idSerializer(new LongSerializer())
-                .entityViewSettings(givenDtoViewConfigs)
-                .build();
+        var givenService = createReplicatedService(givenProducerConfig, givenTopicConfig, givenDtoViewConfigs);
 
         @SuppressWarnings("unchecked") KafkaTemplate<Object, ProducedReplication<?>> givenKafkaTemplate = mock(
                 KafkaTemplate.class
         );
-        when(mockedKafkaTemplateFactory.create(same(givenSetting))).thenReturn(givenKafkaTemplate);
+        when(mockedKafkaTemplateFactory.create(same(givenProducerConfig))).thenReturn(givenKafkaTemplate);
 
-        ReplicationProducer actual = producerFactory.create(givenSetting);
+        ReplicationProducer actual = producerFactory.create(givenService);
 
         SaveProducedReplicationFactory actualSaveReplicationFactory = getSaveReplicationFactory(actual);
         assertSame(mockedSaveReplicationFactory, actualSaveReplicationFactory);
@@ -70,33 +67,30 @@ public final class ReplicationProducerFactoryTest {
         KafkaTemplate<?, ?> actualKafkaTemplate = getKafkaTemplate(actual);
         assertSame(givenKafkaTemplate, actualKafkaTemplate);
 
-        ReplicationTransactionManager actualTransactionManager = getTransactionManager(actual);
-        assertSame(mockedTransactionManager, actualTransactionManager);
-
         String actualTopic = getTopic(actual);
-        assertSame(givenTopic, actualTopic);
+        assertSame(givenTopicName, actualTopic);
 
-        EntityViewSetting[] actualEntityViewSettings = getEntityViewSettings(actual);
-        assertSame(givenDtoViewConfigs, actualEntityViewSettings);
+        DtoViewConfig[] actualDtoViewConfigs = getDtoViewConfigs(actual);
+        assertSame(givenDtoViewConfigs, actualDtoViewConfigs);
     }
 
     private SaveProducedReplicationFactory getSaveReplicationFactory(ReplicationProducer producer) {
-        return getFieldValue(producer, FIELD_NAME_SAVE_REPLICATION_FACTORY, SaveProducedReplicationFactory.class);
+        return getFieldValue(
+                producer,
+                FIELD_NAME_PRODUCER_SAVE_REPLICATION_FACTORY,
+                SaveProducedReplicationFactory.class
+        );
     }
 
     private KafkaTemplate<?, ?> getKafkaTemplate(ReplicationProducer producer) {
-        return getFieldValue(producer, FIELD_NAME_KAFKA_TEMPLATE, KafkaTemplate.class);
-    }
-
-    private ReplicationTransactionManager getTransactionManager(ReplicationProducer producer) {
-        return getFieldValue(producer, FIELD_NAME_TRANSACTION_MANAGER, ReplicationTransactionManager.class);
+        return getFieldValue(producer, FIELD_NAME_PRODUCER_KAFKA_TEMPLATE, KafkaTemplate.class);
     }
 
     private String getTopic(ReplicationProducer producer) {
-        return getFieldValue(producer, FIELD_NAME_TOPIC, String.class);
+        return getFieldValue(producer, FIELD_NAME_PRODUCER_TOPIC, String.class);
     }
 
-    private EntityViewSetting[] getEntityViewSettings(ReplicationProducer producer) {
-        return getFieldValue(producer, FIELD_NAME_DTO_VIEW_CONFIGS, EntityViewSetting[].class);
+    private DtoViewConfig[] getDtoViewConfigs(ReplicationProducer producer) {
+        return getFieldValue(producer, FIELD_NAME_PRODUCER_DTO_VIEW_CONFIGS, DtoViewConfig[].class);
     }
 }
