@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.testcrud;
 
 import by.aurorasoft.replicator.annotation.operation.*;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ReplicatedService(
-        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-        topicConfig = @TopicConfig(name = "sync-dto")
+        producerConfig = @ProducerConfig(
+                idSerializer = LongSerializer.class,
+                batchSize = 11,
+                lingerMs = 501,
+                deliveryTimeoutMs = 100001
+        ),
+        topicConfig = @TopicConfig(name = "sync-dto", partitionCount = 2, replicationFactor = 3),
+        dtoViewConfigs = @DtoViewConfig(
+                type = TestDto.class,
+                includedFields = "firstProperty",
+                excludedFields = "secondProperty"
+        )
 )
 @RequiredArgsConstructor
 public class TestService {

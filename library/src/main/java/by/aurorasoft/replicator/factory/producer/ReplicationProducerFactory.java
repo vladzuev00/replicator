@@ -13,13 +13,14 @@ public final class ReplicationProducerFactory {
     private final ReplicationKafkaTemplateFactory kafkaTemplateFactory;
     private final SaveProducedReplicationFactory saveReplicationFactory;
 
-    public ReplicationProducer create(ReplicatedService service) {
-        var kafkaTemplate = kafkaTemplateFactory.create(service.producerConfig());
+    public ReplicationProducer create(Object service) {
+        ReplicatedService serviceConfig = service.getClass().getAnnotation(ReplicatedService.class);
+        var kafkaTemplate = kafkaTemplateFactory.create(serviceConfig.producerConfig());
         return new ReplicationProducer(
                 saveReplicationFactory,
                 kafkaTemplate,
-                service.topicConfig().name(),
-                service.dtoViewConfigs()
+                serviceConfig.topicConfig().name(),
+                serviceConfig.dtoViewConfigs()
         );
     }
 }

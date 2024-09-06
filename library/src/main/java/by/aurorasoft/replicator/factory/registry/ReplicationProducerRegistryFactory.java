@@ -21,7 +21,7 @@ public final class ReplicationProducerRegistryFactory {
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
-        return new ReplicationProducerRegistry(Collections.emptyMap());
+        return null;
 //        return applicationContext.getBeansWithAnnotation(ReplicatedService.class)
 //                .values()
 //                .stream()

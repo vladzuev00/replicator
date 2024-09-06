@@ -5,7 +5,6 @@ import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConf
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
 import lombok.experimental.UtilityClass;
-import org.mockito.Mockito;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,5 +20,11 @@ public final class ReplicatedServiceUtil {
         when(replicatedService.topicConfig()).thenReturn(topicConfig);
         when(replicatedService.dtoViewConfigs()).thenReturn(dtoViewConfigs);
         return replicatedService;
+    }
+
+    public static void assertEquals(ReplicatedService expected, ReplicatedService actual) {
+        ProducerConfigUtil.assertEquals(expected.producerConfig(), actual.producerConfig());
+        TopicConfigUtil.assertEquals(expected.topicConfig(), actual.topicConfig());
+        DtoViewConfigUtil.assertEquals(expected.dtoViewConfigs(), actual.dtoViewConfigs());
     }
 }
