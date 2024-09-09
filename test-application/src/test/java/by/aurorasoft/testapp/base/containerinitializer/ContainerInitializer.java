@@ -16,8 +16,7 @@ import java.util.Optional;
 import static org.testcontainers.utility.DockerImageName.parse;
 
 @RequiredArgsConstructor
-public abstract class ContainerInitializer<C extends Startable>
-        implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public abstract class ContainerInitializer<C extends Startable> implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public final void initialize(@NotNull ConfigurableApplicationContext context) {
