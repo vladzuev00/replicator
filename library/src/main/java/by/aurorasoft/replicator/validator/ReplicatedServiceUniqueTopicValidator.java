@@ -4,7 +4,7 @@ import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class ReplicatedServiceUniqueTopicValidator extends UniquePropertyValidator<ReplicatedService, String> {
+public final class ReplicatedServiceUniqueTopicValidator extends UniquePropertyValidator<Object, String> {
     private static final String VIOLATION_MESSAGE = "Replicated service's topics should be unique";
 
     public ReplicatedServiceUniqueTopicValidator() {
@@ -12,7 +12,10 @@ public final class ReplicatedServiceUniqueTopicValidator extends UniquePropertyV
     }
 
     @Override
-    protected String getProperty(ReplicatedService service) {
-        return service.topicConfig().name();
+    protected String getProperty(Object service) {
+        return service.getClass()
+                .getAnnotation(ReplicatedService.class)
+                .topicConfig()
+                .name();
     }
 }

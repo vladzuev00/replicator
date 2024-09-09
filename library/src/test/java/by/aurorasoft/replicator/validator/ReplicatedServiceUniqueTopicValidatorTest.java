@@ -1,21 +1,19 @@
 package by.aurorasoft.replicator.validator;
 
-import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+import by.aurorasoft.replicator.testcrud.TestService;
 import org.junit.jupiter.api.Test;
 
-import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.createReplicatedService;
-import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class ReplicatedServiceUniqueTopicValidatorTest {
     private final ReplicatedServiceUniqueTopicValidator validator = new ReplicatedServiceUniqueTopicValidator();
 
     @Test
     public void propertyShouldBeGot() {
-        String givenTopicName = "test-topic";
-        ReplicatedService givenService = createReplicatedService(createTopicConfig(givenTopicName));
+        TestService givenService = new TestService(null);
 
         String actual = validator.getProperty(givenService);
-        assertSame(givenTopicName, actual);
+        String expected = "sync-dto";
+        assertEquals(expected, actual);
     }
 }
