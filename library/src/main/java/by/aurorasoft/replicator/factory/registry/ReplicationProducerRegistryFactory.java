@@ -26,7 +26,7 @@ public final class ReplicationProducerRegistryFactory {
         return services.stream()
                 .collect(
                         collectingAndThen(
-                                toMap(identity(), producingStarter::start),
+                                toMap(identity(), producingStarter::startReturningProducer),
                                 ReplicationProducerRegistry::new
                         )
                 );

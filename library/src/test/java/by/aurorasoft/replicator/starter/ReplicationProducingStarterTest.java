@@ -55,7 +55,7 @@ public final class ReplicationProducingStarterTest {
         ReplicationProducer givenProducer = mock(ReplicationProducer.class);
         when(mockedProducerFactory.create(any(ReplicatedService.class))).thenReturn(givenProducer);
 
-        ReplicationProducer actual = starter.start(givenService);
+        ReplicationProducer actual = starter.startReturningProducer(givenService);
         assertSame(givenProducer, actual);
 
         verify(mockedTopicAllocator, times(1)).allocate(topicConfigCaptor.capture());
