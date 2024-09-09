@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.executeExpectingException;
 
 public final class UniquePropertyValidatorTest {
     private final TestUniquePropertyValidator validator = new TestUniquePropertyValidator();
@@ -32,25 +31,13 @@ public final class UniquePropertyValidatorTest {
                 new TestSource("value-6", "value-2")
         );
 
-        validateExpectingException(
-                givenSources,
+        executeExpectingException(
+                () -> validator.validate(givenSources),
+                IllegalStateException.class,
                 """
                         Violation
                         	Duplicates: [value-2, value-4]"""
         );
-    }
-
-    private void validateExpectingException(List<TestSource> sources,
-                                            @SuppressWarnings("SameParameterValue") String expectedMessage) {
-        boolean exceptionArisen = false;
-        try {
-            validator.validate(sources);
-        } catch (IllegalStateException exception) {
-            exceptionArisen = true;
-            String actualMessage = exception.getMessage();
-            assertEquals(expectedMessage, actualMessage);
-        }
-        assertTrue(exceptionArisen);
     }
 
     private static final class TestUniquePropertyValidator extends UniquePropertyValidator<TestSource, String> {
