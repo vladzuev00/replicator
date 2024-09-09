@@ -12,6 +12,12 @@ import static org.mockito.Mockito.when;
 @UtilityClass
 public final class ReplicatedServiceUtil {
 
+    public static ReplicatedService createReplicatedService(TopicConfig topicConfig) {
+        ReplicatedService replicatedService = mock(ReplicatedService.class);
+        when(replicatedService.topicConfig()).thenReturn(topicConfig);
+        return replicatedService;
+    }
+
     public static ReplicatedService createReplicatedService(ProducerConfig producerConfig,
                                                             TopicConfig topicConfig,
                                                             DtoViewConfig[] dtoViewConfigs) {
