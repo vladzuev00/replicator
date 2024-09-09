@@ -1,6 +1,9 @@
 package by.aurorasoft.testapp.crud.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -10,7 +13,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @Getter
 @ToString
-@Builder
 @jakarta.persistence.Entity
 @Table(name = "addresses")
 public class AddressEntity extends Entity {

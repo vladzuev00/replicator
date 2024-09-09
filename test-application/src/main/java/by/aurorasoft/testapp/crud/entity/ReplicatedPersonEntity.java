@@ -12,7 +12,6 @@ import static jakarta.persistence.FetchType.LAZY;
 @Setter
 @Getter
 @ToString
-@Builder
 @jakarta.persistence.Entity
 @Table(name = "replicated_persons")
 public class ReplicatedPersonEntity extends Entity {

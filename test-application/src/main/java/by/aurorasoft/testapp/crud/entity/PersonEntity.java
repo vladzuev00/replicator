@@ -13,7 +13,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @Getter
 @ToString
-@Builder
 @jakarta.persistence.Entity
 @Table(name = "persons")
 public class PersonEntity extends Entity {
