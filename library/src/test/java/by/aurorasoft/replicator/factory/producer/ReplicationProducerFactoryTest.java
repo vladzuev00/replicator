@@ -2,30 +2,22 @@ package by.aurorasoft.replicator.factory.producer;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
 import by.aurorasoft.replicator.factory.kafkatemplate.ReplicationKafkaTemplateFactory;
 import by.aurorasoft.replicator.factory.replication.SaveProducedReplicationFactory;
 import by.aurorasoft.replicator.model.replication.produced.ProducedReplication;
 import by.aurorasoft.replicator.producer.ReplicationProducer;
-import by.aurorasoft.replicator.testcrud.TestDto;
-import by.aurorasoft.replicator.testcrud.TestService;
-import by.aurorasoft.replicator.testutil.DtoViewConfigUtil;
-import by.aurorasoft.replicator.testutil.ProducerConfigUtil;
-import org.apache.kafka.common.serialization.LongSerializer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import static by.aurorasoft.replicator.testutil.DtoViewConfigUtil.createDtoViewConfig;
-import static by.aurorasoft.replicator.testutil.ProducerConfigUtil.createProducerConfig;
 import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.createReplicatedService;
+import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,9 +35,6 @@ public final class ReplicationProducerFactoryTest {
 
     private ReplicationProducerFactory producerFactory;
 
-    @Captor
-    private ArgumentCaptor<ProducerConfig> producerConfigCaptor;
-
     @BeforeEach
     public void initializeProducerFactory() {
         producerFactory = new ReplicationProducerFactory(mockedKafkaTemplateFactory, mockedSaveReplicationFactory);
@@ -53,12 +42,16 @@ public final class ReplicationProducerFactoryTest {
 
     @Test
     public void producerShouldBeCreated() {
-        TestService givenService = new TestService(null);
+        ProducerConfig givenProducerConfig = mock(ProducerConfig.class);
+        String givenTopicName = "test-topic";
+        TopicConfig givenTopicConfig = createTopicConfig(givenTopicName);
+        DtoViewConfig[] givenDtoViewConfigs = new DtoViewConfig[]{mock(DtoViewConfig.class), mock(DtoViewConfig.class)};
+        var givenService = createReplicatedService(givenProducerConfig, givenTopicConfig, givenDtoViewConfigs);
 
         @SuppressWarnings("unchecked") KafkaTemplate<Object, ProducedReplication<?>> givenKafkaTemplate = mock(
                 KafkaTemplate.class
         );
-        when(mockedKafkaTemplateFactory.create(any(ProducerConfig.class))).thenReturn(givenKafkaTemplate);
+        when(mockedKafkaTemplateFactory.create(same(givenProducerConfig))).thenReturn(givenKafkaTemplate);
 
         ReplicationProducer actual = producerFactory.create(givenService);
 
@@ -68,20 +61,11 @@ public final class ReplicationProducerFactoryTest {
         KafkaTemplate<?, ?> actualKafkaTemplate = getKafkaTemplate(actual);
         assertSame(givenKafkaTemplate, actualKafkaTemplate);
 
-        String actualTopic = getTopic(actual);
-        String expectedTopic = "sync-dto";
-        Assertions.assertEquals(expectedTopic, actualTopic);
+        String actualTopicName = getTopicName(actual);
+        assertSame(givenTopicName, actualTopicName);
 
         DtoViewConfig[] actualDtoViewConfigs = getDtoViewConfigs(actual);
-        DtoViewConfig[] expectedDtoViewConfigs = {
-                createDtoViewConfig(TestDto.class, new String[]{"firstProperty"}, new String[]{"secondProperty"})
-        };
-        DtoViewConfigUtil.assertEquals(expectedDtoViewConfigs, actualDtoViewConfigs);
-
-        verify(mockedKafkaTemplateFactory, times(1)).create(producerConfigCaptor.capture());
-        ProducerConfig actualProducerConfig = producerConfigCaptor.getValue();
-        ProducerConfig expectedProducerConfig = createProducerConfig(LongSerializer.class, 11, 501, 100001);
-        ProducerConfigUtil.assertEquals(expectedProducerConfig, actualProducerConfig);
+        assertSame(givenDtoViewConfigs, actualDtoViewConfigs);
     }
 
     private SaveProducedReplicationFactory getSaveReplicationFactory(ReplicationProducer producer) {
@@ -96,7 +80,7 @@ public final class ReplicationProducerFactoryTest {
         return getFieldValue(producer, FIELD_NAME_PRODUCER_KAFKA_TEMPLATE, KafkaTemplate.class);
     }
 
-    private String getTopic(ReplicationProducer producer) {
+    private String getTopicName(ReplicationProducer producer) {
         return getFieldValue(producer, FIELD_NAME_PRODUCER_TOPIC, String.class);
     }
 
