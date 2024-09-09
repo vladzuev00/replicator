@@ -16,11 +16,11 @@ public final class TopicConfigUtil {
         return config;
     }
 
-    public static TopicConfig createTopicConfig(String name, int partitionCount, short replicationFactor) {
+    public static TopicConfig createTopicConfig(String name, int partitionCount, int replicationFactor) {
         TopicConfig config = mock(TopicConfig.class);
         when(config.name()).thenReturn(name);
         when(config.partitionCount()).thenReturn(partitionCount);
-        when(config.replicationFactor()).thenReturn(replicationFactor);
+        when(config.replicationFactor()).thenReturn((short) replicationFactor);
         return config;
     }
 

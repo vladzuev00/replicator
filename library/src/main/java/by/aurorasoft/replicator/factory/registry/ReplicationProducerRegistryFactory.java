@@ -1,9 +1,8 @@
 package by.aurorasoft.replicator.factory.registry;
 
-import by.aurorasoft.replicator.factory.producer.ReplicationProducerFactory;
 import by.aurorasoft.replicator.loader.ReplicatedServiceLoader;
 import by.aurorasoft.replicator.registry.ReplicationProducerRegistry;
-import by.aurorasoft.replicator.topicallocator.ReplicationTopicAllocator;
+import by.aurorasoft.replicator.starter.ReplicationProducingStarter;
 import by.aurorasoft.replicator.validator.ReplicatedServiceUniqueTopicValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,19 +18,17 @@ import static java.util.stream.Collectors.toMap;
 public final class ReplicationProducerRegistryFactory {
     private final ReplicatedServiceUniqueTopicValidator uniqueTopicValidator;
     private final ReplicatedServiceLoader serviceLoader;
-    private final ReplicationTopicAllocator topicAllocator;
-    private final ReplicationProducerFactory producerFactory;
+    private final ReplicationProducingStarter producingStarter;
 
     public ReplicationProducerRegistry create() {
-        throw new UnsupportedOperationException();
-//        Collection<Object> services = serviceLoader.load();
-//        uniqueTopicValidator.validate(services);
-//        return services.stream()
-//                .collect(
-//                        collectingAndThen(
-//                                toMap(identity(), producerFactory::create),
-//                                ReplicationProducerRegistry::new
-//                        )
-//                );
+        Collection<Object> services = serviceLoader.load();
+        uniqueTopicValidator.validate(services);
+        return services.stream()
+                .collect(
+                        collectingAndThen(
+                                toMap(identity(), producingStarter::start),
+                                ReplicationProducerRegistry::new
+                        )
+                );
     }
 }

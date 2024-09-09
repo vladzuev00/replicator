@@ -13,8 +13,9 @@ public final class ReplicationProducingStarter {
     private final ReplicationTopicAllocator topicAllocator;
     private final ReplicationProducerFactory producerFactory;
 
-    public ReplicationProducer start(ReplicatedService service) {
-        topicAllocator.allocate(service.topicConfig());
-        return producerFactory.create(service);
+    public ReplicationProducer start(Object service) {
+        ReplicatedService serviceConfig = service.getClass().getAnnotation(ReplicatedService.class);
+        topicAllocator.allocate(serviceConfig.topicConfig());
+        return producerFactory.create(serviceConfig);
     }
 }
