@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableReplication
-public class ReplicationConsumeConfig {
+public class ReplicationConfig {
 
     @Bean
     public ReplicationConsumeSetting<ReplicatedPersonEntity, Long> personReplicationConsumeSetting(@Value("${replication.consume.topic.person}") String topic,
