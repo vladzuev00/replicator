@@ -23,7 +23,7 @@ public final class ReplicationProducerRegistryFactory {
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
-        return null;
+        throw new UnsupportedOperationException();
 //        Collection<Object> services = serviceLoader.load();
 //        uniqueTopicValidator.validate(services);
 //        return services.stream()

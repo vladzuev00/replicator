@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.consumingstarter;
+package by.aurorasoft.replicator.starter;
 
 import by.aurorasoft.replicator.factory.kafkastreams.ReplicationKafkaStreamsFactory;
 import by.aurorasoft.replicator.model.setting.ReplicationConsumeSetting;
