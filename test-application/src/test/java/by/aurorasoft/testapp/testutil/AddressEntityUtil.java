@@ -16,8 +16,4 @@ public final class AddressEntityUtil {
         assertEquals(expected.getCountry(), expected.getCountry());
         assertEquals(expected.getCity(), actual.getCity());
     }
-
-    public static void checkEquals(List<AddressEntity> expected, List<AddressEntity> actual) {
-        EntityUtil.checkEquals(expected, actual, AddressEntityUtil::checkEquals);
-    }
 }

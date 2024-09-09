@@ -15,8 +15,4 @@ public final class ReplicatedAddressEntityUtil {
         assertEquals(expected.getCountry(), actual.getCountry());
         assertEquals(expected.getCity(), actual.getCity());
     }
-
-    public static void checkEquals(List<ReplicatedAddressEntity> expected, List<ReplicatedAddressEntity> actual) {
-        EntityUtil.checkEquals(expected, actual, ReplicatedAddressEntityUtil::checkEquals);
-    }
 }
