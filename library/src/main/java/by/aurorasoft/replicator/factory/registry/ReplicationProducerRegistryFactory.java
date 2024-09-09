@@ -17,17 +17,14 @@ import static java.util.stream.Collectors.toMap;
 @Component
 @RequiredArgsConstructor
 public final class ReplicationProducerRegistryFactory {
-//    private final ReplicatedServiceUniqueTopicValidator uniqueTopicValidator;
+    private final ReplicatedServiceUniqueTopicValidator uniqueTopicValidator;
     private final ApplicationContext applicationContext;
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducerRegistry create() {
-//        var replicatedServices = applicationContext.getBeansWithAnnotation(ReplicatedService.class).values();
-//        uniqueTopicValidator.validate(replicatedServices);
-        //TODO: validate unique topics
-        return applicationContext.getBeansWithAnnotation(ReplicatedService.class)
-                .values()
-                .stream()
+        Collection<Object> replicatedServices = applicationContext.getBeansWithAnnotation(ReplicatedService.class).values();
+        uniqueTopicValidator.validate(replicatedServices);
+        return replicatedServices.stream()
                 .collect(
                         collectingAndThen(
                                 toMap(identity(), producerFactory::create),
