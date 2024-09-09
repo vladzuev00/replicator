@@ -1,12 +1,13 @@
 package by.aurorasoft.testapp.crud.entity;
 
+import by.nhorushko.crudgeneric.v2.domain.AbstractEntity;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
 import static java.util.Objects.hash;
 
-public abstract class Entity {
+public abstract class Entity implements AbstractEntity<Long> {
 
     public abstract Long getId();
 
