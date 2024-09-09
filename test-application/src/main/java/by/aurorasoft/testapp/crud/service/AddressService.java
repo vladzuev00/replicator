@@ -12,10 +12,12 @@ import by.aurorasoft.testapp.crud.repository.AddressRepository;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.apache.kafka.common.serialization.LongSerializer;
 
+import static by.aurorasoft.testapp.crud.dto.Address.Fields.country;
+
 @ReplicatedService(
         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
         topicConfig = @TopicConfig(name = "address-sync"),
-        dtoViewConfigs = @DtoViewConfig(type = Address.class, includedFields = "country")
+        dtoViewConfigs = @DtoViewConfig(type = Address.class, includedFields = country)
 )
 public class AddressService extends AbsServiceCRUD<Long, AddressEntity, Address, AddressRepository> {
 
