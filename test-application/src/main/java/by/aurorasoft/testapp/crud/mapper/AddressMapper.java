@@ -16,7 +16,7 @@ public final class AddressMapper extends AbsMapperEntityDto<AddressEntity, Addre
     }
 
     @Override
-    protected Address create(AddressEntity from) {
-        return null;
+    protected Address create(AddressEntity entity) {
+        return new Address(entity.getId(), entity.getCountry(), entity.getCity());
     }
 }
