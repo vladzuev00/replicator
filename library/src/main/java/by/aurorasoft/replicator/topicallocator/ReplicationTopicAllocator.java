@@ -7,7 +7,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Component;
 
-//TODO
+
 @Component
 @RequiredArgsConstructor
 public final class ReplicationTopicAllocator {
