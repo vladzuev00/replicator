@@ -12,7 +12,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.AnnotationErrorAlertUtil.alert;
+import static by.aurorasoft.replicator.util.AnnotationProcessErrorAlertUtil.alert;
 import static by.aurorasoft.replicator.util.AnnotationProcessUtil.getAnnotatedElements;
 import static by.aurorasoft.replicator.util.AnnotationProcessUtil.isPublic;
 import static java.util.stream.Collectors.collectingAndThen;

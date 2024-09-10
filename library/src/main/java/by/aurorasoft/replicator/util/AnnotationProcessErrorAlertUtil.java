@@ -10,22 +10,22 @@ import static java.util.stream.Collectors.joining;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
 @UtilityClass
-public final class AnnotationErrorAlertUtil {
-    private static final String REQUIREMENTS_DELIMITER = "\n\t";
-    private static final String ERROR_TEXT_TEMPLATE = "Element annotated by @%s should match next requirements: %s";
+public final class AnnotationProcessErrorAlertUtil {
+    private static final String REQUIREMENT_PREFIX = "\n\t";
+    private static final String MESSAGE_TEMPLATE = "Element annotated by @%s should match next requirements:%s";
 
     public static void alert(AnnotationError error, ProcessingEnvironment environment) {
-        String text = createText(error);
-        environment.getMessager().printMessage(ERROR, text, error.getElement());
+        environment.getMessager().printMessage(ERROR, getMessage(error), error.getElement());
     }
 
-    private static String createText(AnnotationError error) {
+    private static String getMessage(AnnotationError error) {
         return error.getRequirements()
                 .stream()
+                .map(requirement -> REQUIREMENT_PREFIX + requirement)
                 .collect(
                         collectingAndThen(
-                                joining(REQUIREMENTS_DELIMITER),
-                                requirements -> ERROR_TEXT_TEMPLATE.formatted(
+                                joining(),
+                                requirements -> MESSAGE_TEMPLATE.formatted(
                                         error.getAnnotation().getSimpleName(),
                                         requirements
                                 )
