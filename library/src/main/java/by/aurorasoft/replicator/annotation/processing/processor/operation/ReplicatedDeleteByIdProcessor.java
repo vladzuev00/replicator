@@ -13,7 +13,7 @@ import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedDeleteByIdProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String PARAMETERS_REQUIREMENT = "Method should have at least one parameter";
+    static final String PARAMETERS_REQUIREMENT = "Method should have at least one parameter";
 
     public ReplicatedDeleteByIdProcessor() {
         super(ReplicatedDeleteById.class);

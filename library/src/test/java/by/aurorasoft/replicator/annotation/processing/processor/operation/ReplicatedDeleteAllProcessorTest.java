@@ -67,13 +67,13 @@ public final class ReplicatedDeleteAllProcessorTest {
     }
 
     @Test
-    public void returnTypeRequirementShouldBeGot() {
+    public void returnTypeRequirementShouldNotBeGot() {
         Optional<String> optionalActual = processor.getReturnTypeRequirement();
         assertTrue(optionalActual.isEmpty());
     }
 
     @Test
-    public void parametersRequirementShouldBeGot() {
+    public void parametersRequirementShouldNotBeGot() {
         Optional<String> optionalActual = processor.getParametersRequirement();
         assertTrue(optionalActual.isEmpty());
     }
