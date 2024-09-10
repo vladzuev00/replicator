@@ -14,7 +14,7 @@ import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedDeleteByIdsProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String PARAMETERS_REQUIREMENT = "Method should have at least one parameter as Iterable";
+    static final String PARAMETERS_REQUIREMENT = "Method should have at least one parameter as Iterable";
 
     public ReplicatedDeleteByIdsProcessor() {
         super(ReplicatedDeleteByIds.class);
