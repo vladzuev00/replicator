@@ -16,7 +16,6 @@ public final class PropertyUtil {
     public static final String FIELD_NAME_REPOSITORY = "repository";
 
     private static final String NO_ID_GETTER_MESSAGE_TEMPLATE = "There is no id's getter in %s";
-    private static final String NO_REPOSITORY_MESSAGE_TEMPLATE = "There is no repository in %s";
 
     @SneakyThrows
     public static Object getId(Object object) {
@@ -26,12 +25,7 @@ public final class PropertyUtil {
     }
 
     public static JpaRepository<?, ?> getJpaRepository(Object object) {
-        return getFieldValue(
-                object,
-                FIELD_NAME_REPOSITORY,
-                JpaRepository.class,
-                () -> NO_REPOSITORY_MESSAGE_TEMPLATE.formatted(object.getClass())
-        );
+        return getFieldValue(object, FIELD_NAME_REPOSITORY, JpaRepository.class);
     }
 
     private static PropertyDescriptor getIdDescriptor(Class<?> type) {

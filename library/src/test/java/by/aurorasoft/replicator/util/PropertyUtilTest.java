@@ -51,7 +51,7 @@ public final class PropertyUtilTest {
         executeExpectingException(
                 () -> getJpaRepository(givenService),
                 NullPointerException.class,
-                "There is no repository in class by.aurorasoft.replicator.util.PropertyUtilTest$SecondTestService"
+                "There is no field 'repository' in 'class by.aurorasoft.replicator.util.PropertyUtilTest$SecondTestService'"
         );
     }
 
