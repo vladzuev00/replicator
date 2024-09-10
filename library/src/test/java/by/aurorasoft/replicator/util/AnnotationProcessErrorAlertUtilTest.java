@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.util;
 
-import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ public final class AnnotationProcessErrorAlertUtilTest {
     @Test
     public void errorShouldBeAlerted() {
         Element givenElement = mock(Element.class);
-        Class<? extends Annotation> givenAnnotation = ReplicatedSave.class;
+        Class<? extends Annotation> givenAnnotation = TestAnnotation.class;
         Set<String> givenRequirements = new LinkedHashSet<>(
                 List.of(
                         "first requirement",
@@ -38,10 +37,14 @@ public final class AnnotationProcessErrorAlertUtilTest {
         alert(givenError, givenEnvironment);
 
         String expectedMessage = """
-                Element annotated by @ReplicatedSave should match next requirements:
+                Element annotated by @TestAnnotation should match next requirements:
                 	first requirement
                 	second requirement
                 	third requirement""";
         verify(givenMessager, times(1)).printMessage(same(ERROR), eq(expectedMessage), same(givenElement));
+    }
+
+    private @interface TestAnnotation {
+
     }
 }
