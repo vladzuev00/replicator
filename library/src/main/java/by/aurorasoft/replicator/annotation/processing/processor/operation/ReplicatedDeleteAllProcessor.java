@@ -14,7 +14,7 @@ import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String REPLICATED_SERVICE_REQUIREMENT = "Service should contain repository";
+    static final String REPLICATED_SERVICE_REQUIREMENT = "Service should contain repository";
 
     public ReplicatedDeleteAllProcessor() {
         super(ReplicatedDeleteAll.class);
