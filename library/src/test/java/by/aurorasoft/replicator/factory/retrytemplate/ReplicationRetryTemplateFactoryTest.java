@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;

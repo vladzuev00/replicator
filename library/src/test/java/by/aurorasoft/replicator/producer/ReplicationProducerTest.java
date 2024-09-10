@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.same;

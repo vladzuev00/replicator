@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static by.aurorasoft.replicator.testutil.ReflectionUtil.getFieldValue;
+import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
