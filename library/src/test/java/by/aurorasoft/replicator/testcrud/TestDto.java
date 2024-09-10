@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Value;
 
 @Value
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class TestDto {
     Long id;
     String firstProperty;
