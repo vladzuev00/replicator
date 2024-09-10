@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 @Value
-public class AnnotationError {
+public class AnnotationProcessError {
     Element element;
     Class<? extends Annotation> annotation;
     Set<String> requirements;

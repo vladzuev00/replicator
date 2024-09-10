@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.util;
 
-import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
+import by.aurorasoft.replicator.annotation.processing.error.AnnotationProcessError;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Messager;
@@ -28,7 +28,7 @@ public final class AnnotationProcessErrorAlertUtilTest {
                         "third requirement"
                 )
         );
-        AnnotationError givenError = new AnnotationError(givenElement, givenAnnotation, givenRequirements);
+        AnnotationProcessError givenError = new AnnotationProcessError(givenElement, givenAnnotation, givenRequirements);
         ProcessingEnvironment givenEnvironment = mock(ProcessingEnvironment.class);
 
         Messager givenMessager = mock(Messager.class);

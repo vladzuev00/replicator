@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.annotation.processing.processor;
 
-import by.aurorasoft.replicator.annotation.processing.error.AnnotationError;
+import by.aurorasoft.replicator.annotation.processing.error.AnnotationProcessError;
 import lombok.RequiredArgsConstructor;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -55,12 +55,12 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         return isPublic(element) && isValidPublicElement(element);
     }
 
-    private AnnotationError createError(E element) {
+    private AnnotationProcessError createError(E element) {
         return concat(Stream.of(PUBLIC_MODIFIER_REQUIREMENT), getRequirementsInternal())
                 .collect(
                         collectingAndThen(
                                 toUnmodifiableSet(),
-                                requirements -> new AnnotationError(element, annotation, requirements)
+                                requirements -> new AnnotationProcessError(element, annotation, requirements)
                         )
                 );
     }
