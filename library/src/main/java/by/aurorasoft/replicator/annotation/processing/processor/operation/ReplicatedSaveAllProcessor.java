@@ -14,7 +14,7 @@ import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String RETURN_TYPE_REQUIREMENT = "Returned list's objects should contain id's getter";
+    static final String RETURN_TYPE_REQUIREMENT = "Returned list's objects should contain id's getter";
 
     public ReplicatedSaveAllProcessor() {
         super(ReplicatedSaveAll.class);
@@ -27,8 +27,7 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return true;
-//        return isList(mirror) && isContainIdGetter(getFirstGenericParameterType(mirror));
+        return isList(mirror) && isContainIdGetter(getFirstGenericParameterType(mirror));
     }
 
     @Override

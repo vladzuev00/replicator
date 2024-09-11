@@ -55,7 +55,8 @@ public final class AnnotationProcessUtil {
     }
 
     public static TypeMirror getFirstGenericParameterType(TypeMirror mirror) {
-        return ((DeclaredType) requireNonNull(getTypeElement(mirror))).getTypeArguments().get(0);
+        return null;
+//        return ((DeclaredType) requireNonNull(getTypeElement(mirror))).getTypeArguments().get(0);
     }
 
     public static TypeMirror getFirstGenericParameterType(VariableElement element) {
