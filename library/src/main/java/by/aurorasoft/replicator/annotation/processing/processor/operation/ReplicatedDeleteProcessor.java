@@ -14,7 +14,7 @@ import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationProcessor {
-    private static final String PARAMETERS_REQUIREMENT = "Method should contain at least one parameter and "
+    static final String PARAMETERS_REQUIREMENT = "Method should contain at least one parameter and "
             + "this parameter should contain id's getter";
 
     public ReplicatedDeleteProcessor() {
