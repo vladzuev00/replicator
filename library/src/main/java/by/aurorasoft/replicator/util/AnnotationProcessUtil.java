@@ -59,7 +59,8 @@ public final class AnnotationProcessUtil {
     }
 
     public static TypeMirror getFirstGenericParameterType(VariableElement element) {
-        return getFirstGenericParameterType(element.asType());
+        return null;
+//        return getFirstGenericParameterType(element.asType());
     }
 
     public static boolean isContainIdGetter(TypeMirror typeMirror) {
