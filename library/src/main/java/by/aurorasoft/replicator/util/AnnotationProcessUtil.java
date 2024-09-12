@@ -35,13 +35,11 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isPublic(Element element) {
-        return true;
-//        return element.getModifiers().contains(PUBLIC);
+        return element.getModifiers().contains(PUBLIC);
     }
 
     public static boolean isReplicatedService(TypeMirror mirror) {
-        return true;
-//        return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
+        return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
     }
 
     public static boolean isList(TypeMirror mirror) {
@@ -64,13 +62,13 @@ public final class AnnotationProcessUtil {
 //        return getFirstGenericParameterType(element.asType());
     }
 
-    public static boolean isContainIdGetter(TypeMirror typeMirror) {
-        return true;
-//        return getTypeElement(typeMirror).getEnclosedElements().stream()
-//                .filter(element -> element.getKind() == ElementKind.METHOD)
-//                .filter(element -> element.getSimpleName().contentEquals("getId"))
-//                .filter(element -> element.getModifiers().contains(PUBLIC))
-//                .findFirst().isPresent();
+    public static boolean isContainIdGetter(TypeMirror typeMirror) {;
+        return getTypeElement(typeMirror).getEnclosedElements().stream()
+                .filter(element -> element.getKind() == ElementKind.METHOD)
+                .filter(element -> element.getSimpleName().contentEquals("getId"))
+                .filter(element -> element.getModifiers().contains(PUBLIC))
+                .findFirst()
+                .isPresent();
     }
 
     public static boolean isContainIdGetter(VariableElement element) {

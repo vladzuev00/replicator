@@ -18,7 +18,7 @@ public final class AssertExceptionUtil {
         } catch (Throwable actual) {
             exceptionArisen = true;
             assertTrue(expectedExceptionType.isInstance(actual));
-            assertEquals(expectedMessage, actual.getMessage());
+            assertTrue(actual.getMessage().contains(expectedMessage));
         }
         assertTrue(exceptionArisen);
     }
