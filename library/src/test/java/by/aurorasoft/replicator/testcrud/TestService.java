@@ -11,59 +11,59 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import java.util.ArrayList;
 import java.util.List;
 
-@ReplicatedService(
-        producerConfig = @ProducerConfig(
-                idSerializer = LongSerializer.class,
-                batchSize = 11,
-                lingerMs = 501,
-                deliveryTimeoutMs = 100001
-        ),
-        topicConfig = @TopicConfig(name = "sync-dto", partitionCount = 2, replicationFactor = 3),
-        dtoViewConfigs = @DtoViewConfig(
-                type = TestDto.class,
-                includedFields = "firstProperty",
-                excludedFields = "secondProperty"
-        )
-)
+//@ReplicatedService(
+//        producerConfig = @ProducerConfig(
+//                idSerializer = LongSerializer.class,
+//                batchSize = 11,
+//                lingerMs = 501,
+//                deliveryTimeoutMs = 100001
+//        ),
+//        topicConfig = @TopicConfig(name = "sync-dto", partitionCount = 2, replicationFactor = 3),
+//        dtoViewConfigs = @DtoViewConfig(
+//                type = TestDto.class,
+//                includedFields = "firstProperty",
+//                excludedFields = "secondProperty"
+//        )
+//)
 @RequiredArgsConstructor
 public class TestService {
 
     @SuppressWarnings("unused")
     private final TestRepository repository;
 
-    @ReplicatedSave
+//    @ReplicatedSave
     public TestDto save(TestDto dto) {
         return dto;
     }
 
-    @ReplicatedSaveAll
+//    @ReplicatedSaveAll
     public List<TestDto> saveAll(Iterable<TestDto> dtos) {
         List<TestDto> result = new ArrayList<>();
         dtos.forEach(result::add);
         return result;
     }
 
-    @ReplicatedDeleteById
+//    @ReplicatedDeleteById
     public void deleteById(@SuppressWarnings("unused") Long id) {
 
     }
 
-    @ReplicatedDelete
+//    @ReplicatedDelete
     public void delete(@SuppressWarnings("unused") TestDto dto) {
 
     }
 
-    @ReplicatedDeleteByIds
+//    @ReplicatedDeleteByIds
     public void deleteByIds(@SuppressWarnings("unused") Iterable<Long> ids) {
 
     }
 
-    @ReplicatedDeleteIterable
+//    @ReplicatedDeleteIterable
     public void delete(@SuppressWarnings("unused") Iterable<TestDto> dtos) {
 
     }
 
-    @ReplicatedDeleteAll
+//    @ReplicatedDeleteAll
     public void deleteAll() {
 
     }

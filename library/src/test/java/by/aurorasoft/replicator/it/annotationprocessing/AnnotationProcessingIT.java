@@ -18,13 +18,13 @@ import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.executeExpec
 public final class AnnotationProcessingIT {
 
     @ParameterizedTest
-    @MethodSource("provideClassNameAndCompiledSourceCode")
+    @MethodSource("provideSuccessCompileArguments")
     public void sourceCodeShouldBeCompiled(SuccessCompileTestArgument argument) {
         compile(argument);
     }
 
     @ParameterizedTest
-    @MethodSource("provideClassNameAndNotCompiledSourceCodeAndErrorMessage")
+    @MethodSource("provideFailedCompileArguments")
     public void sourceCodeShouldNotBeCompiled(FailedCompileTestArgument argument) {
         compileExpectingError(argument);
     }
@@ -76,58 +76,59 @@ public final class AnnotationProcessingIT {
         }
     }
 
-    private static Stream<Arguments> provideClassNameAndCompiledSourceCode() {
+    private static Stream<Arguments> provideSuccessCompileArguments() {
         return Stream.of(
                 Arguments.of(
                         new SuccessCompileTestArgument(
                                 "by.aurorasoft.replicator.TestService",
                                 """
-                                package by.aurorasoft.replicator;
-                                                                
-                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                import org.apache.kafka.common.serialization.LongSerializer;
-                                                                
-                                @ReplicatedService(
-                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                        topicConfig = @TopicConfig(name = "sync-dto")
-                                )
-                                public class TestService {
-                                   
-                                }
+                                        package by.aurorasoft.replicator;
+                                                                        
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                           
+                                        }
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new SuccessCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
                                 """
+                                        package by.aurorasoft.replicator;
+                                                                                        
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                        
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                        
+                                            @ReplicatedSave
+                                            public TestDto save() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }"""
                         )
                 )
-//                Arguments.of(
-//                        "by.aurorasoft.replicator.TestService",
-//                        """
-//                                package by.aurorasoft.replicator;
-//
-//                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
-//                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-//                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-//                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-//                                import by.aurorasoft.replicator.testdto.TestDto;
-//                                import org.apache.kafka.common.serialization.LongSerializer;
-//
-//                                @ReplicatedService(
-//                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-//                                        topicConfig = @TopicConfig(name = "sync-dto")
-//                                )
-//                                public class TestService {
-//
-//                                    @ReplicatedDelete
-//                                    public void delete(TestDto dto) {
-//
-//                                    }
-//                                }
-//                                """
-//                )
         );
     }
 
-    private static Stream<Arguments> provideClassNameAndNotCompiledSourceCodeAndErrorMessage() {
+    private static Stream<Arguments> provideFailedCompileArguments() {
         return Stream.of(
                 Arguments.of(
                         new FailedCompileTestArgument(
@@ -148,6 +149,32 @@ public final class AnnotationProcessingIT {
                                                                 
                                         }""",
                                 "Element annotated by @ReplicatedService should match next requirements: Element should be public"
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                        
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                        
+                                            @ReplicatedSave
+                                            public void save() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                ""
                         )
                 )
         );

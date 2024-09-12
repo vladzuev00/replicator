@@ -4,8 +4,10 @@ import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.Processor;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +29,8 @@ public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationPro
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isContainIdGetter(mirror);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, Boolean.toString(isContainIdGetter((TypeElement) processingEnv.getTypeUtils().asElement(mirror))));
+        return isContainIdGetter((TypeElement) processingEnv.getTypeUtils().asElement(mirror));
     }
 
     @Override

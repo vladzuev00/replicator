@@ -13,6 +13,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -38,8 +39,13 @@ public final class AnnotationProcessUtil {
         return element.getModifiers().contains(PUBLIC);
     }
 
-    public static boolean isReplicatedService(TypeMirror mirror) {
-        return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
+//    public static boolean isReplicatedService(TypeMirror mirror) {
+//        return containsSameByClass(mirror.getAnnotationMirrors(), ReplicatedService.class);
+//    }
+
+    public static boolean isReplicatedService(Element element) {
+        return element.getAnnotation(ReplicatedService.class) != null;
+//        return util.getTypeElement(mirror.toString()).asType().getAnnotation(ReplicatedService.class) != null;
     }
 
     public static boolean isList(TypeMirror mirror) {
@@ -62,11 +68,21 @@ public final class AnnotationProcessUtil {
 //        return getFirstGenericParameterType(element.asType());
     }
 
-    public static boolean isContainIdGetter(TypeMirror typeMirror) {;
+    public static boolean isContainIdGetter(TypeMirror typeMirror) {
         return getTypeElement(typeMirror).getEnclosedElements().stream()
                 .filter(element -> element.getKind() == ElementKind.METHOD)
                 .filter(element -> element.getSimpleName().contentEquals("getId"))
                 .filter(element -> element.getModifiers().contains(PUBLIC))
+                .findFirst()
+                .isPresent();
+    }
+
+    public static boolean isContainIdGetter(TypeElement element) {
+        return element.getEnclosedElements()
+                .stream()
+                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.METHOD)
+                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("getId"))
+                .filter(enclosedElement -> enclosedElement.getModifiers().contains(PUBLIC))
                 .findFirst()
                 .isPresent();
     }
