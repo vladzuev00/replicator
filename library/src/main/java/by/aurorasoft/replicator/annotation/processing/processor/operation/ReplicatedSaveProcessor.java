@@ -2,10 +2,13 @@ package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import com.google.auto.service.AutoService;
+import org.checkerframework.javacutil.TypesUtils;
+import org.springframework.cglib.core.TypeUtils;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import java.util.List;
@@ -29,8 +32,11 @@ public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationPro
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, Boolean.toString(isContainIdGetter((TypeElement) processingEnv.getTypeUtils().asElement(mirror))));
-        return isContainIdGetter((TypeElement) processingEnv.getTypeUtils().asElement(mirror));
+        processingEnv.getTypeUtils().
+        processingEnv.getTypeUtils().asElement().getKind()
+        mirror.getKind().isPrimitive() && mirror.getKind() == TypeKind.VOID
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Return type: " + mirror);
+        return mirror.isPrimitiveOrVoid() && isContainIdGetter(processingEnv.getElementUtils().getTypeElement(mirror.toString()));
     }
 
     @Override

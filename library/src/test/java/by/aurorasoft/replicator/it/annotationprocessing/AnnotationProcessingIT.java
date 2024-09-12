@@ -174,7 +174,7 @@ public final class AnnotationProcessingIT {
                                                 throw new UnsupportedOperationException();
                                             }
                                         }""",
-                                ""
+                                "gfggggggggggggggggggggggggggggggggggggggggggggg"
                         )
                 )
         );
