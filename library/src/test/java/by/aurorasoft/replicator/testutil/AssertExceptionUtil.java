@@ -1,6 +1,7 @@
 package by.aurorasoft.replicator.testutil;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.util.StringUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,7 +19,7 @@ public final class AssertExceptionUtil {
         } catch (Throwable actual) {
             exceptionArisen = true;
             assertTrue(expectedExceptionType.isInstance(actual));
-            assertTrue(actual.getMessage().contains(expectedMessage));
+            assertEquals(expectedMessage, actual.getMessage());
         }
         assertTrue(exceptionArisen);
     }

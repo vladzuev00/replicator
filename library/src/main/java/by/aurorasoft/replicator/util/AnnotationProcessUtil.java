@@ -2,8 +2,6 @@ package by.aurorasoft.replicator.util;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
-import org.checkerframework.javacutil.TypesUtils;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -11,16 +9,11 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.Modifier.PUBLIC;
-import static org.checkerframework.javacutil.AnnotationUtils.containsSameByClass;
 import static org.checkerframework.javacutil.TypesUtils.getClassFromType;
 import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 
@@ -77,8 +70,12 @@ public final class AnnotationProcessUtil {
                 .isPresent();
     }
 
-    public static boolean isContainIdGetter(TypeElement element) {
-        return element.getEnclosedElements()
+    public static boolean isContainIdGetter(TypeMirror typeMirror, ProcessingEnvironment environment) {
+        if (typeMirror.getKind().isPrimitive() || typeMirror.getKind() == TypeKind.VOID) {
+            return false;
+        }
+        return environment.getElementUtils().getTypeElement(typeMirror.toString())
+                .getEnclosedElements()
                 .stream()
                 .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.METHOD)
                 .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("getId"))

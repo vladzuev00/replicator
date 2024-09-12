@@ -95,8 +95,7 @@ public final class AnnotationProcessingIT {
                                         )
                                         public class TestService {
                                            
-                                        }
-                                        """
+                                        }"""
                         )
                 ),
                 Arguments.of(
@@ -148,7 +147,13 @@ public final class AnnotationProcessingIT {
                                         class TestService {
                                                                 
                                         }""",
-                                "Element annotated by @ReplicatedService should match next requirements: Element should be public"
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:12: error: Element annotated by @ReplicatedService should match next requirements:
+                                        class TestService {
+                                        ^
+                                          	 - Element should be public
+                                        1 error
+                                        """
                         )
                 ),
                 Arguments.of(
@@ -174,7 +179,77 @@ public final class AnnotationProcessingIT {
                                                 throw new UnsupportedOperationException();
                                             }
                                         }""",
-                                "gfggggggggggggggggggggggggggggggggggggggggggggg"
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedSave should match next requirements:
+                                            public void save() {
+                                                        ^
+                                          	 - Element should be public
+                                          	 - Returned object should contain id's getter
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedSave
+                                            TestDto save() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedSave should match next requirements:
+                                            TestDto save() {
+                                                    ^
+                                          	 - Returned object should contain id's getter
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Element should be public
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                                                                
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedSave
+                                            public TestDto save() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:9: error: Element annotated by @ReplicatedSave should match next requirements:
+                                            public TestDto save() {
+                                                           ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Returned object should contain id's getter
+                                        1 error
+                                        """
                         )
                 )
         );

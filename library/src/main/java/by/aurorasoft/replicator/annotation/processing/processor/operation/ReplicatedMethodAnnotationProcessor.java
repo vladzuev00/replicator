@@ -7,7 +7,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +50,6 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
     protected abstract Optional<String> getParametersRequirement();
 
     private boolean isValidEnclosingClass(Element element) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "isReplicatedService: " + isReplicatedService(element) + ". Element: " + element);
         return isReplicatedService(element) && isValidReplicatedService(element.asType());
     }
 

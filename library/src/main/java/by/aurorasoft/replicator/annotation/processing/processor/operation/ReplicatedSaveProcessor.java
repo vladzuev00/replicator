@@ -6,6 +6,7 @@ import org.checkerframework.javacutil.TypesUtils;
 import org.springframework.cglib.core.TypeUtils;
 
 import javax.annotation.processing.Processor;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
@@ -32,11 +33,7 @@ public final class ReplicatedSaveProcessor extends ReplicatedMethodAnnotationPro
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        processingEnv.getTypeUtils().
-        processingEnv.getTypeUtils().asElement().getKind()
-        mirror.getKind().isPrimitive() && mirror.getKind() == TypeKind.VOID
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Return type: " + mirror);
-        return mirror.isPrimitiveOrVoid() && isContainIdGetter(processingEnv.getElementUtils().getTypeElement(mirror.toString()));
+        return isContainIdGetter(mirror, processingEnv);
     }
 
     @Override
