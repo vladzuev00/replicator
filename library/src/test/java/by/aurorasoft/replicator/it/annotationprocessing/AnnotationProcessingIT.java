@@ -658,6 +658,174 @@ public final class AnnotationProcessingIT {
                                         1 error
                                         """
                         )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                
+                                        import java.util.List;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedDeleteIterable
+                                            void delete(List<TestDto> dtos) {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:19: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                            void delete(List<TestDto> dtos) {
+                                                 ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                        
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                                                        
+                                        import java.util.List;
+                                                                        
+                                        public class TestService {
+                                                                        
+                                            @ReplicatedDeleteIterable
+                                            public void delete(List<TestDto> dtos) {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:11: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                            public void delete(List<TestDto> dtos) {
+                                                        ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedDeleteIterable
+                                            public void delete() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                            public void delete() {
+                                                        ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedDeleteIterable
+                                            public void delete(Object object) {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                            public void delete(Object object) {
+                                                        ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedDeleteIterable
+                                            public void delete(Iterable<Object> objects) {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                            public void delete(Iterable<Object> objects) {
+                                                        ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                        1 error
+                                        """
+                        )
                 )
         );
     }
