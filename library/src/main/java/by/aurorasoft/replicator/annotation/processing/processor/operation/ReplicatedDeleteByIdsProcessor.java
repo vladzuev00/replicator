@@ -32,7 +32,7 @@ public final class ReplicatedDeleteByIdsProcessor extends ReplicatedMethodAnnota
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return elements.size() > 0 && isIterable(elements.get(0), processingEnv);
+        return !elements.isEmpty() && isIterable(elements.get(0), processingEnv);
     }
 
     @Override
