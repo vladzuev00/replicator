@@ -13,7 +13,7 @@ import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
 public final class ReplicatedDeleteByIdProcessor extends ReplicatedMethodAnnotationProcessor {
-    static final String PARAMETERS_REQUIREMENT = "Method should have at least one parameter";
+    static final String PARAMETERS_REQUIREMENT = "Method should have at least one parameter as id";
 
     public ReplicatedDeleteByIdProcessor() {
         super(ReplicatedDeleteById.class);
@@ -31,7 +31,7 @@ public final class ReplicatedDeleteByIdProcessor extends ReplicatedMethodAnnotat
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return elements.size() > 0;
+        return !elements.isEmpty();
     }
 
     @Override
