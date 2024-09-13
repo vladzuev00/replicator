@@ -5,10 +5,8 @@ import lombok.experimental.UtilityClass;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.stream.Stream;
@@ -41,8 +39,8 @@ public final class AnnotationProcessUtil {
 //        return util.getTypeElement(mirror.toString()).asType().getAnnotation(ReplicatedService.class) != null;
     }
 
-    public static boolean isList(TypeMirror mirror) {
-        return true;
+    public static boolean isList(TypeMirror mirror, ProcessingEnvironment environment) {
+        return environment.getTypeUtils().erasure(mirror).toString().equals("java.util.List");
 //        return isSame(mirror, List.class);
     }
 
@@ -61,8 +59,29 @@ public final class AnnotationProcessUtil {
 //        return getFirstGenericParameterType(element.asType());
     }
 
+    public static TypeMirror getFirstTypeParameter(TypeMirror mirror, ProcessingEnvironment environment) {
+        if (mirror.getKind().isPrimitive() || mirror.getKind() == TypeKind.VOID) {
+            throw new RuntimeException();
+        }
+//        List<? extends TypeParameterElement> typeParameters = ((TypeElement) environment.getTypeUtils().asElement(mirror)).getTypeParameters();
+//        if (typeParameters.isEmpty()) {
+//            throw new RuntimeException();
+//        }
+//        return typeParameters.get(0);
+        return ((DeclaredType) mirror).getTypeArguments().get(0);
+    }
+
     public static boolean isContainIdGetter(TypeMirror typeMirror) {
         return getTypeElement(typeMirror).getEnclosedElements().stream()
+                .filter(element -> element.getKind() == ElementKind.METHOD)
+                .filter(element -> element.getSimpleName().contentEquals("getId"))
+                .filter(element -> element.getModifiers().contains(PUBLIC))
+                .findFirst()
+                .isPresent();
+    }
+
+    public static boolean isContainIdGetter(TypeParameterElement typeParameterElement) {
+        return typeParameterElement.getGenericElement().getEnclosedElements().stream()
                 .filter(element -> element.getKind() == ElementKind.METHOD)
                 .filter(element -> element.getSimpleName().contentEquals("getId"))
                 .filter(element -> element.getModifiers().contains(PUBLIC))
@@ -74,7 +93,7 @@ public final class AnnotationProcessUtil {
         if (typeMirror.getKind().isPrimitive() || typeMirror.getKind() == TypeKind.VOID) {
             return false;
         }
-        return environment.getElementUtils().getTypeElement(typeMirror.toString())
+        return environment.getTypeUtils().asElement(typeMirror)
                 .getEnclosedElements()
                 .stream()
                 .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.METHOD)
