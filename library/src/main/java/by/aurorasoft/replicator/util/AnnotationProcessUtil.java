@@ -102,8 +102,8 @@ public final class AnnotationProcessUtil {
                 .isPresent();
     }
 
-    public static boolean isContainIdGetter(VariableElement element) {
-        return isContainIdGetter(element.asType());
+    public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
+        return isContainIdGetter(element.asType(), environment);
     }
 
     public static boolean isContainRepository(TypeMirror mirror) {

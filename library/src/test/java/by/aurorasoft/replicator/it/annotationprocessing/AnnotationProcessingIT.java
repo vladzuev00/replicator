@@ -180,6 +180,32 @@ public final class AnnotationProcessingIT {
                                             }
                                         }"""
                         )
+                ),
+                Arguments.of(
+                        new SuccessCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                        
+                                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
+                                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                        
+                                                @ReplicatedService(
+                                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                                )
+                                                public class TestService {
+                                                                                        
+                                                    @ReplicatedDelete
+                                                    public void delete(TestDto dto) {
+                                                        throw new UnsupportedOperationException();
+                                                    }
+                                                }"""
+                        )
                 )
         );
     }
