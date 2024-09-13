@@ -9,6 +9,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -16,7 +17,7 @@ import static by.aurorasoft.replicator.util.AnnotationProcessErrorAlertUtil.aler
 import static by.aurorasoft.replicator.util.AnnotationProcessUtil.getAnnotatedElements;
 import static by.aurorasoft.replicator.util.AnnotationProcessUtil.isPublic;
 import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toUnmodifiableSet;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Stream.concat;
 import static javax.lang.model.SourceVersion.latestSupported;
 
@@ -59,7 +60,7 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         return concat(Stream.of(PUBLIC_MODIFIER_REQUIREMENT), getRequirementsInternal())
                 .collect(
                         collectingAndThen(
-                                toUnmodifiableSet(),
+                                toCollection(LinkedHashSet::new),
                                 requirements -> new AnnotationProcessError(element, annotation, requirements)
                         )
                 );

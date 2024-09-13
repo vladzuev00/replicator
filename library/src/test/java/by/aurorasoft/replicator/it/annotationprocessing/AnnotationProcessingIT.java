@@ -151,6 +151,35 @@ public final class AnnotationProcessingIT {
                                             }
                                         }"""
                         )
+                ),
+                Arguments.of(
+                        new SuccessCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                
+                                        import java.util.ArrayList;
+                                        import java.util.List;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedSaveAll
+                                            public ArrayList<TestDto> saveAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }"""
+                        )
                 )
         );
     }
@@ -212,8 +241,8 @@ public final class AnnotationProcessingIT {
                                             public void save() {
                                                         ^
                                           	 - Element should be public
-                                          	 - Returned object should contain id's getter
                                           	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Returned object should contain id's getter
                                         1 error
                                         """
                         )
@@ -246,9 +275,9 @@ public final class AnnotationProcessingIT {
                                         Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedSave should match next requirements:
                                             TestDto save() {
                                                     ^
-                                          	 - Returned object should contain id's getter
-                                          	 - It should be inside class annotated by @ReplicatedService
                                           	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Returned object should contain id's getter
                                         1 error
                                         """
                         )
@@ -276,6 +305,143 @@ public final class AnnotationProcessingIT {
                                           	 - Element should be public
                                           	 - It should be inside class annotated by @ReplicatedService
                                           	 - Returned object should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                        
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                        import java.util.List;
+                                                                        
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                        
+                                            @ReplicatedSaveAll
+                                            List<TestDto> saveAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:19: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                            List<TestDto> saveAll() {
+                                                          ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Returned list's objects should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                        
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                                                        
+                                        import java.util.List;
+                                                                        
+                                        public class TestService {
+                                                                        
+                                            @ReplicatedSaveAll
+                                            public List<TestDto> saveAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:11: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                            public List<TestDto> saveAll() {
+                                                                 ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Returned list's objects should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                        
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                        import java.util.List;
+                                                                        
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                        
+                                            @ReplicatedSaveAll
+                                            public List<Object> saveAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:18: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                            public List<Object> saveAll() {
+                                                                ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Returned list's objects should contain id's getter
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestDto;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                                                                
+                                            @ReplicatedSaveAll
+                                            public Iterable<TestDto> saveAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                            public Iterable<TestDto> saveAll() {
+                                                                     ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Returned list's objects should contain id's getter
                                         1 error
                                         """
                         )

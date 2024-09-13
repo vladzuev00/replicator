@@ -40,8 +40,7 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isList(TypeMirror mirror, ProcessingEnvironment environment) {
-        return environment.getTypeUtils().erasure(mirror).toString().equals("java.util.List");
-//        return isSame(mirror, List.class);
+        return environment.getTypeUtils().isAssignable(environment.getTypeUtils().erasure(mirror), environment.getElementUtils().getTypeElement("java.util.List").asType());
     }
 
     public static boolean isIterable(VariableElement element) {
