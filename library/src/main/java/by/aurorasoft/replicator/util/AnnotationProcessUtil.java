@@ -43,8 +43,8 @@ public final class AnnotationProcessUtil {
         return environment.getTypeUtils().isAssignable(environment.getTypeUtils().erasure(mirror), environment.getElementUtils().getTypeElement("java.util.List").asType());
     }
 
-    public static boolean isIterable(VariableElement element) {
-        return true;
+    public static boolean isIterable(VariableElement element, ProcessingEnvironment environment) {
+        return environment.getTypeUtils().isAssignable(environment.getTypeUtils().erasure(element.asType()), environment.getElementUtils().getTypeElement("java.lang.Iterable").asType());
 //        return isSame(element.asType(), Iterable.class);
     }
 
@@ -58,7 +58,7 @@ public final class AnnotationProcessUtil {
 //        return getFirstGenericParameterType(element.asType());
     }
 
-    public static TypeMirror getFirstTypeParameter(TypeMirror mirror, ProcessingEnvironment environment) {
+    public static TypeMirror getFirstTypeParameter(TypeMirror mirror) {
         if (mirror.getKind().isPrimitive() || mirror.getKind() == TypeKind.VOID) {
             throw new RuntimeException();
         }
@@ -70,13 +70,8 @@ public final class AnnotationProcessUtil {
         return ((DeclaredType) mirror).getTypeArguments().get(0);
     }
 
-    public static boolean isContainIdGetter(TypeMirror typeMirror) {
-        return getTypeElement(typeMirror).getEnclosedElements().stream()
-                .filter(element -> element.getKind() == ElementKind.METHOD)
-                .filter(element -> element.getSimpleName().contentEquals("getId"))
-                .filter(element -> element.getModifiers().contains(PUBLIC))
-                .findFirst()
-                .isPresent();
+    public static TypeMirror getFirstTypeParameter(VariableElement element) {
+        return getFirstTypeParameter(element.asType());
     }
 
     public static boolean isContainIdGetter(TypeParameterElement typeParameterElement) {
