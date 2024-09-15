@@ -40,23 +40,9 @@ public final class AnnotationProcessUtil {
 //        return util.getTypeElement(mirror.toString()).asType().getAnnotation(ReplicatedService.class) != null;
     }
 
-    public static boolean isList(TypeMirror mirror, ProcessingEnvironment environment) {
-        return environment.getTypeUtils().isAssignable(environment.getTypeUtils().erasure(mirror), environment.getElementUtils().getTypeElement("java.util.List").asType());
-    }
-
     public static boolean isIterable(VariableElement element, ProcessingEnvironment environment) {
         return environment.getTypeUtils().isAssignable(environment.getTypeUtils().erasure(element.asType()), environment.getElementUtils().getTypeElement("java.lang.Iterable").asType());
 //        return isSame(element.asType(), Iterable.class);
-    }
-
-    public static TypeMirror getFirstGenericParameterType(TypeMirror mirror) {
-        return null;
-//        return ((DeclaredType) requireNonNull(getTypeElement(mirror))).getTypeArguments().get(0);
-    }
-
-    public static TypeMirror getFirstGenericParameterType(VariableElement element) {
-        return null;
-//        return getFirstGenericParameterType(element.asType());
     }
 
     public static TypeMirror getFirstTypeParameter(TypeMirror mirror) {
