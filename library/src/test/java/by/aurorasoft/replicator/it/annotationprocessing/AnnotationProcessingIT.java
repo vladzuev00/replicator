@@ -52,6 +52,7 @@ public final class AnnotationProcessingIT {
                 );
     }
 
+    //TODO: Inherit from Arguments
     @RequiredArgsConstructor
     @Getter
     private static abstract class CompileTestArgument {
@@ -341,6 +342,123 @@ public final class AnnotationProcessingIT {
                                             }
                                         }
                                         """
+                        )
+                ),
+                Arguments.of(
+                        new SuccessCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                         
+                                         import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                         import by.aurorasoft.replicator.testcrud.TestEntity;
+                                         import org.apache.kafka.common.serialization.LongSerializer;
+                                         import org.springframework.data.jpa.repository.JpaRepository;
+                                         
+                                         @ReplicatedService(
+                                                 producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                 topicConfig = @TopicConfig(name = "sync-dto")
+                                         )
+                                         public class TestService {
+                                             private final JpaRepository<Long, TestEntity> repository;
+                                         
+                                             public TestService(JpaRepository<Long, TestEntity> repository) {
+                                                 this.repository = repository;
+                                             }
+                                         
+                                             @ReplicatedDeleteAll
+                                             public void deleteAll() {
+                                                 throw new UnsupportedOperationException();
+                                             }
+                                         }"""
+                        )
+                ),
+                Arguments.of(
+                        new SuccessCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestEntity;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                        import org.springframework.data.jpa.repository.JpaRepository;
+                                                                                
+                                        abstract class AbstractService<E, ID> {
+                                            private final JpaRepository<E, ID> repository;
+                                                                                
+                                            public AbstractService(JpaRepository<E, ID> repository) {
+                                                this.repository = repository;
+                                            }
+                                        }
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService extends AbstractService<TestEntity, Long> {
+                                                                                
+                                            public TestService(JpaRepository<TestEntity, Long> repository) {
+                                                super(repository);
+                                            }
+                                                                                
+                                            @ReplicatedDeleteAll
+                                            public void deleteAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }"""
+                        )
+                ),
+                Arguments.of(
+                        new SuccessCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestEntity;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                        import org.springframework.data.jpa.repository.JpaRepository;
+                                                                                
+                                        abstract class FirstAbstractService<E, ID> {
+                                            private final JpaRepository<E, ID> repository;
+                                                                                
+                                            public FirstAbstractService(JpaRepository<E, ID> repository) {
+                                                this.repository = repository;
+                                            }
+                                        }
+                                                                                
+                                        abstract class SecondAbstractService<E, ID> extends FirstAbstractService<E, ID> {
+                                                                                
+                                            public SecondAbstractService(JpaRepository<E, ID> repository) {
+                                                super(repository);
+                                            }
+                                        }
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService extends SecondAbstractService<TestEntity, Long> {
+                                                                                
+                                            public TestService(JpaRepository<TestEntity, Long> repository) {
+                                                super(repository);
+                                            }
+                                                                                
+                                            @ReplicatedDeleteAll
+                                            public void deleteAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }"""
                         )
                 )
         );
@@ -1132,6 +1250,80 @@ public final class AnnotationProcessingIT {
                                           	 - Element should be public
                                           	 - It should be inside class annotated by @ReplicatedService
                                           	 - Method should have at least one parameter as id
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                                
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                        import by.aurorasoft.replicator.testcrud.TestEntity;
+                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                        import org.springframework.data.jpa.repository.JpaRepository;
+                                                                                
+                                        @ReplicatedService(
+                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                                topicConfig = @TopicConfig(name = "sync-dto")
+                                        )
+                                        public class TestService {
+                                            private final JpaRepository<Long, TestEntity> repository;
+                                                                                
+                                            public TestService(JpaRepository<Long, TestEntity> repository) {
+                                                this.repository = repository;
+                                            }
+                                                                                
+                                            @ReplicatedDeleteAll
+                                            void deleteAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:23: error: Element annotated by @ReplicatedDeleteAll should match next requirements:
+                                            void deleteAll() {
+                                                 ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Service should contain repository
+                                        1 error
+                                        """
+                        )
+                ),
+                Arguments.of(
+                        new FailedCompileTestArgument(
+                                "by.aurorasoft.replicator.TestService",
+                                """
+                                        package by.aurorasoft.replicator;
+                                                                        
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                        import by.aurorasoft.replicator.testcrud.TestEntity;
+                                        import org.springframework.data.jpa.repository.JpaRepository;
+                                                                        
+                                        public class TestService {
+                                            private final JpaRepository<Long, TestEntity> repository;
+                                                                        
+                                            public TestService(JpaRepository<Long, TestEntity> repository) {
+                                                this.repository = repository;
+                                            }
+                                                                        
+                                            @ReplicatedDeleteAll
+                                            public void deleteAll() {
+                                                throw new UnsupportedOperationException();
+                                            }
+                                        }""",
+                                """
+                                        Compilation error: /by/aurorasoft/replicator/TestService.java:15: error: Element annotated by @ReplicatedDeleteAll should match next requirements:
+                                            public void deleteAll() {
+                                                        ^
+                                          	 - Element should be public
+                                          	 - It should be inside class annotated by @ReplicatedService
+                                          	 - Service should contain repository
                                         1 error
                                         """
                         )

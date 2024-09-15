@@ -9,11 +9,12 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.stream.Stream.concat;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static org.checkerframework.javacutil.TypesUtils.getClassFromType;
-import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
@@ -101,12 +102,28 @@ public final class AnnotationProcessUtil {
         return isContainIdGetter(element.asType(), environment);
     }
 
-    public static boolean isContainRepository(TypeMirror mirror) {
-        return true;
-//        return getTypeElement(mirror).getEnclosedElements().stream()
-//                .filter(element -> element.getKind() == ElementKind.METHOD)
-//                .filter(element -> getClassFromType(mirror) == JpaRepository.class)
-//                .findFirst().isPresent();
+    public static boolean isContainRepository(TypeMirror mirror, ProcessingEnvironment environment) {
+        return concat(environment.getTypeUtils().directSupertypes(mirror).stream(), Stream.of(mirror)).flatMap(superType -> environment.getTypeUtils().asElement(superType).getEnclosedElements().stream())
+                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.FIELD)
+                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("repository"))
+                .filter(enclosedElement -> isRepository(enclosedElement, environment))
+                .findFirst()
+                .isPresent();
+    }
+
+    private static List<TypeMirror> getAllSuperTypes(TypeMirror mirror, ProcessingEnvironment environment) {
+        return List.of();
+//        List<TypeMirror> superTypes = new ArrayList<>();
+//        List<? extends TypeMirror> current = environment.getTypeUtils().directSupertypes(mirror);
+//        do {
+//            superTypes.addAll(current);
+//            current.clear();
+//            current = environment.getTypeUtils().directSupertypes(m)
+//        }while (environment.getTypeUtils().isSameType(current.get(0), environment.getElementUtils().getTypeElement("java.lang.Object").asType()));
+    }
+
+    private static boolean isRepository(Element element, ProcessingEnvironment environment) {
+        return environment.getTypeUtils().isAssignable(environment.getTypeUtils().erasure(element.asType()), environment.getElementUtils().getTypeElement("org.springframework.data.jpa.repository.JpaRepository").asType());
     }
 
     private static boolean isSame(TypeMirror mirror, Class<?> type) {
