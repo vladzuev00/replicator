@@ -2,20 +2,14 @@ package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import com.google.auto.service.AutoService;
-import org.checkerframework.javacutil.TypesUtils;
-import org.springframework.cglib.core.TypeUtils;
 
 import javax.annotation.processing.Processor;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.AnnotationProcessUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.TypeMirrorUtil.isContainIdGetter;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)

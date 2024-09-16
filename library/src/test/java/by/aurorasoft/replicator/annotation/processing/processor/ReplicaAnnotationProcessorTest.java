@@ -2,7 +2,6 @@ package by.aurorasoft.replicator.annotation.processing.processor;
 
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationProcessError;
 import by.aurorasoft.replicator.util.AnnotationProcessErrorAlertUtil;
-import by.aurorasoft.replicator.util.AnnotationProcessUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
