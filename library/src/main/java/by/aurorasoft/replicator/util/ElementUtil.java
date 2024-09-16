@@ -26,16 +26,6 @@ public final class ElementUtil {
                 .map(elementType::cast);
     }
 
-    public static boolean isContainIdGetter(Element element) {
-        return element.getEnclosedElements()
-                .stream()
-                .anyMatch(ElementUtil::isIdGetter);
-    }
-
-    public static boolean isContainIdGetter(TypeParameterElement element) {
-        return isContainIdGetter(element.getGenericElement());
-    }
-
     public static boolean isPublic(Element element) {
         return element.getModifiers().contains(PUBLIC);
     }
@@ -50,6 +40,16 @@ public final class ElementUtil {
 
     public static TypeMirror getFirstTypeArgument(Element element) {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
+    }
+
+    public static boolean isContainIdGetter(Element element) {
+        return element.getEnclosedElements()
+                .stream()
+                .anyMatch(ElementUtil::isIdGetter);
+    }
+
+    public static boolean isContainIdGetter(TypeParameterElement element) {
+        return isContainIdGetter(element.getGenericElement());
     }
 
     private static boolean isIdGetter(Element element) {

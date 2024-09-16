@@ -25,8 +25,7 @@ public final class ReplicatedSaveProcessorTest {
     public void replicatedServiceShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReplicatedService(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReplicatedService(givenMirror));
     }
 
     @Test
@@ -36,8 +35,7 @@ public final class ReplicatedSaveProcessorTest {
 
             mockedMirrorUtil.when(() -> isContainIdGetter(same(givenMirror), any())).thenReturn(true);
 
-            boolean actual = processor.isValidReturnType(givenMirror);
-            assertTrue(actual);
+            assertTrue(processor.isValidReturnType(givenMirror));
         }
     }
 
@@ -48,8 +46,7 @@ public final class ReplicatedSaveProcessorTest {
 
             mockedMirrorUtil.when(() -> isContainIdGetter(same(givenMirror), any())).thenReturn(false);
 
-            boolean actual = processor.isValidReturnType(givenMirror);
-            assertFalse(actual);
+            assertFalse(processor.isValidReturnType(givenMirror));
         }
     }
 
@@ -57,8 +54,7 @@ public final class ReplicatedSaveProcessorTest {
     public void parametersShouldBeValid() {
         List<? extends VariableElement> givenElements = emptyList();
 
-        boolean actual = processor.isValidParameters(givenElements);
-        assertTrue(actual);
+        assertTrue(processor.isValidParameters(givenElements));
     }
 
     @Test

@@ -65,8 +65,7 @@ public final class ReplicaAnnotationProcessorTest {
                     fourthGivenMethod
             );
 
-            boolean actual = processor.process(givenAnnotations, givenEnvironment);
-            assertTrue(actual);
+            assertTrue(processor.process(givenAnnotations, givenEnvironment));
 
             mockedProcessErrorAlertUtil.verifyNoInteractions();
         }
@@ -101,8 +100,7 @@ public final class ReplicaAnnotationProcessorTest {
                     fourthGivenMethod
             );
 
-            boolean actual = processor.process(givenAnnotations, givenEnvironment);
-            assertTrue(actual);
+            assertTrue(processor.process(givenAnnotations, givenEnvironment));
 
             mockedProcessErrorAlertUtil.verify(() -> alert(errorCaptor.capture(), any()), times(2));
 

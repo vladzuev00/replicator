@@ -39,8 +39,7 @@ public final class ReplicatedMethodAnnotationProcessorTest {
             List givenParameters = List.of(mock(VariableElement.class));
             when(givenElement.getParameters()).thenReturn(givenParameters);
 
-            boolean actual = processor.isValidPublicElement(givenElement);
-            assertTrue(actual);
+            assertTrue(processor.isValidPublicElement(givenElement));
         }
     }
 

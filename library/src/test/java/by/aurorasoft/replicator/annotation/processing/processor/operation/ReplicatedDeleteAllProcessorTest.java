@@ -27,8 +27,7 @@ public final class ReplicatedDeleteAllProcessorTest {
             TypeMirror givenMirror = mock(TypeMirror.class);
             mockedMirrorUtil.when(() -> isContainRepository(same(givenMirror), any())).thenReturn(true);
 
-            boolean actual = processor.isValidReplicatedService(givenMirror);
-            assertTrue(actual);
+            assertTrue(processor.isValidReplicatedService(givenMirror));
         }
     }
 
@@ -38,8 +37,7 @@ public final class ReplicatedDeleteAllProcessorTest {
             TypeMirror givenMirror = mock(TypeMirror.class);
             mockedMirrorUtil.when(() -> isContainRepository(same(givenMirror), any())).thenReturn(false);
 
-            boolean actual = processor.isValidReplicatedService(givenMirror);
-            assertFalse(actual);
+            assertFalse(processor.isValidReplicatedService(givenMirror));
         }
     }
 
@@ -47,16 +45,14 @@ public final class ReplicatedDeleteAllProcessorTest {
     public void returnTypeShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReturnType(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReturnType(givenMirror));
     }
 
     @Test
     public void parametersShouldBeValid() {
         var givenElements = List.of(mock(VariableElement.class), mock(VariableElement.class));
 
-        boolean actual = processor.isValidParameters(givenElements);
-        assertTrue(actual);
+        assertTrue(processor.isValidParameters(givenElements));
     }
 
     @Test

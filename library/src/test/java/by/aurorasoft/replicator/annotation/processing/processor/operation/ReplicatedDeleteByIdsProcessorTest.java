@@ -25,16 +25,14 @@ public final class ReplicatedDeleteByIdsProcessorTest {
     public void replicatedServiceShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReplicatedService(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReplicatedService(givenMirror));
     }
 
     @Test
     public void returnTypeShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReturnType(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReturnType(givenMirror));
     }
 
     @Test
@@ -45,8 +43,7 @@ public final class ReplicatedDeleteByIdsProcessorTest {
 
             mockedElementUtil.when(() -> isIterable(same(givenElement), any())).thenReturn(true);
 
-            boolean actual = processor.isValidParameters(givenElements);
-            assertTrue(actual);
+            assertTrue(processor.isValidParameters(givenElements));
         }
     }
 
@@ -55,8 +52,7 @@ public final class ReplicatedDeleteByIdsProcessorTest {
         try (MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
             List<? extends VariableElement> givenElements = emptyList();
 
-            boolean actual = processor.isValidParameters(givenElements);
-            assertFalse(actual);
+            assertFalse(processor.isValidParameters(givenElements));
 
             mockedElementUtil.verifyNoInteractions();
         }
@@ -70,8 +66,7 @@ public final class ReplicatedDeleteByIdsProcessorTest {
 
             mockedElementUtil.when(() -> isIterable(same(givenElement), any())).thenReturn(false);
 
-            boolean actual = processor.isValidParameters(givenElements);
-            assertFalse(actual);
+            assertFalse(processor.isValidParameters(givenElements));
         }
     }
 

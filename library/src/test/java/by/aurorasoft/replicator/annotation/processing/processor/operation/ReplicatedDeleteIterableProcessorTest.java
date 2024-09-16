@@ -30,16 +30,14 @@ public final class ReplicatedDeleteIterableProcessorTest {
     public void replicatedServiceShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReplicatedService(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReplicatedService(givenMirror));
     }
 
     @Test
     public void returnTypeShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReturnType(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReturnType(givenMirror));
     }
 
     @Test
@@ -56,8 +54,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
                     .thenReturn(givenFirstTypeArgument);
             mockedMirrorUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(true);
 
-            boolean actual = processor.isValidParameters(givenElements);
-            assertTrue(actual);
+            assertTrue(processor.isValidParameters(givenElements));
         }
     }
 
@@ -67,8 +64,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
              MockedStatic<TypeMirrorUtil> mockedMirrorUtil = mockStatic(TypeMirrorUtil.class)) {
             List<? extends VariableElement> givenElements = emptyList();
 
-            boolean actual = processor.isValidParameters(givenElements);
-            assertFalse(actual);
+            assertFalse(processor.isValidParameters(givenElements));
 
             mockedElementUtil.verifyNoInteractions();
             mockedMirrorUtil.verifyNoInteractions();
@@ -84,8 +80,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
 
             mockedElementUtil.when(() -> isIterable(same(givenFirstParameter), any())).thenReturn(false);
 
-            boolean actual = processor.isValidParameters(givenElements);
-            assertFalse(actual);
+            assertFalse(processor.isValidParameters(givenElements));
 
             mockedElementUtil.verify(() -> getFirstTypeArgument(any(Element.class)), times(0));
             mockedMirrorUtil.verifyNoInteractions();
@@ -106,8 +101,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
                     .thenReturn(givenFirstTypeArgument);
             mockedMirrorUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(false);
 
-            boolean actual = processor.isValidParameters(givenElements);
-            assertFalse(actual);
+            assertFalse(processor.isValidParameters(givenElements));
         }
     }
 

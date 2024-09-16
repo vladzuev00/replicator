@@ -20,32 +20,28 @@ public final class ReplicatedDeleteByIdProcessorTest {
     public void replicatedServiceShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReplicatedService(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReplicatedService(givenMirror));
     }
 
     @Test
     public void returnTypeShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReturnType(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReturnType(givenMirror));
     }
 
     @Test
     public void parametersShouldBeValid() {
         List<? extends VariableElement> givenElements = singletonList(mock(VariableElement.class));
 
-        boolean actual = processor.isValidParameters(givenElements);
-        assertTrue(actual);
+        assertTrue(processor.isValidParameters(givenElements));
     }
 
     @Test
     public void parametersShouldNotBeValid() {
         List<? extends VariableElement> givenElements = emptyList();
 
-        boolean actual = processor.isValidParameters(givenElements);
-        assertFalse(actual);
+        assertFalse(processor.isValidParameters(givenElements));
     }
 
     @Test

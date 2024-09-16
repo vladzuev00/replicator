@@ -15,14 +15,12 @@ public final class ReplicatedServiceProcessorTest {
     public void publicElementShouldBeValid() {
         TypeElement givenElement = mock(TypeElement.class);
 
-        boolean actual = processor.isValidPublicElement(givenElement);
-        assertTrue(actual);
+        assertTrue(processor.isValidPublicElement(givenElement));
     }
 
     @Test
     public void requirementsShouldBeGotInternally() {
         Stream<String> actual = processor.getRequirementsInternal();
-        boolean actualEmpty = actual.findAny().isEmpty();
-        assertTrue(actualEmpty);
+        assertTrue(actual.findAny().isEmpty());
     }
 }

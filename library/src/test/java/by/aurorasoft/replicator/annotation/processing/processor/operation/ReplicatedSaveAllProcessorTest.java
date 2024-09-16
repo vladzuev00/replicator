@@ -24,8 +24,7 @@ public final class ReplicatedSaveAllProcessorTest {
     public void replicatedServiceShouldBeValid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
-        boolean actual = processor.isValidReplicatedService(givenMirror);
-        assertTrue(actual);
+        assertTrue(processor.isValidReplicatedService(givenMirror));
     }
 
     @Test
@@ -39,8 +38,7 @@ public final class ReplicatedSaveAllProcessorTest {
             mockedMirrorUtil.when(() -> getFirstTypeArgument(same(givenMirror))).thenReturn(givenFirstTypeArgument);
             mockedMirrorUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(true);
 
-            boolean actual = processor.isValidReturnType(givenMirror);
-            assertTrue(actual);
+            assertTrue(processor.isValidReturnType(givenMirror));
         }
     }
 
@@ -51,8 +49,7 @@ public final class ReplicatedSaveAllProcessorTest {
 
             mockedMirrorUtil.when(() -> isList(same(givenMirror), any())).thenReturn(false);
 
-            boolean actual = processor.isValidReturnType(givenMirror);
-            assertFalse(actual);
+            assertFalse(processor.isValidReturnType(givenMirror));
 
             mockedMirrorUtil.verify(() -> getFirstTypeArgument(any(TypeMirror.class)), times(0));
             mockedMirrorUtil.verify(() -> isContainIdGetter(any(TypeMirror.class), any()), times(0));
@@ -70,8 +67,7 @@ public final class ReplicatedSaveAllProcessorTest {
             mockedMirrorUtil.when(() -> getFirstTypeArgument(same(givenMirror))).thenReturn(givenFirstTypeArgument);
             mockedMirrorUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(false);
 
-            boolean actual = processor.isValidReturnType(givenMirror);
-            assertFalse(actual);
+            assertFalse(processor.isValidReturnType(givenMirror));
         }
     }
 
@@ -79,8 +75,7 @@ public final class ReplicatedSaveAllProcessorTest {
     public void parametersShouldBeValid() {
         List<? extends VariableElement> givenElements = emptyList();
 
-        boolean actual = processor.isValidParameters(givenElements);
-        assertTrue(actual);
+        assertTrue(processor.isValidParameters(givenElements));
     }
 
     @Test
