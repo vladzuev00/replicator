@@ -9,8 +9,8 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.AnnotationProcessUtil.getFirstTypeParameter;
 import static by.aurorasoft.replicator.util.AnnotationProcessUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.TypeMirrorUtil.getFirstTypeArgument;
 import static by.aurorasoft.replicator.util.TypeMirrorUtil.isList;
 import static java.util.Optional.empty;
 
@@ -29,7 +29,7 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isList(mirror, processingEnv) && isContainIdGetter(getFirstTypeParameter(mirror), processingEnv);
+        return isList(mirror, processingEnv) && isContainIdGetter(getFirstTypeArgument(mirror), processingEnv);
     }
 
     @Override

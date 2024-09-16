@@ -45,20 +45,8 @@ public final class AnnotationProcessUtil {
 //        return isSame(element.asType(), Iterable.class);
     }
 
-    public static TypeMirror getFirstTypeParameter(TypeMirror mirror) {
-        if (mirror.getKind().isPrimitive() || mirror.getKind() == TypeKind.VOID) {
-            throw new RuntimeException();
-        }
-//        List<? extends TypeParameterElement> typeParameters = ((TypeElement) environment.getTypeUtils().asElement(mirror)).getTypeParameters();
-//        if (typeParameters.isEmpty()) {
-//            throw new RuntimeException();
-//        }
-//        return typeParameters.get(0);
-        return ((DeclaredType) mirror).getTypeArguments().get(0);
-    }
-
     public static TypeMirror getFirstTypeParameter(VariableElement element) {
-        return getFirstTypeParameter(element.asType());
+        return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
 
     public static boolean isContainIdGetter(TypeParameterElement typeParameterElement) {
