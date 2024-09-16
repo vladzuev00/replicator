@@ -8,7 +8,6 @@ import org.joor.CompileOptions;
 import org.joor.Reflect;
 import org.joor.ReflectException;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
@@ -52,7 +51,6 @@ public final class AnnotationProcessingIT {
                 );
     }
 
-    //TODO: Inherit from Arguments
     @RequiredArgsConstructor
     @Getter
     private static abstract class CompileTestArgument {
@@ -77,1256 +75,1178 @@ public final class AnnotationProcessingIT {
         }
     }
 
-    private static Stream<Arguments> provideSuccessCompileArguments() {
+    private static Stream<SuccessCompileTestArgument> provideSuccessCompileArguments() {
         return Stream.of(
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                           
-                                        }"""
-                        )
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                   
+                                }"""
                 ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                        
-                                            @ReplicatedSave
-                                            public TestDto save() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }"""
-                        )
-                ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        import java.util.List;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedSaveAll
-                                            public List<TestDto> saveAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }"""
-                        )
-                ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
                                                                                 
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
                                                                                 
-                                        import java.util.ArrayList;
-                                        import java.util.List;
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
                                                                                 
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedSaveAll
-                                            public ArrayList<TestDto> saveAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }"""
-                        )
+                                    @ReplicatedSave
+                                    public TestDto save() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }"""
                 ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                        
-                                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
-                                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                                import by.aurorasoft.replicator.testcrud.TestDto;
-                                                import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                        
-                                                @ReplicatedService(
-                                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                        topicConfig = @TopicConfig(name = "sync-dto")
-                                                )
-                                                public class TestService {
-                                                                                        
-                                                    @ReplicatedDelete
-                                                    public void delete(TestDto dto) {
-                                                        throw new UnsupportedOperationException();
-                                                    }
-                                                }"""
-                        )
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                import java.util.List;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedSaveAll
+                                    public List<TestDto> saveAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }"""
                 ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
                                                                         
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
                                                                         
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
+                                import java.util.ArrayList;
+                                import java.util.List;
                                                                         
-                                            @ReplicatedDeleteIterable
-                                            public void delete(Iterable<TestDto> dtos) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """
-                        )
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedSaveAll
+                                    public ArrayList<TestDto> saveAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }"""
                 ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
                                                                                 
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService;
                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
                                         import by.aurorasoft.replicator.testcrud.TestDto;
                                         import org.apache.kafka.common.serialization.LongSerializer;
                                                                                 
-                                        import java.util.List;
-                                                                                
                                         @ReplicatedService(
                                                 producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
                                                 topicConfig = @TopicConfig(name = "sync-dto")
                                         )
                                         public class TestService {
                                                                                 
-                                            @ReplicatedDeleteIterable
-                                            public void delete(List<TestDto> dtos) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteByIds
-                                            public void delete(Iterable<Long> ids) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        import java.util.List;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDeleteByIds
-                                            public void delete(List<Long> ids) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDeleteById
-                                            public void delete(Long id) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                         
-                                         import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
-                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                         import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                         import by.aurorasoft.replicator.testcrud.TestEntity;
-                                         import org.apache.kafka.common.serialization.LongSerializer;
-                                         import org.springframework.data.jpa.repository.JpaRepository;
-                                         
-                                         @ReplicatedService(
-                                                 producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                 topicConfig = @TopicConfig(name = "sync-dto")
-                                         )
-                                         public class TestService {
-                                             private final JpaRepository<Long, TestEntity> repository;
-                                         
-                                             public TestService(JpaRepository<Long, TestEntity> repository) {
-                                                 this.repository = repository;
-                                             }
-                                         
-                                             @ReplicatedDeleteAll
-                                             public void deleteAll() {
-                                                 throw new UnsupportedOperationException();
-                                             }
-                                         }"""
-                        )
-                ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestEntity;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                        import org.springframework.data.jpa.repository.JpaRepository;
-                                                                                
-                                        abstract class AbstractService<E, ID> {
-                                            private final JpaRepository<E, ID> repository;
-                                                                                
-                                            public AbstractService(JpaRepository<E, ID> repository) {
-                                                this.repository = repository;
-                                            }
-                                        }
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService extends AbstractService<TestEntity, Long> {
-                                                                                
-                                            public TestService(JpaRepository<TestEntity, Long> repository) {
-                                                super(repository);
-                                            }
-                                                                                
-                                            @ReplicatedDeleteAll
-                                            public void deleteAll() {
+                                            @ReplicatedDelete
+                                            public void delete(TestDto dto) {
                                                 throw new UnsupportedOperationException();
                                             }
                                         }"""
-                        )
                 ),
-                Arguments.of(
-                        new SuccessCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedDeleteIterable
+                                    public void delete(Iterable<TestDto> dtos) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestEntity;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                        import org.springframework.data.jpa.repository.JpaRepository;
-                                                                                
-                                        abstract class FirstAbstractService<E, ID> {
-                                            private final JpaRepository<E, ID> repository;
-                                                                                
-                                            public FirstAbstractService(JpaRepository<E, ID> repository) {
-                                                this.repository = repository;
-                                            }
-                                        }
-                                                                                
-                                        abstract class SecondAbstractService<E, ID> extends FirstAbstractService<E, ID> {
-                                                                                
-                                            public SecondAbstractService(JpaRepository<E, ID> repository) {
-                                                super(repository);
-                                            }
-                                        }
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService extends SecondAbstractService<TestEntity, Long> {
-                                                                                
-                                            public TestService(JpaRepository<TestEntity, Long> repository) {
-                                                super(repository);
-                                            }
-                                                                                
-                                            @ReplicatedDeleteAll
-                                            public void deleteAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }"""
-                        )
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                import java.util.List;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteIterable
+                                    public void delete(List<TestDto> dtos) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteByIds
+                                    public void delete(Iterable<Long> ids) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                import java.util.List;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedDeleteByIds
+                                    public void delete(List<Long> ids) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedDeleteById
+                                    public void delete(Long id) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                 
+                                 import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                 import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                 import by.aurorasoft.replicator.testcrud.TestEntity;
+                                 import org.apache.kafka.common.serialization.LongSerializer;
+                                 import org.springframework.data.jpa.repository.JpaRepository;
+                                 
+                                 @ReplicatedService(
+                                         producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                         topicConfig = @TopicConfig(name = "sync-dto")
+                                 )
+                                 public class TestService {
+                                     private final JpaRepository<Long, TestEntity> repository;
+                                 
+                                     public TestService(JpaRepository<Long, TestEntity> repository) {
+                                         this.repository = repository;
+                                     }
+                                 
+                                     @ReplicatedDeleteAll
+                                     public void deleteAll() {
+                                         throw new UnsupportedOperationException();
+                                     }
+                                 }"""
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestEntity;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                import org.springframework.data.jpa.repository.JpaRepository;
+                                                                        
+                                abstract class AbstractService<E, ID> {
+                                    private final JpaRepository<E, ID> repository;
+                                                                        
+                                    public AbstractService(JpaRepository<E, ID> repository) {
+                                        this.repository = repository;
+                                    }
+                                }
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService extends AbstractService<TestEntity, Long> {
+                                                                        
+                                    public TestService(JpaRepository<TestEntity, Long> repository) {
+                                        super(repository);
+                                    }
+                                                                        
+                                    @ReplicatedDeleteAll
+                                    public void deleteAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }"""
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestEntity;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                import org.springframework.data.jpa.repository.JpaRepository;
+                                                                        
+                                abstract class FirstAbstractService<E, ID> {
+                                    private final JpaRepository<E, ID> repository;
+                                                                        
+                                    public FirstAbstractService(JpaRepository<E, ID> repository) {
+                                        this.repository = repository;
+                                    }
+                                }
+                                                                        
+                                abstract class SecondAbstractService<E, ID> extends FirstAbstractService<E, ID> {
+                                                                        
+                                    public SecondAbstractService(JpaRepository<E, ID> repository) {
+                                        super(repository);
+                                    }
+                                }
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService extends SecondAbstractService<TestEntity, Long> {
+                                                                        
+                                    public TestService(JpaRepository<TestEntity, Long> repository) {
+                                        super(repository);
+                                    }
+                                                                        
+                                    @ReplicatedDeleteAll
+                                    public void deleteAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }"""
                 )
         );
     }
 
-    private static Stream<Arguments> provideFailedCompileArguments() {
+    private static Stream<FailedCompileTestArgument> provideFailedCompileArguments() {
         return Stream.of(
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                        
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                class TestService {
+                                                        
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:12: error: Element annotated by @ReplicatedService should match next requirements:
+                                class TestService {
+                                ^
+                                       - Element should be public
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
                                                                 
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
                                                                 
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        class TestService {
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
                                                                 
-                                        }""",
+                                    @ReplicatedSave
+                                    public void save() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedSave should match next requirements:
+                                    public void save() {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Returned object should contain id's getter
+                                1 error
                                 """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:12: error: Element annotated by @ReplicatedService should match next requirements:
-                                        class TestService {
-                                        ^
-                                          	 - Element should be public
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedSave
+                                    TestDto save() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedSave should match next requirements:
+                                    TestDto save() {
+                                            ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Returned object should contain id's getter
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedSave
-                                            public void save() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedSave should match next requirements:
-                                            public void save() {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Returned object should contain id's getter
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                                                        
+                                public class TestService {
+                                                                        
+                                    @ReplicatedSave
+                                    public TestDto save() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:9: error: Element annotated by @ReplicatedSave should match next requirements:
+                                    public TestDto save() {
+                                                   ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Returned object should contain id's getter
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedSave
-                                            TestDto save() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedSave should match next requirements:
-                                            TestDto save() {
-                                                    ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Returned object should contain id's getter
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                import java.util.List;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedSaveAll
+                                    List<TestDto> saveAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:19: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                    List<TestDto> saveAll() {
+                                                  ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Returned list's objects should contain id's getter
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                                                                
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedSave
-                                            public TestDto save() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:9: error: Element annotated by @ReplicatedSave should match next requirements:
-                                            public TestDto save() {
-                                                           ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Returned object should contain id's getter
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        import java.util.List;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedSaveAll
-                                            List<TestDto> saveAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:19: error: Element annotated by @ReplicatedSaveAll should match next requirements:
-                                            List<TestDto> saveAll() {
-                                                          ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Returned list's objects should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                                                        
-                                        import java.util.List;
-                                                                        
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedSaveAll
-                                            public List<TestDto> saveAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:11: error: Element annotated by @ReplicatedSaveAll should match next requirements:
-                                            public List<TestDto> saveAll() {
-                                                                 ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Returned list's objects should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        import java.util.List;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedSaveAll
-                                            public List<Object> saveAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:18: error: Element annotated by @ReplicatedSaveAll should match next requirements:
-                                            public List<Object> saveAll() {
-                                                                ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Returned list's objects should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedSaveAll
-                                            public Iterable<TestDto> saveAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedSaveAll should match next requirements:
-                                            public Iterable<TestDto> saveAll() {
-                                                                     ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Returned list's objects should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDelete
-                                            void delete(TestDto dto) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedDelete should match next requirements:
-                                            void delete(TestDto dto) {
-                                                 ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should contain at least one parameter and this parameter should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                                                        
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDelete
-                                            public void delete(TestDto dto) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:9: error: Element annotated by @ReplicatedDelete should match next requirements:
-                                            public void delete(TestDto dto) {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should contain at least one parameter and this parameter should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDelete
-                                            public void delete() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """,
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDelete should match next requirements:
-                                            public void delete() {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should contain at least one parameter and this parameter should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDelete
-                                            public void delete(Object object) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDelete should match next requirements:
-                                            public void delete(Object object) {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should contain at least one parameter and this parameter should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        import java.util.List;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteIterable
-                                            void delete(List<TestDto> dtos) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:19: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
-                                            void delete(List<TestDto> dtos) {
-                                                 ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
-                                        import by.aurorasoft.replicator.testcrud.TestDto;
-                                                                        
-                                        import java.util.List;
-                                                                        
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDeleteIterable
-                                            public void delete(List<TestDto> dtos) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:11: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
-                                            public void delete(List<TestDto> dtos) {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteIterable
-                                            public void delete() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
-                                            public void delete() {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteIterable
-                                            public void delete(Object object) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
-                                            public void delete(Object object) {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteIterable
-                                            public void delete(Iterable<Object> objects) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
-                                            public void delete(Iterable<Object> objects) {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable. Elements should contain id's getter
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        import java.util.List;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteByIds
-                                            void delete(List<Long> ids) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:18: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
-                                            void delete(List<Long> ids) {
-                                                 ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable
-                                        1 error
-                                        """
-                        )
-                ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                         
-                                         import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
-                                         
-                                         import java.util.List;
-                                         
-                                         public class TestService {
-                                         
-                                             @ReplicatedDeleteByIds
-                                             public void delete(List<Long> ids) {
-                                                 throw new UnsupportedOperationException();
-                                             }
-                                         }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:10: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
-                                             public void delete(List<Long> ids) {
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                                                
+                                import java.util.List;
+                                                                
+                                public class TestService {
+                                                                
+                                    @ReplicatedSaveAll
+                                    public List<TestDto> saveAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:11: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                    public List<TestDto> saveAll() {
                                                          ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable
-                                        1 error
-                                        """
-                        )
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Returned list's objects should contain id's getter
+                                1 error
+                                """
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
-                                """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteByIds
-                                            public void delete() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
-                                            public void delete() {
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                import java.util.List;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedSaveAll
+                                    public List<Object> saveAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:18: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                    public List<Object> saveAll() {
                                                         ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable
-                                        1 error
-                                        """
-                        )
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Returned list's objects should contain id's getter
+                                1 error
+                                """
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedSaveAll
+                                    public Iterable<TestDto> saveAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedSaveAll should match next requirements:
+                                    public Iterable<TestDto> saveAll() {
+                                                             ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Returned list's objects should contain id's getter
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDeleteByIds
-                                            public void delete(Object object) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
-                                            public void delete(Object object) {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as Iterable
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedDelete
+                                    void delete(TestDto dto) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:17: error: Element annotated by @ReplicatedDelete should match next requirements:
+                                    void delete(TestDto dto) {
+                                         ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should contain at least one parameter and this parameter should contain id's getter
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                        
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDeleteById
-                                            void delete(Long id) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """,
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                                                
+                                public class TestService {
+                                                                
+                                    @ReplicatedDelete
+                                    public void delete(TestDto dto) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:9: error: Element annotated by @ReplicatedDelete should match next requirements:
+                                    public void delete(TestDto dto) {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should contain at least one parameter and this parameter should contain id's getter
+                                1 error
                                 """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteById should match next requirements:
-                                            void delete(Long id) {
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDelete
+                                    public void delete() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """,
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDelete should match next requirements:
+                                    public void delete() {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should contain at least one parameter and this parameter should contain id's getter
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedDelete
+                                    public void delete(Object object) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDelete should match next requirements:
+                                    public void delete(Object object) {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should contain at least one parameter and this parameter should contain id's getter
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                import java.util.List;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteIterable
+                                    void delete(List<TestDto> dtos) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:19: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                    void delete(List<TestDto> dtos) {
+                                         ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                import by.aurorasoft.replicator.testcrud.TestDto;
+                                                                
+                                import java.util.List;
+                                                                
+                                public class TestService {
+                                                                
+                                    @ReplicatedDeleteIterable
+                                    public void delete(List<TestDto> dtos) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:11: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                    public void delete(List<TestDto> dtos) {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteIterable
+                                    public void delete() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                    public void delete() {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteIterable
+                                    public void delete(Object object) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                    public void delete(Object object) {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteIterable;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteIterable
+                                    public void delete(Iterable<Object> objects) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteIterable should match next requirements:
+                                    public void delete(Iterable<Object> objects) {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable. Elements should contain id's getter
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                import java.util.List;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteByIds
+                                    void delete(List<Long> ids) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:18: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
+                                    void delete(List<Long> ids) {
+                                         ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                 
+                                 import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
+                                 
+                                 import java.util.List;
+                                 
+                                 public class TestService {
+                                 
+                                     @ReplicatedDeleteByIds
+                                     public void delete(List<Long> ids) {
+                                         throw new UnsupportedOperationException();
+                                     }
+                                 }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:10: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
+                                     public void delete(List<Long> ids) {
                                                  ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as id
-                                        1 error
-                                        """
-                        )
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable
+                                1 error
+                                """
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                        
+                                    @ReplicatedDeleteByIds
+                                    public void delete() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
+                                    public void delete() {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                        
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
-                                                                        
-                                        public class TestService {
-                                                                        
-                                            @ReplicatedDeleteById
-                                            public void delete(Long id) {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """,
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:8: error: Element annotated by @ReplicatedDeleteById should match next requirements:
-                                            public void delete(Long id) {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as id
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteByIds;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedDeleteByIds
+                                    public void delete(Object object) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteByIds should match next requirements:
+                                    public void delete(Object object) {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as Iterable
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                                                                
-                                            @ReplicatedDeleteById
-                                            public void delete() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }
-                                        """,
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteById should match next requirements:
-                                            public void delete() {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Method should have at least one parameter as id
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedDeleteById
+                                    void delete(Long id) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """,
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteById should match next requirements:
+                                    void delete(Long id) {
+                                         ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as id
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
-                                                                                
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
-                                        import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
-                                        import by.aurorasoft.replicator.testcrud.TestEntity;
-                                        import org.apache.kafka.common.serialization.LongSerializer;
-                                        import org.springframework.data.jpa.repository.JpaRepository;
-                                                                                
-                                        @ReplicatedService(
-                                                producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
-                                                topicConfig = @TopicConfig(name = "sync-dto")
-                                        )
-                                        public class TestService {
-                                            private final JpaRepository<Long, TestEntity> repository;
-                                                                                
-                                            public TestService(JpaRepository<Long, TestEntity> repository) {
-                                                this.repository = repository;
-                                            }
-                                                                                
-                                            @ReplicatedDeleteAll
-                                            void deleteAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
-                                """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:23: error: Element annotated by @ReplicatedDeleteAll should match next requirements:
-                                            void deleteAll() {
-                                                 ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Service should contain repository
-                                        1 error
-                                        """
-                        )
                 ),
-                Arguments.of(
-                        new FailedCompileTestArgument(
-                                "by.aurorasoft.replicator.TestService",
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
+                                                                
+                                public class TestService {
+                                                                
+                                    @ReplicatedDeleteById
+                                    public void delete(Long id) {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """,
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:8: error: Element annotated by @ReplicatedDeleteById should match next requirements:
+                                    public void delete(Long id) {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as id
+                                1 error
                                 """
-                                        package by.aurorasoft.replicator;
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
                                                                         
-                                        import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
-                                        import by.aurorasoft.replicator.testcrud.TestEntity;
-                                        import org.springframework.data.jpa.repository.JpaRepository;
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
                                                                         
-                                        public class TestService {
-                                            private final JpaRepository<Long, TestEntity> repository;
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
                                                                         
-                                            public TestService(JpaRepository<Long, TestEntity> repository) {
-                                                this.repository = repository;
-                                            }
-                                                                        
-                                            @ReplicatedDeleteAll
-                                            public void deleteAll() {
-                                                throw new UnsupportedOperationException();
-                                            }
-                                        }""",
+                                    @ReplicatedDeleteById
+                                    public void delete() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                """,
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:16: error: Element annotated by @ReplicatedDeleteById should match next requirements:
+                                    public void delete() {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Method should have at least one parameter as id
+                                1 error
                                 """
-                                        Compilation error: /by/aurorasoft/replicator/TestService.java:15: error: Element annotated by @ReplicatedDeleteAll should match next requirements:
-                                            public void deleteAll() {
-                                                        ^
-                                          	 - Element should be public
-                                          	 - It should be inside class annotated by @ReplicatedService
-                                          	 - Service should contain repository
-                                        1 error
-                                        """
-                        )
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                        
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import by.aurorasoft.replicator.testcrud.TestEntity;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                import org.springframework.data.jpa.repository.JpaRepository;
+                                                                        
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                    private final JpaRepository<Long, TestEntity> repository;
+                                                                        
+                                    public TestService(JpaRepository<Long, TestEntity> repository) {
+                                        this.repository = repository;
+                                    }
+                                                                        
+                                    @ReplicatedDeleteAll
+                                    void deleteAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:23: error: Element annotated by @ReplicatedDeleteAll should match next requirements:
+                                    void deleteAll() {
+                                         ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Service should contain repository
+                                1 error
+                                """
+                ),
+                new FailedCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
+                                import by.aurorasoft.replicator.testcrud.TestEntity;
+                                import org.springframework.data.jpa.repository.JpaRepository;
+                                                                
+                                public class TestService {
+                                    private final JpaRepository<Long, TestEntity> repository;
+                                                                
+                                    public TestService(JpaRepository<Long, TestEntity> repository) {
+                                        this.repository = repository;
+                                    }
+                                                                
+                                    @ReplicatedDeleteAll
+                                    public void deleteAll() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }""",
+                        """
+                                Compilation error: /by/aurorasoft/replicator/TestService.java:15: error: Element annotated by @ReplicatedDeleteAll should match next requirements:
+                                    public void deleteAll() {
+                                                ^
+                                       - Element should be public
+                                       - It should be inside class annotated by @ReplicatedService
+                                       - Service should contain repository
+                                1 error
+                                """
                 )
         );
     }
