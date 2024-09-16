@@ -38,9 +38,9 @@ public final class AnnotationProcessErrorAlertUtilTest {
 
         String expectedMessage = """
                 Element annotated by @TestAnnotation should match next requirements:
-                	first requirement
-                	second requirement
-                	third requirement""";
+                	 - first requirement
+                	 - second requirement
+                	 - third requirement""";
         verify(givenMessager, times(1)).printMessage(same(ERROR), eq(expectedMessage), same(givenElement));
     }
 
