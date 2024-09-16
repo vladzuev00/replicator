@@ -45,7 +45,7 @@ public final class ElementUtil {
         return TypeMirrorUtil.isIterable(element.asType(), environment);
     }
 
-    public static TypeMirror getFirstTypeParameter(Element element) {
+    public static TypeMirror getFirstTypeArgument(Element element) {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
 

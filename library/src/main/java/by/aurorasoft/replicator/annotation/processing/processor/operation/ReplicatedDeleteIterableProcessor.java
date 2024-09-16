@@ -9,7 +9,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.ElementUtil.getFirstTypeParameter;
+import static by.aurorasoft.replicator.util.ElementUtil.getFirstTypeArgument;
 import static by.aurorasoft.replicator.util.ElementUtil.isIterable;
 import static by.aurorasoft.replicator.util.TypeMirrorUtil.isContainIdGetter;
 import static java.util.Optional.empty;
@@ -35,9 +35,12 @@ public final class ReplicatedDeleteIterableProcessor extends ReplicatedMethodAnn
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return !elements.isEmpty()
-                && isIterable(elements.get(0), processingEnv)
-                && isContainIdGetter(getFirstTypeParameter(elements.get(0)), processingEnv);
+        if (elements.isEmpty()) {
+            return false;
+        }
+        VariableElement firstParameter = elements.get(0);
+        return isIterable(firstParameter, processingEnv)
+                && isContainIdGetter(getFirstTypeArgument(firstParameter), processingEnv);
     }
 
     @Override
