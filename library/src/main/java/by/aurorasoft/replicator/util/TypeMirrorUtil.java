@@ -3,13 +3,13 @@ package by.aurorasoft.replicator.util;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.List;
-import java.util.NoSuchElementException;
 
+import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.type.TypeKind.VOID;
 
 @UtilityClass
@@ -27,9 +27,23 @@ public final class TypeMirrorUtil {
 
     public static TypeMirror getFirstTypeArgument(TypeMirror mirror) {
         if (isPrimitiveOrVoid(mirror)) {
-            throwNoTypeArgumentsException(mirror);
+            throw new IllegalArgumentException("%s doesn't have type arguments".formatted(mirror));
         }
-        return getFirstTypeArgument((DeclaredType) mirror);
+        return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) mirror);
+    }
+
+    public static boolean isContainIdGetter(TypeMirror typeMirror, ProcessingEnvironment environment) {
+        if (typeMirror.getKind().isPrimitive() || typeMirror.getKind() == TypeKind.VOID) {
+            return false;
+        }
+        return environment.getTypeUtils().asElement(typeMirror)
+                .getEnclosedElements()
+                .stream()
+                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.METHOD)
+                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("getId"))
+                .filter(enclosedElement -> enclosedElement.getModifiers().contains(PUBLIC))
+                .findFirst()
+                .isPresent();
     }
 
     private static boolean isErasedMirrorAssignable(TypeMirror mirror,
@@ -46,17 +60,5 @@ public final class TypeMirrorUtil {
     private static boolean isPrimitiveOrVoid(TypeMirror mirror) {
         TypeKind kind = mirror.getKind();
         return kind.isPrimitive() || kind == VOID;
-    }
-
-    private static TypeMirror getFirstTypeArgument(DeclaredType type) {
-        List<? extends TypeMirror> arguments = type.getTypeArguments();
-        if (arguments.isEmpty()) {
-            throwNoTypeArgumentsException(type);
-        }
-        return arguments.get(0);
-    }
-
-    private static void throwNoTypeArgumentsException(TypeMirror mirror) {
-        throw new NoSuchElementException("%s doesn't have type arguments".formatted(mirror));
     }
 }
