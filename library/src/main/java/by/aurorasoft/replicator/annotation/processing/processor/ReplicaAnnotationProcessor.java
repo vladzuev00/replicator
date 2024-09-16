@@ -23,7 +23,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 
 @RequiredArgsConstructor
 public abstract class ReplicaAnnotationProcessor<E extends Element> extends AbstractProcessor {
-    private static final String PUBLIC_MODIFIER_REQUIREMENT = "Element should be public";
+    static final String PUBLIC_MODIFIER_REQUIREMENT = "Element should be public";
 
     private final Class<? extends Annotation> annotation;
     private final Class<E> elementType;

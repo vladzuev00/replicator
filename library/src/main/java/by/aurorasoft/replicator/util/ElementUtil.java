@@ -43,7 +43,6 @@ public final class ElementUtil {
 
     public static boolean isIterable(Element element, ProcessingEnvironment environment) {
         return TypeMirrorUtil.isIterable(element.asType(), environment);
-//        return isSame(element.asType(), Iterable.class);
     }
 
     public static TypeMirror getFirstTypeParameter(Element element) {
