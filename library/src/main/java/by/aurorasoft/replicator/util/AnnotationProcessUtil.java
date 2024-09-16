@@ -41,7 +41,7 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isIterable(VariableElement element, ProcessingEnvironment environment) {
-        return environment.getTypeUtils().isAssignable(environment.getTypeUtils().erasure(element.asType()), environment.getElementUtils().getTypeElement("java.lang.Iterable").asType());
+        return TypeMirrorUtil.isIterable(element.asType(), environment);
 //        return isSame(element.asType(), Iterable.class);
     }
 
