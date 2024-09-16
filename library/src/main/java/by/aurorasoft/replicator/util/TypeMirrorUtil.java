@@ -3,13 +3,12 @@ package by.aurorasoft.replicator.util;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
-import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.type.TypeKind.VOID;
 
 @UtilityClass
@@ -27,23 +26,17 @@ public final class TypeMirrorUtil {
 
     public static TypeMirror getFirstTypeArgument(TypeMirror mirror) {
         if (isPrimitiveOrVoid(mirror)) {
-            throw new IllegalArgumentException("%s doesn't have type arguments".formatted(mirror));
+            throw new IllegalArgumentException("Primitive types or void don't have type arguments");
         }
         return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) mirror);
     }
 
-    public static boolean isContainIdGetter(TypeMirror typeMirror, ProcessingEnvironment environment) {
-        if (typeMirror.getKind().isPrimitive() || typeMirror.getKind() == TypeKind.VOID) {
+    public static boolean isContainIdGetter(TypeMirror mirror, ProcessingEnvironment environment) {
+        if (isPrimitiveOrVoid(mirror)) {
             return false;
         }
-        return environment.getTypeUtils().asElement(typeMirror)
-                .getEnclosedElements()
-                .stream()
-                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.METHOD)
-                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("getId"))
-                .filter(enclosedElement -> enclosedElement.getModifiers().contains(PUBLIC))
-                .findFirst()
-                .isPresent();
+        Element element = environment.getTypeUtils().asElement(mirror);
+        return ElementUtil.isContainIdGetter(element);
     }
 
     private static boolean isErasedMirrorAssignable(TypeMirror mirror,
