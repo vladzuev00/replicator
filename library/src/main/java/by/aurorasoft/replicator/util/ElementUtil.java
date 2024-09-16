@@ -5,11 +5,14 @@ import lombok.experimental.UtilityClass;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
-
 import java.util.stream.Stream;
 
+import static by.aurorasoft.replicator.util.PropertyNameUtil.GETTER_NAME_ID;
+import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 @UtilityClass
@@ -26,11 +29,11 @@ public final class ElementUtil {
     public static boolean isContainIdGetter(Element element) {
         return element.getEnclosedElements()
                 .stream()
-                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.METHOD)
-                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("getId"))
-                .filter(enclosedElement -> enclosedElement.getModifiers().contains(PUBLIC))
-                .findFirst()
-                .isPresent();
+                .anyMatch(ElementUtil::isIdGetter);
+    }
+
+    public static boolean isContainIdGetter(TypeParameterElement element) {
+        return isContainIdGetter(element.getGenericElement());
     }
 
     public static boolean isPublic(Element element) {
@@ -49,12 +52,9 @@ public final class ElementUtil {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
 
-    public static boolean isContainIdGetter(TypeParameterElement typeParameterElement) {
-        return typeParameterElement.getGenericElement().getEnclosedElements().stream()
-                .filter(element -> element.getKind() == ElementKind.METHOD)
-                .filter(element -> element.getSimpleName().contentEquals("getId"))
-                .filter(element -> element.getModifiers().contains(PUBLIC))
-                .findFirst()
-                .isPresent();
+    private static boolean isIdGetter(Element element) {
+        return element.getKind() == METHOD
+                && isPublic(element)
+                && element.getSimpleName().contentEquals(GETTER_NAME_ID);
     }
 }

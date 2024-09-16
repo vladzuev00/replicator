@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.BODY;
+import static by.aurorasoft.replicator.util.ReplicationTransportNameUtil.BODY;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)

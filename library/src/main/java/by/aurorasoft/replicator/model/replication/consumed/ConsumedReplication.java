@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.*;
+import static by.aurorasoft.replicator.util.ReplicationTransportNameUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 import static org.springframework.core.NestedExceptionUtils.getRootCause;
 

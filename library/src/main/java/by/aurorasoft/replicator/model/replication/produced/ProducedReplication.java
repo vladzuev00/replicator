@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import static by.aurorasoft.replicator.util.TransportNameUtil.*;
+import static by.aurorasoft.replicator.util.ReplicationTransportNameUtil.*;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
 @JsonTypeInfo(use = NAME, property = TYPE)
