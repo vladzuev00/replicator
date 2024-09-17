@@ -8,6 +8,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.stream.Stream;
 
@@ -54,7 +55,17 @@ public final class ElementUtil {
                 .anyMatch(ElementUtil::isIdGetter);
     }
 
+    //TODO: temp
+    public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
+        return isContainIdGetter(environment.getElementUtils().getTypeElement(element.asType().toString()));
+    }
+
     public static boolean isContainIdGetter(TypeParameterElement element) {
         return isContainIdGetter(element.getGenericElement());
+    }
+
+    //TODO: temp
+    public static Stream<TypeElement> getInheritance(TypeElement element, ProcessingEnvironment environment) {
+        return Stream.iterate(element, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()) != null, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()));
     }
 }
