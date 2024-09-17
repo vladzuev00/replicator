@@ -42,6 +42,12 @@ public final class ElementUtil {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
 
+    public static boolean isIdGetter(Element element) {
+        return element.getKind() == METHOD
+                && isPublic(element)
+                && element.getSimpleName().contentEquals(GETTER_NAME_ID);
+    }
+
     public static boolean isContainIdGetter(Element element) {
         return element.getEnclosedElements()
                 .stream()
@@ -50,11 +56,5 @@ public final class ElementUtil {
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
         return isContainIdGetter(element.getGenericElement());
-    }
-
-    private static boolean isIdGetter(Element element) {
-        return element.getKind() == METHOD
-                && isPublic(element)
-                && element.getSimpleName().contentEquals(GETTER_NAME_ID);
     }
 }
