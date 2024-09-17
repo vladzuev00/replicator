@@ -11,12 +11,12 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.PropertyNameUtil.GETTER_NAME_ID;
 import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 @UtilityClass
 public final class ElementUtil {
+    static final String GETTER_NAME_ID = "getId";
 
     public static <E extends Element> Stream<E> getAnnotatedElements(TypeElement annotation,
                                                                      RoundEnvironment environment,

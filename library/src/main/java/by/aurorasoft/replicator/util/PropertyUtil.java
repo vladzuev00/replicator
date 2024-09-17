@@ -6,14 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.beans.PropertyDescriptor;
 
-import static by.aurorasoft.replicator.util.PropertyNameUtil.FIELD_NAME_ID;
-import static by.aurorasoft.replicator.util.PropertyNameUtil.FIELD_NAME_REPOSITORY;
 import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 
 @UtilityClass
 public final class PropertyUtil {
+    static final String FIELD_NAME_ID = "id";
+    static final String FIELD_NAME_REPOSITORY = "repository";
 
     @SneakyThrows
     public static Object getId(Object object) {

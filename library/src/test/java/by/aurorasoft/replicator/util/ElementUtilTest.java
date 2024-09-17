@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.ElementUtil.*;
-import static by.aurorasoft.replicator.util.PropertyNameUtil.GETTER_NAME_ID;
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
 import static org.junit.jupiter.api.Assertions.*;
