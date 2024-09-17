@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 //TODO: использовать везде где есть exceptionArisen переменная
 @UtilityClass
@@ -18,7 +19,7 @@ public final class AssertExceptionUtil {
         } catch (Throwable actual) {
             exceptionArisen = true;
             assertTrue(expectedExceptionType.isInstance(actual));
-            assertEquals(expectedMessage.replaceAll("[\n\r]", "").replaceAll("[ \t]+", ""), actual.getMessage().replaceAll("[\n\r]", "").replaceAll("[ \t]+", ""));
+            assertEquals(trimAllWhitespace(expectedMessage), trimAllWhitespace(actual.getMessage()));
         }
         assertTrue(exceptionArisen);
     }
