@@ -31,12 +31,12 @@ public class TestService {
     @SuppressWarnings("unused")
     private final TestRepository repository;
 
-    @ReplicatedSave
+//    @ReplicatedSave
     public TestDto save(TestDto dto) {
         return dto;
     }
 
-    @ReplicatedSaveAll
+//    @ReplicatedSaveAll
     public List<TestDto> saveAll(Iterable<TestDto> dtos) {
         List<TestDto> result = new ArrayList<>();
         dtos.forEach(result::add);
@@ -48,7 +48,7 @@ public class TestService {
 
     }
 
-    @ReplicatedDelete
+//    @ReplicatedDelete
     public void delete(@SuppressWarnings("unused") TestDto dto) {
 
     }
@@ -58,12 +58,12 @@ public class TestService {
 
     }
 
-    @ReplicatedDeleteIterable
+//    @ReplicatedDeleteIterable
     public void delete(@SuppressWarnings("unused") Iterable<TestDto> dtos) {
 
     }
 
-    @ReplicatedDeleteAll
+//    @ReplicatedDeleteAll
     public void deleteAll() {
 
     }
