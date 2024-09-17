@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.util;
+package by.aurorasoft.replicator.util.annotationprocessing;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;

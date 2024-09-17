@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.util.ElementUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.ElementUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -12,7 +12,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.ElementUtil.isReplicatedService;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isReplicatedService;
 import static java.util.Optional.empty;
 import static javax.lang.model.type.TypeKind.DECLARED;
 import static javax.lang.model.type.TypeKind.VOID;

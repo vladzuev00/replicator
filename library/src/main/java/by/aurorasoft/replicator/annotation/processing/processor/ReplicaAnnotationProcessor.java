@@ -13,9 +13,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.AnnotationProcessErrorAlertUtil.alert;
-import static by.aurorasoft.replicator.util.ElementUtil.getAnnotatedElements;
-import static by.aurorasoft.replicator.util.ElementUtil.isPublic;
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessErrorAlertUtil.alert;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.getAnnotatedElements;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Stream.concat;

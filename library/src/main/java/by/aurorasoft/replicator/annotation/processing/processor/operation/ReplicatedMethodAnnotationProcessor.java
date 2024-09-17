@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.ElementUtil.isReplicatedService;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isReplicatedService;
 import static java.util.stream.Stream.concat;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {

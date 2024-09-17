@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.util.ElementUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.ElementUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.annotation.processing.processor.operation.ReplicatedDeleteProcessor.PARAMETERS_REQUIREMENT;
-import static by.aurorasoft.replicator.util.ElementUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isContainIdGetter;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;

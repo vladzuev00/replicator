@@ -9,7 +9,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.ElementUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isContainIdGetter;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)

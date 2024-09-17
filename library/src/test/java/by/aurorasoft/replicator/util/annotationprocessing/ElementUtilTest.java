@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.util;
+package by.aurorasoft.replicator.util.annotationprocessing;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.ElementUtil.*;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
 import static org.junit.jupiter.api.Assertions.*;

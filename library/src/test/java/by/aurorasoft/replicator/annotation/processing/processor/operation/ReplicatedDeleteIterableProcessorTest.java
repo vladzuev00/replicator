@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.util.ElementUtil;
-import by.aurorasoft.replicator.util.TypeMirrorUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.ElementUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.annotation.processing.processor.operation.ReplicatedDeleteIterableProcessor.PARAMETERS_REQUIREMENT;
-import static by.aurorasoft.replicator.util.ElementUtil.getFirstTypeArgument;
-import static by.aurorasoft.replicator.util.ElementUtil.isIterable;
-import static by.aurorasoft.replicator.util.TypeMirrorUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.getFirstTypeArgument;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isIterable;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainIdGetter;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

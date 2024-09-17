@@ -1,4 +1,4 @@
-package by.aurorasoft.replicator.util;
+package by.aurorasoft.replicator.util.annotationprocessing;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +7,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static by.aurorasoft.replicator.util.DeclaredTypeUtil.getFirstTypeArgument;
+import static by.aurorasoft.replicator.util.annotationprocessing.DeclaredTypeUtil.getFirstTypeArgument;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;

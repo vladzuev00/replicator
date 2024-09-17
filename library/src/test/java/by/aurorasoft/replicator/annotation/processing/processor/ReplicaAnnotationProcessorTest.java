@@ -1,8 +1,8 @@
 package by.aurorasoft.replicator.annotation.processing.processor;
 
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationProcessError;
-import by.aurorasoft.replicator.util.AnnotationProcessErrorAlertUtil;
-import by.aurorasoft.replicator.util.ElementUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessErrorAlertUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.ElementUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,9 +21,9 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.annotation.processing.processor.ReplicaAnnotationProcessor.PUBLIC_MODIFIER_REQUIREMENT;
-import static by.aurorasoft.replicator.util.AnnotationProcessErrorAlertUtil.alert;
-import static by.aurorasoft.replicator.util.ElementUtil.getAnnotatedElements;
-import static by.aurorasoft.replicator.util.ElementUtil.isPublic;
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessErrorAlertUtil.alert;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.getAnnotatedElements;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
 import static java.util.Arrays.stream;
 import static javax.lang.model.SourceVersion.latestSupported;
 import static org.junit.jupiter.api.Assertions.*;

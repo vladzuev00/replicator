@@ -9,9 +9,9 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.TypeMirrorUtil.getFirstTypeArgument;
-import static by.aurorasoft.replicator.util.TypeMirrorUtil.isContainIdGetter;
-import static by.aurorasoft.replicator.util.TypeMirrorUtil.isList;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.getFirstTypeArgument;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isList;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)

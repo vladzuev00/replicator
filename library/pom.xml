@@ -110,13 +110,6 @@
             <version>${kafka-streams.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.checkerframework/javacutil -->
-        <dependency>
-            <groupId>org.checkerframework</groupId>
-            <artifactId>javacutil</artifactId>
-            <version>3.46.0</version>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.util.TypeMirrorUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.annotation.processing.processor.operation.ReplicatedDeleteAllProcessor.REPLICATED_SERVICE_REQUIREMENT;
-import static by.aurorasoft.replicator.util.TypeMirrorUtil.isContainRepository;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainRepository;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
