@@ -14,7 +14,6 @@ import static org.springframework.beans.BeanUtils.getPropertyDescriptor;
 
 @UtilityClass
 public final class PropertyUtil {
-    private static final String NO_ID_GETTER_MESSAGE_TEMPLATE = "There is no id's getter in %s";
 
     @SneakyThrows
     public static Object getId(Object object) {
@@ -29,6 +28,6 @@ public final class PropertyUtil {
 
     private static PropertyDescriptor getIdDescriptor(Class<?> type) {
         PropertyDescriptor descriptor = getPropertyDescriptor(type, FIELD_NAME_ID);
-        return requireNonNull(descriptor, () -> NO_ID_GETTER_MESSAGE_TEMPLATE.formatted(type));
+        return requireNonNull(descriptor, () -> "There is no id's getter in %s".formatted(type));
     }
 }
