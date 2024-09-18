@@ -63,7 +63,7 @@ public class TestService {
 
     }
 
-//    @ReplicatedDeleteAll
+    @ReplicatedDeleteAll
     public void deleteAll() {
 
     }
