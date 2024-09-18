@@ -69,9 +69,9 @@ public final class TypeMirrorUtil {
                                                     ProcessingEnvironment environment) {
         Types typeUtil = environment.getTypeUtils();
         TypeMirror erasedMirror = typeUtil.erasure(mirror);
-        TypeMirror superTypeMirror = environment.getElementUtils()
+        TypeMirror superTypeMirror = typeUtil.erasure(environment.getElementUtils()
                 .getTypeElement(superTypeName)
-                .asType();
+                .asType());
         return typeUtil.isAssignable(erasedMirror, superTypeMirror);
     }
 }
