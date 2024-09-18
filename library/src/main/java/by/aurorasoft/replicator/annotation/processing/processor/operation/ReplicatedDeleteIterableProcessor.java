@@ -12,8 +12,6 @@ import java.util.Optional;
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.getFirstTypeArgument;
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isContainIdGetter;
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isIterable;
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.getFirstTypeArgument;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainIdGetter;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
@@ -41,8 +39,7 @@ public final class ReplicatedDeleteIterableProcessor extends ReplicatedMethodAnn
             return false;
         }
         VariableElement firstParameter = elements.get(0);
-        return isIterable(firstParameter, processingEnv)
-                && isContainIdGetter(getFirstTypeArgument(firstParameter), processingEnv);
+        return isIterable(firstParameter, processingEnv) && isContainIdGetter(getFirstTypeArgument(firstParameter));
     }
 
     @Override

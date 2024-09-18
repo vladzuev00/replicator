@@ -27,7 +27,7 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected boolean isValidReturnType(TypeElement element) {
-        return isList(element, processingEnv) && isContainIdGetter(getFirstTypeArgument(element), processingEnv);
+        return isList(element, processingEnv) && isContainIdGetter(getFirstTypeArgument(element));
     }
 
     @Override
