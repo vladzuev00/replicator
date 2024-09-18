@@ -2,6 +2,7 @@ package by.aurorasoft.replicator.util.annotationprocessing;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
+import org.checkerframework.javacutil.ElementUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -39,16 +40,18 @@ public final class ElementUtil {
         return TypeMirrorUtil.isIterable(element.asType(), environment);
     }
 
-    public static TypeMirror getFirstTypeArgument(Element element) {
+    public static TypeMirror getFirstTypeArgument(Element element, ProcessingEnvironment environment) {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
 
+    //TODO: check static, check parameters
     public static boolean isIdGetter(Element element) {
         return element.getKind() == METHOD
                 && isPublic(element)
                 && element.getSimpleName().contentEquals(GETTER_NAME_ID);
     }
 
+    //TODO: ElementUtils.matchesElement
     public static boolean isContainIdGetter(Element element) {
         return element.getEnclosedElements()
                 .stream()

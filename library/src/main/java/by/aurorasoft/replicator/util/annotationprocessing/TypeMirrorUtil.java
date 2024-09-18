@@ -36,10 +36,10 @@ public final class TypeMirrorUtil {
     }
 
     public static TypeMirror getFirstTypeArgument(TypeMirror mirror) {
-        if (isPrimitiveOrVoid(mirror)) {
-            throw new IllegalArgumentException("Primitive types or void don't have type arguments");
+        if (mirror instanceof DeclaredType declaredType) {
+            return declaredType.getTypeArguments().get(0);
         }
-        return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) mirror);
+        throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(mirror));
     }
 
     public static boolean isContainIdGetter(TypeMirror mirror, ProcessingEnvironment environment) {
