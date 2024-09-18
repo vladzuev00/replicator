@@ -4,8 +4,8 @@ import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
 import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.Processor;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +22,12 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
     }
 
     @Override
-    protected boolean isValidReplicatedService(TypeMirror mirror) {
+    protected boolean isValidReplicatedService(TypeElement element) {
         return true;
     }
 
     @Override
-    protected boolean isValidReturnType(TypeMirror mirror) {
+    protected boolean isValidReturnType(TypeElement element) {
         return true;
     }
 
