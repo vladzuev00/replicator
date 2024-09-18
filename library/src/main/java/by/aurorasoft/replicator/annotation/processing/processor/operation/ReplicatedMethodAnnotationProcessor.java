@@ -3,10 +3,9 @@ package by.aurorasoft.replicator.annotation.processing.processor.operation;
 import by.aurorasoft.replicator.annotation.processing.processor.ReplicaAnnotationProcessor;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +13,7 @@ import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isReplicatedService;
 import static java.util.stream.Stream.concat;
+import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
     private static final String INSIDE_REPLICATED_SERVICE_REQUIREMENT = "It should be inside class annotated by @"
@@ -25,8 +25,8 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     @Override
     protected final boolean isValidPublicElement(ExecutableElement element) {
-        return isValidEnclosingClass(element.getEnclosingElement())
-                && isValidReturnType(element.getReturnType())
+        return isValidEnclosingClass((TypeElement) element.getEnclosingElement())
+                && isValidReturnType(getTypeElement(element.getReturnType()))
                 && isValidParameters(element.getParameters());
     }
 
@@ -37,9 +37,9 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
                 .map(Optional::get);
     }
 
-    protected abstract boolean isValidReplicatedService(TypeMirror mirror);
+    protected abstract boolean isValidReplicatedService(TypeElement element);
 
-    protected abstract boolean isValidReturnType(TypeMirror mirror);
+    protected abstract boolean isValidReturnType(TypeElement element);
 
     protected abstract boolean isValidParameters(List<? extends VariableElement> elements);
 
@@ -49,8 +49,8 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     protected abstract Optional<String> getParametersRequirement();
 
-    private boolean isValidEnclosingClass(Element element) {
-        return isReplicatedService(element) && isValidReplicatedService(element.asType());
+    private boolean isValidEnclosingClass(TypeElement element) {
+        return isReplicatedService(element) && isValidReplicatedService(element);
     }
 
     private Stream<Optional<String>> getEnclosingClassRequirement() {
