@@ -9,9 +9,7 @@ import javax.lang.model.element.VariableElement;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isList;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.getFirstTypeArgument;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)

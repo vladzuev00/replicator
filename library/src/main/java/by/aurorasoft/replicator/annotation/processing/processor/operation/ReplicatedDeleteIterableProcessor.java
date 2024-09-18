@@ -9,6 +9,8 @@ import javax.lang.model.element.VariableElement;
 import java.util.List;
 import java.util.Optional;
 
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.getFirstTypeArgument;
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isContainIdGetter;
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isIterable;
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.getFirstTypeArgument;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainIdGetter;
@@ -40,7 +42,7 @@ public final class ReplicatedDeleteIterableProcessor extends ReplicatedMethodAnn
         }
         VariableElement firstParameter = elements.get(0);
         return isIterable(firstParameter, processingEnv)
-                && isContainIdGetter(getFirstTypeArgument(firstParameter, processingEnv), processingEnv);
+                && isContainIdGetter(getFirstTypeArgument(firstParameter), processingEnv);
     }
 
     @Override

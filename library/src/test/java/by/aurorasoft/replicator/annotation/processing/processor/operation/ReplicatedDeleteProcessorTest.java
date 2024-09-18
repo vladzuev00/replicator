@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.util.annotationprocessing.ElementUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
