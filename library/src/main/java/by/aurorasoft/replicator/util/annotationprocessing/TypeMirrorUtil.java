@@ -15,20 +15,6 @@ import static javax.lang.model.type.TypeKind.VOID;
 
 @UtilityClass
 public final class TypeMirrorUtil {
-    private static final String LIST_TYPE_NAME = "java.util.List";
-    private static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
-
-    public static boolean isList(TypeMirror mirror, ProcessingEnvironment environment) {
-        return isErasedSubtype(mirror, LIST_TYPE_NAME, environment);
-    }
-
-    public static boolean isList(TypeElement mirror, ProcessingEnvironment environment) {
-        return isErasedSubtype(mirror.asType(), LIST_TYPE_NAME, environment);
-    }
-
-    public static boolean isIterable(TypeMirror mirror, ProcessingEnvironment environment) {
-        return isErasedSubtype(mirror, ITERABLE_TYPE_NAME, environment);
-    }
 
     public static boolean isPrimitiveOrVoid(TypeMirror mirror) {
         TypeKind kind = mirror.getKind();
@@ -48,12 +34,5 @@ public final class TypeMirrorUtil {
         }
         Element element = environment.getTypeUtils().asElement(mirror);
         return ElementUtil.isContainIdGetter(element);
-    }
-
-    private static boolean isErasedSubtype(TypeMirror subtype, String supertypeName, ProcessingEnvironment environment) {
-        TypeMirror supertype = environment.getElementUtils()
-                .getTypeElement(supertypeName)
-                .asType();
-        return TypesUtils.isErasedSubtype(subtype, supertype, environment.getTypeUtils());
     }
 }

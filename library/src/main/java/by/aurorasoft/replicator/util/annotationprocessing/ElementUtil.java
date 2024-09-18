@@ -34,10 +34,6 @@ public final class ElementUtil {
         return element.getAnnotation(ReplicatedService.class) != null;
     }
 
-    public static boolean isIterable(Element element, ProcessingEnvironment environment) {
-        return TypeMirrorUtil.isIterable(element.asType(), environment);
-    }
-
     public static TypeMirror getFirstTypeArgument(Element element, ProcessingEnvironment environment) {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
@@ -63,10 +59,5 @@ public final class ElementUtil {
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
         return isContainIdGetter(element.getGenericElement());
-    }
-
-    //TODO: temp
-    public static Stream<TypeElement> getInheritance(TypeElement element, ProcessingEnvironment environment) {
-        return Stream.iterate(element, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()) != null, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()));
     }
 }

@@ -9,7 +9,7 @@ import javax.lang.model.element.VariableElement;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isIterable;
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isIterable;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
