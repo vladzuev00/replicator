@@ -6,6 +6,7 @@ import org.checkerframework.javacutil.TypesUtils;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -22,6 +23,10 @@ public final class TypeMirrorUtil {
         return isErasedSubtype(mirror, LIST_TYPE_NAME, environment);
     }
 
+    public static boolean isList(TypeElement mirror, ProcessingEnvironment environment) {
+        return isErasedSubtype(mirror.asType(), LIST_TYPE_NAME, environment);
+    }
+
     public static boolean isIterable(TypeMirror mirror, ProcessingEnvironment environment) {
         return isErasedSubtype(mirror, ITERABLE_TYPE_NAME, environment);
     }
@@ -35,8 +40,8 @@ public final class TypeMirrorUtil {
         return kind.isPrimitive() || kind == VOID;
     }
 
-    public static TypeMirror getFirstTypeArgument(TypeMirror mirror) {
-        if (mirror instanceof DeclaredType declaredType) {
+    public static TypeMirror getFirstTypeArgument(TypeElement mirror) {
+        if (mirror.asType() instanceof DeclaredType declaredType) {
             return declaredType.getTypeArguments().get(0);
         }
         throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(mirror));
