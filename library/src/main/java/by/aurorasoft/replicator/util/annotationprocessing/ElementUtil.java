@@ -3,13 +3,11 @@ package by.aurorasoft.replicator.util.annotationprocessing;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.stream.Stream;
 
@@ -44,6 +42,22 @@ public final class ElementUtil {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
 
+    public static boolean isContainRepository(TypeElement mirror, ProcessingEnvironment environment) {
+//TODO        ElementUtils.getAllSupertypes()
+        return ElementUtil.getInheritance(mirror, environment)
+                .flatMap(e -> e.getEnclosedElements().stream())
+                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.FIELD)
+                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("repository"))
+                .map(Element::asType)
+                .filter(type -> isJpaRepository(type, environment))
+                .findFirst()
+                .isPresent();
+    }
+
+    public static boolean isJpaRepository(TypeMirror mirror, ProcessingEnvironment environment) {
+        return isErasedSubtype(mirror, "org.springframework.data.jpa.repository.JpaRepository", environment);
+    }
+
     //TODO: check static, check parameters
     public static boolean isIdGetter(Element element) {
         return element.getKind() == METHOD
@@ -70,5 +84,12 @@ public final class ElementUtil {
     //TODO: temp
     public static Stream<TypeElement> getInheritance(TypeElement element, ProcessingEnvironment environment) {
         return Stream.iterate(element, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()) != null, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()));
+    }
+
+    private static boolean isErasedSubtype(TypeMirror subtype, String supertypeName, ProcessingEnvironment environment) {
+        TypeMirror supertype = environment.getElementUtils()
+                .getTypeElement(supertypeName)
+                .asType();
+        return TypesUtils.isErasedSubtype(subtype, supertype, environment.getTypeUtils());
     }
 }

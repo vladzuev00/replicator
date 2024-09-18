@@ -4,12 +4,12 @@ import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteAll;
 import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.Processor;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainRepository;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isContainRepository;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
@@ -21,12 +21,12 @@ public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotati
     }
 
     @Override
-    protected boolean isValidReplicatedService(TypeMirror mirror) {
-        return isContainRepository(mirror, processingEnv);
+    protected boolean isValidReplicatedService(TypeElement element) {
+        return isContainRepository(element, processingEnv);
     }
 
     @Override
-    protected boolean isValidReturnType(TypeMirror mirror) {
+    protected boolean isValidReturnType(TypeElement element) {
         return true;
     }
 
