@@ -17,7 +17,6 @@ import static javax.lang.model.type.TypeKind.VOID;
 public final class TypeMirrorUtil {
     private static final String LIST_TYPE_NAME = "java.util.List";
     private static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
-    private static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
 
     public static boolean isList(TypeMirror mirror, ProcessingEnvironment environment) {
         return isErasedSubtype(mirror, LIST_TYPE_NAME, environment);
@@ -29,10 +28,6 @@ public final class TypeMirrorUtil {
 
     public static boolean isIterable(TypeMirror mirror, ProcessingEnvironment environment) {
         return isErasedSubtype(mirror, ITERABLE_TYPE_NAME, environment);
-    }
-
-    public static boolean isJpaRepository(TypeMirror mirror, ProcessingEnvironment environment) {
-        return isErasedSubtype(mirror, JPA_REPOSITORY_TYPE_NAME, environment);
     }
 
     public static boolean isPrimitiveOrVoid(TypeMirror mirror) {
@@ -53,19 +48,6 @@ public final class TypeMirrorUtil {
         }
         Element element = environment.getTypeUtils().asElement(mirror);
         return ElementUtil.isContainIdGetter(element);
-    }
-
-    public static boolean isContainRepository(TypeMirror mirror, ProcessingEnvironment environment) {
-        // TypesUtils.getTypeElement()
-        return ElementUtil.getInheritance(environment.getElementUtils().getTypeElement(mirror.toString()), environment)
-                .map(m -> environment.getElementUtils().getTypeElement(m.toString()))
-                .flatMap(e -> e.getEnclosedElements().stream())
-                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.FIELD)
-                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("repository"))
-                .map(Element::asType)
-                .filter(type -> isJpaRepository(type, environment))
-                .findFirst()
-                .isPresent();
     }
 
     private static boolean isErasedSubtype(TypeMirror subtype, String supertypeName, ProcessingEnvironment environment) {

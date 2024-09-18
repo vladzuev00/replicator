@@ -42,22 +42,6 @@ public final class ElementUtil {
         return TypeMirrorUtil.getFirstTypeArgument(element.asType());
     }
 
-    public static boolean isContainRepository(TypeElement mirror, ProcessingEnvironment environment) {
-//TODO        ElementUtils.getAllSupertypes()
-        return ElementUtil.getInheritance(mirror, environment)
-                .flatMap(e -> e.getEnclosedElements().stream())
-                .filter(enclosedElement -> enclosedElement.getKind() == ElementKind.FIELD)
-                .filter(enclosedElement -> enclosedElement.getSimpleName().contentEquals("repository"))
-                .map(Element::asType)
-                .filter(type -> isJpaRepository(type, environment))
-                .findFirst()
-                .isPresent();
-    }
-
-    public static boolean isJpaRepository(TypeMirror mirror, ProcessingEnvironment environment) {
-        return isErasedSubtype(mirror, "org.springframework.data.jpa.repository.JpaRepository", environment);
-    }
-
     //TODO: check static, check parameters
     public static boolean isIdGetter(Element element) {
         return element.getKind() == METHOD
@@ -84,12 +68,5 @@ public final class ElementUtil {
     //TODO: temp
     public static Stream<TypeElement> getInheritance(TypeElement element, ProcessingEnvironment environment) {
         return Stream.iterate(element, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()) != null, e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()));
-    }
-
-    private static boolean isErasedSubtype(TypeMirror subtype, String supertypeName, ProcessingEnvironment environment) {
-        TypeMirror supertype = environment.getElementUtils()
-                .getTypeElement(supertypeName)
-                .asType();
-        return TypesUtils.isErasedSubtype(subtype, supertype, environment.getTypeUtils());
     }
 }
