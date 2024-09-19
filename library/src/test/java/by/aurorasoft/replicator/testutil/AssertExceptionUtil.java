@@ -28,7 +28,7 @@ public final class AssertExceptionUtil {
         assertTrue(exceptionArisen);
     }
 
-    public void executeExpectingException(Runnable task, Class<? extends Throwable> expectedExceptionType) {
+    public static void executeExpectingException(Runnable task, Class<? extends Throwable> expectedExceptionType) {
         boolean exceptionArisen = false;
         try {
             task.run();
