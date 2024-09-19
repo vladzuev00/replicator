@@ -11,13 +11,12 @@ import static org.mockito.Mockito.when;
 public final class TopicConfigUtil {
 
     public static TopicConfig createTopicConfig(String name) {
-        TopicConfig config = mock(TopicConfig.class);
-        when(config.name()).thenReturn(name);
-        return config;
+        return createTopicConfig(name, 0, 0);
     }
 
     public static TopicConfig createTopicConfig(String name, int partitionCount, int replicationFactor) {
-        TopicConfig config = createTopicConfig(name);
+        TopicConfig config = mock(TopicConfig.class);
+        when(config.name()).thenReturn(name);
         when(config.partitionCount()).thenReturn(partitionCount);
         when(config.replicationFactor()).thenReturn((short) replicationFactor);
         return config;

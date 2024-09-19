@@ -13,15 +13,14 @@ import static org.mockito.Mockito.when;
 public final class ReplicatedServiceUtil {
 
     public static ReplicatedService createReplicatedService(TopicConfig topicConfig) {
-        ReplicatedService replicatedService = mock(ReplicatedService.class);
-        when(replicatedService.topicConfig()).thenReturn(topicConfig);
-        return replicatedService;
+        return createReplicatedService(null, topicConfig, null);
     }
 
     public static ReplicatedService createReplicatedService(ProducerConfig producerConfig,
                                                             TopicConfig topicConfig,
                                                             DtoViewConfig[] dtoViewConfigs) {
-        ReplicatedService replicatedService = createReplicatedService(topicConfig);
+        ReplicatedService replicatedService = mock(ReplicatedService.class);
+        when(replicatedService.topicConfig()).thenReturn(topicConfig);
         when(replicatedService.producerConfig()).thenReturn(producerConfig);
         when(replicatedService.dtoViewConfigs()).thenReturn(dtoViewConfigs);
         return replicatedService;
