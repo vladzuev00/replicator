@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isReplicatedService;
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
 import static java.util.stream.Stream.concat;
-import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
     private static final String INSIDE_REPLICATED_SERVICE_REQUIREMENT = "It should be inside class annotated by @"
@@ -25,8 +24,8 @@ public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotat
 
     @Override
     protected final boolean isValidPublicElement(ExecutableElement element) {
-        return isValidEnclosingClass((TypeElement) element.getEnclosingElement())
-                && isValidReturnType(getTypeElement(element.getReturnType()))
+        return isValidEnclosingClass(getEnclosingClass(element))
+                && isValidReturnType(getReturnType(element, processingEnv))
                 && isValidParameters(element.getParameters());
     }
 

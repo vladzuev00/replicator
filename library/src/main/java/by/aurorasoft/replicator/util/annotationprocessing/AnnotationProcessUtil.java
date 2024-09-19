@@ -18,7 +18,6 @@ import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static org.checkerframework.javacutil.ElementUtils.getAllSupertypes;
 import static org.checkerframework.javacutil.ElementUtils.isStatic;
-import static org.checkerframework.javacutil.TypesUtils.getTypeElement;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
@@ -42,6 +41,18 @@ public final class AnnotationProcessUtil {
 
     public static boolean isReplicatedService(Element element) {
         return element.getAnnotation(ReplicatedService.class) != null;
+    }
+
+    public static TypeElement getTypeElement(TypeMirror mirror, ProcessingEnvironment environment) {
+        return environment.getElementUtils().getTypeElement(mirror.toString());
+    }
+
+    public static TypeElement getEnclosingClass(ExecutableElement element) {
+        return (TypeElement) element.getEnclosingElement();
+    }
+
+    public static TypeElement getReturnType(ExecutableElement element, ProcessingEnvironment environment) {
+        return environment.getElementUtils().getTypeElement(element.getReturnType().toString());
     }
 
     public static boolean isContainRepository(TypeElement element, ProcessingEnvironment environment) {
@@ -86,12 +97,12 @@ public final class AnnotationProcessUtil {
                 .anyMatch(AnnotationProcessUtil::isIdGetter);
     }
 
-    public static boolean isContainIdGetter(VariableElement element) {
-        return isContainIdGetter(requireNonNull(getTypeElement(element.asType())));
+    public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
+        return isContainIdGetter(requireNonNull(getTypeElement(element.asType(), environment)));
     }
 
-    public static boolean isContainIdGetter(TypeMirror mirror) {
-        return isContainIdGetter(requireNonNull(getTypeElement(mirror)));
+    public static boolean isContainIdGetter(TypeMirror mirror, ProcessingEnvironment environment) {
+        return isContainIdGetter(requireNonNull(getTypeElement(mirror, environment)));
     }
 
     public static boolean isContainIdGetter(TypeParameterElement element) {

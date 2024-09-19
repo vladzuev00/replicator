@@ -47,7 +47,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
             TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
             mockedProcessUtil.when(() -> getFirstTypeArgument(same(givenFirstParameter)))
                     .thenReturn(givenFirstTypeArgument);
-            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument))).thenReturn(true);
+            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(true);
 
             assertTrue(processor.isValidParameters(givenElements));
         }
@@ -75,7 +75,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
             assertFalse(processor.isValidParameters(givenElements));
 
             mockedProcessUtil.verify(() -> getFirstTypeArgument(any(Element.class)), times(0));
-            mockedProcessUtil.verify(() -> isContainIdGetter(any(TypeMirror.class)), times(0));
+            mockedProcessUtil.verify(() -> isContainIdGetter(any(TypeMirror.class), any()), times(0));
         }
     }
 
@@ -90,7 +90,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
             TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
             mockedProcessUtil.when(() -> getFirstTypeArgument(same(givenFirstParameter)))
                     .thenReturn(givenFirstTypeArgument);
-            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument))).thenReturn(false);
+            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(false);
 
             assertFalse(processor.isValidParameters(givenElements));
         }
