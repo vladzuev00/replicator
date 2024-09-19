@@ -11,6 +11,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @ReplicatedService(
         producerConfig = @ProducerConfig(
                 idSerializer = LongSerializer.class,
@@ -25,7 +26,6 @@ import java.util.List;
                 excludedFields = "secondProperty"
         )
 )
-@RequiredArgsConstructor
 public class TestService {
 
     @SuppressWarnings("unused")

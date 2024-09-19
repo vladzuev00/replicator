@@ -21,8 +21,8 @@ import java.sql.SQLException;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.model.replication.consumed.ConsumedReplication.FOREIGN_KEY_VIOLATION_SQL_STATE;
+import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.executeExpectingException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public final class ConsumedReplicationTest extends AbstractSpringBootTest {
@@ -60,27 +60,13 @@ public final class ConsumedReplicationTest extends AbstractSpringBootTest {
 
         when(givenRepository.save(same(givenEntity))).thenThrow(givenCause);
 
-        executeExpectingException(givenReplication, givenRepository, expected);
+        executeExpectingException(() -> givenReplication.execute(givenRepository), expected);
     }
 
     @SneakyThrows(JsonProcessingException.class)
     private ConsumedReplication<TestEntity, Long> deserialize(String json) {
         return objectMapper.readValue(json, new TypeReference<>() {
         });
-    }
-
-    private void executeExpectingException(TestConsumedReplication replication,
-                                           JpaRepository<TestEntity, Long> repository,
-                                           Class<? extends Exception> exceptionType) {
-        boolean exceptionArisen;
-        try {
-            replication.execute(repository);
-            exceptionArisen = false;
-        } catch (Exception exception) {
-            assertTrue(exceptionType.isInstance(exception));
-            exceptionArisen = true;
-        }
-        assertTrue(exceptionArisen);
     }
 
     private static Stream<Arguments> provideJsonAndExpectedReplication() {

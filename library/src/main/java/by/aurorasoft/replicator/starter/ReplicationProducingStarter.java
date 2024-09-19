@@ -7,6 +7,8 @@ import by.aurorasoft.replicator.topicallocator.ReplicationTopicAllocator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.aop.support.AopUtils.getTargetClass;
+
 @Component
 @RequiredArgsConstructor
 public final class ReplicationProducingStarter {
@@ -14,7 +16,7 @@ public final class ReplicationProducingStarter {
     private final ReplicationProducerFactory producerFactory;
 
     public ReplicationProducer startReturningProducer(Object service) {
-        ReplicatedService serviceConfig = service.getClass().getAnnotation(ReplicatedService.class);
+        ReplicatedService serviceConfig = getTargetClass(service).getAnnotation(ReplicatedService.class);
         topicAllocator.allocate(serviceConfig.topicConfig());
         return producerFactory.create(serviceConfig);
     }

@@ -1,7 +1,10 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.stereotype.Component;
+
+import static org.springframework.aop.support.AopUtils.getTargetClass;
 
 @Component
 public final class ReplicatedServiceUniqueTopicValidator extends UniquePropertyValidator<Object, String> {
@@ -13,7 +16,7 @@ public final class ReplicatedServiceUniqueTopicValidator extends UniquePropertyV
 
     @Override
     protected String getProperty(Object service) {
-        return service.getClass()
+        return getTargetClass(service)
                 .getAnnotation(ReplicatedService.class)
                 .topicConfig()
                 .name();
