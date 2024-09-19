@@ -1,19 +1,19 @@
 //package by.aurorasoft.replicator.annotation.processing.processor.operation;
 //
-//import by.aurorasoft.replicator.util.annotationprocessing.ElementUtil;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.MockedStatic;
 //
 //import javax.lang.model.element.Element;
 //import javax.lang.model.element.ExecutableElement;
+//import javax.lang.model.element.TypeElement;
 //import javax.lang.model.element.VariableElement;
 //import javax.lang.model.type.TypeKind;
 //import javax.lang.model.type.TypeMirror;
 //import java.util.List;
 //import java.util.Optional;
 //
-//import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isReplicatedService;
 //import static java.util.Optional.empty;
+//import static javax.lang.model.element.ElementKind.CLASS;
 //import static javax.lang.model.type.TypeKind.DECLARED;
 //import static javax.lang.model.type.TypeKind.VOID;
 //import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -79,8 +79,8 @@
 //        }
 //
 //        @Override
-//        protected boolean isValidReplicatedService(TypeMirror mirror) {
-//            return mirror.getKind() == DECLARED;
+//        protected boolean isValidReplicatedService(TypeElement element) {
+//            return element.getKind() == CLASS;
 //        }
 //
 //        @Override
