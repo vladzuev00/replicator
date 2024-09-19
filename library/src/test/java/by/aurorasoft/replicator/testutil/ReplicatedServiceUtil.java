@@ -21,9 +21,8 @@ public final class ReplicatedServiceUtil {
     public static ReplicatedService createReplicatedService(ProducerConfig producerConfig,
                                                             TopicConfig topicConfig,
                                                             DtoViewConfig[] dtoViewConfigs) {
-        ReplicatedService replicatedService = mock(ReplicatedService.class);
+        ReplicatedService replicatedService = createReplicatedService(topicConfig);
         when(replicatedService.producerConfig()).thenReturn(producerConfig);
-        when(replicatedService.topicConfig()).thenReturn(topicConfig);
         when(replicatedService.dtoViewConfigs()).thenReturn(dtoViewConfigs);
         return replicatedService;
     }
