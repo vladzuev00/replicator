@@ -17,8 +17,7 @@ public final class TopicConfigUtil {
     }
 
     public static TopicConfig createTopicConfig(String name, int partitionCount, int replicationFactor) {
-        TopicConfig config = mock(TopicConfig.class);
-        when(config.name()).thenReturn(name);
+        TopicConfig config = createTopicConfig(name);
         when(config.partitionCount()).thenReturn(partitionCount);
         when(config.replicationFactor()).thenReturn((short) replicationFactor);
         return config;
