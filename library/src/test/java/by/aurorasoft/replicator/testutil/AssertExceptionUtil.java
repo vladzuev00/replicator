@@ -17,6 +17,7 @@ public final class AssertExceptionUtil {
         try {
             task.run();
         } catch (Throwable actual) {
+            actual.printStackTrace();
             exceptionArisen = true;
             assertTrue(expectedExceptionType.isInstance(actual));
             assertEquals(trimAllWhitespace(expectedMessage), trimAllWhitespace(actual.getMessage()));

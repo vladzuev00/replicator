@@ -2,12 +2,14 @@ package by.aurorasoft.replicator.util.annotationprocessing;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
+import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.stream.Stream;
@@ -16,9 +18,9 @@ import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.FIELD;
 import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.element.Modifier.PUBLIC;
-import static org.checkerframework.javacutil.ElementUtils.getAllSupertypes;
 import static org.checkerframework.javacutil.ElementUtils.isStatic;
 
+//TODO: correct and refactor
 @UtilityClass
 public final class AnnotationProcessUtil {
     private static final String LIST_TYPE_NAME = "java.util.List";
@@ -51,15 +53,21 @@ public final class AnnotationProcessUtil {
         return (TypeElement) element.getEnclosingElement();
     }
 
-    public static TypeElement getReturnType(ExecutableElement element, ProcessingEnvironment environment) {
-        return environment.getElementUtils().getTypeElement(element.getReturnType().toString());
+    public static DeclaredType getReturnType(ExecutableElement element) {
+        return (DeclaredType) element.getReturnType();
     }
 
     public static boolean isContainRepository(TypeElement element, ProcessingEnvironment environment) {
-        return getAllSupertypes(element, environment)
-                .stream()
+        return Stream.iterate(element, e -> !ElementUtils.isObject(e), e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()))
                 .flatMap(e -> e.getEnclosedElements().stream())
                 .anyMatch(e -> isJpaRepositoryField(e, environment));
+    }
+
+    public static boolean isList(TypeMirror type, ProcessingEnvironment environment) {
+        TypeMirror supertype = environment.getElementUtils()
+                .getTypeElement(LIST_TYPE_NAME)
+                .asType();
+        return TypesUtils.isErasedSubtype(type, supertype, environment.getTypeUtils());
     }
 
     public static boolean isList(Element element, ProcessingEnvironment environment) {
@@ -79,6 +87,24 @@ public final class AnnotationProcessUtil {
             }
         }
         throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(element));
+    }
+
+    public static TypeMirror getFirstTypeArgument(TypeMirror mirror) {
+        if (mirror instanceof DeclaredType declaredType) {
+            List<? extends TypeMirror> arguments = declaredType.getTypeArguments();
+            if (!arguments.isEmpty()) {
+                return arguments.get(0);
+            }
+        }
+        throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(mirror));
+    }
+
+    public static TypeMirror getFirstTypeArgument(DeclaredType type) {
+        List<? extends TypeMirror> arguments = type.getTypeArguments();
+        if (!arguments.isEmpty()) {
+            return arguments.get(0);
+        }
+        throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(type));
     }
 
     public static boolean isIdGetter(ExecutableElement element) {
@@ -102,6 +128,9 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isContainIdGetter(TypeMirror mirror, ProcessingEnvironment environment) {
+        if (mirror.getKind() == TypeKind.VOID || mirror.getKind().isPrimitive()) {
+            return false;
+        }
         return isContainIdGetter(requireNonNull(getTypeElement(mirror, environment)));
     }
 
