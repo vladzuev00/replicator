@@ -38,8 +38,8 @@ public final class ReplicatedDeleteIterableProcessor extends ReplicatedMethodAnn
             return false;
         }
         VariableElement firstParameter = elements.get(0);
-        return isIterable(firstParameter, processingEnv)
-                && isContainIdGetter(getFirstTypeArgument(firstParameter), processingEnv);
+        return isIterable(firstParameter, getElementUtil(), getTypeUtil())
+                && isContainIdGetter(getFirstTypeArgument(firstParameter), getTypeUtil());
     }
 
     @Override

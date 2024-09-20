@@ -23,7 +23,7 @@ public final class ReplicatedDeleteAllProcessor extends ReplicatedMethodAnnotati
 
     @Override
     protected boolean isValidReplicatedService(TypeElement element) {
-        return isContainRepository(element, processingEnv);
+        return isContainRepository(element, getElementUtil(), getTypeUtil());
     }
 
     @Override
