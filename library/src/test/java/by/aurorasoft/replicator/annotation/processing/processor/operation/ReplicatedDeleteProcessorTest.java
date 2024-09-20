@@ -1,12 +1,18 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
 import by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,13 +20,20 @@ import static by.aurorasoft.replicator.annotation.processing.processor.operation
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isContainIdGetter;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public final class ReplicatedDeleteProcessorTest {
     private final ReplicatedDeleteProcessor processor = new ReplicatedDeleteProcessor();
+
+    @Mock
+    private ProcessingEnvironment mockedEnvironment;
+
+    @BeforeEach
+    public void initializeProcessor() {
+        processor.init(mockedEnvironment);
+    }
 
     @Test
     public void replicatedServiceShouldBeValid() {
@@ -42,7 +55,11 @@ public final class ReplicatedDeleteProcessorTest {
             VariableElement givenFirstParameter = mock(VariableElement.class);
             List<? extends VariableElement> givenElements = List.of(givenFirstParameter);
 
-            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstParameter), any())).thenReturn(true);
+            Elements givenElementUtil = mock(Elements.class);
+            when(mockedEnvironment.getElementUtils()).thenReturn(givenElementUtil);
+
+            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstParameter), same(givenElementUtil)))
+                    .thenReturn(true);
 
             assertTrue(processor.isValidParameters(givenElements));
         }
@@ -65,7 +82,11 @@ public final class ReplicatedDeleteProcessorTest {
             VariableElement givenFirstParameter = mock(VariableElement.class);
             List<? extends VariableElement> givenElements = List.of(givenFirstParameter);
 
-            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstParameter), any())).thenReturn(false);
+            Elements givenElementUtil = mock(Elements.class);
+            when(mockedEnvironment.getElementUtils()).thenReturn(givenElementUtil);
+
+            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstParameter), same(givenElementUtil)))
+                    .thenReturn(false);
 
             assertFalse(processor.isValidParameters(givenElements));
         }
