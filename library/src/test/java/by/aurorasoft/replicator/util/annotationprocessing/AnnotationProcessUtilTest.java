@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
+import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import org.testng.annotations.Test;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -12,8 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.getAnnotatedElements;
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isPublic;
+import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
 import static javax.lang.model.element.Modifier.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
@@ -59,5 +59,23 @@ public final class AnnotationProcessUtilTest {
         when(givenElement.getModifiers()).thenReturn(givenModifiers);
 
         assertFalse(isPublic(givenElement));
+    }
+
+    @Test
+    public void elementShouldBeReplicatedService() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getAnnotation(same(ReplicatedService.class))).thenReturn(mock(ReplicatedService.class));
+
+        assertTrue(isReplicatedService(givenElement));
+    }
+
+    @Test
+    public void elementShouldNotBeReplicatedService() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getAnnotation(same(ReplicatedService.class))).thenReturn(null);
+
+        assertFalse(isReplicatedService(givenElement));
     }
 }
