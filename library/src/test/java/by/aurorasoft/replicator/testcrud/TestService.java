@@ -53,17 +53,17 @@ public class TestService {
 
     }
 
-    @ReplicatedDeleteByIds
+//    @ReplicatedDeleteByIds
     public void deleteByIds(@SuppressWarnings("unused") Iterable<Long> ids) {
 
     }
 
-    @ReplicatedDeleteIterable
+//    @ReplicatedDeleteIterable
     public void delete(@SuppressWarnings("unused") Iterable<TestDto> dtos) {
 
     }
 
-    @ReplicatedDeleteAll
+//    @ReplicatedDeleteAll
     public void deleteAll() {
 
     }
