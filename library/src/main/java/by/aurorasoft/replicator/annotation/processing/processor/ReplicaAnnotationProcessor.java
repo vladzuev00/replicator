@@ -50,12 +50,10 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
         return latestSupported();
     }
 
-    //TODO: test
     protected final Types getTypeUtil() {
         return processingEnv.getTypeUtils();
     }
 
-    //TODO: test
     protected final Elements getElementUtil() {
         return processingEnv.getElementUtils();
     }

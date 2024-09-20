@@ -3,18 +3,23 @@ package by.aurorasoft.replicator.annotation.processing.processor;
 import by.aurorasoft.replicator.annotation.processing.error.AnnotationProcessError;
 import by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessErrorAlertUtil;
 import by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,8 +40,16 @@ import static org.mockito.quality.Strictness.LENIENT;
 public final class ReplicaAnnotationProcessorTest {
     private final TestReplicaAnnotationProcessor processor = new TestReplicaAnnotationProcessor();
 
+    @Mock
+    private ProcessingEnvironment mockedEnvironment;
+
     @Captor
     private ArgumentCaptor<AnnotationProcessError> errorCaptor;
+
+    @BeforeEach
+    public void initializeProcessor() {
+        processor.init(mockedEnvironment);
+    }
 
     @Test
     public void annotationsShouldBeProcessedWithoutError() {
@@ -132,6 +145,24 @@ public final class ReplicaAnnotationProcessorTest {
         SourceVersion actual = processor.getSupportedSourceVersion();
         SourceVersion expected = latestSupported();
         assertSame(expected, actual);
+    }
+
+    @Test
+    public void typeUtilShouldBeGot() {
+        Types givenUtil = mock(Types.class);
+        when(mockedEnvironment.getTypeUtils()).thenReturn(givenUtil);
+
+        Types actual = processor.getTypeUtil();
+        assertSame(givenUtil, actual);
+    }
+
+    @Test
+    public void elementUtilShouldBeGot() {
+        Elements givenUtil = mock(Elements.class);
+        when(mockedEnvironment.getElementUtils()).thenReturn(givenUtil);
+
+        Elements actual = processor.getElementUtil();
+        assertSame(givenUtil, actual);
     }
 
     private ExecutableElement createMethod(boolean publicValue,
