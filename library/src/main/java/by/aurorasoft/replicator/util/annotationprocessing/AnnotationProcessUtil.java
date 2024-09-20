@@ -23,11 +23,11 @@ import static org.checkerframework.javacutil.ElementUtils.isStatic;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
-    private static final String LIST_TYPE_NAME = "java.util.List";
-    private static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
-    private static final String ID_GETTER_NAME = "getId";
-    private static final String JPA_REPOSITORY_FIELD_NAME = "repository";
-    private static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
+    static final String LIST_TYPE_NAME = "java.util.List";
+    static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
+    static final String ID_GETTER_NAME = "getId";
+    static final String JPA_REPOSITORY_FIELD_NAME = "repository";
+    static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
 
     public static <E extends Element> Stream<E> getAnnotatedElements(TypeElement annotation,
                                                                      RoundEnvironment environment,
@@ -64,6 +64,15 @@ public final class AnnotationProcessUtil {
                 );
     }
 
+    public static boolean isIdGetter(ExecutableElement element) {
+        return element.getKind() == METHOD
+                && isPublic(element)
+                && !isStatic(element)
+                && element.getSimpleName().contentEquals(ID_GETTER_NAME)
+                && element.getParameters().isEmpty();
+    }
+
+    //TODO: ---------------------------------------------------------------------------
     public static boolean isContainRepository(TypeElement element, ProcessingEnvironment environment) {
         return iterate(element, e -> !ElementUtils.isObject(e), e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()))
                 .flatMap(e -> e.getEnclosedElements().stream())
@@ -75,10 +84,6 @@ public final class AnnotationProcessUtil {
                 .getTypeElement(LIST_TYPE_NAME)
                 .asType();
         return TypesUtils.isErasedSubtype(type, supertype, environment.getTypeUtils());
-    }
-
-    public static boolean isList(Element element, ProcessingEnvironment environment) {
-        return isErasedSubtype(element, LIST_TYPE_NAME, environment);
     }
 
     public static boolean isIterable(Element element, ProcessingEnvironment environment) {
@@ -104,22 +109,6 @@ public final class AnnotationProcessUtil {
             }
         }
         throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(mirror));
-    }
-
-    public static TypeMirror getFirstTypeArgument(DeclaredType type) {
-        List<? extends TypeMirror> arguments = type.getTypeArguments();
-        if (!arguments.isEmpty()) {
-            return arguments.get(0);
-        }
-        throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(type));
-    }
-
-    public static boolean isIdGetter(ExecutableElement element) {
-        return element.getKind() == METHOD
-                && isPublic(element)
-                && !isStatic(element)
-                && element.getSimpleName().contentEquals(ID_GETTER_NAME)
-                && element.getParameters().isEmpty();
     }
 
     public static boolean isContainIdGetter(Element element) {
