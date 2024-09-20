@@ -7,6 +7,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -133,7 +134,7 @@ public final class AnnotationProcessUtilTest {
                 TypeElement.class
         );
         createEnclosingElement(
-                secondGivenEnclosingElement,
+                thirdGivenEnclosingElement,
                 PACKAGE,
                 PackageElement.class
         );
@@ -142,16 +143,33 @@ public final class AnnotationProcessUtilTest {
         assertSame(thirdGivenEnclosingElement, actual);
     }
 
-//    @Test
-//    public void enclosingClassShouldNotBeGot() {
-//        ExecutableElement givenElement = mock(ExecutableElement.class);
-//
-//        TypeElement firstGivenEnclosingElement = createEnclosingElement(givenElement, INTERFACE);
-//        TypeElement secondGivenEnclosingElement = createEnclosingElement(firstGivenEnclosingElement, INTERFACE);
-//        createEnclosingElement(secondGivenEnclosingElement, INTERFACE);
-//
-//        assertThrows(NoSuchElementException.class, () -> getEnclosingClass(givenElement));
-//    }
+    @Test
+    public void enclosingClassShouldNotBeGot() {
+        ExecutableElement givenElement = mock(ExecutableElement.class);
+
+        Element firstGivenEnclosingElement = createEnclosingElement(
+                givenElement,
+                INTERFACE,
+                TypeElement.class
+        );
+        Element secondGivenEnclosingElement = createEnclosingElement(
+                firstGivenEnclosingElement,
+                INTERFACE,
+                TypeElement.class
+        );
+        Element thirdGivenEnclosingElement = createEnclosingElement(
+                secondGivenEnclosingElement,
+                INTERFACE,
+                TypeElement.class
+        );
+        createEnclosingElement(
+                thirdGivenEnclosingElement,
+                PACKAGE,
+                PackageElement.class
+        );
+
+        assertThrows(NoSuchElementException.class, () -> getEnclosingClass(givenElement));
+    }
 
     private Element createEnclosingElement(Element enclosedElement, ElementKind kind, Class<? extends Element> type) {
         Element element = mock(type);

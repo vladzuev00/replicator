@@ -59,7 +59,7 @@ public final class AnnotationProcessUtil {
                 .findFirst()
                 .orElseThrow(
                         () -> new NoSuchElementException(
-                                "Impossible to find enclosing class of '%s'".formatted(element)
+                                "Impossible to find enclosing class for '%s'".formatted(element)
                         )
                 );
     }
