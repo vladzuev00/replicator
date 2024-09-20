@@ -4,18 +4,14 @@ import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import org.testng.annotations.Test;
 
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
-import static javax.lang.model.element.ElementKind.CLASS;
-import static javax.lang.model.element.ElementKind.INTERFACE;
+import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
@@ -97,5 +93,70 @@ public final class AnnotationProcessUtilTest {
         when(givenElement.getKind()).thenReturn(INTERFACE);
 
         assertFalse(isClass(givenElement));
+    }
+
+    @Test
+    public void elementShouldBePackage() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(PACKAGE);
+
+        assertTrue(isPackage(givenElement));
+    }
+
+    @Test
+    public void elementShouldNotBePackage() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(CLASS);
+
+        assertFalse(isPackage(givenElement));
+    }
+
+    @Test
+    public void enclosingClassShouldBeGot() {
+        ExecutableElement givenElement = mock(ExecutableElement.class);
+
+        Element firstGivenEnclosingElement = createEnclosingElement(
+                givenElement,
+                INTERFACE,
+                TypeElement.class
+        );
+        Element secondGivenEnclosingElement = createEnclosingElement(
+                firstGivenEnclosingElement,
+                INTERFACE,
+                TypeElement.class
+        );
+        Element thirdGivenEnclosingElement = createEnclosingElement(
+                secondGivenEnclosingElement,
+                CLASS,
+                TypeElement.class
+        );
+        createEnclosingElement(
+                secondGivenEnclosingElement,
+                PACKAGE,
+                PackageElement.class
+        );
+
+        TypeElement actual = getEnclosingClass(givenElement);
+        assertSame(thirdGivenEnclosingElement, actual);
+    }
+
+//    @Test
+//    public void enclosingClassShouldNotBeGot() {
+//        ExecutableElement givenElement = mock(ExecutableElement.class);
+//
+//        TypeElement firstGivenEnclosingElement = createEnclosingElement(givenElement, INTERFACE);
+//        TypeElement secondGivenEnclosingElement = createEnclosingElement(firstGivenEnclosingElement, INTERFACE);
+//        createEnclosingElement(secondGivenEnclosingElement, INTERFACE);
+//
+//        assertThrows(NoSuchElementException.class, () -> getEnclosingClass(givenElement));
+//    }
+
+    private Element createEnclosingElement(Element enclosedElement, ElementKind kind, Class<? extends Element> type) {
+        Element element = mock(type);
+        when(enclosedElement.getEnclosingElement()).thenReturn(element);
+        when(element.getKind()).thenReturn(kind);
+        return element;
     }
 }

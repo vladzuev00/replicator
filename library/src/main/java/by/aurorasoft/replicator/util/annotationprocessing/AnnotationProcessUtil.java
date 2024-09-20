@@ -49,11 +49,19 @@ public final class AnnotationProcessUtil {
         return element.getKind() == CLASS;
     }
 
+    public static boolean isPackage(Element element) {
+        return element.getKind() == PACKAGE;
+    }
+
     public static TypeElement getEnclosingClass(ExecutableElement element) {
-        return (TypeElement) iterate(element, Element::getEnclosingElement)
+        return (TypeElement) iterate(element, e -> !isPackage(e), Element::getEnclosingElement)
                 .filter(AnnotationProcessUtil::isClass)
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Impossible to find enclosing class of '%s'".formatted(element)));
+                .orElseThrow(
+                        () -> new NoSuchElementException(
+                                "Impossible to find enclosing class of '%s'".formatted(element)
+                        )
+                );
     }
 
     public static boolean isContainRepository(TypeElement element, ProcessingEnvironment environment) {
