@@ -246,6 +246,66 @@ public final class AnnotationProcessUtilTest {
         assertFalse(isIdGetter(givenElement));
     }
 
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void elementShouldContainIdGetter() {
+        Element givenElement = mock(Element.class);
+
+        Element firstGivenEnclosedElement = mock(Element.class);
+        Element secondGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE),
+                ID_GETTER_NAME,
+                emptyList()
+        );
+        Element thirdGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
+                ID_GETTER_NAME,
+                emptyList()
+        );
+        Element fourthGivenEnclosedElement = mock(Element.class);
+        List givenEnclosedElements = List.of(
+                firstGivenEnclosedElement,
+                secondGivenEnclosedElement,
+                thirdGivenEnclosedElement,
+                fourthGivenEnclosedElement
+        );
+        when(givenElement.getEnclosedElements()).thenReturn(givenEnclosedElements);
+
+        assertTrue(isContainIdGetter(givenElement));
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void elementShouldNotContainIdGetter() {
+        Element givenElement = mock(Element.class);
+
+        Element firstGivenEnclosedElement = mock(Element.class);
+        Element secondGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE),
+                ID_GETTER_NAME,
+                emptyList()
+        );
+        Element thirdGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
+                "GetId",
+                emptyList()
+        );
+        Element fourthGivenEnclosedElement = mock(Element.class);
+        List givenEnclosedElements = List.of(
+                firstGivenEnclosedElement,
+                secondGivenEnclosedElement,
+                thirdGivenEnclosedElement,
+                fourthGivenEnclosedElement
+        );
+        when(givenElement.getEnclosedElements()).thenReturn(givenEnclosedElements);
+
+        assertFalse(isContainIdGetter(givenElement));
+    }
+
     private Element createEnclosingElement(Element enclosedElement, ElementKind kind, Class<? extends Element> type) {
         Element element = mock(type);
         when(enclosedElement.getEnclosingElement()).thenReturn(element);

@@ -72,6 +72,14 @@ public final class AnnotationProcessUtil {
                 && element.getParameters().isEmpty();
     }
 
+    public static boolean isContainIdGetter(Element element) {
+        return element.getEnclosedElements()
+                .stream()
+                .filter(e -> e instanceof ExecutableElement)
+                .map(e -> (ExecutableElement) e)
+                .anyMatch(AnnotationProcessUtil::isIdGetter);
+    }
+
     //TODO: ---------------------------------------------------------------------------
     public static boolean isContainRepository(TypeElement element, ProcessingEnvironment environment) {
         return iterate(element, e -> !ElementUtils.isObject(e), e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()))
@@ -109,14 +117,6 @@ public final class AnnotationProcessUtil {
             }
         }
         throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(mirror));
-    }
-
-    public static boolean isContainIdGetter(Element element) {
-        return element.getEnclosedElements()
-                .stream()
-                .filter(e -> e instanceof ExecutableElement)
-                .map(e -> (ExecutableElement) e)
-                .anyMatch(AnnotationProcessUtil::isIdGetter);
     }
 
     public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
