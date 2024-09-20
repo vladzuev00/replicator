@@ -8,6 +8,8 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -46,6 +48,16 @@ public abstract class ReplicaAnnotationProcessor<E extends Element> extends Abst
     @Override
     public final SourceVersion getSupportedSourceVersion() {
         return latestSupported();
+    }
+
+    //TODO: test
+    protected final Types getTypeUtil() {
+        return processingEnv.getTypeUtils();
+    }
+
+    //TODO: test
+    protected final Elements getElementUtil() {
+        return processingEnv.getElementUtils();
     }
 
     protected abstract boolean isValidPublicElement(E element);

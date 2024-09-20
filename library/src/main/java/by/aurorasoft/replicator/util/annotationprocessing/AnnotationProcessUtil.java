@@ -10,6 +10,8 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
@@ -88,11 +90,17 @@ public final class AnnotationProcessUtil {
                 .anyMatch(AnnotationProcessUtil::isIdGetter);
     }
 
+    public static boolean isContainIdGetter(TypeMirror mirror, Types typeUtil) {
+        return !isVoid(mirror)
+                && !isPrimitive(mirror)
+                && isContainIdGetter(typeUtil.asElement(mirror));
+    }
+
     //TODO: ---------------------------------------------------------------------------
-    public static boolean isContainRepository(TypeElement element, ProcessingEnvironment environment) {
-        return iterate(element, e -> !ElementUtils.isObject(e), e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()))
+    public static boolean isContainRepository(TypeElement element, Elements elementUtil, Types typeUtil) {
+        return iterate(element, e -> !ElementUtils.isObject(e), e -> elementUtil.getTypeElement(typeUtil.erasure(e.getSuperclass()).toString()))
                 .flatMap(e -> e.getEnclosedElements().stream())
-                .anyMatch(e -> isJpaRepositoryField(e, environment));
+                .anyMatch(e -> isJpaRepositoryField(e, elementUtil, typeUtil));
     }
 
     public static boolean isList(TypeMirror type, ProcessingEnvironment environment) {
@@ -102,8 +110,8 @@ public final class AnnotationProcessUtil {
         return TypesUtils.isErasedSubtype(type, supertype, environment.getTypeUtils());
     }
 
-    public static boolean isIterable(Element element, ProcessingEnvironment environment) {
-        return isErasedSubtype(element, ITERABLE_TYPE_NAME, environment);
+    public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
+        return isErasedSubtype(element, ITERABLE_TYPE_NAME, elementUtil, typeUtil);
     }
 
     //TODO: refactor
@@ -127,39 +135,30 @@ public final class AnnotationProcessUtil {
         throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(mirror));
     }
 
-    public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
-        return isContainIdGetter(requireNonNull(getTypeElement(element.asType(), environment)));
+    public static boolean isContainIdGetter(VariableElement element, Elements elementUtil) {
+        return isContainIdGetter(requireNonNull(getTypeElement(element.asType(), elementUtil)));
     }
 
-    public static TypeElement getTypeElement(TypeMirror mirror, ProcessingEnvironment environment) {
-        return environment.getElementUtils().getTypeElement(mirror.toString());
-    }
-
-    public static boolean isContainIdGetter(TypeMirror mirror, ProcessingEnvironment environment) {
-        if (isVoid(mirror) || isPrimitive(mirror)) {
-            return false;
-        }
-        return isContainIdGetter(environment.getTypeUtils().asElement(mirror));
+    public static TypeElement getTypeElement(TypeMirror mirror, Elements elementUtil) {
+        return elementUtil.getTypeElement(mirror.toString());
     }
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
         return isContainIdGetter(element.getGenericElement());
     }
 
-    private static boolean isJpaRepositoryField(Element element, ProcessingEnvironment environment) {
+    private static boolean isJpaRepositoryField(Element element, Elements elementUtil, Types typeUtil) {
         return element.getKind() == FIELD
                 && element.getSimpleName().contentEquals(JPA_REPOSITORY_FIELD_NAME)
-                && isJpaRepository(element, environment);
+                && isJpaRepository(element, elementUtil, typeUtil);
     }
 
-    private static boolean isJpaRepository(Element element, ProcessingEnvironment environment) {
-        return isErasedSubtype(element, JPA_REPOSITORY_TYPE_NAME, environment);
+    private static boolean isJpaRepository(Element element, Elements elementUtil, Types typeUtil) {
+        return isErasedSubtype(element, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
     }
 
-    private static boolean isErasedSubtype(Element element, String supertypeName, ProcessingEnvironment environment) {
-        TypeMirror supertype = environment.getElementUtils()
-                .getTypeElement(supertypeName)
-                .asType();
-        return TypesUtils.isErasedSubtype(element.asType(), supertype, environment.getTypeUtils());
+    private static boolean isErasedSubtype(Element element, String supertypeName, Elements elementUtil, Types typeUtil) {
+        TypeMirror supertype = elementUtil.getTypeElement(supertypeName).asType();
+        return TypesUtils.isErasedSubtype(element.asType(), supertype, typeUtil);
     }
 }
