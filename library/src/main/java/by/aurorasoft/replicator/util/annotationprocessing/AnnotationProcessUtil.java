@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
@@ -103,11 +102,11 @@ public final class AnnotationProcessUtil {
                 .anyMatch(e -> isJpaRepositoryField(e, elementUtil, typeUtil));
     }
 
-    public static boolean isList(TypeMirror type, ProcessingEnvironment environment) {
-        TypeMirror supertype = environment.getElementUtils()
+    public static boolean isList(TypeMirror type, Elements elementUtil, Types typeUtil) {
+        TypeMirror supertype = elementUtil
                 .getTypeElement(LIST_TYPE_NAME)
                 .asType();
-        return TypesUtils.isErasedSubtype(type, supertype, environment.getTypeUtils());
+        return TypesUtils.isErasedSubtype(type, supertype, typeUtil);
     }
 
     public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {

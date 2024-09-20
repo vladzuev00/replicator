@@ -28,7 +28,8 @@ public final class ReplicatedSaveAllProcessor extends ReplicatedMethodAnnotation
 
     @Override
     protected boolean isValidReturnType(TypeMirror mirror) {
-        return isList(mirror, processingEnv) && isContainIdGetter(getFirstTypeArgument(mirror), getTypeUtil());
+        return isList(mirror, getElementUtil(), getTypeUtil())
+                && isContainIdGetter(getFirstTypeArgument(mirror), getTypeUtil());
     }
 
     @Override

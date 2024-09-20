@@ -116,7 +116,7 @@ public final class ReplicatedDeleteIterableProcessorTest {
             assertFalse(processor.isValidParameters(givenElements));
 
             mockedProcessUtil.verify(() -> getFirstTypeArgument(any(Element.class)), times(0));
-            mockedProcessUtil.verify(() -> isContainIdGetter(any(TypeMirror.class), any()), times(0));
+            mockedProcessUtil.verify(() -> isContainIdGetter(any(TypeMirror.class), any(Types.class)), times(0));
         }
     }
 

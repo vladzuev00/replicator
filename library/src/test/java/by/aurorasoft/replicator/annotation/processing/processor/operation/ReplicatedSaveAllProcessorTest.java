@@ -1,12 +1,19 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
 import by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +25,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public final class ReplicatedSaveAllProcessorTest {
     private final ReplicatedSaveAllProcessor processor = new ReplicatedSaveAllProcessor();
+
+    @Mock
+    private ProcessingEnvironment mockedEnvironment;
+
+    @BeforeEach
+    public void initializeProcessor() {
+        processor.init(mockedEnvironment);
+    }
 
     @Test
     public void replicatedServiceShouldBeValid() {
@@ -33,11 +49,19 @@ public final class ReplicatedSaveAllProcessorTest {
         try (MockedStatic<AnnotationProcessUtil> mockedProcessUtil = mockStatic(AnnotationProcessUtil.class)) {
             TypeMirror givenMirror = mock(TypeMirror.class);
 
-            mockedProcessUtil.when(() -> isList(same(givenMirror), any())).thenReturn(true);
+            Elements givenElementUtil = mock(Elements.class);
+            when(mockedEnvironment.getElementUtils()).thenReturn(givenElementUtil);
+
+            Types givenTypeUtil = mock(Types.class);
+            when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
+
+            mockedProcessUtil.when(() -> isList(same(givenMirror), same(givenElementUtil), same(givenTypeUtil)))
+                    .thenReturn(true);
 
             TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
             mockedProcessUtil.when(() -> getFirstTypeArgument(same(givenMirror))).thenReturn(givenFirstTypeArgument);
-            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(true);
+            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), same(givenTypeUtil)))
+                    .thenReturn(true);
 
             assertTrue(processor.isValidReturnType(givenMirror));
         }
@@ -48,12 +72,19 @@ public final class ReplicatedSaveAllProcessorTest {
         try (MockedStatic<AnnotationProcessUtil> mockedProcessUtil = mockStatic(AnnotationProcessUtil.class)) {
             TypeMirror givenMirror = mock(TypeMirror.class);
 
-            mockedProcessUtil.when(() -> isList(same(givenMirror), any())).thenReturn(false);
+            Elements givenElementUtil = mock(Elements.class);
+            when(mockedEnvironment.getElementUtils()).thenReturn(givenElementUtil);
+
+            Types givenTypeUtil = mock(Types.class);
+            when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
+
+            mockedProcessUtil.when(() -> isList(same(givenMirror), same(givenElementUtil), same(givenTypeUtil)))
+                    .thenReturn(false);
 
             assertFalse(processor.isValidReturnType(givenMirror));
 
             mockedProcessUtil.verify(() -> getFirstTypeArgument(any(TypeMirror.class)), times(0));
-            mockedProcessUtil.verify(() -> isContainIdGetter(any(TypeMirror.class), any()), times(0));
+            mockedProcessUtil.verify(() -> isContainIdGetter(any(TypeMirror.class), any(Types.class)), times(0));
         }
     }
 
@@ -62,11 +93,19 @@ public final class ReplicatedSaveAllProcessorTest {
         try (MockedStatic<AnnotationProcessUtil> mockedProcessUtil = mockStatic(AnnotationProcessUtil.class)) {
             TypeMirror givenMirror = mock(TypeMirror.class);
 
-            mockedProcessUtil.when(() -> isList(same(givenMirror), any())).thenReturn(true);
+            Elements givenElementUtil = mock(Elements.class);
+            when(mockedEnvironment.getElementUtils()).thenReturn(givenElementUtil);
+
+            Types givenTypeUtil = mock(Types.class);
+            when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
+
+            mockedProcessUtil.when(() -> isList(same(givenMirror), same(givenElementUtil), same(givenTypeUtil)))
+                    .thenReturn(true);
 
             TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
             mockedProcessUtil.when(() -> getFirstTypeArgument(same(givenMirror))).thenReturn(givenFirstTypeArgument);
-            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), any())).thenReturn(false);
+            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), same(givenTypeUtil)))
+                    .thenReturn(false);
 
             assertFalse(processor.isValidReturnType(givenMirror));
         }
