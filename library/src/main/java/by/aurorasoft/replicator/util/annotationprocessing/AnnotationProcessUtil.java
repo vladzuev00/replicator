@@ -20,7 +20,6 @@ import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static org.checkerframework.javacutil.ElementUtils.isStatic;
 
-//TODO: correct and refactor
 @UtilityClass
 public final class AnnotationProcessUtil {
     private static final String LIST_TYPE_NAME = "java.util.List";
