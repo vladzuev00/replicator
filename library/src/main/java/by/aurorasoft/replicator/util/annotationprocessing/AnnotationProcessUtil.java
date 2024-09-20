@@ -130,7 +130,7 @@ public final class AnnotationProcessUtil {
         if (mirror.getKind() == TypeKind.VOID || mirror.getKind().isPrimitive()) {
             return false;
         }
-        return isContainIdGetter(requireNonNull(getTypeElement(mirror, environment)));
+        return isContainIdGetter(environment.getTypeUtils().asElement(mirror));
     }
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
