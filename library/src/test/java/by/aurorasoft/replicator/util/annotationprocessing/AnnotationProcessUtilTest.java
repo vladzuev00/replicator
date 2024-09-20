@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
+import javax.lang.model.type.TypeMirror;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,6 +18,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
+import static javax.lang.model.type.TypeKind.DOUBLE;
+import static javax.lang.model.type.TypeKind.VOID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -244,6 +247,42 @@ public final class AnnotationProcessUtilTest {
         );
 
         assertFalse(isIdGetter(givenElement));
+    }
+
+    @Test
+    public void mirrorShouldBeVoid() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+
+        when(givenMirror.getKind()).thenReturn(VOID);
+
+        assertTrue(isVoid(givenMirror));
+    }
+
+    @Test
+    public void mirrorShouldNotBeVoid() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+
+        when(givenMirror.getKind()).thenReturn(DOUBLE);
+
+        assertFalse(isVoid(givenMirror));
+    }
+
+    @Test
+    public void mirrorShouldBePrimitive() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+
+        when(givenMirror.getKind()).thenReturn(DOUBLE);
+
+        assertTrue(isPrimitive(givenMirror));
+    }
+
+    @Test
+    public void mirrorShouldNotBePrimitive() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+
+        when(givenMirror.getKind()).thenReturn(VOID);
+
+        assertFalse(isPrimitive(givenMirror));
     }
 
     @Test

@@ -9,7 +9,6 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,6 +18,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.type.TypeKind.VOID;
 import static org.checkerframework.javacutil.ElementUtils.isStatic;
 
 @UtilityClass
@@ -70,6 +70,14 @@ public final class AnnotationProcessUtil {
                 && !isStatic(element)
                 && element.getSimpleName().contentEquals(ID_GETTER_NAME)
                 && element.getParameters().isEmpty();
+    }
+
+    public boolean isVoid(TypeMirror mirror) {
+        return mirror.getKind() == VOID;
+    }
+
+    public boolean isPrimitive(TypeMirror mirror) {
+        return mirror.getKind().isPrimitive();
     }
 
     public static boolean isContainIdGetter(Element element) {
@@ -128,7 +136,7 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isContainIdGetter(TypeMirror mirror, ProcessingEnvironment environment) {
-        if (mirror.getKind() == TypeKind.VOID || mirror.getKind().isPrimitive()) {
+        if (isVoid(mirror) || isPrimitive(mirror)) {
             return false;
         }
         return isContainIdGetter(environment.getTypeUtils().asElement(mirror));
