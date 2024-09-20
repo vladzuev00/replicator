@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
+import static javax.lang.model.element.ElementKind.CLASS;
+import static javax.lang.model.element.ElementKind.INTERFACE;
 import static javax.lang.model.element.Modifier.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
@@ -77,5 +79,23 @@ public final class AnnotationProcessUtilTest {
         when(givenElement.getAnnotation(same(ReplicatedService.class))).thenReturn(null);
 
         assertFalse(isReplicatedService(givenElement));
+    }
+
+    @Test
+    public void elementShouldBeClass() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(CLASS);
+
+        assertTrue(isClass(givenElement));
+    }
+
+    @Test
+    public void elementShouldNotBeClass() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(INTERFACE);
+
+        assertFalse(isClass(givenElement));
     }
 }

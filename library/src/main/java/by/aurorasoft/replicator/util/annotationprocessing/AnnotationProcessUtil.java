@@ -12,11 +12,12 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static javax.lang.model.element.ElementKind.FIELD;
-import static javax.lang.model.element.ElementKind.METHOD;
+import static java.util.stream.Stream.iterate;
+import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static org.checkerframework.javacutil.ElementUtils.isStatic;
 
@@ -44,20 +45,19 @@ public final class AnnotationProcessUtil {
         return element.getAnnotation(ReplicatedService.class) != null;
     }
 
-    public static TypeElement getTypeElement(TypeMirror mirror, ProcessingEnvironment environment) {
-        return environment.getElementUtils().getTypeElement(mirror.toString());
+    public static boolean isClass(Element element) {
+        return element.getKind() == CLASS;
     }
 
     public static TypeElement getEnclosingClass(ExecutableElement element) {
-        return (TypeElement) element.getEnclosingElement();
-    }
-
-    public static DeclaredType getReturnType(ExecutableElement element) {
-        return (DeclaredType) element.getReturnType();
+        return (TypeElement) iterate(element, Element::getEnclosingElement)
+                .filter(AnnotationProcessUtil::isClass)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Impossible to find enclosing class of '%s'".formatted(element)));
     }
 
     public static boolean isContainRepository(TypeElement element, ProcessingEnvironment environment) {
-        return Stream.iterate(element, e -> !ElementUtils.isObject(e), e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()))
+        return iterate(element, e -> !ElementUtils.isObject(e), e -> environment.getElementUtils().getTypeElement(environment.getTypeUtils().erasure(e.getSuperclass()).toString()))
                 .flatMap(e -> e.getEnclosedElements().stream())
                 .anyMatch(e -> isJpaRepositoryField(e, environment));
     }
@@ -124,6 +124,10 @@ public final class AnnotationProcessUtil {
 
     public static boolean isContainIdGetter(VariableElement element, ProcessingEnvironment environment) {
         return isContainIdGetter(requireNonNull(getTypeElement(element.asType(), environment)));
+    }
+
+    public static TypeElement getTypeElement(TypeMirror mirror, ProcessingEnvironment environment) {
+        return environment.getElementUtils().getTypeElement(mirror.toString());
     }
 
     public static boolean isContainIdGetter(TypeMirror mirror, ProcessingEnvironment environment) {
