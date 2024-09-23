@@ -95,6 +95,10 @@ public final class AnnotationProcessUtil {
                 && isContainIdGetter(typeUtil.asElement(mirror));
     }
 
+    public static boolean isContainIdGetter(TypeParameterElement element) {
+        return isContainIdGetter(element.getGenericElement());
+    }
+
     public static boolean isList(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
         return isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
     }
@@ -108,21 +112,6 @@ public final class AnnotationProcessUtil {
         return iterate(element, e -> !ElementUtils.isObject(e), e -> elementUtil.getTypeElement(typeUtil.erasure(e.getSuperclass()).toString()))
                 .flatMap(e -> e.getEnclosedElements().stream())
                 .anyMatch(e -> isJpaRepositoryField(e, elementUtil, typeUtil));
-    }
-
-    private static boolean isErasedSubtype(Element element,
-                                           String supertypeName,
-                                           Elements elementUtil,
-                                           Types typeUtil) {
-        return isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
-    }
-
-    private static boolean isErasedSubtype(TypeMirror mirror,
-                                           String superTypeName,
-                                           Elements elementUtil,
-                                           Types typeUtil) {
-        TypeMirror superTypeMirror = elementUtil.getTypeElement(superTypeName).asType();
-        return TypesUtils.isErasedSubtype(mirror, superTypeMirror, typeUtil);
     }
 
     //TODO: refactor
@@ -154,8 +143,19 @@ public final class AnnotationProcessUtil {
         return elementUtil.getTypeElement(mirror.toString());
     }
 
-    public static boolean isContainIdGetter(TypeParameterElement element) {
-        return isContainIdGetter(element.getGenericElement());
+    private static boolean isErasedSubtype(Element element,
+                                           String supertypeName,
+                                           Elements elementUtil,
+                                           Types typeUtil) {
+        return isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
+    }
+
+    private static boolean isErasedSubtype(TypeMirror mirror,
+                                           String superTypeName,
+                                           Elements elementUtil,
+                                           Types typeUtil) {
+        TypeMirror superTypeMirror = elementUtil.getTypeElement(superTypeName).asType();
+        return TypesUtils.isErasedSubtype(mirror, superTypeMirror, typeUtil);
     }
 
     private static boolean isJpaRepositoryField(Element element, Elements elementUtil, Types typeUtil) {
