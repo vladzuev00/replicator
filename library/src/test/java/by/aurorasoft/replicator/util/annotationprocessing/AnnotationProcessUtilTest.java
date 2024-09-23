@@ -2,11 +2,14 @@ package by.aurorasoft.replicator.util.annotationprocessing;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.util.NameImpl;
+import org.checkerframework.javacutil.TypesUtils;
+import org.mockito.MockedStatic;
 import org.testng.annotations.Test;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,10 +24,10 @@ import static javax.lang.model.element.ElementKind.PACKAGE;
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
 import static javax.lang.model.type.TypeKind.*;
+import static org.checkerframework.javacutil.TypesUtils.isErasedSubtype;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public final class AnnotationProcessUtilTest {
 
@@ -436,6 +439,56 @@ public final class AnnotationProcessUtilTest {
         when(givenElement.getEnclosedElements()).thenReturn(givenEnclosedElements);
 
         assertFalse(isContainIdGetter(givenMirror, givenTypeUtil));
+    }
+
+    @Test
+    public void mirrorShouldBeList() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            TypeElement givenSuperType = mock(TypeElement.class);
+            when(givenElementUtil.getTypeElement(same(LIST_TYPE_NAME))).thenReturn(givenSuperType);
+
+            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
+            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
+
+            mockedTypeUtil.when(
+                    () -> isErasedSubtype(
+                            same(givenMirror),
+                            same(givenSuperTypeMirror),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(true);
+
+            assertTrue(isList(givenMirror, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void mirrorShouldNotBeList() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            TypeElement givenSuperType = mock(TypeElement.class);
+            when(givenElementUtil.getTypeElement(same(LIST_TYPE_NAME))).thenReturn(givenSuperType);
+
+            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
+            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
+
+            mockedTypeUtil.when(
+                    () -> isErasedSubtype(
+                            same(givenMirror),
+                            same(givenSuperTypeMirror),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(false);
+
+            assertFalse(isList(givenMirror, givenElementUtil, givenTypeUtil));
+        }
     }
 
     private Element createEnclosingElement(Element enclosedElement, ElementKind kind, Class<? extends Element> type) {
