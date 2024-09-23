@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
 import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.ID_GETTER_NAME;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.JPA_REPOSITORY_TYPE_NAME;
 import static java.util.Collections.emptyList;
 import static javax.lang.model.element.ElementKind.PACKAGE;
 import static javax.lang.model.element.ElementKind.*;

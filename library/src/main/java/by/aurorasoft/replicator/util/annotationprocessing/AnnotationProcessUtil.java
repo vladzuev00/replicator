@@ -22,7 +22,6 @@ import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 @UtilityClass
 public final class AnnotationProcessUtil {
     static final String JPA_REPOSITORY_FIELD_NAME = "repository";
-    static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
 
     public static <E extends Element> Stream<E> getAnnotatedElements(TypeElement annotation,
                                                                      RoundEnvironment environment,
@@ -84,6 +83,7 @@ public final class AnnotationProcessUtil {
         throw new IllegalArgumentException("Impossible to extract first type argument of '%s'".formatted(element));
     }
 
+    //TODO put in DeclaredTypeUtil
     public static TypeMirror getFirstTypeArgument(TypeMirror mirror) {
         if (mirror instanceof DeclaredType declaredType) {
             List<? extends TypeMirror> arguments = declaredType.getTypeArguments();
