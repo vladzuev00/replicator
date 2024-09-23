@@ -37,23 +37,14 @@ public final class AnnotationProcessUtil {
         return element.getAnnotation(ReplicatedService.class) != null;
     }
 
-    //TODO: remove
-    public static boolean isContainIdGetter(Element element) {
-        return element.getEnclosedElements()
-                .stream()
-                .filter(e -> e instanceof ExecutableElement)
-                .map(e -> (ExecutableElement) e)
-                .anyMatch(ExecutableElementUtil::isIdGetter);
-    }
-
     public static boolean isContainIdGetter(TypeMirror mirror, Types typeUtil) {
         return !isVoid(mirror)
                 && !isPrimitive(mirror)
-                && isContainIdGetter(typeUtil.asElement(mirror));
+                && ElementUtil.isContainIdGetter(typeUtil.asElement(mirror));
     }
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
-        return isContainIdGetter(element.getGenericElement());
+        return ElementUtil.isContainIdGetter(element.getGenericElement());
     }
 
     //TODO: ---------------------------------------------------------------------------
@@ -86,7 +77,7 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isContainIdGetter(VariableElement element, Elements elementUtil) {
-        return isContainIdGetter(requireNonNull(getTypeElement(element.asType(), elementUtil)));
+        return ElementUtil.isContainIdGetter(requireNonNull(getTypeElement(element.asType(), elementUtil)));
     }
 
     public static TypeElement getTypeElement(TypeMirror mirror, Elements elementUtil) {

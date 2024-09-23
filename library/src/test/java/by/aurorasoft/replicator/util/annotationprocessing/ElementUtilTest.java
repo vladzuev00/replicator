@@ -4,12 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.util.List;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isIterable;
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepository;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
+import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.isIdGetter;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.same;
@@ -102,6 +104,67 @@ public final class ElementUtilTest {
             ).thenReturn(false);
 
             assertFalse(isJpaRepository(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void elementShouldContainIdGetter() {
+        try (MockedStatic<ExecutableElementUtil> mockedExecutableElementUtil = mockStatic(ExecutableElementUtil.class)) {
+            Element givenElement = mock(Element.class);
+
+            Element firstGivenEnclosedElement = mock(Element.class);
+            Element secondGivenEnclosedElement = mock(Element.class);
+            ExecutableElement thirdGivenEnclosedElement = mock(ExecutableElement.class);
+            ExecutableElement fourthGivenEnclosedElement = mock(ExecutableElement.class);
+            Element fifthGivenEnclosedElement = mock(Element.class);
+            ExecutableElement sixthGivenEnclosedElement = mock(ExecutableElement.class);
+            List givenEnclosedElements = List.of(
+                    firstGivenEnclosedElement,
+                    secondGivenEnclosedElement,
+                    thirdGivenEnclosedElement,
+                    fourthGivenEnclosedElement,
+                    fifthGivenEnclosedElement,
+                    sixthGivenEnclosedElement
+            );
+            when(givenElement.getEnclosedElements()).thenReturn(givenEnclosedElements);
+
+            mockedExecutableElementUtil.when(() -> isIdGetter(same(thirdGivenEnclosedElement))).thenReturn(false);
+            mockedExecutableElementUtil.when(() -> isIdGetter(same(fourthGivenEnclosedElement))).thenReturn(true);
+
+            assertTrue(isContainIdGetter(givenElement));
+
+            mockedExecutableElementUtil.verify(() -> isIdGetter(same(sixthGivenEnclosedElement)), times(0));
+        }
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void elementShouldNotContainIdGetter() {
+        try (MockedStatic<ExecutableElementUtil> mockedExecutableElementUtil = mockStatic(ExecutableElementUtil.class)) {
+            Element givenElement = mock(Element.class);
+
+            Element firstGivenEnclosedElement = mock(Element.class);
+            Element secondGivenEnclosedElement = mock(Element.class);
+            ExecutableElement thirdGivenEnclosedElement = mock(ExecutableElement.class);
+            ExecutableElement fourthGivenEnclosedElement = mock(ExecutableElement.class);
+            Element fifthGivenEnclosedElement = mock(Element.class);
+            ExecutableElement sixthGivenEnclosedElement = mock(ExecutableElement.class);
+            List givenEnclosedElements = List.of(
+                    firstGivenEnclosedElement,
+                    secondGivenEnclosedElement,
+                    thirdGivenEnclosedElement,
+                    fourthGivenEnclosedElement,
+                    fifthGivenEnclosedElement,
+                    sixthGivenEnclosedElement
+            );
+            when(givenElement.getEnclosedElements()).thenReturn(givenEnclosedElements);
+
+            mockedExecutableElementUtil.when(() -> isIdGetter(same(thirdGivenEnclosedElement))).thenReturn(false);
+            mockedExecutableElementUtil.when(() -> isIdGetter(same(fourthGivenEnclosedElement))).thenReturn(false);
+            mockedExecutableElementUtil.when(() -> isIdGetter(same(sixthGivenEnclosedElement))).thenReturn(false);
+
+            assertFalse(isContainIdGetter(givenElement));
         }
     }
 }
