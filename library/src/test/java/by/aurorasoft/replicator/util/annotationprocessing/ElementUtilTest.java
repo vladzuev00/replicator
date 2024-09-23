@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
+import by.aurorasoft.replicator.util.NameImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -12,6 +13,8 @@ import java.util.List;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
 import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.isIdGetter;
+import static javax.lang.model.element.ElementKind.FIELD;
+import static javax.lang.model.element.ElementKind.PARAMETER;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.same;
@@ -165,6 +168,85 @@ public final class ElementUtilTest {
             mockedExecutableElementUtil.when(() -> isIdGetter(same(sixthGivenEnclosedElement))).thenReturn(false);
 
             assertFalse(isContainIdGetter(givenElement));
+        }
+    }
+
+    @Test
+    public void elementShouldBeJpaRepositoryField() {
+        try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenElement.getKind()).thenReturn(FIELD);
+            when(givenElement.getSimpleName()).thenReturn(new NameImpl(JPA_REPOSITORY_FIELD_NAME));
+
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            when(givenElement.asType()).thenReturn(givenMirror);
+            mockedTypeMirrorUtil.when(
+                    () -> TypeMirrorUtil.isJpaRepository(
+                            same(givenMirror),
+                            same(givenElementUtil),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(true);
+
+            assertTrue(isJpaRepositoryField(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void elementShouldNotBeJpaRepositoryFieldBecauseOfNotSuitableKind() {
+        try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenElement.getKind()).thenReturn(PARAMETER);
+
+            assertFalse(isJpaRepositoryField(givenElement, givenElementUtil, givenTypeUtil));
+
+            mockedTypeMirrorUtil.verifyNoInteractions();
+        }
+    }
+
+    @Test
+    public void elementShouldNotBeJpaRepositoryFieldBecauseOfNotSuitableName() {
+        try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenElement.getKind()).thenReturn(FIELD);
+            when(givenElement.getSimpleName()).thenReturn(new NameImpl("jpaRepository"));
+
+            assertFalse(isJpaRepositoryField(givenElement, givenElementUtil, givenTypeUtil));
+
+            mockedTypeMirrorUtil.verifyNoInteractions();
+        }
+    }
+
+    @Test
+    public void elementShouldNotBeJpaRepositoryFieldBecauseOfNotSuitableType() {
+        try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenElement.getKind()).thenReturn(FIELD);
+            when(givenElement.getSimpleName()).thenReturn(new NameImpl(JPA_REPOSITORY_FIELD_NAME));
+
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            when(givenElement.asType()).thenReturn(givenMirror);
+            mockedTypeMirrorUtil.when(
+                    () -> TypeMirrorUtil.isJpaRepository(
+                            same(givenMirror),
+                            same(givenElementUtil),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(false);
+
+            assertFalse(isJpaRepositoryField(givenElement, givenElementUtil, givenTypeUtil));
         }
     }
 }

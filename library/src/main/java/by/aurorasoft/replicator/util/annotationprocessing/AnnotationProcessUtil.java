@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepository;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
@@ -22,7 +23,6 @@ import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
-    static final String JPA_REPOSITORY_FIELD_NAME = "repository";
 
     public static <E extends Element> Stream<E> getAnnotatedElements(TypeElement annotation,
                                                                      RoundEnvironment environment,
@@ -82,12 +82,5 @@ public final class AnnotationProcessUtil {
 
     public static TypeElement getTypeElement(TypeMirror mirror, Elements elementUtil) {
         return elementUtil.getTypeElement(mirror.toString());
-    }
-
-    //TODO: remove
-    private static boolean isJpaRepositoryField(Element element, Elements elementUtil, Types typeUtil) {
-        return element.getKind() == FIELD
-                && element.getSimpleName().contentEquals(JPA_REPOSITORY_FIELD_NAME)
-                && isJpaRepository(element, elementUtil, typeUtil);
     }
 }
