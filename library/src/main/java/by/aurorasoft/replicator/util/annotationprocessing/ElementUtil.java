@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import javax.lang.model.element.Element;
 
 import static javax.lang.model.element.ElementKind.CLASS;
+import static javax.lang.model.element.ElementKind.PACKAGE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 @UtilityClass
@@ -21,10 +22,10 @@ public final class ElementUtil {
         return element.getKind() == CLASS;
     }
 
-//    public static boolean isPackage(Element element) {
-//        return element.getKind() == PACKAGE;
-//    }
-//
+    public static boolean isPackage(Element element) {
+        return element.getKind() == PACKAGE;
+    }
+
 //    public static boolean isContainIdGetter(Element element) {
 //        return element.getEnclosedElements()
 //                .stream()

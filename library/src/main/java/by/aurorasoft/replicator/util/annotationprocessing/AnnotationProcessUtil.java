@@ -15,11 +15,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPackage;
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
-import static javax.lang.model.element.ElementKind.*;
-import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.element.ElementKind.FIELD;
+import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.type.TypeKind.VOID;
 import static org.checkerframework.javacutil.ElementUtils.isStatic;
 
@@ -42,11 +43,6 @@ public final class AnnotationProcessUtil {
     //TODO: remove and put into TypeElementUtil and Element replace by TypeElement
     public static boolean isReplicatedService(Element element) {
         return element.getAnnotation(ReplicatedService.class) != null;
-    }
-
-    //TODO: remove
-    public static boolean isPackage(Element element) {
-        return element.getKind() == PACKAGE;
     }
 
     public static TypeElement getEnclosingClass(ExecutableElement element) {
@@ -147,16 +143,16 @@ public final class AnnotationProcessUtil {
 
     //TODO: remove
     public static boolean isErasedSubtype(Element element,
-                                           String supertypeName,
-                                           Elements elementUtil,
-                                           Types typeUtil) {
+                                          String supertypeName,
+                                          Elements elementUtil,
+                                          Types typeUtil) {
         return isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
     }
 
     public static boolean isErasedSubtype(TypeMirror mirror,
-                                           String superTypeName,
-                                           Elements elementUtil,
-                                           Types typeUtil) {
+                                          String superTypeName,
+                                          Elements elementUtil,
+                                          Types typeUtil) {
         TypeMirror superTypeMirror = elementUtil.getTypeElement(superTypeName).asType();
         return TypesUtils.isErasedSubtype(mirror, superTypeMirror, typeUtil);
     }

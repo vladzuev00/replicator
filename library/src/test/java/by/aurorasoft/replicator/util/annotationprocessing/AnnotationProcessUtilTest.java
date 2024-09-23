@@ -69,24 +69,6 @@ public final class AnnotationProcessUtilTest {
     }
 
     @Test
-    public void elementShouldBePackage() {
-        Element givenElement = mock(Element.class);
-
-        when(givenElement.getKind()).thenReturn(PACKAGE);
-
-        assertTrue(isPackage(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBePackage() {
-        Element givenElement = mock(Element.class);
-
-        when(givenElement.getKind()).thenReturn(CLASS);
-
-        assertFalse(isPackage(givenElement));
-    }
-
-    @Test
     public void enclosingClassShouldBeGot() {
         ExecutableElement givenElement = mock(ExecutableElement.class);
 

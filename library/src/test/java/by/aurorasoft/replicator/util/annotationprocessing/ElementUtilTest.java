@@ -7,10 +7,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import java.util.Set;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isClass;
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
-import static javax.lang.model.element.ElementKind.CLASS;
-import static javax.lang.model.element.ElementKind.INTERFACE;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
+import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,5 +53,23 @@ public final class ElementUtilTest {
         when(givenElement.getKind()).thenReturn(INTERFACE);
 
         assertFalse(isClass(givenElement));
+    }
+
+    @Test
+    public void elementShouldBePackage() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(PACKAGE);
+
+        assertTrue(isPackage(givenElement));
+    }
+
+    @Test
+    public void elementShouldNotBePackage() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(CLASS);
+
+        assertFalse(isPackage(givenElement));
     }
 }
