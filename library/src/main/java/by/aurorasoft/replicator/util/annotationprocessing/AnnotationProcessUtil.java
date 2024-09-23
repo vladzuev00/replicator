@@ -63,7 +63,7 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isList(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
-        return isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
+        return TypeMirrorUtil.isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
     }
 
     //TODO: remove
@@ -117,15 +117,7 @@ public final class AnnotationProcessUtil {
                                           String supertypeName,
                                           Elements elementUtil,
                                           Types typeUtil) {
-        return isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
-    }
-
-    public static boolean isErasedSubtype(TypeMirror mirror,
-                                          String superTypeName,
-                                          Elements elementUtil,
-                                          Types typeUtil) {
-        TypeMirror superTypeMirror = elementUtil.getTypeElement(superTypeName).asType();
-        return TypesUtils.isErasedSubtype(mirror, superTypeMirror, typeUtil);
+        return TypeMirrorUtil.isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
     }
 
     //TODO: remove
