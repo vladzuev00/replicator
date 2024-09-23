@@ -494,7 +494,56 @@ public final class AnnotationProcessUtilTest {
     @Test
     public void elementShouldBeIterable() {
         try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
 
+            TypeMirror givenElementMirror = mock(TypeMirror.class);
+            when(givenElement.asType()).thenReturn(givenElementMirror);
+
+            TypeElement givenSuperType = mock(TypeElement.class);
+            when(givenElementUtil.getTypeElement(same(ITERABLE_TYPE_NAME))).thenReturn(givenSuperType);
+
+            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
+            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
+
+            mockedTypeUtil.when(
+                    () -> isErasedSubtype(
+                            same(givenElementMirror),
+                            same(givenSuperTypeMirror),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(true);
+
+            assertTrue(isIterable(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void elementShouldNotBeIterable() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            TypeMirror givenElementMirror = mock(TypeMirror.class);
+            when(givenElement.asType()).thenReturn(givenElementMirror);
+
+            TypeElement givenSuperType = mock(TypeElement.class);
+            when(givenElementUtil.getTypeElement(same(ITERABLE_TYPE_NAME))).thenReturn(givenSuperType);
+
+            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
+            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
+
+            mockedTypeUtil.when(
+                    () -> isErasedSubtype(
+                            same(givenElementMirror),
+                            same(givenSuperTypeMirror),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(false);
+
+            assertFalse(isIterable(givenElement, givenElementUtil, givenTypeUtil));
         }
     }
 
