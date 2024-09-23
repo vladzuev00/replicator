@@ -69,24 +69,6 @@ public final class AnnotationProcessUtilTest {
     }
 
     @Test
-    public void mirrorShouldBePrimitive() {
-        TypeMirror givenMirror = mock(TypeMirror.class);
-
-        when(givenMirror.getKind()).thenReturn(DOUBLE);
-
-        assertTrue(isPrimitive(givenMirror));
-    }
-
-    @Test
-    public void mirrorShouldNotBePrimitive() {
-        TypeMirror givenMirror = mock(TypeMirror.class);
-
-        when(givenMirror.getKind()).thenReturn(VOID);
-
-        assertFalse(isPrimitive(givenMirror));
-    }
-
-    @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void elementShouldContainIdGetter() {
         Element givenElement = mock(Element.class);

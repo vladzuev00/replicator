@@ -21,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
 import static javax.lang.model.element.ElementKind.FIELD;
 import static javax.lang.model.type.TypeKind.VOID;
+import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
@@ -40,10 +41,6 @@ public final class AnnotationProcessUtil {
     //TODO: remove and put into TypeElementUtil and Element replace by TypeElement
     public static boolean isReplicatedService(Element element) {
         return element.getAnnotation(ReplicatedService.class) != null;
-    }
-
-    public boolean isPrimitive(TypeMirror mirror) {
-        return mirror.getKind().isPrimitive();
     }
 
     //TODO: remove
