@@ -25,7 +25,6 @@ import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
-    static final String LIST_TYPE_NAME = "java.util.List";
     static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
     static final String JPA_REPOSITORY_FIELD_NAME = "repository";
     static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
@@ -60,10 +59,6 @@ public final class AnnotationProcessUtil {
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
         return isContainIdGetter(element.getGenericElement());
-    }
-
-    public static boolean isList(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
-        return TypeMirrorUtil.isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
     }
 
     //TODO: remove
@@ -117,7 +112,8 @@ public final class AnnotationProcessUtil {
                                           String supertypeName,
                                           Elements elementUtil,
                                           Types typeUtil) {
-        return TypeMirrorUtil.isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
+        return true;
+//        return TypeMirrorUtil.isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
     }
 
     //TODO: remove

@@ -287,56 +287,6 @@ public final class AnnotationProcessUtilTest {
     }
 
     @Test
-    public void mirrorShouldBeList() {
-        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
-            TypeMirror givenMirror = mock(TypeMirror.class);
-            Elements givenElementUtil = mock(Elements.class);
-            Types givenTypeUtil = mock(Types.class);
-
-            TypeElement givenSuperType = mock(TypeElement.class);
-            when(givenElementUtil.getTypeElement(same(LIST_TYPE_NAME))).thenReturn(givenSuperType);
-
-            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
-            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
-
-            mockedTypeUtil.when(
-                    () -> isErasedSubtype(
-                            same(givenMirror),
-                            same(givenSuperTypeMirror),
-                            same(givenTypeUtil)
-                    )
-            ).thenReturn(true);
-
-            assertTrue(isList(givenMirror, givenElementUtil, givenTypeUtil));
-        }
-    }
-
-    @Test
-    public void mirrorShouldNotBeList() {
-        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
-            TypeMirror givenMirror = mock(TypeMirror.class);
-            Elements givenElementUtil = mock(Elements.class);
-            Types givenTypeUtil = mock(Types.class);
-
-            TypeElement givenSuperType = mock(TypeElement.class);
-            when(givenElementUtil.getTypeElement(same(LIST_TYPE_NAME))).thenReturn(givenSuperType);
-
-            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
-            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
-
-            mockedTypeUtil.when(
-                    () -> isErasedSubtype(
-                            same(givenMirror),
-                            same(givenSuperTypeMirror),
-                            same(givenTypeUtil)
-                    )
-            ).thenReturn(false);
-
-            assertFalse(isList(givenMirror, givenElementUtil, givenTypeUtil));
-        }
-    }
-
-    @Test
     public void elementShouldBeIterable() {
         try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
             Element givenElement = mock(Element.class);

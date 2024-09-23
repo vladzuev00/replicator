@@ -9,8 +9,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isErasedSubtype;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.*;
 import static javax.lang.model.type.TypeKind.DOUBLE;
 import static javax.lang.model.type.TypeKind.VOID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,20 +38,19 @@ public final class TypeMirrorUtilTest {
     }
 
     @Test
-    public void mirrorShouldBeErasedSubtype() {
-        try (MockedStatic<TypesUtils> mockedTypeUtils = mockStatic(TypesUtils.class)) {
+    public void mirrorShouldBeList() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
             TypeMirror givenMirror = mock(TypeMirror.class);
-            String givenSuperTypeName = "SuperType";
             Elements givenElementUtil = mock(Elements.class);
             Types givenTypeUtil = mock(Types.class);
 
             TypeElement givenSuperType = mock(TypeElement.class);
-            when(givenElementUtil.getTypeElement(same(givenSuperTypeName))).thenReturn(givenSuperType);
+            when(givenElementUtil.getTypeElement(same(LIST_TYPE_NAME))).thenReturn(givenSuperType);
 
             TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
             when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
 
-            mockedTypeUtils.when(
+            mockedTypeUtil.when(
                     () -> TypesUtils.isErasedSubtype(
                             same(givenMirror),
                             same(givenSuperTypeMirror),
@@ -60,25 +58,24 @@ public final class TypeMirrorUtilTest {
                     )
             ).thenReturn(true);
 
-            assertTrue(isErasedSubtype(givenMirror, givenSuperTypeName, givenElementUtil, givenTypeUtil));
+            assertTrue(isList(givenMirror, givenElementUtil, givenTypeUtil));
         }
     }
 
     @Test
-    public void mirrorShouldNotBeErasedSubtype() {
-        try (MockedStatic<TypesUtils> mockedTypeUtils = mockStatic(TypesUtils.class)) {
+    public void mirrorShouldNotBeList() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
             TypeMirror givenMirror = mock(TypeMirror.class);
-            String givenSuperTypeName = "SuperType";
             Elements givenElementUtil = mock(Elements.class);
             Types givenTypeUtil = mock(Types.class);
 
             TypeElement givenSuperType = mock(TypeElement.class);
-            when(givenElementUtil.getTypeElement(same(givenSuperTypeName))).thenReturn(givenSuperType);
+            when(givenElementUtil.getTypeElement(same(LIST_TYPE_NAME))).thenReturn(givenSuperType);
 
             TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
             when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
 
-            mockedTypeUtils.when(
+            mockedTypeUtil.when(
                     () -> TypesUtils.isErasedSubtype(
                             same(givenMirror),
                             same(givenSuperTypeMirror),
@@ -86,7 +83,7 @@ public final class TypeMirrorUtilTest {
                     )
             ).thenReturn(false);
 
-            assertFalse(isErasedSubtype(givenMirror, givenSuperTypeName, givenElementUtil, givenTypeUtil));
+            assertFalse(isList(givenMirror, givenElementUtil, givenTypeUtil));
         }
     }
 }
