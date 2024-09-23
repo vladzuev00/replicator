@@ -69,63 +69,6 @@ public final class AnnotationProcessUtilTest {
     }
 
     @Test
-    public void enclosingClassShouldBeGot() {
-        ExecutableElement givenElement = mock(ExecutableElement.class);
-
-        Element firstGivenEnclosingElement = createEnclosingElement(
-                givenElement,
-                INTERFACE,
-                TypeElement.class
-        );
-        Element secondGivenEnclosingElement = createEnclosingElement(
-                firstGivenEnclosingElement,
-                INTERFACE,
-                TypeElement.class
-        );
-        Element thirdGivenEnclosingElement = createEnclosingElement(
-                secondGivenEnclosingElement,
-                CLASS,
-                TypeElement.class
-        );
-        createEnclosingElement(
-                thirdGivenEnclosingElement,
-                PACKAGE,
-                PackageElement.class
-        );
-
-        TypeElement actual = getEnclosingClass(givenElement);
-        assertSame(thirdGivenEnclosingElement, actual);
-    }
-
-    @Test
-    public void enclosingClassShouldNotBeGot() {
-        ExecutableElement givenElement = mock(ExecutableElement.class);
-
-        Element firstGivenEnclosingElement = createEnclosingElement(
-                givenElement,
-                INTERFACE,
-                TypeElement.class
-        );
-        Element secondGivenEnclosingElement = createEnclosingElement(
-                firstGivenEnclosingElement,
-                INTERFACE,
-                TypeElement.class
-        );
-        Element thirdGivenEnclosingElement = createEnclosingElement(
-                secondGivenEnclosingElement,
-                INTERFACE,
-                TypeElement.class
-        );
-        createEnclosingElement(
-                thirdGivenEnclosingElement,
-                PACKAGE,
-                PackageElement.class
-        );
-
-        assertThrows(NoSuchElementException.class, () -> getEnclosingClass(givenElement));
-    }
-
-    @Test
     public void mirrorShouldBeVoid() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
@@ -539,13 +482,6 @@ public final class AnnotationProcessUtilTest {
 
             assertFalse(isJpaRepository(givenElement, givenElementUtil, givenTypeUtil));
         }
-    }
-
-    private Element createEnclosingElement(Element enclosedElement, ElementKind kind, Class<? extends Element> type) {
-        Element element = mock(type);
-        when(enclosedElement.getEnclosingElement()).thenReturn(element);
-        when(element.getKind()).thenReturn(kind);
-        return element;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

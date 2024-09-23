@@ -41,17 +41,6 @@ public final class AnnotationProcessUtil {
         return element.getAnnotation(ReplicatedService.class) != null;
     }
 
-    public static TypeElement getEnclosingClass(ExecutableElement element) {
-        return (TypeElement) iterate(element, e -> !isPackage(e), Element::getEnclosingElement)
-                .filter(ElementUtil::isClass)
-                .findFirst()
-                .orElseThrow(
-                        () -> new NoSuchElementException(
-                                "Impossible to find enclosing class for '%s'".formatted(element)
-                        )
-                );
-    }
-
     public boolean isVoid(TypeMirror mirror) {
         return mirror.getKind() == VOID;
     }
