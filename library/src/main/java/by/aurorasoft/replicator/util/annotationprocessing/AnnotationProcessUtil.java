@@ -3,7 +3,6 @@ package by.aurorasoft.replicator.util.annotationprocessing;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TypesUtils;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
@@ -12,20 +11,16 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPackage;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
 import static javax.lang.model.element.ElementKind.FIELD;
-import static javax.lang.model.type.TypeKind.VOID;
 import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
-    static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
     static final String JPA_REPOSITORY_FIELD_NAME = "repository";
     static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
 
@@ -63,12 +58,12 @@ public final class AnnotationProcessUtil {
 
     //TODO: remove
     public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
-        return isErasedSubtype(element, ITERABLE_TYPE_NAME, elementUtil, typeUtil);
+        return TypeMirrorUtil.isIterable(element.asType(), elementUtil, typeUtil);
     }
 
     //TODO: remove
     public static boolean isJpaRepository(Element element, Elements elementUtil, Types typeUtil) {
-        return isErasedSubtype(element, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
+        return TypeMirrorUtil.isJpaRepository(element.asType(), elementUtil, typeUtil);
     }
 
     //TODO: ---------------------------------------------------------------------------
@@ -105,15 +100,6 @@ public final class AnnotationProcessUtil {
 
     public static TypeElement getTypeElement(TypeMirror mirror, Elements elementUtil) {
         return elementUtil.getTypeElement(mirror.toString());
-    }
-
-    //TODO: remove
-    public static boolean isErasedSubtype(Element element,
-                                          String supertypeName,
-                                          Elements elementUtil,
-                                          Types typeUtil) {
-        return true;
-//        return TypeMirrorUtil.isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
     }
 
     //TODO: remove

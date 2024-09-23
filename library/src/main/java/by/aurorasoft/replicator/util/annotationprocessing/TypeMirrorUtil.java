@@ -12,13 +12,23 @@ import static javax.lang.model.type.TypeKind.VOID;
 @UtilityClass
 public final class TypeMirrorUtil {
     static final String LIST_TYPE_NAME = "java.util.List";
+    static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
+    static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
 
     public static boolean isVoid(TypeMirror mirror) {
         return mirror.getKind() == VOID;
     }
 
     public static boolean isList(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
-        return TypeMirrorUtil.isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
+        return isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
+    }
+
+    public static boolean isIterable(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
+        return isErasedSubtype(mirror, ITERABLE_TYPE_NAME, elementUtil, typeUtil);
+    }
+
+    public static boolean isJpaRepository(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
+        return isErasedSubtype(mirror, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
     }
 
     private static boolean isErasedSubtype(TypeMirror mirror,
