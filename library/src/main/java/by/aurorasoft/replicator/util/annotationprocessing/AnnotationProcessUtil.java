@@ -99,6 +99,10 @@ public final class AnnotationProcessUtil {
         return isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
     }
 
+    public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
+        return isErasedSubtype(element, ITERABLE_TYPE_NAME, elementUtil, typeUtil);
+    }
+
     //TODO: ---------------------------------------------------------------------------
     public static boolean isContainRepository(TypeElement element, Elements elementUtil, Types typeUtil) {
         return iterate(element, e -> !ElementUtils.isObject(e), e -> elementUtil.getTypeElement(typeUtil.erasure(e.getSuperclass()).toString()))
@@ -106,16 +110,11 @@ public final class AnnotationProcessUtil {
                 .anyMatch(e -> isJpaRepositoryField(e, elementUtil, typeUtil));
     }
 
-    public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
-        return isErasedSubtype(element, ITERABLE_TYPE_NAME, elementUtil, typeUtil);
-    }
-
     private static boolean isErasedSubtype(Element element,
                                            String supertypeName,
                                            Elements elementUtil,
                                            Types typeUtil) {
-        TypeMirror supertype = elementUtil.getTypeElement(supertypeName).asType();
-        return TypesUtils.isErasedSubtype(element.asType(), supertype, typeUtil);
+        return isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
     }
 
     private static boolean isErasedSubtype(TypeMirror mirror,

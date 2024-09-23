@@ -491,6 +491,13 @@ public final class AnnotationProcessUtilTest {
         }
     }
 
+    @Test
+    public void elementShouldBeIterable() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
+
+        }
+    }
+
     private Element createEnclosingElement(Element enclosedElement, ElementKind kind, Class<? extends Element> type) {
         Element element = mock(type);
         when(enclosedElement.getEnclosingElement()).thenReturn(element);
