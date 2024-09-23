@@ -51,26 +51,6 @@ public final class AnnotationProcessUtilTest {
     }
 
     @Test
-    public void elementShouldBePublic() {
-        Element givenElement = mock(Element.class);
-
-        Set<Modifier> givenModifiers = Set.of(NATIVE, SYNCHRONIZED, PUBLIC, VOLATILE);
-        when(givenElement.getModifiers()).thenReturn(givenModifiers);
-
-        assertTrue(isPublic(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBePublic() {
-        Element givenElement = mock(Element.class);
-
-        Set<Modifier> givenModifiers = Set.of(NATIVE, SYNCHRONIZED, PRIVATE, VOLATILE);
-        when(givenElement.getModifiers()).thenReturn(givenModifiers);
-
-        assertFalse(isPublic(givenElement));
-    }
-
-    @Test
     public void elementShouldBeReplicatedService() {
         Element givenElement = mock(Element.class);
 
@@ -610,6 +590,62 @@ public final class AnnotationProcessUtilTest {
             ).thenReturn(false);
 
             assertFalse(isIterable(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void elementShouldBeJpaRepository() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            TypeMirror givenElementMirror = mock(TypeMirror.class);
+            when(givenElement.asType()).thenReturn(givenElementMirror);
+
+            TypeElement givenSuperType = mock(TypeElement.class);
+            when(givenElementUtil.getTypeElement(same(JPA_REPOSITORY_TYPE_NAME))).thenReturn(givenSuperType);
+
+            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
+            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
+
+            mockedTypeUtil.when(
+                    () -> isErasedSubtype(
+                            same(givenElementMirror),
+                            same(givenSuperTypeMirror),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(true);
+
+            assertTrue(isJpaRepository(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void elementShouldNotBeJpaRepository() {
+        try (MockedStatic<TypesUtils> mockedTypeUtil = mockStatic(TypesUtils.class)) {
+            Element givenElement = mock(Element.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            TypeMirror givenElementMirror = mock(TypeMirror.class);
+            when(givenElement.asType()).thenReturn(givenElementMirror);
+
+            TypeElement givenSuperType = mock(TypeElement.class);
+            when(givenElementUtil.getTypeElement(same(JPA_REPOSITORY_TYPE_NAME))).thenReturn(givenSuperType);
+
+            TypeMirror givenSuperTypeMirror = mock(TypeMirror.class);
+            when(givenSuperType.asType()).thenReturn(givenSuperTypeMirror);
+
+            mockedTypeUtil.when(
+                    () -> isErasedSubtype(
+                            same(givenElementMirror),
+                            same(givenSuperTypeMirror),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(false);
+
+            assertFalse(isJpaRepository(givenElement, givenElementUtil, givenTypeUtil));
         }
     }
 

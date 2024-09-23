@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
 import static javax.lang.model.element.ElementKind.*;
@@ -38,18 +39,17 @@ public final class AnnotationProcessUtil {
                 .map(elementType::cast);
     }
 
-    public static boolean isPublic(Element element) {
-        return element.getModifiers().contains(PUBLIC);
-    }
-
+    //TODO: remove and put into TypeElementUtil and Element replace by TypeElement
     public static boolean isReplicatedService(Element element) {
         return element.getAnnotation(ReplicatedService.class) != null;
     }
 
+    //TODO: remove
     public static boolean isClass(Element element) {
         return element.getKind() == CLASS;
     }
 
+    //TODO: remove
     public static boolean isPackage(Element element) {
         return element.getKind() == PACKAGE;
     }
@@ -81,6 +81,7 @@ public final class AnnotationProcessUtil {
         return mirror.getKind().isPrimitive();
     }
 
+    //TODO: remove
     public static boolean isContainIdGetter(Element element) {
         return element.getEnclosedElements()
                 .stream()
@@ -103,8 +104,14 @@ public final class AnnotationProcessUtil {
         return isErasedSubtype(mirror, LIST_TYPE_NAME, elementUtil, typeUtil);
     }
 
+    //TODO: remove
     public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
         return isErasedSubtype(element, ITERABLE_TYPE_NAME, elementUtil, typeUtil);
+    }
+
+    //TODO: remove
+    public static boolean isJpaRepository(Element element, Elements elementUtil, Types typeUtil) {
+        return isErasedSubtype(element, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
     }
 
     //TODO: ---------------------------------------------------------------------------
@@ -143,14 +150,15 @@ public final class AnnotationProcessUtil {
         return elementUtil.getTypeElement(mirror.toString());
     }
 
-    private static boolean isErasedSubtype(Element element,
+    //TODO: remove
+    public static boolean isErasedSubtype(Element element,
                                            String supertypeName,
                                            Elements elementUtil,
                                            Types typeUtil) {
         return isErasedSubtype(element.asType(), supertypeName, elementUtil, typeUtil);
     }
 
-    private static boolean isErasedSubtype(TypeMirror mirror,
+    public static boolean isErasedSubtype(TypeMirror mirror,
                                            String superTypeName,
                                            Elements elementUtil,
                                            Types typeUtil) {
@@ -158,13 +166,10 @@ public final class AnnotationProcessUtil {
         return TypesUtils.isErasedSubtype(mirror, superTypeMirror, typeUtil);
     }
 
+    //TODO: remove
     private static boolean isJpaRepositoryField(Element element, Elements elementUtil, Types typeUtil) {
         return element.getKind() == FIELD
                 && element.getSimpleName().contentEquals(JPA_REPOSITORY_FIELD_NAME)
                 && isJpaRepository(element, elementUtil, typeUtil);
-    }
-
-    private static boolean isJpaRepository(Element element, Elements elementUtil, Types typeUtil) {
-        return isErasedSubtype(element, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
     }
 }

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessErrorAlertUtil.alert;
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.getAnnotatedElements;
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isPublic;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Stream.concat;
