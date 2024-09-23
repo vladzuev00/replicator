@@ -4,10 +4,10 @@ import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.util.NameImpl;
 import org.testng.annotations.Test;
 
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -347,13 +347,95 @@ public final class AnnotationProcessUtilTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void mirrorShouldContainIdGetter() {
         TypeMirror givenMirror = mock(TypeMirror.class);
-        ProcessingEnvironment givenEnvironment = mock(ProcessingEnvironment.class);
+        Types givenTypeUtil = mock(Types.class);
 
         when(givenMirror.getKind()).thenReturn(DECLARED);
 
-        throw new UnsupportedOperationException();
+        Element givenElement = mock(Element.class);
+        when(givenTypeUtil.asElement(same(givenMirror))).thenReturn(givenElement);
+
+        Element firstGivenEnclosedElement = mock(Element.class);
+        Element secondGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE),
+                ID_GETTER_NAME,
+                emptyList()
+        );
+        Element thirdGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
+                ID_GETTER_NAME,
+                emptyList()
+        );
+        Element fourthGivenEnclosedElement = mock(Element.class);
+        List givenEnclosedElements = List.of(
+                firstGivenEnclosedElement,
+                secondGivenEnclosedElement,
+                thirdGivenEnclosedElement,
+                fourthGivenEnclosedElement
+        );
+        when(givenElement.getEnclosedElements()).thenReturn(givenEnclosedElements);
+
+        assertTrue(isContainIdGetter(givenMirror, givenTypeUtil));
+    }
+
+    @Test
+    public void mirrorShouldNotContainIdGetterBecauseOfItIsVoid() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+        Types givenTypeUtil = mock(Types.class);
+
+        when(givenMirror.getKind()).thenReturn(VOID);
+
+        assertFalse(isContainIdGetter(givenMirror, givenTypeUtil));
+    }
+
+    @Test
+    public void mirrorShouldNotContainIdGetterBecauseOfItIsPrimitive() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+        Types givenTypeUtil = mock(Types.class);
+
+        when(givenMirror.getKind()).thenReturn(DOUBLE);
+
+        assertFalse(isContainIdGetter(givenMirror, givenTypeUtil));
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void mirrorShouldNotContainIdGetter() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+        Types givenTypeUtil = mock(Types.class);
+
+        when(givenMirror.getKind()).thenReturn(DECLARED);
+
+        Element givenElement = mock(Element.class);
+        when(givenTypeUtil.asElement(same(givenMirror))).thenReturn(givenElement);
+
+        Element firstGivenEnclosedElement = mock(Element.class);
+        Element secondGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE),
+                ID_GETTER_NAME,
+                emptyList()
+        );
+        Element thirdGivenEnclosedElement = createExecutableElement(
+                METHOD,
+                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
+                "GetId",
+                emptyList()
+        );
+        Element fourthGivenEnclosedElement = mock(Element.class);
+        List givenEnclosedElements = List.of(
+                firstGivenEnclosedElement,
+                secondGivenEnclosedElement,
+                thirdGivenEnclosedElement,
+                fourthGivenEnclosedElement
+        );
+        when(givenElement.getEnclosedElements()).thenReturn(givenEnclosedElements);
+
+        assertFalse(isContainIdGetter(givenMirror, givenTypeUtil));
     }
 
     private Element createEnclosingElement(Element enclosedElement, ElementKind kind, Class<? extends Element> type) {
