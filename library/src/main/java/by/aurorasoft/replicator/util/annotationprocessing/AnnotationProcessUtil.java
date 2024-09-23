@@ -16,19 +16,15 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPackage;
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
 import static javax.lang.model.element.ElementKind.FIELD;
-import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.type.TypeKind.VOID;
-import static org.checkerframework.javacutil.ElementUtils.isStatic;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
     static final String LIST_TYPE_NAME = "java.util.List";
     static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
-    static final String ID_GETTER_NAME = "getId";
     static final String JPA_REPOSITORY_FIELD_NAME = "repository";
     static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
 
@@ -56,14 +52,6 @@ public final class AnnotationProcessUtil {
                 );
     }
 
-    public static boolean isIdGetter(ExecutableElement element) {
-        return element.getKind() == METHOD
-                && isPublic(element)
-                && !isStatic(element)
-                && element.getSimpleName().contentEquals(ID_GETTER_NAME)
-                && element.getParameters().isEmpty();
-    }
-
     public boolean isVoid(TypeMirror mirror) {
         return mirror.getKind() == VOID;
     }
@@ -78,7 +66,7 @@ public final class AnnotationProcessUtil {
                 .stream()
                 .filter(e -> e instanceof ExecutableElement)
                 .map(e -> (ExecutableElement) e)
-                .anyMatch(AnnotationProcessUtil::isIdGetter);
+                .anyMatch(ExecutableElementUtil::isIdGetter);
     }
 
     public static boolean isContainIdGetter(TypeMirror mirror, Types typeUtil) {

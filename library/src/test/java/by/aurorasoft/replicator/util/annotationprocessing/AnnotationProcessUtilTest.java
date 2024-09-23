@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
+import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.ID_GETTER_NAME;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static javax.lang.model.element.ElementKind.PACKAGE;
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
@@ -123,78 +123,6 @@ public final class AnnotationProcessUtilTest {
         );
 
         assertThrows(NoSuchElementException.class, () -> getEnclosingClass(givenElement));
-    }
-
-    @Test
-    public void elementShouldBeIdGetter() {
-        ExecutableElement givenElement = createExecutableElement(
-                METHOD,
-                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
-                ID_GETTER_NAME,
-                emptyList()
-        );
-
-        assertTrue(isIdGetter(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBeIdGetterBecauseOfNotSuitableKind() {
-        ExecutableElement givenElement = createExecutableElement(
-                CONSTRUCTOR,
-                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
-                ID_GETTER_NAME,
-                emptyList()
-        );
-
-        assertFalse(isIdGetter(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBeIdGetterBecauseOfNoPublicModifier() {
-        ExecutableElement givenElement = createExecutableElement(
-                METHOD,
-                Set.of(SYNCHRONIZED, VOLATILE, PROTECTED),
-                ID_GETTER_NAME,
-                emptyList()
-        );
-
-        assertFalse(isIdGetter(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBeIdGetterBecauseOfStaticModifier() {
-        ExecutableElement givenElement = createExecutableElement(
-                METHOD,
-                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC, STATIC),
-                ID_GETTER_NAME,
-                emptyList()
-        );
-
-        assertFalse(isIdGetter(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBeIdGetterBecauseOfNotSuitableName() {
-        ExecutableElement givenElement = createExecutableElement(
-                METHOD,
-                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
-                "GetId",
-                emptyList()
-        );
-
-        assertFalse(isIdGetter(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBeIdGetterBecauseOfParametersIsNotEmpty() {
-        ExecutableElement givenElement = createExecutableElement(
-                METHOD,
-                Set.of(SYNCHRONIZED, VOLATILE, PUBLIC),
-                ID_GETTER_NAME,
-                singletonList(mock(VariableElement.class))
-        );
-
-        assertFalse(isIdGetter(givenElement));
     }
 
     @Test
