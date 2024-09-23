@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
+import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 
 import javax.lang.model.element.Element;
@@ -12,6 +13,10 @@ import static javax.lang.model.element.ElementKind.FIELD;
 @UtilityClass
 public final class ElementUtil {
     static final String JPA_REPOSITORY_FIELD_NAME = "repository";
+
+    public static boolean isReplicatedService(Element element) {
+        return element.getAnnotation(ReplicatedService.class) != null;
+    }
 
     public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
         return TypeMirrorUtil.isIterable(element.asType(), elementUtil, typeUtil);

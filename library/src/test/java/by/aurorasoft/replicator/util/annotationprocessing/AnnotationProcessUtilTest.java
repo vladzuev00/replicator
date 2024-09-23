@@ -33,24 +33,6 @@ import static org.mockito.Mockito.*;
 public final class AnnotationProcessUtilTest {
 
     @Test
-    public void elementShouldBeReplicatedService() {
-        Element givenElement = mock(Element.class);
-
-        when(givenElement.getAnnotation(same(ReplicatedService.class))).thenReturn(mock(ReplicatedService.class));
-
-        assertTrue(isReplicatedService(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBeReplicatedService() {
-        Element givenElement = mock(Element.class);
-
-        when(givenElement.getAnnotation(same(ReplicatedService.class))).thenReturn(null);
-
-        assertFalse(isReplicatedService(givenElement));
-    }
-
-    @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void mirrorShouldContainIdGetter() {
         TypeMirror givenMirror = mock(TypeMirror.class);

@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
+import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.util.NameImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -21,6 +22,24 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 public final class ElementUtilTest {
+
+    @Test
+    public void elementShouldBeReplicatedService() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getAnnotation(same(ReplicatedService.class))).thenReturn(mock(ReplicatedService.class));
+
+        assertTrue(isReplicatedService(givenElement));
+    }
+
+    @Test
+    public void elementShouldNotBeReplicatedService() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getAnnotation(same(ReplicatedService.class))).thenReturn(null);
+
+        assertFalse(isReplicatedService(givenElement));
+    }
 
     @Test
     public void elementShouldBeIterable() {

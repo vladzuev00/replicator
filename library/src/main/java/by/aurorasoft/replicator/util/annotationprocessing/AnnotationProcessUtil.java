@@ -4,30 +4,24 @@ import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 import org.checkerframework.javacutil.ElementUtils;
 
-import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepository;
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
-import static javax.lang.model.element.ElementKind.FIELD;
 import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
 @UtilityClass
 public final class AnnotationProcessUtil {
-
-    //TODO: remove and put into TypeElementUtil and Element replace by TypeElement
-    public static boolean isReplicatedService(Element element) {
-        return element.getAnnotation(ReplicatedService.class) != null;
-    }
 
     public static boolean isContainIdGetter(TypeMirror mirror, Types typeUtil) {
         return !isVoid(mirror)
