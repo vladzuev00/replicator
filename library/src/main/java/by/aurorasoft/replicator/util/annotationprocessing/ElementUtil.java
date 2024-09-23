@@ -12,4 +12,8 @@ public final class ElementUtil {
     public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
         return TypeMirrorUtil.isIterable(element.asType(), elementUtil, typeUtil);
     }
+
+    public static boolean isJpaRepository(Element element, Elements elementUtil, Types typeUtil) {
+        return TypeMirrorUtil.isJpaRepository(element.asType(), elementUtil, typeUtil);
+    }
 }

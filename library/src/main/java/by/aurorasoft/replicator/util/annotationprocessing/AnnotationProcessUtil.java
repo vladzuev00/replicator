@@ -13,6 +13,7 @@ import javax.lang.model.util.Types;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepository;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
@@ -53,11 +54,6 @@ public final class AnnotationProcessUtil {
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
         return isContainIdGetter(element.getGenericElement());
-    }
-
-    //TODO: remove
-    public static boolean isJpaRepository(Element element, Elements elementUtil, Types typeUtil) {
-        return TypeMirrorUtil.isJpaRepository(element.asType(), elementUtil, typeUtil);
     }
 
     //TODO: ---------------------------------------------------------------------------
