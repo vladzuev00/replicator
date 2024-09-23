@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.*;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isIterable;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)

@@ -56,11 +56,6 @@ public final class AnnotationProcessUtil {
     }
 
     //TODO: remove
-    public static boolean isIterable(Element element, Elements elementUtil, Types typeUtil) {
-        return TypeMirrorUtil.isIterable(element.asType(), elementUtil, typeUtil);
-    }
-
-    //TODO: remove
     public static boolean isJpaRepository(Element element, Elements elementUtil, Types typeUtil) {
         return TypeMirrorUtil.isJpaRepository(element.asType(), elementUtil, typeUtil);
     }
