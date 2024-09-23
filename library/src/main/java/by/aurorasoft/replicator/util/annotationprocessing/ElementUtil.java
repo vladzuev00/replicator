@@ -1,14 +1,10 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
-import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
-import static javax.lang.model.element.ElementKind.*;
+import static javax.lang.model.element.ElementKind.CLASS;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 @UtilityClass
@@ -21,10 +17,10 @@ public final class ElementUtil {
         return element.getModifiers().contains(PUBLIC);
     }
 
-//    public static boolean isClass(Element element) {
-//        return element.getKind() == CLASS;
-//    }
-//
+    public static boolean isClass(Element element) {
+        return element.getKind() == CLASS;
+    }
+
 //    public static boolean isPackage(Element element) {
 //        return element.getKind() == PACKAGE;
 //    }

@@ -45,18 +45,13 @@ public final class AnnotationProcessUtil {
     }
 
     //TODO: remove
-    public static boolean isClass(Element element) {
-        return element.getKind() == CLASS;
-    }
-
-    //TODO: remove
     public static boolean isPackage(Element element) {
         return element.getKind() == PACKAGE;
     }
 
     public static TypeElement getEnclosingClass(ExecutableElement element) {
         return (TypeElement) iterate(element, e -> !isPackage(e), Element::getEnclosingElement)
-                .filter(AnnotationProcessUtil::isClass)
+                .filter(ElementUtil::isClass)
                 .findFirst()
                 .orElseThrow(
                         () -> new NoSuchElementException(
