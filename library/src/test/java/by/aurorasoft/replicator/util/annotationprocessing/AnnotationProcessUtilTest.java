@@ -33,25 +33,6 @@ import static org.mockito.Mockito.*;
 public final class AnnotationProcessUtilTest {
 
     @Test
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void annotatedElementsShouldBeGot() {
-        TypeElement givenAnnotation = mock(TypeElement.class);
-        RoundEnvironment givenEnvironment = mock(RoundEnvironment.class);
-        Class<ExecutableElement> givenElementType = ExecutableElement.class;
-
-        Element firstGivenElement = mock(ExecutableElement.class);
-        Element secondGivenElement = mock(ExecutableElement.class);
-        Element thirdGivenElement = mock(ExecutableElement.class);
-        Set givenElements = new LinkedHashSet<>(List.of(firstGivenElement, secondGivenElement, thirdGivenElement));
-        when(givenEnvironment.getElementsAnnotatedWith(same(givenAnnotation))).thenReturn(givenElements);
-
-        Stream<ExecutableElement> actual = getAnnotatedElements(givenAnnotation, givenEnvironment, givenElementType);
-        List<ExecutableElement> actualAsList = actual.toList();
-        List<Element> expectedAsList = List.of(firstGivenElement, secondGivenElement, thirdGivenElement);
-        assertEquals(expectedAsList, actualAsList);
-    }
-
-    @Test
     public void elementShouldBeReplicatedService() {
         Element givenElement = mock(Element.class);
 

@@ -24,14 +24,6 @@ import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 @UtilityClass
 public final class AnnotationProcessUtil {
 
-    public static <E extends Element> Stream<E> getAnnotatedElements(TypeElement annotation,
-                                                                     RoundEnvironment environment,
-                                                                     Class<E> elementType) {
-        return environment.getElementsAnnotatedWith(annotation)
-                .stream()
-                .map(elementType::cast);
-    }
-
     //TODO: remove and put into TypeElementUtil and Element replace by TypeElement
     public static boolean isReplicatedService(Element element) {
         return element.getAnnotation(ReplicatedService.class) != null;
