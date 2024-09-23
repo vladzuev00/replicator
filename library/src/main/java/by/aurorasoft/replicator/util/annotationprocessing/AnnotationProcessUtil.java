@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPackage;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
 import static javax.lang.model.element.ElementKind.FIELD;
@@ -39,10 +40,6 @@ public final class AnnotationProcessUtil {
     //TODO: remove and put into TypeElementUtil and Element replace by TypeElement
     public static boolean isReplicatedService(Element element) {
         return element.getAnnotation(ReplicatedService.class) != null;
-    }
-
-    public boolean isVoid(TypeMirror mirror) {
-        return mirror.getKind() == VOID;
     }
 
     public boolean isPrimitive(TypeMirror mirror) {

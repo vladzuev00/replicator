@@ -69,24 +69,6 @@ public final class AnnotationProcessUtilTest {
     }
 
     @Test
-    public void mirrorShouldBeVoid() {
-        TypeMirror givenMirror = mock(TypeMirror.class);
-
-        when(givenMirror.getKind()).thenReturn(VOID);
-
-        assertTrue(isVoid(givenMirror));
-    }
-
-    @Test
-    public void mirrorShouldNotBeVoid() {
-        TypeMirror givenMirror = mock(TypeMirror.class);
-
-        when(givenMirror.getKind()).thenReturn(DOUBLE);
-
-        assertFalse(isVoid(givenMirror));
-    }
-
-    @Test
     public void mirrorShouldBePrimitive() {
         TypeMirror givenMirror = mock(TypeMirror.class);
 
