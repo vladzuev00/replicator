@@ -9,10 +9,15 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import static javax.lang.model.element.ElementKind.FIELD;
+import static javax.lang.model.element.Modifier.PUBLIC;
 
 @UtilityClass
 public final class ElementUtil {
     static final String JPA_REPOSITORY_FIELD_NAME = "repository";
+
+    public static boolean isPublic(Element element) {
+        return element.getModifiers().contains(PUBLIC);
+    }
 
     public static boolean isReplicatedService(Element element) {
         return element.getAnnotation(ReplicatedService.class) != null;

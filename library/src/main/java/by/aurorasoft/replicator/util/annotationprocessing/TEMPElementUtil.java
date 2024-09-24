@@ -8,15 +8,9 @@ import static javax.lang.model.element.ElementKind.CLASS;
 import static javax.lang.model.element.ElementKind.PACKAGE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
+//TODO: remove
 @UtilityClass
 public final class TEMPElementUtil {
-    static final String ITERABLE_TYPE_NAME = "java.lang.Iterable";
-    static final String JPA_REPOSITORY_TYPE_NAME = "org.springframework.data.jpa.repository.JpaRepository";
-    static final String JPA_REPOSITORY_FIELD_NAME = "repository";
-
-    public static boolean isPublic(Element element) {
-        return element.getModifiers().contains(PUBLIC);
-    }
 
     public static boolean isClass(Element element) {
         return element.getKind() == CLASS;

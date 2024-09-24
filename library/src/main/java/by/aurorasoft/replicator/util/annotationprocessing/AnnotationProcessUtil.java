@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
 import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
+//TODO: remove
 @UtilityClass
 public final class AnnotationProcessUtil {
 

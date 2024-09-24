@@ -18,26 +18,6 @@ import static org.mockito.Mockito.when;
 public final class TEMPElementUtilTest {
 
     @Test
-    public void elementShouldBePublic() {
-        Element givenElement = mock(Element.class);
-
-        Set<Modifier> givenModifiers = Set.of(NATIVE, SYNCHRONIZED, PUBLIC, VOLATILE);
-        when(givenElement.getModifiers()).thenReturn(givenModifiers);
-
-        assertTrue(isPublic(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBePublic() {
-        Element givenElement = mock(Element.class);
-
-        Set<Modifier> givenModifiers = Set.of(NATIVE, SYNCHRONIZED, PRIVATE, VOLATILE);
-        when(givenElement.getModifiers()).thenReturn(givenModifiers);
-
-        assertFalse(isPublic(givenElement));
-    }
-
-    @Test
     public void elementShouldBeClass() {
         Element givenElement = mock(Element.class);
 

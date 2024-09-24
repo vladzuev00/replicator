@@ -7,8 +7,8 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import java.util.NoSuchElementException;
 
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isPublic;
 import static by.aurorasoft.replicator.util.annotationprocessing.TEMPElementUtil.isPackage;
-import static by.aurorasoft.replicator.util.annotationprocessing.TEMPElementUtil.isPublic;
 import static java.util.stream.Stream.iterate;
 import static javax.lang.model.element.ElementKind.METHOD;
 import static org.checkerframework.javacutil.ElementUtils.isStatic;

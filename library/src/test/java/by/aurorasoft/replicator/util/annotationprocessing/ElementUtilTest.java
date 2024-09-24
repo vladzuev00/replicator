@@ -7,21 +7,45 @@ import org.mockito.MockedStatic;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.List;
+import java.util.Set;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
 import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.isIdGetter;
 import static javax.lang.model.element.ElementKind.FIELD;
 import static javax.lang.model.element.ElementKind.PARAMETER;
+import static javax.lang.model.element.Modifier.*;
+import static javax.lang.model.element.Modifier.VOLATILE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 public final class ElementUtilTest {
+
+    @Test
+    public void elementShouldBePublic() {
+        Element givenElement = mock(Element.class);
+
+        Set<Modifier> givenModifiers = Set.of(NATIVE, SYNCHRONIZED, PUBLIC, VOLATILE);
+        when(givenElement.getModifiers()).thenReturn(givenModifiers);
+
+        assertTrue(isPublic(givenElement));
+    }
+
+    @Test
+    public void elementShouldNotBePublic() {
+        Element givenElement = mock(Element.class);
+
+        Set<Modifier> givenModifiers = Set.of(NATIVE, SYNCHRONIZED, PRIVATE, VOLATILE);
+        when(givenElement.getModifiers()).thenReturn(givenModifiers);
+
+        assertFalse(isPublic(givenElement));
+    }
 
     @Test
     public void elementShouldBeReplicatedService() {
