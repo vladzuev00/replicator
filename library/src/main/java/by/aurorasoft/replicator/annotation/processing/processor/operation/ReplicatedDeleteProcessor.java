@@ -10,7 +10,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isContainIdGetter;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainIdGetter;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
@@ -34,7 +34,8 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return elements.size() > 0 && isContainIdGetter(elements.get(0), getElementUtil());
+        //TODO: refactor
+        return elements.size() > 0 && isContainIdGetter(elements.get(0).asType(), getTypeUtil());
     }
 
     @Override
