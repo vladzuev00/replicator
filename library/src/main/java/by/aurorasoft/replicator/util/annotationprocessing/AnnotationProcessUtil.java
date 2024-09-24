@@ -50,10 +50,6 @@ public final class AnnotationProcessUtil {
     }
 
     public static boolean isContainIdGetter(VariableElement element, Elements elementUtil) {
-        return ElementUtil.isContainIdGetter(requireNonNull(getTypeElement(element.asType(), elementUtil)));
-    }
-
-    public static TypeElement getTypeElement(TypeMirror mirror, Elements elementUtil) {
-        return elementUtil.getTypeElement(mirror.toString());
+        return ElementUtil.isContainIdGetter(requireNonNull(elementUtil.getTypeElement(element.asType().toString())));
     }
 }
