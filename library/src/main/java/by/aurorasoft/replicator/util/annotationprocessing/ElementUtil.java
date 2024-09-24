@@ -57,7 +57,6 @@ public final class ElementUtil {
                 && isJpaRepository(element, elementUtil, typeUtil);
     }
 
-    //TODO: test
     public static TypeMirror getFirstTypeArgument(Element element) {
         return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) element.asType());
     }

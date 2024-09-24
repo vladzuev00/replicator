@@ -8,6 +8,7 @@ import org.mockito.MockedStatic;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -18,8 +19,7 @@ import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
 import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.isIdGetter;
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
@@ -324,6 +324,24 @@ public final class ElementUtilTest {
             ).thenReturn(false);
 
             assertFalse(isJpaRepositoryField(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void firstTypeArgumentShouldBeGot() {
+        try (MockedStatic<DeclaredTypeUtil> mockedDeclaredTypeUtil = mockStatic(DeclaredTypeUtil.class)) {
+            Element givenElement = mock(Element.class);
+
+            DeclaredType givenDeclaredType = mock(DeclaredType.class);
+            when(givenElement.asType()).thenReturn(givenDeclaredType);
+
+            TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
+            mockedDeclaredTypeUtil
+                    .when(() -> DeclaredTypeUtil.getFirstTypeArgument(same(givenDeclaredType)))
+                    .thenReturn(givenFirstTypeArgument);
+
+            TypeMirror actual = getFirstTypeArgument(givenElement);
+            assertSame(givenFirstTypeArgument, actual);
         }
     }
 }
