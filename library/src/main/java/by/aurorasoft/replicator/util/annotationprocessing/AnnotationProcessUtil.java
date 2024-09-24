@@ -5,7 +5,6 @@ import org.checkerframework.javacutil.ElementUtils;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -20,10 +19,6 @@ import static java.util.stream.Stream.iterate;
 //TODO: remove
 @UtilityClass
 public final class AnnotationProcessUtil {
-
-    public static boolean isContainIdGetter(TypeParameterElement element) {
-        return ElementUtil.isContainIdGetter(element.getGenericElement());
-    }
 
     //TODO: ---------------------------------------------------------------------------
     public static boolean isContainRepository(TypeElement element, Elements elementUtil, Types typeUtil) {
