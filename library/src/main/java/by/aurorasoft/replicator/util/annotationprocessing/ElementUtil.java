@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -58,5 +60,15 @@ public final class ElementUtil {
     //TODO: test
     public static TypeMirror getFirstTypeArgument(Element element) {
         return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) element.asType());
+    }
+
+    //TODO: test, VariableElementUtil
+    public static TypeElement getTypeElement(VariableElement element, Elements elementUtil) {
+        return elementUtil.getTypeElement(element.asType().toString());
+    }
+
+    //TODO: test, TypeMirrorUtil
+    public static TypeElement getErasuredTypeElement(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
+        return elementUtil.getTypeElement(typeUtil.erasure(mirror).toString());
     }
 }
