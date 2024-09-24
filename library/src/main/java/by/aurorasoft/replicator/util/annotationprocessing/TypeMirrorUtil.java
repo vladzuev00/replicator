@@ -32,7 +32,6 @@ public final class TypeMirrorUtil {
         return isErasedSubtype(mirror, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
     }
 
-    //TODO: test
     public static boolean isContainIdGetter(TypeMirror mirror, Types typeUtil) {
         return !isVoid(mirror)
                 && !isPrimitive(mirror)

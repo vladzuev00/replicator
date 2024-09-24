@@ -1,17 +1,17 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
 import org.checkerframework.javacutil.TypesUtils;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.testng.annotations.Test;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.*;
-import static javax.lang.model.type.TypeKind.DOUBLE;
-import static javax.lang.model.type.TypeKind.VOID;
+import static javax.lang.model.type.TypeKind.*;
 import static org.checkerframework.javacutil.TypesUtils.isErasedSubtype;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -185,6 +185,66 @@ public final class TypeMirrorUtilTest {
             ).thenReturn(false);
 
             assertFalse(isJpaRepository(givenMirror, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void mirrorShouldContainIdGetter() {
+        try (MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenMirror.getKind()).thenReturn(DECLARED);
+
+            Element givenElement = mock(Element.class);
+            when(givenTypeUtil.asElement(same(givenMirror))).thenReturn(givenElement);
+            mockedElementUtil.when(() -> ElementUtil.isContainIdGetter(same(givenElement))).thenReturn(true);
+
+            assertTrue(isContainIdGetter(givenMirror, givenTypeUtil));
+        }
+    }
+
+    @Test
+    public void mirrorShouldNotContainIdGetterBecauseOfItIsVoid() {
+        try (MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenMirror.getKind()).thenReturn(VOID);
+
+            assertFalse(isContainIdGetter(givenMirror, givenTypeUtil));
+
+            mockedElementUtil.verifyNoInteractions();
+        }
+    }
+
+    @Test
+    public void mirrorShouldNotContainIdGetterBecauseOfItIsPrimitive() {
+        try (MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenMirror.getKind()).thenReturn(DOUBLE);
+
+            assertFalse(isContainIdGetter(givenMirror, givenTypeUtil));
+
+            mockedElementUtil.verifyNoInteractions();
+        }
+    }
+
+    @Test
+    public void mirrorShouldNotContainIdGetter() {
+        try (MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
+            TypeMirror givenMirror = mock(TypeMirror.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenMirror.getKind()).thenReturn(DECLARED);
+
+            Element givenElement = mock(Element.class);
+            when(givenTypeUtil.asElement(same(givenMirror))).thenReturn(givenElement);
+            mockedElementUtil.when(() -> ElementUtil.isContainIdGetter(same(givenElement))).thenReturn(false);
+
+            assertFalse(isContainIdGetter(givenMirror, givenTypeUtil));
         }
     }
 }
