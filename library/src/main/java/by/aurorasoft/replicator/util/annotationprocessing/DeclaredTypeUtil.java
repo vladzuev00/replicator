@@ -9,6 +9,7 @@ import java.util.List;
 @UtilityClass
 public final class DeclaredTypeUtil {
 
+    //TODO: test
     public static TypeMirror getFirstTypeArgument(DeclaredType type) {
         List<? extends TypeMirror> arguments = type.getTypeArguments();
         if (arguments.isEmpty()) {

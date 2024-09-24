@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -51,5 +53,10 @@ public final class ElementUtil {
         return element.getKind() == FIELD
                 && element.getSimpleName().contentEquals(JPA_REPOSITORY_FIELD_NAME)
                 && isJpaRepository(element, elementUtil, typeUtil);
+    }
+
+    //TODO: test
+    public static TypeMirror getFirstTypeArgument(Element element) {
+        return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) element.asType());
     }
 }
