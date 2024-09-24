@@ -2,8 +2,6 @@ package by.aurorasoft.replicator.util.annotationprocessing;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TypesUtils;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -60,11 +58,6 @@ public final class ElementUtil {
 
     public static TypeMirror getFirstTypeArgument(Element element) {
         return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) element.asType());
-    }
-
-    //TODO: test, TypeMirrorUtil
-    public static TypeElement getErasuredTypeElement(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
-        return elementUtil.getTypeElement(typeUtil.erasure(mirror).toString());
     }
 
     public static TypeElement getTypeElement(Element element, Elements elementUtil) {
