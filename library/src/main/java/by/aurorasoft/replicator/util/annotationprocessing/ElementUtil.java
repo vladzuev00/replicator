@@ -8,6 +8,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import static javax.lang.model.element.ElementKind.CLASS;
 import static javax.lang.model.element.ElementKind.FIELD;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
@@ -17,6 +18,10 @@ public final class ElementUtil {
 
     public static boolean isPublic(Element element) {
         return element.getModifiers().contains(PUBLIC);
+    }
+
+    public static boolean isClass(Element element) {
+        return element.getKind() == CLASS;
     }
 
     public static boolean isReplicatedService(Element element) {

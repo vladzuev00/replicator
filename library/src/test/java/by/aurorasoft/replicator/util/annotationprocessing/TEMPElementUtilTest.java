@@ -18,24 +18,6 @@ import static org.mockito.Mockito.when;
 public final class TEMPElementUtilTest {
 
     @Test
-    public void elementShouldBeClass() {
-        Element givenElement = mock(Element.class);
-
-        when(givenElement.getKind()).thenReturn(CLASS);
-
-        assertTrue(isClass(givenElement));
-    }
-
-    @Test
-    public void elementShouldNotBeClass() {
-        Element givenElement = mock(Element.class);
-
-        when(givenElement.getKind()).thenReturn(INTERFACE);
-
-        assertFalse(isClass(givenElement));
-    }
-
-    @Test
     public void elementShouldBePackage() {
         Element givenElement = mock(Element.class);
 

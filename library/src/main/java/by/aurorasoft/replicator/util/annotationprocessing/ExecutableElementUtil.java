@@ -27,7 +27,7 @@ public final class ExecutableElementUtil {
 
     public static TypeElement getEnclosingClass(ExecutableElement element) {
         return (TypeElement) iterate(element, e -> !isPackage(e), Element::getEnclosingElement)
-                .filter(TEMPElementUtil::isClass)
+                .filter(ElementUtil::isClass)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("No enclosing class of '%s'".formatted(element)));
     }

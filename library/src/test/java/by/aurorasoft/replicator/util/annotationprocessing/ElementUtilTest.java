@@ -16,8 +16,8 @@ import java.util.Set;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
 import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.isIdGetter;
-import static javax.lang.model.element.ElementKind.FIELD;
-import static javax.lang.model.element.ElementKind.PARAMETER;
+import static javax.lang.model.element.ElementKind.*;
+import static javax.lang.model.element.ElementKind.INTERFACE;
 import static javax.lang.model.element.Modifier.*;
 import static javax.lang.model.element.Modifier.VOLATILE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,6 +45,24 @@ public final class ElementUtilTest {
         when(givenElement.getModifiers()).thenReturn(givenModifiers);
 
         assertFalse(isPublic(givenElement));
+    }
+
+    @Test
+    public void elementShouldBeClass() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(CLASS);
+
+        assertTrue(isClass(givenElement));
+    }
+
+    @Test
+    public void elementShouldNotBeClass() {
+        Element givenElement = mock(Element.class);
+
+        when(givenElement.getKind()).thenReturn(INTERFACE);
+
+        assertFalse(isClass(givenElement));
     }
 
     @Test

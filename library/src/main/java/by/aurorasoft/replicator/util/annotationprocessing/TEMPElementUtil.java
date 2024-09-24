@@ -12,10 +12,6 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 @UtilityClass
 public final class TEMPElementUtil {
 
-    public static boolean isClass(Element element) {
-        return element.getKind() == CLASS;
-    }
-
     public static boolean isPackage(Element element) {
         return element.getKind() == PACKAGE;
     }
