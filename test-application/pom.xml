@@ -69,7 +69,7 @@
         <dependency>
             <groupId>com.github.NikolayNN</groupId>
             <artifactId>crud-generic</artifactId>
-            <version>13.3.1-javax</version>
+            <version>13.0-jakarta</version>
         </dependency>
 
         <dependency>
