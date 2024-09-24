@@ -8,6 +8,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import static javax.lang.model.type.TypeKind.VOID;
+import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
 @UtilityClass
 public final class TypeMirrorUtil {
@@ -29,6 +30,13 @@ public final class TypeMirrorUtil {
 
     public static boolean isJpaRepository(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
         return isErasedSubtype(mirror, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
+    }
+
+    //TODO: test
+    public static boolean isContainIdGetter(TypeMirror mirror, Types typeUtil) {
+        return !isVoid(mirror)
+                && !isPrimitive(mirror)
+                && ElementUtil.isContainIdGetter(typeUtil.asElement(mirror));
     }
 
     private static boolean isErasedSubtype(TypeMirror mirror,

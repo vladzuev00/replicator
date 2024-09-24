@@ -1,6 +1,5 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
-import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 import org.checkerframework.javacutil.ElementUtils;
 
@@ -15,20 +14,12 @@ import javax.lang.model.util.Types;
 import java.util.List;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Stream.iterate;
-import static org.checkerframework.javacutil.TypesUtils.isPrimitive;
 
 //TODO: remove
 @UtilityClass
 public final class AnnotationProcessUtil {
-
-    public static boolean isContainIdGetter(TypeMirror mirror, Types typeUtil) {
-        return !isVoid(mirror)
-                && !isPrimitive(mirror)
-                && ElementUtil.isContainIdGetter(typeUtil.asElement(mirror));
-    }
 
     public static boolean isContainIdGetter(TypeParameterElement element) {
         return ElementUtil.isContainIdGetter(element.getGenericElement());
