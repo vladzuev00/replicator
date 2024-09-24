@@ -8,7 +8,9 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.*;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.getErasuredTypeElement;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.getTypeElement;
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
 import static java.util.stream.Stream.iterate;
 
 //TODO: remove

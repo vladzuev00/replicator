@@ -5,9 +5,7 @@ import by.aurorasoft.replicator.util.NameImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
+import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -343,5 +341,23 @@ public final class ElementUtilTest {
             TypeMirror actual = getFirstTypeArgument(givenElement);
             assertSame(givenFirstTypeArgument, actual);
         }
+    }
+
+    @Test
+    public void typeElementShouldBeGot() {
+        VariableElement givenElement = mock(VariableElement.class);
+        Elements givenElementUtil = mock(Elements.class);
+
+        TypeMirror givenMirror = mock(TypeMirror.class);
+        when(givenElement.asType()).thenReturn(givenMirror);
+
+        String givenMirrorString = "some.package.Type";
+        when(givenMirror.toString()).thenReturn(givenMirrorString);
+
+        TypeElement givenTypeElement = mock(TypeElement.class);
+        when(givenElementUtil.getTypeElement(same(givenMirrorString))).thenReturn(givenTypeElement);
+
+        TypeElement actual = getTypeElement(givenElement, givenElementUtil);
+        assertSame(givenTypeElement, actual);
     }
 }
