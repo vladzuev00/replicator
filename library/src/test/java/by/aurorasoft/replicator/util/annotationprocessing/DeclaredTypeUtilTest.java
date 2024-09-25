@@ -21,11 +21,7 @@ public final class DeclaredTypeUtilTest {
         DeclaredType givenDeclaredType = mock(DeclaredType.class);
 
         TypeMirror firstGivenArgument = mock(TypeMirror.class);
-        List givenArguments = List.of(
-                firstGivenArgument,
-                mock(TypeMirror.class),
-                mock(TypeMirror.class)
-        );
+        List givenArguments = List.of(firstGivenArgument, mock(TypeMirror.class), mock(TypeMirror.class));
         when(givenDeclaredType.getTypeArguments()).thenReturn(givenArguments);
 
         TypeMirror actual = getFirstTypeArgument(givenDeclaredType);
