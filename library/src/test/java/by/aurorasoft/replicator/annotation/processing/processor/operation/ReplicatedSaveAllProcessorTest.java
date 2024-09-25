@@ -59,8 +59,13 @@ public final class ReplicatedSaveAllProcessorTest {
             Types givenTypeUtil = mock(Types.class);
             when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
 
-            mockedTypeMirrorUtil.when(() -> isList(same(givenDeclaredType), same(givenElementUtil), same(givenTypeUtil)))
-                    .thenReturn(true);
+            mockedTypeMirrorUtil.when(
+                    () -> isList(
+                            same(givenDeclaredType),
+                            same(givenElementUtil),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(true);
 
             TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
             mockedDeclaredTypeUtil.when(() -> getFirstTypeArgument(same(givenDeclaredType)))
@@ -94,28 +99,35 @@ public final class ReplicatedSaveAllProcessorTest {
         }
     }
 
-//    @Test
-//    public void returnTypeShouldNotBeValidBecauseOfListTypeArgumentNotContainId() {
-//        try (MockedStatic<AnnotationProcessUtil> mockedProcessUtil = mockStatic(AnnotationProcessUtil.class)) {
-//            TypeMirror givenMirror = mock(TypeMirror.class);
-//
-//            Elements givenElementUtil = mock(Elements.class);
-//            when(mockedEnvironment.getElementUtils()).thenReturn(givenElementUtil);
-//
-//            Types givenTypeUtil = mock(Types.class);
-//            when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
-//
-//            mockedProcessUtil.when(() -> isList(same(givenMirror), same(givenElementUtil), same(givenTypeUtil)))
-//                    .thenReturn(true);
-//
-//            TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
-//            mockedProcessUtil.when(() -> getFirstTypeArgument(same(givenMirror))).thenReturn(givenFirstTypeArgument);
-//            mockedProcessUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), same(givenTypeUtil)))
-//                    .thenReturn(false);
-//
-//            assertFalse(processor.isValidReturnType(givenMirror));
-//        }
-//    }
+    @Test
+    public void returnTypeShouldNotBeValidBecauseOfListTypeArgumentNotContainId() {
+        try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class);
+             MockedStatic<DeclaredTypeUtil> mockedDeclaredTypeUtil = mockStatic(DeclaredTypeUtil.class)) {
+            DeclaredType givenDeclaredType = mock(DeclaredType.class);
+
+            Elements givenElementUtil = mock(Elements.class);
+            when(mockedEnvironment.getElementUtils()).thenReturn(givenElementUtil);
+
+            Types givenTypeUtil = mock(Types.class);
+            when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
+
+            mockedTypeMirrorUtil.when(
+                    () -> isList(
+                            same(givenDeclaredType),
+                            same(givenElementUtil),
+                            same(givenTypeUtil)
+                    )
+            ).thenReturn(true);
+
+            TypeMirror givenFirstTypeArgument = mock(TypeMirror.class);
+            mockedDeclaredTypeUtil.when(() -> getFirstTypeArgument(same(givenDeclaredType)))
+                    .thenReturn(givenFirstTypeArgument);
+            mockedTypeMirrorUtil.when(() -> isContainIdGetter(same(givenFirstTypeArgument), same(givenTypeUtil)))
+                    .thenReturn(false);
+
+            assertFalse(processor.isValidReturnType(givenDeclaredType));
+        }
+    }
 
     @Test
     public void parametersShouldBeValid() {
