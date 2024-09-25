@@ -1,6 +1,6 @@
 package by.aurorasoft.replicator.annotation.processing.processor.operation;
 
-import by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil;
+import by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.aurorasoft.replicator.annotation.processing.processor.operation.ReplicatedDeleteAllProcessor.REPLICATED_SERVICE_REQUIREMENT;
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isContainRepository;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.isContainRepository;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
@@ -38,7 +38,7 @@ public final class ReplicatedDeleteAllProcessorTest {
 
     @Test
     public void replicatedServiceShouldBeValid() {
-        try (MockedStatic<AnnotationProcessUtil> mockedProcessUtil = mockStatic(AnnotationProcessUtil.class)) {
+        try (MockedStatic<TypeElementUtil> mockedTypeElementUtil = mockStatic(TypeElementUtil.class)) {
             TypeElement givenElement = mock(TypeElement.class);
 
             Elements givenElementUtil = mock(Elements.class);
@@ -47,7 +47,7 @@ public final class ReplicatedDeleteAllProcessorTest {
             Types givenTypeUtil = mock(Types.class);
             when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
 
-            mockedProcessUtil.when(
+            mockedTypeElementUtil.when(
                     () -> isContainRepository(
                             same(givenElement),
                             same(givenElementUtil),
@@ -61,7 +61,7 @@ public final class ReplicatedDeleteAllProcessorTest {
 
     @Test
     public void replicatedServiceShouldNotBeValid() {
-        try (MockedStatic<AnnotationProcessUtil> mockedProcessUtil = mockStatic(AnnotationProcessUtil.class)) {
+        try (MockedStatic<TypeElementUtil> mockedTypeElementUtil = mockStatic(TypeElementUtil.class)) {
             TypeElement givenElement = mock(TypeElement.class);
 
             Elements givenElementUtil = mock(Elements.class);
@@ -70,7 +70,7 @@ public final class ReplicatedDeleteAllProcessorTest {
             Types givenTypeUtil = mock(Types.class);
             when(mockedEnvironment.getTypeUtils()).thenReturn(givenTypeUtil);
 
-            mockedProcessUtil.when(
+            mockedTypeElementUtil.when(
                     () -> isContainRepository(
                             same(givenElement),
                             same(givenElementUtil),

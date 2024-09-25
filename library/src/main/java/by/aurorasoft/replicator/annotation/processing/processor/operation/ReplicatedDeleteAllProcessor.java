@@ -10,7 +10,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.AnnotationProcessUtil.isContainRepository;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.isContainRepository;
 import static java.util.Optional.empty;
 
 @AutoService(Processor.class)
