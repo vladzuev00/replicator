@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 
 import javax.lang.model.element.Name;
 
-//TODO: use everywhere
 @RequiredArgsConstructor
 @SuppressWarnings("NullableProblems")
 public final class NameImpl implements Name {
