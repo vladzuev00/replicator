@@ -17,7 +17,7 @@ import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableEleme
 import static java.util.stream.Stream.concat;
 
 public abstract class ReplicatedMethodAnnotationProcessor extends ReplicaAnnotationProcessor<ExecutableElement> {
-    private static final String INSIDE_REPLICATED_SERVICE_REQUIREMENT = "It should be inside class annotated by @"
+    static final String INSIDE_REPLICATED_SERVICE_REQUIREMENT = "It should be inside class annotated by @"
             + ReplicatedService.class.getSimpleName();
 
     public ReplicatedMethodAnnotationProcessor(Class<? extends Annotation> annotation) {
