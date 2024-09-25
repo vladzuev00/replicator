@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
 import lombok.experimental.UtilityClass;
-import org.checkerframework.javacutil.ElementUtils;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -13,6 +12,7 @@ import java.util.stream.Stream;
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.getErasuredTypeElement;
 import static java.util.stream.Stream.iterate;
+import static org.checkerframework.javacutil.ElementUtils.isObject;
 
 @UtilityClass
 public final class TypeElementUtil {
@@ -25,9 +25,8 @@ public final class TypeElementUtil {
                 .map(elementType::cast);
     }
 
-    //TODO: test
     public static boolean isContainRepository(TypeElement element, Elements elementUtil, Types typeUtil) {
-        return iterate(element, e -> !ElementUtils.isObject(e), e -> getErasuredTypeElement(e.getSuperclass(), elementUtil, typeUtil))
+        return iterate(element, e -> !isObject(e), e -> getErasuredTypeElement(e.getSuperclass(), elementUtil, typeUtil))
                 .flatMap(e -> e.getEnclosedElements().stream())
                 .anyMatch(e -> isJpaRepositoryField(e, elementUtil, typeUtil));
     }
