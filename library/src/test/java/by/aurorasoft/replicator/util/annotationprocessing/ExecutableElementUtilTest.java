@@ -1,7 +1,7 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
 import by.aurorasoft.replicator.util.NameImpl;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.*;
 import java.util.List;
