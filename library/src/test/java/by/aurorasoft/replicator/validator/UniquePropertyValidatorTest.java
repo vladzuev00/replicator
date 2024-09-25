@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.executeExpectingException;
+import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.assertException;
 
 public final class UniquePropertyValidatorTest {
     private final TestUniquePropertyValidator validator = new TestUniquePropertyValidator();
@@ -31,7 +31,7 @@ public final class UniquePropertyValidatorTest {
                 new TestSource("value-6", "value-2")
         );
 
-        executeExpectingException(
+        assertException(
                 () -> validator.validate(givenSources),
                 IllegalStateException.class,
                 """

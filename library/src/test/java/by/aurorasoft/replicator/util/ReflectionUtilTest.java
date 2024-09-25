@@ -3,7 +3,7 @@ package by.aurorasoft.replicator.util;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 
-import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.executeExpectingException;
+import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.assertException;
 import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -26,7 +26,7 @@ public final class ReflectionUtilTest {
         String givenFieldName = "notExistingProperty";
         Class<Object> givenType = Object.class;
 
-        executeExpectingException(
+        assertException(
                 () -> getFieldValue(givenObject, givenFieldName, givenType),
                 NullPointerException.class,
                 "There is no field 'notExistingProperty' in 'class by.aurorasoft.replicator.util.ReflectionUtilTest$TestObject'"

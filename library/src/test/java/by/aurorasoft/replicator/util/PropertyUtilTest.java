@@ -5,7 +5,7 @@ import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.executeExpectingException;
+import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.assertException;
 import static by.aurorasoft.replicator.util.PropertyUtil.getId;
 import static by.aurorasoft.replicator.util.PropertyUtil.getJpaRepository;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -27,7 +27,7 @@ public final class PropertyUtilTest {
         Object givenId = new Object();
         SecondTestDto givenObject = new SecondTestDto(givenId);
 
-        executeExpectingException(
+        assertException(
                 () -> getId(givenObject),
                 NullPointerException.class,
                 "There is no id's getter in class by.aurorasoft.replicator.util.PropertyUtilTest$SecondTestDto"
@@ -48,7 +48,7 @@ public final class PropertyUtilTest {
         JpaRepository<?, ?> givenRepository = mock(JpaRepository.class);
         SecondTestService givenService = new SecondTestService(givenRepository);
 
-        executeExpectingException(
+        assertException(
                 () -> getJpaRepository(givenService),
                 NullPointerException.class,
                 "There is no field 'repository' in 'class by.aurorasoft.replicator.util.PropertyUtilTest$SecondTestService'"

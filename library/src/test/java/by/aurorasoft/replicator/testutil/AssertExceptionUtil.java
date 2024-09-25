@@ -9,15 +9,13 @@ import static org.springframework.util.StringUtils.trimAllWhitespace;
 @UtilityClass
 public final class AssertExceptionUtil {
 
-    public static void executeExpectingException(Runnable task,
-                                                 Class<? extends Throwable> expectedExceptionType,
-                                                 String expectedMessage) {
+    public static void assertException(Runnable task, Class<? extends Throwable> expectedType, String expectedMessage) {
         boolean exceptionArisen = false;
         try {
             task.run();
         } catch (Throwable actual) {
             exceptionArisen = true;
-            assertTrue(expectedExceptionType.isInstance(actual));
+            assertTrue(expectedType.isInstance(actual));
             assertEquals(trimAllWhitespace(expectedMessage), trimAllWhitespace(actual.getMessage()));
         }
         assertTrue(exceptionArisen);

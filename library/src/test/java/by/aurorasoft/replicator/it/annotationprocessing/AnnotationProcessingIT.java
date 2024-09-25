@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.executeExpectingException;
+import static by.aurorasoft.replicator.testutil.AssertExceptionUtil.assertException;
 
 public final class AnnotationProcessingIT {
 
@@ -33,7 +33,7 @@ public final class AnnotationProcessingIT {
     }
 
     private void compileExpectingError(FailedCompileTestArgument argument) {
-        executeExpectingException(() -> compile(argument), ReflectException.class, argument.getExpectedErrorMessage());
+        assertException(() -> compile(argument), ReflectException.class, argument.getExpectedErrorMessage());
     }
 
     private CompileOptions getCompileOptions() {
