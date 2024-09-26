@@ -15,9 +15,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.getAnnotatedElements;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.isContainRepository;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.getErasuredTypeElement;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
@@ -42,6 +45,7 @@ public final class TypeElementUtilTest {
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void elementShouldContainRepository() {
         try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class);
              MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
@@ -49,38 +53,129 @@ public final class TypeElementUtilTest {
             Elements givenElementUtil = mock(Elements.class);
             Types givenTypeUtil = mock(Types.class);
 
+            when(givenElement.getQualifiedName()).thenReturn(new NameImpl("TestClass"));
+
             TypeElement firstGivenSuperClass = mockErasuredSuperClass(
                     givenElement,
                     "FirstSuperClass",
-                    mockedElementUtil,
+                    mockedTypeMirrorUtil,
                     givenElementUtil,
                     givenTypeUtil
             );
             TypeElement secondGivenSuperClass = mockErasuredSuperClass(
                     firstGivenSuperClass,
                     "SecondSuperClass",
-                    mockedElementUtil,
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            mockErasuredSuperClass(
+                    secondGivenSuperClass,
+                    "java.lang.Object",
+                    mockedTypeMirrorUtil,
                     givenElementUtil,
                     givenTypeUtil
             );
 
+            List firstGivenEnclosedElements = singletonList(
+                    createEnclosedElement(false, mockedElementUtil, givenElementUtil, givenTypeUtil)
+            );
+            when(givenElement.getEnclosedElements()).thenReturn(firstGivenEnclosedElements);
 
+            List secondGivenEnclosedElements = List.of(
+                    createEnclosedElement(false, mockedElementUtil, givenElementUtil, givenTypeUtil),
+                    createEnclosedElement(false, mockedElementUtil, givenElementUtil, givenTypeUtil)
+            );
+            when(firstGivenSuperClass.getEnclosedElements()).thenReturn(secondGivenEnclosedElements);
+
+            List thirdGivenEnclosedElements = List.of(
+                    createEnclosedElement(true, mockedElementUtil, givenElementUtil, givenTypeUtil)
+            );
+            when(secondGivenSuperClass.getEnclosedElements()).thenReturn(thirdGivenEnclosedElements);
+
+            assertTrue(isContainRepository(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void elementShouldNotContainRepository() {
+        try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class);
+             MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
+            TypeElement givenElement = mock(TypeElement.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenElement.getQualifiedName()).thenReturn(new NameImpl("TestClass"));
+
+            TypeElement firstGivenSuperClass = mockErasuredSuperClass(
+                    givenElement,
+                    "FirstSuperClass",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            TypeElement secondGivenSuperClass = mockErasuredSuperClass(
+                    firstGivenSuperClass,
+                    "SecondSuperClass",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            mockErasuredSuperClass(
+                    secondGivenSuperClass,
+                    "java.lang.Object",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+
+            List firstGivenEnclosedElements = singletonList(
+                    createEnclosedElement(false, mockedElementUtil, givenElementUtil, givenTypeUtil)
+            );
+            when(givenElement.getEnclosedElements()).thenReturn(firstGivenEnclosedElements);
+
+            List secondGivenEnclosedElements = List.of(
+                    createEnclosedElement(false, mockedElementUtil, givenElementUtil, givenTypeUtil),
+                    createEnclosedElement(false, mockedElementUtil, givenElementUtil, givenTypeUtil)
+            );
+            when(firstGivenSuperClass.getEnclosedElements()).thenReturn(secondGivenEnclosedElements);
+
+            List thirdGivenEnclosedElements = List.of(
+                    createEnclosedElement(false, mockedElementUtil, givenElementUtil, givenTypeUtil)
+            );
+            when(secondGivenSuperClass.getEnclosedElements()).thenReturn(thirdGivenEnclosedElements);
+
+            assertFalse(isContainRepository(givenElement, givenElementUtil, givenTypeUtil));
         }
     }
 
     private TypeElement mockErasuredSuperClass(TypeElement element,
                                                String superClassName,
-                                               boolean containRepository,
-                                               MockedStatic<ElementUtil> mockedElementUtil,
+                                               MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil,
                                                Elements elementUtil,
                                                Types typeUtil) {
         TypeMirror superClassMirror = mock(TypeMirror.class);
         when(element.getSuperclass()).thenReturn(superClassMirror);
         TypeElement erasuredSuperClass = mock(TypeElement.class);
         when(erasuredSuperClass.getQualifiedName()).thenReturn(new NameImpl(superClassName));
-        mockedElementUtil.when(() -> getErasuredTypeElement(same(superClassMirror), same(elementUtil), same(typeUtil)))
-                .thenReturn(erasuredSuperClass);
-        mockedElementUtil.when(() -> )
+        mockedTypeMirrorUtil.when(
+                () -> getErasuredTypeElement(
+                        same(superClassMirror),
+                        same(elementUtil),
+                        same(typeUtil)
+                )
+        ).thenReturn(erasuredSuperClass);
         return erasuredSuperClass;
+    }
+
+    private Element createEnclosedElement(boolean jpaRepositoryField,
+                                          MockedStatic<ElementUtil> mockedElementUtil,
+                                          Elements elementUtil,
+                                          Types typeUtil) {
+        Element element = mock(Element.class);
+        mockedElementUtil.when(() -> isJpaRepositoryField(same(element), same(elementUtil), same(typeUtil)))
+                .thenReturn(jpaRepositoryField);
+        return element;
     }
 }
