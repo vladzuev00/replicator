@@ -102,11 +102,9 @@ public final class TypeElementUtilTest {
     public void elementShouldNotContainRepository() {
         try (MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class);
              MockedStatic<ElementUtil> mockedElementUtil = mockStatic(ElementUtil.class)) {
-            TypeElement givenElement = mock(TypeElement.class);
+            TypeElement givenElement = createTypeElement("TestClass");
             Elements givenElementUtil = mock(Elements.class);
             Types givenTypeUtil = mock(Types.class);
-
-            when(givenElement.getQualifiedName()).thenReturn(new NameImpl("TestClass"));
 
             TypeElement firstGivenSuperClass = mockErasuredSuperClass(
                     givenElement,
@@ -150,15 +148,20 @@ public final class TypeElementUtilTest {
         }
     }
 
+    private TypeElement createTypeElement(String name) {
+        TypeElement element = mock(TypeElement.class);
+        when(element.getQualifiedName()).thenReturn(new NameImpl(name));
+        return element;
+    }
+
     private TypeElement mockErasuredSuperClass(TypeElement element,
-                                               String superClassName,
+                                               String name,
                                                MockedStatic<TypeMirrorUtil> mockedTypeMirrorUtil,
                                                Elements elementUtil,
                                                Types typeUtil) {
         TypeMirror superClassMirror = mock(TypeMirror.class);
         when(element.getSuperclass()).thenReturn(superClassMirror);
-        TypeElement erasuredSuperClass = mock(TypeElement.class);
-        when(erasuredSuperClass.getQualifiedName()).thenReturn(new NameImpl(superClassName));
+        TypeElement erasuredSuperClass = createTypeElement(name);
         mockedTypeMirrorUtil.when(
                 () -> getErasuredTypeElement(
                         same(superClassMirror),
