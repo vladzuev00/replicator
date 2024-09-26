@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.util.annotationprocessing;
 
+import by.aurorasoft.replicator.util.NameImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -48,25 +49,38 @@ public final class TypeElementUtilTest {
             Elements givenElementUtil = mock(Elements.class);
             Types givenTypeUtil = mock(Types.class);
 
-            var firstGivenSuperType = mockSuperClass(givenElement, mockedElementUtil, givenElementUtil, givenTypeUtil);
-            throw new RuntimeException();
+            TypeElement firstGivenSuperClass = mockErasuredSuperClass(
+                    givenElement,
+                    "FirstSuperClass",
+                    mockedElementUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            TypeElement secondGivenSuperClass = mockErasuredSuperClass(
+                    firstGivenSuperClass,
+                    "SecondSuperClass",
+                    mockedElementUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+
+
         }
     }
 
-    private TypeElement mockSuperClass(TypeElement element,
-                                       MockedStatic<ElementUtil> mockedElementUtil,
-                                       Elements elementUtil,
-                                       Types typeUtil) {
+    private TypeElement mockErasuredSuperClass(TypeElement element,
+                                               String superClassName,
+                                               boolean containRepository,
+                                               MockedStatic<ElementUtil> mockedElementUtil,
+                                               Elements elementUtil,
+                                               Types typeUtil) {
         TypeMirror superClassMirror = mock(TypeMirror.class);
-        TypeElement superClass = mock(TypeElement.class);
         when(element.getSuperclass()).thenReturn(superClassMirror);
-        mockedElementUtil.when(
-                () -> getErasuredTypeElement(
-                        same(superClassMirror),
-                        same(elementUtil),
-                        same(typeUtil)
-                )
-        ).thenReturn(superClass);
-        return superClass;
+        TypeElement erasuredSuperClass = mock(TypeElement.class);
+        when(erasuredSuperClass.getQualifiedName()).thenReturn(new NameImpl(superClassName));
+        mockedElementUtil.when(() -> getErasuredTypeElement(same(superClassMirror), same(elementUtil), same(typeUtil)))
+                .thenReturn(erasuredSuperClass);
+        mockedElementUtil.when(() -> )
+        return erasuredSuperClass;
     }
 }

@@ -25,7 +25,6 @@ public final class TypeElementUtil {
                 .map(elementType::cast);
     }
 
-    //TODO: test
     public static boolean isContainRepository(TypeElement element, Elements elementUtil, Types typeUtil) {
         return iterate(element, e -> !isObject(e), e -> getErasuredTypeElement(e.getSuperclass(), elementUtil, typeUtil))
                 .flatMap(e -> e.getEnclosedElements().stream())
