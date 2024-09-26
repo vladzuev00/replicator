@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.3</version>
         <relativePath/>
     </parent>
 
@@ -20,10 +20,10 @@
         <lombok.version>1.18.26</lombok.version>
         <replicator.version>1.0</replicator.version>
         <jackson.version>2.16.1</jackson.version>
-        <postgresql.version>42.5.4</postgresql.version>
+        <postgresql.version>42.7.2</postgresql.version>
         <crud-generic.version>13.1-jakarta</crud-generic.version>
         <postgresql-container.version>1.17.6</postgresql-container.version>
-        <kafka-container.version>1.19.7</kafka-container.version>
+        <kafka-container.version>1.19.6</kafka-container.version>
     </properties>
 
     <repositories>
