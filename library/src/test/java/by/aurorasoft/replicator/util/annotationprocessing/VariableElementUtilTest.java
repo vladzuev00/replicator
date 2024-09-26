@@ -10,7 +10,6 @@ import javax.lang.model.util.Types;
 import static by.aurorasoft.replicator.util.annotationprocessing.VariableElementUtil.isContainIdGetter;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 public final class VariableElementUtilTest {

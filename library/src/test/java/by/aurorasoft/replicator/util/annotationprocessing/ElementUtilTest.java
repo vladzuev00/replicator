@@ -18,7 +18,6 @@ import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableEleme
 import static javax.lang.model.element.ElementKind.*;
 import static javax.lang.model.element.Modifier.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 public final class ElementUtilTest {

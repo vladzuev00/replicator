@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaAdmin;
 
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

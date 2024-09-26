@@ -21,7 +21,6 @@ import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.getErasuredTypeElement;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 public final class TypeElementUtilTest {

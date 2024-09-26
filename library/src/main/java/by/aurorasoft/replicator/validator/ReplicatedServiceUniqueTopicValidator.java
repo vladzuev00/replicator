@@ -1,7 +1,6 @@
 package by.aurorasoft.replicator.validator;
 
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.aop.support.AopUtils.getTargetClass;

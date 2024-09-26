@@ -21,7 +21,6 @@ import static by.aurorasoft.replicator.annotation.processing.processor.operation
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.isContainRepository;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

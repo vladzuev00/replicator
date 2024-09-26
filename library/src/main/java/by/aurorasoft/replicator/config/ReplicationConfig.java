@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.retry.support.RetryTemplate;
 
-import java.util.List;
-
 @Configuration
 @EnableAspectJAutoProxy
 @ComponentScan("by.aurorasoft.replicator")

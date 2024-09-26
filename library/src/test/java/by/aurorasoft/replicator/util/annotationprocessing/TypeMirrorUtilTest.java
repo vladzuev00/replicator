@@ -15,7 +15,6 @@ import static javax.lang.model.type.TypeKind.*;
 import static org.checkerframework.javacutil.TypesUtils.isErasedSubtype;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 public final class TypeMirrorUtilTest {

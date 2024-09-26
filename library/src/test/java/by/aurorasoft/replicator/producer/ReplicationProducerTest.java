@@ -20,7 +20,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 import static org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization;
 
