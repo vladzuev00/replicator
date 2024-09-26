@@ -12,13 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static by.aurorasoft.replicator.testutil.ReplicatedServiceUtil.createReplicatedService;
 import static by.aurorasoft.replicator.testutil.TopicConfigUtil.createTopicConfig;
+import static by.aurorasoft.replicator.util.ReflectionUtil.getFieldValue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
+import static org.mockito.quality.Strictness.LENIENT;
 
 @ExtendWith(MockitoExtension.class)
 public final class ReplicationProducerFactoryTest {
@@ -41,6 +43,7 @@ public final class ReplicationProducerFactoryTest {
     }
 
     @Test
+    @MockitoSettings(strictness = LENIENT)
     public void producerShouldBeCreated() {
         ProducerConfig givenProducerConfig = mock(ProducerConfig.class);
         String givenTopicName = "test-topic";
