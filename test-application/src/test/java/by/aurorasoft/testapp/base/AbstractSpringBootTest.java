@@ -8,13 +8,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.TimeZone.getTimeZone;
 import static java.util.TimeZone.setDefault;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 @SpringBootTest
+//@Transactional(propagation = NOT_SUPPORTED)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(initializers = {DataBaseContainerInitializer.class, KafkaContainerInitializer.class})
 public abstract class AbstractSpringBootTest {
