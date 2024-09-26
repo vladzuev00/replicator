@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:tc:postgresql:11.1:///integration-tests-db
+    url: dbc:tc:postgres:latest:///integration-tests-db
   jpa:
     hibernate:
       ddl-auto: none
