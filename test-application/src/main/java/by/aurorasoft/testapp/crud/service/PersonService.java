@@ -1,5 +1,6 @@
 package by.aurorasoft.testapp.crud.service;
 
+import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
@@ -26,7 +27,7 @@ public class PersonService extends AbsServiceCRUD<Long, PersonEntity, Person, Pe
     }
 
     @Override
-//    @ReplicatedSave
+    @ReplicatedSave
     public Person save(Person person) {
         return super.save(person);
     }

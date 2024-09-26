@@ -1,5 +1,6 @@
 package by.aurorasoft.testapp.crud.service;
 
+import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
@@ -25,7 +26,7 @@ public class AddressService extends AbsServiceCRUD<Long, AddressEntity, Address,
     }
 
     @Override
-//    @ReplicatedSave
+    @ReplicatedSave
     public Address save(Address address) {
         return super.save(address);
     }
