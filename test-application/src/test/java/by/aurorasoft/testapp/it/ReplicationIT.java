@@ -3,6 +3,7 @@ package by.aurorasoft.testapp.it;
 import by.aurorasoft.replicator.property.ReplicationRetryConsumeProperty;
 import by.aurorasoft.testapp.base.AbstractSpringBootTest;
 import by.aurorasoft.testapp.crud.dto.Address;
+import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.*;
 import by.aurorasoft.testapp.crud.repository.ReplicatedAddressRepository;
 import by.aurorasoft.testapp.crud.repository.ReplicatedPersonRepository;
@@ -21,12 +22,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
-import java.util.Comparator;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -85,84 +85,33 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyReplicationFor(actual);
     }
 
-//    @Test
-//    public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
-//        AddressEntity givenAddress = AddressEntity.builder()
-//                .country("Russia")
-//                .city("Moscow")
-//                .build();
-//
-//        executeExpectingUniqueViolation(() -> addressRepository.save(givenAddress));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
-//        PersonEntity givenPerson = PersonEntity.builder()
-//                .name("Harry")
-//                .surname("Potter")
-//                .patronymic("Sergeevich")
-//                .birthDate(LocalDate.of(1990, 8, 4))
-//                .address(
-//                        AddressEntity.builder()
-//                                .id(254L)
-//                                .build()
-//                )
-//                .build();
-//
-//        executeExpectingForeignKeyViolation(() -> personRepository.save(givenPerson));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressShouldBeSavedAndFlushed() {
-//        String givenCountry = "Belarus";
-//        String givenCity = "Minsk";
-//        AddressEntity givenAddress = AddressEntity.builder()
-//                .country(givenCountry)
-//                .city(givenCity)
-//                .build();
-//
-//        AddressEntity actual = executeWaitingReplication(() -> addressRepository.saveAndFlush(givenAddress), 1, 0, true);
-//        AddressEntity expected = new AddressEntity(1L, givenCountry, givenCity);
-//        checkEquals(expected, actual);
-//
-//        verifyReplicationFor(actual);
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeSavedAndFlushBecauseOfUniqueViolation() {
-//        AddressEntity givenAddress = AddressEntity.builder()
-//                .country("Russia")
-//                .city("Moscow")
-//                .build();
-//
-//        executeExpectingUniqueViolation(() -> addressRepository.saveAndFlush(givenAddress));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personShouldNotBeSavedAndFlushBecauseOfForeignKeyViolation() {
-//        PersonEntity givenPerson = PersonEntity.builder()
-//                .name("Harry")
-//                .surname("Potter")
-//                .patronymic("Sergeevich")
-//                .birthDate(LocalDate.of(1990, 8, 4))
-//                .address(
-//                        AddressEntity.builder()
-//                                .id(254L)
-//                                .build()
-//                )
-//                .build();
-//
-//        executeExpectingForeignKeyViolation(() -> personRepository.saveAndFlush(givenPerson));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
+    @Test
+    public void addressShouldNotBeSavedBecauseOfUniqueViolation() {
+        Address givenAddress = Address.builder()
+                .country("Russia")
+                .city("Moscow")
+                .build();
+
+        executeExpectingUniqueViolation(() -> addressService.save(givenAddress));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void personShouldNotBeSavedBecauseOfForeignKeyViolation() {
+        Person givenPerson = Person.builder()
+                .name("Harry")
+                .surname("Potter")
+                .patronymic("Sergeevich")
+                .birthDate(LocalDate.of(1990, 8, 4))
+                .address(Address.builder().id(254L).build())
+                .build();
+
+        executeExpectingForeignKeyViolation(() -> personService.save(givenPerson));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
 //    @Test
 //    public void addressesShouldBeSaved() {
 //        String firstGivenCountry = "China";
@@ -194,7 +143,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 //
 //        verifyReplicationsFor(actual);
 //    }
-//
+
 //    @Test
 //    public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
 //        List<AddressEntity> givenAddresses = List.of(
