@@ -38,8 +38,7 @@ import java.util.stream.IntStream;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.core.NestedExceptionUtils.getRootCause;
 
@@ -174,107 +173,25 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicationRepositoryMethodCall();
     }
 
-//    @Test
-//    public void addressesShouldBeSavedAndFlush() {
-//        String firstGivenCountry = "China";
-//        String secondGivenCountry = "China";
-//        String firstGivenCity = "Fuyang";
-//        String secondGivenCity = "Hefei";
-//        List<AddressEntity> givenAddresses = List.of(
-//                AddressEntity.builder()
-//                        .country(firstGivenCountry)
-//                        .city(firstGivenCity)
-//                        .build(),
-//                AddressEntity.builder()
-//                        .country(secondGivenCountry)
-//                        .city(secondGivenCity)
-//                        .build()
-//        );
-//
-//        List<AddressEntity> actual = executeWaitingReplication(
-//                () -> addressRepository.saveAllAndFlush(givenAddresses),
-//                givenAddresses.size(),
-//                0,
-//                true
-//        );
-//        List<AddressEntity> expected = List.of(
-//                new AddressEntity(1L, firstGivenCountry, firstGivenCity),
-//                new AddressEntity(2L, secondGivenCountry, secondGivenCity)
-//        );
-//        AddressEntityUtil.checkEquals(expected, actual);
-//
-//        verifyReplicationsFor(actual);
-//    }
-//
-//    @Test
-//    public void addressesShouldNotBeSavedAndFlushBecauseOfUniqueViolation() {
-//        List<AddressEntity> givenAddresses = List.of(
-//                AddressEntity.builder()
-//                        .country("Belarus")
-//                        .city("Minsk")
-//                        .build(),
-//                AddressEntity.builder()
-//                        .country("Russia")
-//                        .city("Moscow")
-//                        .build()
-//        );
-//
-//        executeExpectingUniqueViolation(() -> addressRepository.saveAllAndFlush(givenAddresses));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personsShouldNotBeSavedAndFlushBecauseOfForeignKeyViolation() {
-//        List<PersonEntity> givenPersons = List.of(
-//                PersonEntity.builder()
-//                        .name("Avdifaks")
-//                        .surname("Kuznetsov")
-//                        .patronymic("Vasilievich")
-//                        .birthDate(LocalDate.of(1995, 7, 2))
-//                        .address(
-//                                AddressEntity.builder()
-//                                        .id(255L)
-//                                        .build()
-//                        )
-//                        .build(),
-//                PersonEntity.builder()
-//                        .name("Harry")
-//                        .surname("Potter")
-//                        .patronymic("Sergeevich")
-//                        .birthDate(LocalDate.of(1990, 8, 4))
-//                        .address(
-//                                AddressEntity.builder()
-//                                        .id(254L)
-//                                        .build()
-//                        )
-//                        .build()
-//        );
-//
-//        executeExpectingForeignKeyViolation(() -> personRepository.saveAllAndFlush(givenPersons));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressShouldBeDeletedById() {
-//        Long givenId = 262L;
-//
-//        executeWaitingReplication(() -> addressRepository.deleteById(givenId), 1, 0, true);
-//
-//        assertFalse(addressRepository.existsById(givenId));
-//        assertFalse(replicatedAddressRepository.existsById(givenId));
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedByIdBecauseOfForeignKeyViolation() {
-//        Long givenId = 255L;
-//
-//        executeExpectingForeignKeyViolation(() -> addressRepository.deleteById(givenId));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
+    @Test
+    public void addressShouldBeDeletedById() {
+        Long givenId = 262L;
+
+        executeWaitingReplication(() -> addressService.delete(givenId), 1, 0, true);
+
+        assertFalse(addressService.isExist(givenId));
+        assertFalse(replicatedAddressRepository.existsById(givenId));
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedByIdBecauseOfForeignKeyViolation() {
+        Long givenId = 255L;
+
+        executeExpectingForeignKeyViolation(() -> addressService.delete(givenId));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
 //    @Test
 //    public void addressShouldBeDeleted() {
 //        Long givenId = 262L;
