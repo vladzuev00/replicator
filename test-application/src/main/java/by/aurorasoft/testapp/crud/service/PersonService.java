@@ -1,6 +1,7 @@
 package by.aurorasoft.testapp.crud.service;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
@@ -11,6 +12,9 @@ import by.aurorasoft.testapp.crud.mapper.PersonMapper;
 import by.aurorasoft.testapp.crud.repository.PersonRepository;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.apache.kafka.common.serialization.LongSerializer;
+
+import java.util.Collection;
+import java.util.List;
 
 import static by.aurorasoft.testapp.crud.dto.Person.Fields.address;
 import static by.aurorasoft.testapp.crud.dto.Person.Fields.birthDate;
@@ -30,5 +34,11 @@ public class PersonService extends AbsServiceCRUD<Long, PersonEntity, Person, Pe
     @ReplicatedSave
     public Person save(Person person) {
         return super.save(person);
+    }
+
+    @Override
+    @ReplicatedSaveAll
+    public List<Person> saveAll(Collection<Person> persons) {
+        return super.saveAll(persons);
     }
 }
