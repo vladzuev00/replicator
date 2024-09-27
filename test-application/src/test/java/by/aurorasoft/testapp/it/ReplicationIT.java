@@ -112,88 +112,68 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicationRepositoryMethodCall();
     }
 
-//    @Test
-//    public void addressesShouldBeSaved() {
-//        String firstGivenCountry = "China";
-//        String secondGivenCountry = "China";
-//        String firstGivenCity = "Fuyang";
-//        String secondGivenCity = "Hefei";
-//        List<AddressEntity> givenAddresses = List.of(
-//                AddressEntity.builder()
-//                        .country(firstGivenCountry)
-//                        .city(firstGivenCity)
-//                        .build(),
-//                AddressEntity.builder()
-//                        .country(secondGivenCountry)
-//                        .city(secondGivenCity)
-//                        .build()
-//        );
-//
-//        List<AddressEntity> actual = executeWaitingReplication(
-//                () -> addressRepository.saveAll(givenAddresses),
-//                givenAddresses.size(),
-//                0,
-//                true
-//        );
-//        List<AddressEntity> expected = List.of(
-//                new AddressEntity(1L, firstGivenCountry, firstGivenCity),
-//                new AddressEntity(2L, secondGivenCountry, secondGivenCity)
-//        );
-//        AddressEntityUtil.checkEquals(expected, actual);
-//
-//        verifyReplicationsFor(actual);
-//    }
+    @Test
+    public void addressesShouldBeSaved() {
+        String firstGivenCountry = "China";
+        String secondGivenCountry = "China";
+        String firstGivenCity = "Fuyang";
+        String secondGivenCity = "Hefei";
+        List<Address> givenAddresses = List.of(
+                Address.builder().country(firstGivenCountry).city(firstGivenCity).build(),
+                Address.builder().country(secondGivenCountry).city(secondGivenCity).build()
+        );
 
-//    @Test
-//    public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
-//        List<AddressEntity> givenAddresses = List.of(
-//                AddressEntity.builder()
-//                        .country("Belarus")
-//                        .city("Minsk")
-//                        .build(),
-//                AddressEntity.builder()
-//                        .country("Russia")
-//                        .city("Moscow")
-//                        .build()
-//        );
-//
-//        executeExpectingUniqueViolation(() -> addressRepository.saveAll(givenAddresses));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
-//        List<PersonEntity> givenPersons = List.of(
-//                PersonEntity.builder()
-//                        .name("Avdifaks")
-//                        .surname("Kuznetsov")
-//                        .patronymic("Vasilievich")
-//                        .birthDate(LocalDate.of(1995, 7, 2))
-//                        .address(
-//                                AddressEntity.builder()
-//                                        .id(255L)
-//                                        .build()
-//                        )
-//                        .build(),
-//                PersonEntity.builder()
-//                        .name("Harry")
-//                        .surname("Potter")
-//                        .patronymic("Sergeevich")
-//                        .birthDate(LocalDate.of(1990, 8, 4))
-//                        .address(
-//                                AddressEntity.builder()
-//                                        .id(254L)
-//                                        .build()
-//                        )
-//                        .build()
-//        );
-//
-//        executeExpectingForeignKeyViolation(() -> personRepository.saveAll(givenPersons));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
+        List<Address> actual = executeWaitingReplication(
+                () -> addressService.saveAll(givenAddresses),
+                givenAddresses.size(),
+                0,
+                true
+        );
+        List<Address> expected = List.of(
+                new Address(1L, firstGivenCountry, firstGivenCity),
+                new Address(2L, secondGivenCountry, secondGivenCity)
+        );
+        assertEquals(expected, actual);
+
+        verifyReplicationsFor(actual);
+    }
+
+    @Test
+    public void addressesShouldNotBeSavedBecauseOfUniqueViolation() {
+        List<Address> givenAddresses = List.of(
+                Address.builder().country("Belarus").city("Minsk").build(),
+                Address.builder().country("Russia").city("Moscow").build()
+        );
+
+        executeExpectingUniqueViolation(() -> addressService.saveAll(givenAddresses));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void personsShouldNotBeSavedBecauseOfForeignKeyViolation() {
+        List<Person> givenPersons = List.of(
+                Person.builder()
+                        .name("Avdifaks")
+                        .surname("Kuznetsov")
+                        .patronymic("Vasilievich")
+                        .birthDate(LocalDate.of(1995, 7, 2))
+                        .address(Address.builder().id(255L).build())
+                        .build(),
+                Person.builder()
+                        .name("Harry")
+                        .surname("Potter")
+                        .patronymic("Sergeevich")
+                        .birthDate(LocalDate.of(1990, 8, 4))
+                        .address(Address.builder().id(254L).build())
+                        .build()
+        );
+
+        executeExpectingForeignKeyViolation(() -> personService.saveAll(givenPersons));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
 //    @Test
 //    public void addressesShouldBeSavedAndFlush() {
 //        String firstGivenCountry = "China";
@@ -935,14 +915,10 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     }
 
     private void verifyReplicationFor(Address address) {
-        verifyReplicationFor(new AddressEntity(address.getId(), address.getCountry(), address.getCity()));
-    }
-
-    private void verifyReplicationFor(AddressEntity address) {
         verifyReplicationsFor(singletonList(address));
     }
 
-    private void verifyReplicationsFor(List<AddressEntity> addresses) {
+    private void verifyReplicationsFor(List<Address> addresses) {
         List<Long> ids = mapToIds(addresses);
         List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
         List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
@@ -951,9 +927,9 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 //        ReplicatedAddressEntityUtil.checkEquals(expected, actual);
     }
 
-    private List<Long> mapToIds(List<AddressEntity> addresses) {
+    private List<Long> mapToIds(List<Address> addresses) {
         return addresses.stream()
-                .map(AddressEntity::getId)
+                .map(Address::getId)
                 .toList();
     }
 
@@ -963,13 +939,13 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                 .getResultList();
     }
 
-    private List<ReplicatedAddressEntity> mapToReplicatedAddresses(List<AddressEntity> addresses) {
+    private List<ReplicatedAddressEntity> mapToReplicatedAddresses(List<Address> addresses) {
         return addresses.stream()
                 .map(this::mapToReplicatedAddress)
                 .toList();
     }
 
-    private ReplicatedAddressEntity mapToReplicatedAddress(AddressEntity address) {
+    private ReplicatedAddressEntity mapToReplicatedAddress(Address address) {
         return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
     }
 
