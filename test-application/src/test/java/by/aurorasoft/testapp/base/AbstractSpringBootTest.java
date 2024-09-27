@@ -1,5 +1,6 @@
 package by.aurorasoft.testapp.base;
 
+import by.aurorasoft.testapp.ApplicationRunner;
 import by.aurorasoft.testapp.base.containerinitializer.DataBaseContainerInitializer;
 import by.aurorasoft.testapp.base.containerinitializer.KafkaContainerInitializer;
 import jakarta.persistence.EntityManager;
