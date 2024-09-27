@@ -27,6 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -213,95 +214,62 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicationRepositoryMethodCall();
     }
 
-//    @Test
-//    public void addressesShouldBeDeletedByIds() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 263L;
-//        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
-//
-//        executeWaitingReplication(() -> addressRepository.deleteAllById(givenIds), 2, 0, true);
-//
-//        assertFalse(addressRepository.existsById(firstGivenId));
-//        assertFalse(addressRepository.existsById(secondGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
-//    }
-//
-//    @Test
-//    public void addressesShouldNotBeDeletedByIdsBecauseOfForeignKeyViolation() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 255L;
-//        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
-//
-//        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAllById(givenIds));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressesShouldBeDeletedByIdsInBatch() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 263L;
-//        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
-//
-//        executeWaitingReplication(() -> addressRepository.deleteAllByIdInBatch(givenIds), 2, 0, true);
-//
-//        assertFalse(addressRepository.existsById(firstGivenId));
-//        assertFalse(addressRepository.existsById(secondGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
-//    }
-//
-//    @Test
-//    public void addressesShouldNotBeDeletedByIdsInBatchBecauseOfForeignKeyViolation() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 255L;
-//        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
-//
-//        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAllByIdInBatch(givenIds));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    public void addressesShouldBeDeleted() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 263L;
-//        Iterable<AddressEntity> givenEntities = List.of(
-//                AddressEntity.builder()
-//                        .id(firstGivenId)
-//                        .build(),
-//                AddressEntity.builder()
-//                        .id(secondGivenId)
-//                        .build()
-//        );
-//
-//        executeWaitingReplication(() -> addressRepository.deleteAll(givenEntities), 2, 0, true);
-//
-//        assertFalse(addressRepository.existsById(firstGivenId));
-//        assertFalse(addressRepository.existsById(secondGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
-//    }
-//
-//    @Test
-//    public void addressesShouldNotBeDeletedBecauseOfForeignKeyViolation() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 255L;
-//        Iterable<AddressEntity> givenEntities = List.of(
-//                AddressEntity.builder()
-//                        .id(firstGivenId)
-//                        .build(),
-//                AddressEntity.builder()
-//                        .id(secondGivenId)
-//                        .build()
-//        );
-//
-//        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAll(givenEntities));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
+    @Test
+    public void addressesShouldBeDeletedByIds() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 263L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
+
+        executeWaitingReplication(() -> addressService.deleteByIds(givenIds), 2, 0, true);
+
+        assertFalse(addressService.isExist(firstGivenId));
+        assertFalse(addressService.isExist(secondGivenId));
+        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
+        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
+    }
+
+    @Test
+    public void addressesShouldNotBeDeletedByIdsBecauseOfForeignKeyViolation() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 255L;
+        Iterable<Long> givenIds = List.of(firstGivenId, secondGivenId);
+
+        executeExpectingForeignKeyViolation(() -> addressService.deleteByIds(givenIds));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
+    @Test
+    public void addressesShouldBeDeleted() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 263L;
+        Collection<Address> givenAddresses = List.of(
+                Address.builder().id(firstGivenId).build(),
+                Address.builder().id(secondGivenId).build()
+        );
+
+        executeWaitingReplication(() -> addressService.delete(givenAddresses), 2, 0, true);
+
+        assertFalse(addressService.isExist(firstGivenId));
+        assertFalse(addressService.isExist(secondGivenId));
+        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
+        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
+    }
+
+    @Test
+    public void addressesShouldNotBeDeletedBecauseOfForeignKeyViolation() {
+        Long firstGivenId = 262L;
+        Long secondGivenId = 255L;
+        Collection<Address> givenAddresses = List.of(
+                Address.builder().id(firstGivenId).build(),
+                Address.builder().id(secondGivenId).build()
+        );
+
+        executeExpectingForeignKeyViolation(() -> addressService.delete(givenAddresses));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
 //    @Test
 //    public void addressesShouldBeDeletedInBatch() {
 //        Long firstGivenId = 262L;
