@@ -192,31 +192,27 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicationRepositoryMethodCall();
     }
 
-//    @Test
-//    public void addressShouldBeDeleted() {
-//        Long givenId = 262L;
-//        AddressEntity givenAddress = AddressEntity.builder()
-//                .id(givenId)
-//                .build();
-//
-//        executeWaitingReplication(() -> addressRepository.delete(givenAddress), 1, 0, true);
-//
-//        assertFalse(addressRepository.existsById(givenId));
-//        assertFalse(replicatedAddressRepository.existsById(givenId));
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
-//        Long givenId = 255L;
-//        AddressEntity givenAddress = AddressEntity.builder()
-//                .id(givenId)
-//                .build();
-//
-//        executeExpectingForeignKeyViolation(() -> addressRepository.delete(givenAddress));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
+    @Test
+    public void addressShouldBeDeleted() {
+        Long givenId = 262L;
+        Address givenAddress = Address.builder().id(givenId).build();
+
+        executeWaitingReplication(() -> addressService.delete(givenAddress), 1, 0, true);
+
+        assertFalse(addressService.isExist(givenId));
+        assertFalse(replicatedAddressRepository.existsById(givenId));
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedBecauseOfForeignKeyViolation() {
+        Long givenId = 255L;
+        Address givenAddress = Address.builder().id(givenId).build();
+
+        executeExpectingForeignKeyViolation(() -> addressService.delete(givenAddress));
+
+        verifyNoReplicationRepositoryMethodCall();
+    }
+
 //    @Test
 //    public void addressesShouldBeDeletedByIds() {
 //        Long firstGivenId = 262L;
