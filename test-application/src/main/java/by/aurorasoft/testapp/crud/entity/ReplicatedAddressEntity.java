@@ -13,6 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @Getter
 @ToString
+@Builder
 @jakarta.persistence.Entity
 @Table(name = "replicated_addresses")
 public class ReplicatedAddressEntity extends Entity {

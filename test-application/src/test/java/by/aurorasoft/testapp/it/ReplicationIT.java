@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.SQLException;
@@ -36,6 +37,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -270,388 +272,256 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         verifyNoReplicationRepositoryMethodCall();
     }
 
-//    @Test
-//    public void addressesShouldBeDeletedInBatch() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 263L;
-//        Iterable<AddressEntity> givenEntities = List.of(
-//                AddressEntity.builder()
-//                        .id(firstGivenId)
-//                        .build(),
-//                AddressEntity.builder()
-//                        .id(secondGivenId)
-//                        .build()
-//        );
-//
-//        executeWaitingReplication(() -> addressRepository.deleteAllInBatch(givenEntities), 2, 0, true);
-//
-//        assertFalse(addressRepository.existsById(firstGivenId));
-//        assertFalse(addressRepository.existsById(secondGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(firstGivenId));
-//        assertFalse(replicatedAddressRepository.existsById(secondGivenId));
-//    }
-//
-//    @Test
-//    public void addressesShouldNotBeDeletedInBatchBecauseOfForeignKeyViolation() {
-//        Long firstGivenId = 262L;
-//        Long secondGivenId = 255L;
-//        Iterable<AddressEntity> givenEntities = List.of(
-//                AddressEntity.builder()
-//                        .id(firstGivenId)
-//                        .build(),
-//                AddressEntity.builder()
-//                        .id(secondGivenId)
-//                        .build()
-//        );
-//
-//        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAllInBatch(givenEntities));
-//
-//        verifyNoReplicationRepositoryMethodCall();
-//    }
-//
-//    @Test
-//    @Sql(
-//            statements = {
-//                    "DELETE FROM replicated_persons",
-//                    "DELETE FROM replicated_addresses",
-//                    "DELETE FROM persons",
-//                    "DELETE FROM addresses WHERE id NOT IN (262, 263)",
-//            }
-//    )
-//    public void allAddressesShouldBeDeleted() {
-//        executeWaitingReplication(() -> addressRepository.deleteAll(), 2, 0, true);
-//
-//        assertFalse(addressRepository.existsById(262L));
-//        assertFalse(addressRepository.existsById(263L));
-//        assertFalse(replicatedAddressRepository.existsById(262L));
-//        assertFalse(replicatedAddressRepository.existsById(263L));
-//    }
-//
-//    @Test
-//    public void allAddressesShouldNotBeDeletedBecauseOfForeignKeyViolation() {
-//        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAll());
-//    }
-//
-//    @Test
-//    @Sql(
-//            statements = {
-//                    "DELETE FROM replicated_persons",
-//                    "DELETE FROM replicated_addresses",
-//                    "DELETE FROM persons",
-//                    "DELETE FROM addresses WHERE id NOT IN (262, 263)",
-//            }
-//    )
-//    public void allAddressesShouldBeDeletedInBatch() {
-//        executeWaitingReplication(() -> addressRepository.deleteAllInBatch(), 2, 0, true);
-//
-//        assertFalse(addressRepository.existsById(262L));
-//        assertFalse(addressRepository.existsById(263L));
-//        assertFalse(replicatedAddressRepository.existsById(262L));
-//        assertFalse(replicatedAddressRepository.existsById(263L));
-//    }
-//
-//    @Test
-//    public void allAddressesShouldNotBeDeletedInBatchBecauseOfForeignKeyViolation() {
-//        executeExpectingForeignKeyViolation(() -> addressRepository.deleteAllInBatch());
-//    }
-//
-//    @Test
-//    public void operationsShouldBeExecuted() {
-//        executeWaitingReplication(
-//                () -> {
-//                    addressRepository.saveAll(
-//                            List.of(
-//                                    AddressEntity.builder()
-//                                            .country("China")
-//                                            .city("Hong Kong")
-//                                            .build(),
-//                                    AddressEntity.builder()
-//                                            .country("China")
-//                                            .city("Anqing")
-//                                            .build(),
-//                                    AddressEntity.builder()
-//                                            .country("China")
-//                                            .city("Bozhou")
-//                                            .build()
-//                            )
-//                    );
-//                    personRepository.saveAll(
-//                            List.of(
-//                                    PersonEntity.builder()
-//                                            .name("Avdifaks")
-//                                            .surname("Kuznetsov")
-//                                            .patronymic("Vasilievich")
-//                                            .birthDate(LocalDate.of(1995, 7, 2))
-//                                            .address(
-//                                                    AddressEntity.builder()
-//                                                            .id(1L)
-//                                                            .build()
-//                                            )
-//                                            .build(),
-//                                    PersonEntity.builder()
-//                                            .name("Vitenka")
-//                                            .surname("Kozar")
-//                                            .patronymic("Vadimovich")
-//                                            .birthDate(LocalDate.of(1996, 6, 1))
-//                                            .address(
-//                                                    AddressEntity.builder()
-//                                                            .id(2L)
-//                                                            .build()
-//                                            )
-//                                            .build(),
-//                                    PersonEntity.builder()
-//                                            .name("Yury")
-//                                            .surname("Sitnikov")
-//                                            .patronymic("Stepanovich")
-//                                            .birthDate(LocalDate.of(1997, 8, 3))
-//                                            .address(
-//                                                    AddressEntity.builder()
-//                                                            .id(3L)
-//                                                            .build()
-//                                            )
-//                                            .build()
-//                            )
-//                    );
-//                    addressRepository.save(
-//                            AddressEntity.builder()
-//                                    .country("China")
-//                                    .city("Huainan")
-//                                    .build()
-//                    );
-//                    executeExpectingUniqueViolation(
-//                            () -> addressRepository.save(
-//                                    AddressEntity.builder()
-//                                            .country("China")
-//                                            .city("Huainan")
-//                                            .build()
-//                            )
-//                    );
-//                    executeExpectingUniqueViolation(
-//                            () -> addressRepository.save(
-//                                    AddressEntity.builder()
-//                                            .country("Russia")
-//                                            .city("Moscow")
-//                                            .build()
-//                            )
-//                    );
-//                    addressRepository.save(new AddressEntity(4L, "Belarus", "Gomel"));
-//                    personRepository.save(
-//                            new PersonEntity(
-//                                    2L,
-//                                    "Ivan",
-//                                    "Zuev",
-//                                    "Ivanovich",
-//                                    LocalDate.of(1996, 6, 1),
-//                                    AddressEntity.builder()
-//                                            .id(2L)
-//                                            .build()
-//                            )
-//                    );
-//                    personRepository.deleteById(MAX_VALUE);
-//                    addressRepository.deleteById(MAX_VALUE);
-//                    executeExpectingUniqueViolation(
-//                            () -> addressRepository.save(new AddressEntity(256L, "Russia", "Moscow"))
-//                    );
-//                    personRepository.deleteById(259L);
-//                    addressRepository.deleteById(257L);
-//                    personRepository.save(
-//                            new PersonEntity(
-//                                    257L,
-//                                    "Alexandr",
-//                                    "Verbitskiy",
-//                                    "Dmitrievich",
-//                                    LocalDate.of(2000, 5, 20),
-//                                    AddressEntity.builder()
-//                                            .id(256L)
-//                                            .build()
-//                            )
-//                    );
-//                    return empty();
-//                },
-//                7,
-//                7,
-//                false
-//        );
-//
-//        verifyDatabase(
-//                List.of(
-//                        new AddressEntity(1L, "China", "Hong Kong"),
-//                        new AddressEntity(2L, "China", "Anqing"),
-//                        new AddressEntity(3L, "China", "Bozhou"),
-//                        new AddressEntity(4L, "Belarus", "Gomel"),
-//                        new AddressEntity(255L, "Russia", "Moscow"),
-//                        new AddressEntity(256L, "America", "Chicago"),
-//                        new AddressEntity(258L, "Austria", "Styria"),
-//                        new AddressEntity(259L, "Austria", "Tyrol"),
-//                        new AddressEntity(260L, "Estonia", "Tallinn"),
-//                        new AddressEntity(261L, "Estonia", "Tartu"),
-//                        new AddressEntity(262L, "Estonia", "Narva"),
-//                        new AddressEntity(263L, "Armenia", "Yerevan"),
-//                        new AddressEntity(264L, "America", "New York")
-//                ),
-//                List.of(
-//                        new PersonEntity(
-//                                1L,
-//                                "Avdifaks",
-//                                "Kuznetsov",
-//                                "Vasilievich",
-//                                LocalDate.of(1995, 7, 2),
-//                                AddressEntity.builder()
-//                                        .id(1L)
-//                                        .build()
-//                        ),
-//                        new PersonEntity(
-//                                2L,
-//                                "Ivan",
-//                                "Zuev",
-//                                "Ivanovich",
-//                                LocalDate.of(1996, 6, 1),
-//                                AddressEntity.builder()
-//                                        .id(2L)
-//                                        .build()
-//                        ),
-//                        new PersonEntity(
-//                                3L,
-//                                "Yury",
-//                                "Sitnikov",
-//                                "Stepanovich",
-//                                LocalDate.of(1997, 8, 3),
-//                                AddressEntity.builder()
-//                                        .id(3L)
-//                                        .build()
-//                        ),
-//                        new PersonEntity(
-//                                255L,
-//                                "Vlad",
-//                                "Zuev",
-//                                "Sergeevich",
-//                                LocalDate.of(2000, 2, 18),
-//                                AddressEntity.builder()
-//                                        .id(255L)
-//                                        .build()
-//                        ),
-//                        new PersonEntity(
-//                                256L,
-//                                "Vasilii",
-//                                "Dolzhikov",
-//                                "Borisovich",
-//                                LocalDate.of(1980, 3, 15),
-//                                AddressEntity.builder()
-//                                        .id(255L)
-//                                        .build()
-//                        ),
-//                        new PersonEntity(
-//                                257L,
-//                                "Alexandr",
-//                                "Verbitskiy",
-//                                "Dmitrievich",
-//                                LocalDate.of(2000, 5, 20),
-//                                AddressEntity.builder()
-//                                        .id(256L)
-//                                        .build()
-//                        ),
-//                        new PersonEntity(
-//                                258L,
-//                                "Pashenka",
-//                                "Kornev",
-//                                "Filippovich",
-//                                LocalDate.of(1995, 4, 23),
-//                                AddressEntity.builder()
-//                                        .id(256L)
-//                                        .build()
-//                        )
-//                ),
-//                List.of(
-//                        new ReplicatedAddressEntity(1L, "China", "Hong Kong"),
-//                        new ReplicatedAddressEntity(2L, "China", "Anqing"),
-//                        new ReplicatedAddressEntity(3L, "China", "Bozhou"),
-//                        new ReplicatedAddressEntity(4L, "Belarus", "Gomel"),
-//                        new ReplicatedAddressEntity(255L, "Russia", "Moscow"),
-//                        new ReplicatedAddressEntity(256L, "America", "Chicago"),
-//                        new ReplicatedAddressEntity(258L, "Austria", "Styria"),
-//                        new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
-//                        new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
-//                        new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
-//                        new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
-//                        new ReplicatedAddressEntity(263L, "Armenia", "Yerevan"),
-//                        new ReplicatedAddressEntity(265L, "Japan", "Tokyo")
-//                ),
-//                List.of(
-//                        new ReplicatedPersonEntity(
-//                                1L,
-//                                "Avdifaks",
-//                                "Kuznetsov",
-//                                LocalDate.of(1995, 7, 2),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(1L)
-//                                        .build()
-//                        ),
-//                        new ReplicatedPersonEntity(
-//                                2L,
-//                                "Ivan",
-//                                "Zuev",
-//                                LocalDate.of(1996, 6, 1),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(2L)
-//                                        .build()
-//                        ),
-//                        new ReplicatedPersonEntity(
-//                                3L,
-//                                "Yury",
-//                                "Sitnikov",
-//                                LocalDate.of(1997, 8, 3),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(3L)
-//                                        .build()
-//                        ),
-//                        new ReplicatedPersonEntity(
-//                                255L,
-//                                "Vlad",
-//                                "Zuev",
-//                                LocalDate.of(2000, 2, 18),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(255L)
-//                                        .build()
-//                        ),
-//                        new ReplicatedPersonEntity(
-//                                256L,
-//                                "Vasilii",
-//                                "Dolzhikov",
-//                                LocalDate.of(1980, 3, 15),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(255L)
-//                                        .build()
-//                        ),
-//                        new ReplicatedPersonEntity(
-//                                257L,
-//                                "Alexandr",
-//                                "Verbitskiy",
-//                                LocalDate.of(2000, 5, 20),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(256L)
-//                                        .build()
-//                        ),
-//                        new ReplicatedPersonEntity(
-//                                258L,
-//                                "Pashenka",
-//                                "Kornev",
-//                                LocalDate.of(1995, 4, 23),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(256L)
-//                                        .build()
-//                        ),
-//                        new ReplicatedPersonEntity(
-//                                260L,
-//                                "Nikolay",
-//                                "Radoman",
-//                                LocalDate.of(2000, 2, 20),
-//                                ReplicatedAddressEntity.builder()
-//                                        .id(258L)
-//                                        .build()
-//                        )
-//                )
-//        );
-//    }
+    @Test
+    @Sql(
+            statements = {
+                    "DELETE FROM replicated_persons",
+                    "DELETE FROM replicated_addresses",
+                    "DELETE FROM persons",
+                    "DELETE FROM addresses WHERE id NOT IN (262, 263)",
+            }
+    )
+    public void allAddressesShouldBeDeleted() {
+        executeWaitingReplication(() -> addressService.deleteAll(), 2, 0, true);
+
+        assertFalse(addressService.isExist(262L));
+        assertFalse(addressService.isExist(263L));
+        assertFalse(replicatedAddressRepository.existsById(262L));
+        assertFalse(replicatedAddressRepository.existsById(263L));
+    }
+
+    @Test
+    public void allAddressesShouldNotBeDeletedBecauseOfForeignKeyViolation() {
+        executeExpectingForeignKeyViolation(() -> addressService.deleteAll());
+    }
+
+    @Test
+    public void operationsShouldBeExecuted() {
+        executeWaitingReplication(
+                () -> {
+                    addressService.saveAll(
+                            List.of(
+                                    Address.builder().country("China").city("Hong Kong").build(),
+                                    Address.builder().country("China").city("Anqing").build(),
+                                    Address.builder().country("China").city("Bozhou").build()
+                            )
+                    );
+                    personService.saveAll(
+                            List.of(
+                                    Person.builder()
+                                            .name("Avdifaks")
+                                            .surname("Kuznetsov")
+                                            .patronymic("Vasilievich")
+                                            .birthDate(LocalDate.of(1995, 7, 2))
+                                            .address(Address.builder().id(1L).build())
+                                            .build(),
+                                    Person.builder()
+                                            .name("Vitenka")
+                                            .surname("Kozar")
+                                            .patronymic("Vadimovich")
+                                            .birthDate(LocalDate.of(1996, 6, 1))
+                                            .address(Address.builder().id(2L).build())
+                                            .build(),
+                                    Person.builder()
+                                            .name("Yury")
+                                            .surname("Sitnikov")
+                                            .patronymic("Stepanovich")
+                                            .birthDate(LocalDate.of(1997, 8, 3))
+                                            .address(Address.builder().id(3L).build())
+                                            .build()
+                            )
+                    );
+                    addressService.save(Address.builder().country("China").city("Huainan").build());
+                    executeExpectingUniqueViolation(
+                            () -> addressService.save(Address.builder().country("China").city("Huainan").build())
+                    );
+                    executeExpectingUniqueViolation(
+                            () -> addressService.save(Address.builder().country("Russia").city("Moscow").build())
+                    );
+                    addressService.save(new Address(4L, "Belarus", "Gomel"));
+                    personService.save(
+                            new Person(
+                                    2L,
+                                    "Ivan",
+                                    "Zuev",
+                                    "Ivanovich",
+                                    LocalDate.of(1996, 6, 1),
+                                    Address.builder().id(2L).build()
+                            )
+                    );
+                    personService.delete(MAX_VALUE);
+                    addressService.delete(MAX_VALUE);
+                    executeExpectingUniqueViolation(
+                            () -> addressService.save(new Address(256L, "Russia", "Moscow"))
+                    );
+                    personService.delete(259L);
+                    addressService.delete(257L);
+                    personService.save(
+                            new Person(
+                                    257L,
+                                    "Alexandr",
+                                    "Verbitskiy",
+                                    "Dmitrievich",
+                                    LocalDate.of(2000, 5, 20),
+                                    Address.builder().id(256L).build()
+                            )
+                    );
+                    return empty();
+                },
+                7,
+                7,
+                false
+        );
+
+        verifyEntities(
+                List.of(
+                        new AddressEntity(1L, "China", "Hong Kong"),
+                        new AddressEntity(2L, "China", "Anqing"),
+                        new AddressEntity(3L, "China", "Bozhou"),
+                        new AddressEntity(4L, "Belarus", "Gomel"),
+                        new AddressEntity(255L, "Russia", "Moscow"),
+                        new AddressEntity(256L, "America", "Chicago"),
+                        new AddressEntity(258L, "Austria", "Styria"),
+                        new AddressEntity(259L, "Austria", "Tyrol"),
+                        new AddressEntity(260L, "Estonia", "Tallinn"),
+                        new AddressEntity(261L, "Estonia", "Tartu"),
+                        new AddressEntity(262L, "Estonia", "Narva"),
+                        new AddressEntity(263L, "Armenia", "Yerevan"),
+                        new AddressEntity(264L, "America", "New York")
+                ),
+                List.of(
+                        new PersonEntity(
+                                1L,
+                                "Avdifaks",
+                                "Kuznetsov",
+                                "Vasilievich",
+                                LocalDate.of(1995, 7, 2),
+                                AddressEntity.builder().id(1L).build()
+                        ),
+                        new PersonEntity(
+                                2L,
+                                "Ivan",
+                                "Zuev",
+                                "Ivanovich",
+                                LocalDate.of(1996, 6, 1),
+                                AddressEntity.builder().id(2L).build()
+                        ),
+                        new PersonEntity(
+                                3L,
+                                "Yury",
+                                "Sitnikov",
+                                "Stepanovich",
+                                LocalDate.of(1997, 8, 3),
+                                AddressEntity.builder().id(3L).build()
+                        ),
+                        new PersonEntity(
+                                255L,
+                                "Vlad",
+                                "Zuev",
+                                "Sergeevich",
+                                LocalDate.of(2000, 2, 18),
+                                AddressEntity.builder().id(255L).build()
+                        ),
+                        new PersonEntity(
+                                256L,
+                                "Vasilii",
+                                "Dolzhikov",
+                                "Borisovich",
+                                LocalDate.of(1980, 3, 15),
+                                AddressEntity.builder().id(255L).build()
+                        ),
+                        new PersonEntity(
+                                257L,
+                                "Alexandr",
+                                "Verbitskiy",
+                                "Dmitrievich",
+                                LocalDate.of(2000, 5, 20),
+                                AddressEntity.builder().id(256L).build()
+                        ),
+                        new PersonEntity(
+                                258L,
+                                "Pashenka",
+                                "Kornev",
+                                "Filippovich",
+                                LocalDate.of(1995, 4, 23),
+                                AddressEntity.builder().id(256L).build()
+                        )
+                ),
+                List.of(
+                        new ReplicatedAddressEntity(1L, "China", "Hong Kong"),
+                        new ReplicatedAddressEntity(2L, "China", "Anqing"),
+                        new ReplicatedAddressEntity(3L, "China", "Bozhou"),
+                        new ReplicatedAddressEntity(4L, "Belarus", "Gomel"),
+                        new ReplicatedAddressEntity(255L, "Russia", "Moscow"),
+                        new ReplicatedAddressEntity(256L, "America", "Chicago"),
+                        new ReplicatedAddressEntity(258L, "Austria", "Styria"),
+                        new ReplicatedAddressEntity(259L, "Austria", "Tyrol"),
+                        new ReplicatedAddressEntity(260L, "Estonia", "Tallinn"),
+                        new ReplicatedAddressEntity(261L, "Estonia", "Tartu"),
+                        new ReplicatedAddressEntity(262L, "Estonia", "Narva"),
+                        new ReplicatedAddressEntity(263L, "Armenia", "Yerevan"),
+                        new ReplicatedAddressEntity(265L, "Japan", "Tokyo")
+                ),
+                List.of(
+                        new ReplicatedPersonEntity(
+                                1L,
+                                "Avdifaks",
+                                "Kuznetsov",
+                                LocalDate.of(1995, 7, 2),
+                                ReplicatedAddressEntity.builder().id(1L).build()
+                        ),
+                        new ReplicatedPersonEntity(
+                                2L,
+                                "Ivan",
+                                "Zuev",
+                                LocalDate.of(1996, 6, 1),
+                                ReplicatedAddressEntity.builder().id(2L).build()
+                        ),
+                        new ReplicatedPersonEntity(
+                                3L,
+                                "Yury",
+                                "Sitnikov",
+                                LocalDate.of(1997, 8, 3),
+                                ReplicatedAddressEntity.builder().id(3L).build()
+                        ),
+                        new ReplicatedPersonEntity(
+                                255L,
+                                "Vlad",
+                                "Zuev",
+                                LocalDate.of(2000, 2, 18),
+                                ReplicatedAddressEntity.builder().id(255L).build()
+                        ),
+                        new ReplicatedPersonEntity(
+                                256L,
+                                "Vasilii",
+                                "Dolzhikov",
+                                LocalDate.of(1980, 3, 15),
+                                ReplicatedAddressEntity.builder().id(255L).build()
+                        ),
+                        new ReplicatedPersonEntity(
+                                257L,
+                                "Alexandr",
+                                "Verbitskiy",
+                                LocalDate.of(2000, 5, 20),
+                                ReplicatedAddressEntity.builder().id(256L).build()
+                        ),
+                        new ReplicatedPersonEntity(
+                                258L,
+                                "Pashenka",
+                                "Kornev",
+                                LocalDate.of(1995, 4, 23),
+                                ReplicatedAddressEntity.builder().id(256L).build()
+                        ),
+                        new ReplicatedPersonEntity(
+                                260L,
+                                "Nikolay",
+                                "Radoman",
+                                LocalDate.of(2000, 2, 20),
+                                ReplicatedAddressEntity.builder().id(258L).build()
+                        )
+                )
+        );
+    }
 
     //    @Test
 //    public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
@@ -862,15 +732,15 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         return ((SQLException) getRootCause(exception)).getSQLState();
     }
 
-//    private void verifyDatabase(List<AddressEntity> expectedAddresses,
-//                                List<PersonEntity> expectedPersons,
-//                                List<ReplicatedAddressEntity> expectedReplicatedAddresses,
-//                                List<ReplicatedPersonEntity> expectedReplicatedPersons) {
-//        verifyAddresses(expectedAddresses);
-//        verifyPersons(expectedPersons);
-//        verifyReplicatedAddresses(expectedReplicatedAddresses);
-//        verifyReplicatedPersons(expectedReplicatedPersons);
-//    }
+    private void verifyEntities(List<AddressEntity> expectedAddresses,
+                                List<PersonEntity> expectedPersons,
+                                List<ReplicatedAddressEntity> expectedReplicatedAddresses,
+                                List<ReplicatedPersonEntity> expectedReplicatedPersons) {
+        verifyAddresses(expectedAddresses);
+        verifyPersons(expectedPersons);
+        verifyReplicatedAddresses(expectedReplicatedAddresses);
+        verifyReplicatedPersons(expectedReplicatedPersons);
+    }
 
     private void verifyAddresses(List<AddressEntity> expected) {
         verifyEntities(
@@ -913,6 +783,8 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                                                    Class<E> entityType,
                                                    BiConsumer<E, E> equalChecker) {
         List<E> actual = entityManager.createQuery(hqlQuery, entityType).getResultList();
+        assertEquals(expected.size(), actual.size());
+        IntStream.range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
 //        EntityUtil.checkEquals(expected, actual, equalChecker);
     }
 

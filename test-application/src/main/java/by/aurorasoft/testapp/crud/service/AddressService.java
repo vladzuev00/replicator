@@ -60,4 +60,9 @@ public class AddressService extends AbsServiceCRUD<Long, AddressEntity, Address,
     public void delete(Collection<Address> addresses) {
         repository.deleteAll(mapper.toEntities(addresses));
     }
+
+    @ReplicatedDeleteAll
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }
