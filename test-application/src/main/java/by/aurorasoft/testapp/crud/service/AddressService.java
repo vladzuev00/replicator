@@ -1,6 +1,7 @@
 package by.aurorasoft.testapp.crud.service;
 
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.DtoViewConfig;
 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
@@ -11,6 +12,9 @@ import by.aurorasoft.testapp.crud.mapper.AddressMapper;
 import by.aurorasoft.testapp.crud.repository.AddressRepository;
 import by.nhorushko.crudgeneric.v2.service.AbsServiceCRUD;
 import org.apache.kafka.common.serialization.LongSerializer;
+
+import java.util.Collection;
+import java.util.List;
 
 import static by.aurorasoft.testapp.crud.dto.Address.Fields.country;
 
@@ -29,5 +33,11 @@ public class AddressService extends AbsServiceCRUD<Long, AddressEntity, Address,
     @ReplicatedSave
     public Address save(Address address) {
         return super.save(address);
+    }
+
+    @Override
+    @ReplicatedSaveAll
+    public List<Address> saveAll(Collection<Address> addresses) {
+        return super.saveAll(addresses);
     }
 }
