@@ -1,5 +1,6 @@
 package by.aurorasoft.testapp.crud.service;
 
+import by.aurorasoft.replicator.annotation.operation.ReplicatedDelete;
 import by.aurorasoft.replicator.annotation.operation.ReplicatedDeleteById;
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
 import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
@@ -46,5 +47,10 @@ public class AddressService extends AbsServiceCRUD<Long, AddressEntity, Address,
     @ReplicatedDeleteById
     public void delete(Long id) {
         super.delete(id);
+    }
+
+    @ReplicatedDelete
+    public void delete(Address address) {
+        delete(address.getId());
     }
 }
