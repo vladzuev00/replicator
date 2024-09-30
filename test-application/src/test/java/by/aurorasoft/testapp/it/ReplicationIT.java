@@ -13,7 +13,6 @@ import by.aurorasoft.testapp.testutil.AddressEntityUtil;
 import by.aurorasoft.testapp.testutil.PersonEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedAddressEntityUtil;
 import by.aurorasoft.testapp.testutil.ReplicatedPersonEntityUtil;
-import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,16 +30,20 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 import static java.lang.Long.MAX_VALUE;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toUnmodifiableSet;
+import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.core.NestedExceptionUtils.getRootCause;
@@ -600,48 +603,10 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         assertTrue(replicatedAddressRepository.existsById(givenId));
     }
 
-//    protected abstract ADDRESS createAddress(Long id, String country, String city);
-//
-//    protected abstract PERSON createPerson(Long id,
-//                                           String name,
-//                                           String surname,
-//                                           String patronymic,
-//                                           LocalDate birthDate,
-//                                           ADDRESS address);
-//
-//    protected abstract ADDRESS save(ADDRESS address);
-//
-//    protected abstract PERSON save(PERSON person);
-//
-//    protected abstract List<ADDRESS> saveAddresses(List<ADDRESS> addresses);
-//
-//    @SuppressWarnings("UnusedReturnValue")
-//    protected abstract List<PERSON> savePersons(List<PERSON> persons);
-//
-//    protected abstract ADDRESS update(ADDRESS address);
-//
-//    @SuppressWarnings("UnusedReturnValue")
-//    protected abstract PERSON update(PERSON person);
-//
-//    protected abstract ADDRESS updateAddressPartial(Long id, Object partial);
-//
-//    @SuppressWarnings("UnusedReturnValue")
-//    protected abstract PERSON updatePersonPartial(Long id, Object partial);
-//
-//    protected abstract void deleteAddress(Long id);
-//
-//    protected abstract void deletePerson(Long id);
-//
-//    protected abstract boolean isAddressExist(Long id);
-//
-//    protected final ADDRESS createAddress(Long id) {
-//        return createAddress(id, null, null);
-//    }
-//
-    protected void executeWaitingReplication(Runnable operation,
-                                             int addressCalls,
-                                             @SuppressWarnings("SameParameterValue") int personCalls,
-                                             boolean failedCallsCounted) {
+    private void executeWaitingReplication(Runnable operation,
+                                           int addressCalls,
+                                           @SuppressWarnings("SameParameterValue") int personCalls,
+                                           @SuppressWarnings("SameParameterValue") boolean failedCallsCounted) {
         executeWaitingReplication(
                 () -> {
                     operation.run();
@@ -652,28 +617,6 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                 failedCallsCounted
         );
     }
-//
-//    private ADDRESS createAddress(String country, String city) {
-//        return createAddress(null, country, city);
-//    }
-//
-//    private PERSON createPerson(String name,
-//                                String surname,
-//                                String patronymic,
-//                                LocalDate birthDate,
-//                                Long addressId) {
-//        return createPerson(null, name, surname, patronymic, birthDate, addressId);
-//    }
-//
-//    private PERSON createPerson(Long id,
-//                                String name,
-//                                String surname,
-//                                String patronymic,
-//                                LocalDate birthDate,
-//                                Long addressId) {
-//        ADDRESS address = createAddress(addressId);
-//        return createPerson(id, name, surname, patronymic, birthDate, address);
-//    }
 
     private <R> R executeWaitingReplication(Supplier<R> operation,
                                             int addressCalls,
@@ -690,21 +633,18 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     }
 
     private void verifyReplicationsFor(List<Address> addresses) {
-        List<Long> ids = mapToIds(addresses);
-        List<ReplicatedAddressEntity> actual = findReplicatedAddressesOrderedById(ids);
+        List<ReplicatedAddressEntity> actual = findReplicationsOrderedById(addresses);
         List<ReplicatedAddressEntity> expected = mapToReplicatedAddresses(addresses);
-        assertEquals(expected.size(), actual.size());
-        IntStream.range(0, expected.size()).forEach(i -> ReplicatedAddressEntityUtil.checkEquals(expected.get(i), actual.get(i)));
-//        ReplicatedAddressEntityUtil.checkEquals(expected, actual);
+        assertEntitiesEquals(expected, actual, ReplicatedAddressEntityUtil::assertEquals);
     }
 
-    private List<Long> mapToIds(List<Address> addresses) {
+    private List<ReplicatedAddressEntity> findReplicationsOrderedById(List<Address> addresses) {
         return addresses.stream()
                 .map(Address::getId)
-                .toList();
+                .collect(collectingAndThen(toUnmodifiableSet(), this::findReplicatedAddressesOrderedById));
     }
 
-    private List<ReplicatedAddressEntity> findReplicatedAddressesOrderedById(List<Long> ids) {
+    private List<ReplicatedAddressEntity> findReplicatedAddressesOrderedById(Set<Long> ids) {
         return entityManager.createQuery("SELECT e FROM ReplicatedAddressEntity e WHERE e.id IN :ids ORDER BY e.id", ReplicatedAddressEntity.class)
                 .setParameter("ids", ids)
                 .getResultList();
@@ -712,12 +652,8 @@ public final class ReplicationIT extends AbstractSpringBootTest {
 
     private List<ReplicatedAddressEntity> mapToReplicatedAddresses(List<Address> addresses) {
         return addresses.stream()
-                .map(this::mapToReplicatedAddress)
+                .map(address -> new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity()))
                 .toList();
-    }
-
-    private ReplicatedAddressEntity mapToReplicatedAddress(Address address) {
-        return new ReplicatedAddressEntity(address.getId(), address.getCountry(), address.getCity());
     }
 
     private void executeExpectingUniqueViolation(Runnable task) {
@@ -732,15 +668,10 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         executeExpectingMatchingException(task, exception -> Objects.equals(sqlState, getSqlState(exception)));
     }
 
-    private void executeExpectingNoSuchEntityException(Runnable task) {
-        executeExpectingMatchingException(task, exception -> getRootCause(exception).getClass() == EntityNotFoundException.class);
-    }
-
     private void executeExpectingMatchingException(Runnable task, Predicate<Throwable> predicate) {
-        boolean exceptionArisen;
+        boolean exceptionArisen = false;
         try {
             task.run();
-            exceptionArisen = false;
         } catch (Throwable exception) {
             exceptionArisen = true;
             assertTrue(predicate.test(exception));
@@ -749,7 +680,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     }
 
     private String getSqlState(Throwable exception) {
-        return ((SQLException) getRootCause(exception)).getSQLState();
+        return ((SQLException) requireNonNull(getRootCause(exception))).getSQLState();
     }
 
     private void verifyEntities(List<AddressEntity> expectedAddresses,
@@ -767,7 +698,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                 expected,
                 "SELECT e FROM AddressEntity e ORDER BY e.id",
                 AddressEntity.class,
-                AddressEntityUtil::checkEquals
+                AddressEntityUtil::assertEquals
         );
     }
 
@@ -776,7 +707,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                 expected,
                 "SELECT e FROM PersonEntity e ORDER BY e.id",
                 PersonEntity.class,
-                PersonEntityUtil::checkEquals
+                PersonEntityUtil::assertEquals
         );
     }
 
@@ -785,7 +716,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                 expected,
                 "SELECT e FROM ReplicatedAddressEntity e ORDER BY e.id",
                 ReplicatedAddressEntity.class,
-                ReplicatedAddressEntityUtil::checkEquals
+                ReplicatedAddressEntityUtil::assertEquals
         );
     }
 
@@ -794,57 +725,33 @@ public final class ReplicationIT extends AbstractSpringBootTest {
                 expected,
                 "SELECT e FROM ReplicatedPersonEntity e ORDER BY e.id",
                 ReplicatedPersonEntity.class,
-                ReplicatedPersonEntityUtil::checkEquals
+                ReplicatedPersonEntityUtil::assertEquals
         );
     }
 
     private <E extends Entity> void verifyEntities(List<E> expected,
                                                    String hqlQuery,
                                                    Class<E> entityType,
-                                                   BiConsumer<E, E> equalChecker) {
+                                                   BiConsumer<E, E> equalAsserter) {
         List<E> actual = entityManager.createQuery(hqlQuery, entityType).getResultList();
+        assertEntitiesEquals(expected, actual, equalAsserter);
+    }
+
+    private <E extends Entity> void assertEntitiesEquals(List<E> expected,
+                                                         List<E> actual,
+                                                         BiConsumer<E, E> equalAsserter) {
         assertEquals(expected.size(), actual.size());
-        IntStream.range(0, expected.size()).forEach(i -> equalChecker.accept(expected.get(i), actual.get(i)));
-//        EntityUtil.checkEquals(expected, actual, equalChecker);
+        range(0, expected.size()).forEach(i -> equalAsserter.accept(expected.get(i), actual.get(i)));
     }
 
     private void verifyNoReplicationRepositoryMethodCall() {
         verifyNoInteractions(replicatedAddressRepository, replicatedPersonRepository);
     }
-//
-//    private PersonEntity createPersonEntity(Long id,
-//                                            String name,
-//                                            String surname,
-//                                            String patronymic,
-//                                            LocalDate birthDate,
-//                                            Long addressId) {
-//        return new PersonEntity(id, name, surname, patronymic, birthDate, createAddressEntity(addressId));
-//    }
-//
-//    private AddressEntity createAddressEntity(Long id) {
-//        return AddressEntity.builder()
-//                .id(id)
-//                .build();
-//    }
-//
-//    private ReplicatedAddressEntity createReplicatedAddress(Long id) {
-//        return ReplicatedAddressEntity.builder()
-//                .id(id)
-//                .build();
-//    }
-//
-//    private ReplicatedPersonEntity createReplicatedPerson(Long id,
-//                                                          String name,
-//                                                          String surname,
-//                                                          LocalDate birthDate,
-//                                                          Long addressId) {
-//        return new ReplicatedPersonEntity(id, name, surname, birthDate, createReplicatedAddress(addressId));
-//    }
 
     @Aspect
     @Component
     public static class ReplicationDeliveryBarrier {
-        private static final long TIMEOUT_DELTA_MS = 999999999;  //TODO: 20000
+        private static final long TIMEOUT_DELTA_MS = 20000;
         private static final CountDownLatch DEFAULT_LATCH = new CountDownLatch(0);
 
         private final long timeoutMs;
@@ -853,7 +760,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         private volatile boolean failedCallsCounted;
 
         public ReplicationDeliveryBarrier(ReplicationRetryConsumeProperty retryProperty) {
-            timeoutMs = findTimeoutMs(retryProperty);
+            timeoutMs = calculateTimeoutMs(retryProperty);
             addressLatch = DEFAULT_LATCH;
             personLatch = DEFAULT_LATCH;
         }
@@ -881,7 +788,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
             await(personLatch);
         }
 
-        private long findTimeoutMs(ReplicationRetryConsumeProperty retryProperty) {
+        private long calculateTimeoutMs(ReplicationRetryConsumeProperty retryProperty) {
             return retryProperty.getTimeLapseMs() * retryProperty.getMaxAttempts() + TIMEOUT_DELTA_MS;
         }
 

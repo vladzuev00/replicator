@@ -2,18 +2,17 @@ package by.aurorasoft.testapp.testutil;
 
 import by.aurorasoft.testapp.crud.entity.PersonEntity;
 import lombok.experimental.UtilityClass;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Assertions;
 
 @UtilityClass
 public final class PersonEntityUtil {
 
-    public static void checkEquals(PersonEntity expected, PersonEntity actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getSurname(), actual.getSurname());
-        assertEquals(expected.getPatronymic(), actual.getPatronymic());
-        assertEquals(expected.getBirthDate(), actual.getBirthDate());
-        assertEquals(expected.getAddress().getId(), actual.getAddress().getId());
+    public static void assertEquals(PersonEntity expected, PersonEntity actual) {
+        Assertions.assertEquals(expected.getId(), actual.getId());
+        Assertions.assertEquals(expected.getName(), actual.getName());
+        Assertions.assertEquals(expected.getSurname(), actual.getSurname());
+        Assertions.assertEquals(expected.getPatronymic(), actual.getPatronymic());
+        Assertions.assertEquals(expected.getBirthDate(), actual.getBirthDate());
+        Assertions.assertEquals(expected.getAddress().getId(), actual.getAddress().getId());
     }
 }
