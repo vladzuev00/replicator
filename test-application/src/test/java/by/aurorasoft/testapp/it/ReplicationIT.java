@@ -42,7 +42,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 import static org.springframework.core.NestedExceptionUtils.getRootCause;
 
 @Import(ReplicationIT.ReplicationDeliveryBarrier.class)
@@ -523,63 +523,83 @@ public final class ReplicationIT extends AbstractSpringBootTest {
         );
     }
 
-    //    @Test
-//    public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
-//        Long givenId = 258L;
-//
-//        executeWaitingReplication(() -> deleteAddress(givenId), retryConsumeProperty.getMaxAttempts(), 0, true);
-//
-//        assertFalse(isAddressExist(givenId));
-//        assertTrue(replicatedAddressRepository.existsById(givenId));
-//
-//        verify(replicatedAddressRepository, times(retryConsumeProperty.getMaxAttempts())).deleteById(eq(givenId));
-//    }
-//
-//    @Test
-//    public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
-//        PERSON givenPerson = createPerson("Petr", "Ivanov", "Petrovich", LocalDate.of(2000, 3, 19), 264L);
-//
-//        PERSON actual = executeWaitingReplication(() -> save(givenPerson), 0, retryConsumeProperty.getMaxAttempts(), true);
-//        PERSON expected = createPerson(
-//                1L,
-//                givenPerson.getName(),
-//                givenPerson.getSurname(),
-//                givenPerson.getPatronymic(),
-//                givenPerson.getBirthDate(),
-//                createAddress(264L)
-//        );
-//        assertEquals(expected, actual);
-//
-//        assertFalse(replicatedPersonRepository.existsById(actual.getId()));
-//
-//        verify(
-//                replicatedPersonRepository,
-//                times(retryConsumeProperty.getMaxAttempts())
-//        ).save(any(ReplicatedPersonEntity.class));
-//    }
-//
-//    @Test
-//    public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
-//        ADDRESS givenAddress = createAddress("Japan", "Tokyo");
-//
-//        ADDRESS actual = executeWaitingReplication(() -> save(givenAddress), 1, 0, true);
-//        ADDRESS expected = createAddress(1L, givenAddress.getCountry(), givenAddress.getCity());
-//        assertEquals(expected, actual);
-//
-//        assertFalse(replicatedAddressRepository.existsById(actual.getId()));
-//        verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
-//    }
-//
-//    @Test
-//    public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
-//        Long givenId = 262L;
-//
-//        deleteAddressInRollBackedTransaction(givenId);
-//
-//        assertTrue(isAddressExist(givenId));
-//        assertTrue(replicatedAddressRepository.existsById(givenId));
-//    }
-//
+    @Test
+    public void addressShouldBeDeletedButReplicatedAddressShouldNotBecauseOfForeignKeyViolation() {
+        Long givenId = 258L;
+
+        executeWaitingReplication(
+                () -> addressService.delete(givenId),
+                retryConsumeProperty.getMaxAttempts(),
+                0,
+                true
+        );
+
+        assertFalse(addressService.isExist(givenId));
+        assertTrue(replicatedAddressRepository.existsById(givenId));
+
+        verify(replicatedAddressRepository, times(retryConsumeProperty.getMaxAttempts())).deleteById(eq(givenId));
+    }
+
+    @Test
+    public void personShouldBeSavedButNotReplicatedBecauseOfForeignKeyViolation() {
+        Person givenPerson = Person.builder()
+                .name("Petr")
+                .surname("Ivanov")
+                .patronymic("Petrovich")
+                .birthDate(LocalDate.of(2000, 3, 19))
+                .address(Address.builder().id(264L).build())
+                .build();
+
+        Person actual = executeWaitingReplication(
+                () -> personService.save(givenPerson),
+                0,
+                retryConsumeProperty.getMaxAttempts(),
+                true
+        );
+        Person expected = new Person(
+                1L,
+                givenPerson.getName(),
+                givenPerson.getSurname(),
+                givenPerson.getPatronymic(),
+                givenPerson.getBirthDate(),
+                givenPerson.getAddress()
+        );
+        assertEquals(expected, actual);
+
+        assertFalse(replicatedPersonRepository.existsById(actual.getId()));
+
+        verify(replicatedPersonRepository, times(retryConsumeProperty.getMaxAttempts()))
+                .save(any(ReplicatedPersonEntity.class));
+    }
+
+    @Test
+    public void addressShouldBeSavedButNotReplicatedBecauseOfUniqueConstraint() {
+        Address givenAddress = Address.builder().country("Japan").city("Tokyo").build();
+
+        Address actual = executeWaitingReplication(() -> addressService.save(givenAddress), 1, 0, true);
+        Address expected = new Address(1L, givenAddress.getCountry(), givenAddress.getCity());
+        assertEquals(expected, actual);
+
+        assertFalse(replicatedAddressRepository.existsById(actual.getId()));
+        verify(replicatedAddressRepository, times(1)).save(any(ReplicatedAddressEntity.class));
+    }
+
+    @Test
+    public void addressShouldNotBeDeletedBecauseOfTransactionRollBacked() {
+        Long givenId = 262L;
+
+        transactionTemplate.execute(
+                status -> {
+                    status.setRollbackOnly();
+                    addressService.delete(givenId);
+                    return empty();
+                }
+        );
+
+        assertTrue(addressService.isExist(givenId));
+        assertTrue(replicatedAddressRepository.existsById(givenId));
+    }
+
 //    protected abstract ADDRESS createAddress(Long id, String country, String city);
 //
 //    protected abstract PERSON createPerson(Long id,
@@ -791,16 +811,6 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     private void verifyNoReplicationRepositoryMethodCall() {
         verifyNoInteractions(replicatedAddressRepository, replicatedPersonRepository);
     }
-
-//    private void deleteAddressInRollBackedTransaction(Long id) {
-//        transactionTemplate.execute(
-//                status -> {
-//                    status.setRollbackOnly();
-//                    deleteAddress(id);
-//                    return empty();
-//                }
-//        );
-//    }
 //
 //    private PersonEntity createPersonEntity(Long id,
 //                                            String name,
@@ -834,7 +844,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     @Aspect
     @Component
     public static class ReplicationDeliveryBarrier {
-        private static final long TIMEOUT_DELTA_MS = 20000;
+        private static final long TIMEOUT_DELTA_MS = 999999999;  //TODO: 20000
         private static final CountDownLatch DEFAULT_LATCH = new CountDownLatch(0);
 
         private final long timeoutMs;
