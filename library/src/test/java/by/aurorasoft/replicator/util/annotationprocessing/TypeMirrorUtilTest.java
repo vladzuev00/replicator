@@ -9,19 +9,10 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.isContainIdGetter;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.ITERABLE_TYPE_NAME;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.JPA_REPOSITORY_TYPE_NAME;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.LIST_TYPE_NAME;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isContainIdGetter;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isIterable;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isJpaRepository;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isList;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.isVoid;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.*;
 import static javax.lang.model.type.TypeKind.*;
 import static org.checkerframework.javacutil.TypesUtils.isErasedSubtype;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public final class TypeMirrorUtilTest {
@@ -210,7 +201,7 @@ public final class TypeMirrorUtilTest {
             when(givenElementUtil.getTypeElement(same(givenMirrorString))).thenReturn(givenTypeElement);
 
             mockedTypeElementUtil.when(
-                    () -> isContainIdGetter(
+                    () -> TypeElementUtil.isContainIdGetter(
                             same(givenTypeElement),
                             same(givenElementUtil),
                             same(givenTypeUtil)
@@ -269,7 +260,7 @@ public final class TypeMirrorUtilTest {
             when(givenElementUtil.getTypeElement(same(givenMirrorString))).thenReturn(givenTypeElement);
 
             mockedTypeElementUtil.when(
-                    () -> isContainIdGetter(
+                    () -> TypeElementUtil.isContainIdGetter(
                             same(givenTypeElement),
                             same(givenElementUtil),
                             same(givenTypeUtil)
@@ -278,5 +269,39 @@ public final class TypeMirrorUtilTest {
 
             assertFalse(isContainIdGetter(givenMirror, givenElementUtil, givenTypeUtil));
         }
+    }
+
+    @Test
+    public void erasuredTypeElementShouldBeGot() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+        Elements givenElementUtil = mock(Elements.class);
+        Types givenTypeUtil = mock(Types.class);
+
+        TypeMirror givenErasuredMirror = mock(TypeMirror.class);
+        when(givenTypeUtil.erasure(same(givenMirror))).thenReturn(givenErasuredMirror);
+
+        String givenErasuredMirrorString = "TestType";
+        when(givenErasuredMirror.toString()).thenReturn(givenErasuredMirrorString);
+
+        TypeElement givenTypeElement = mock(TypeElement.class);
+        when(givenElementUtil.getTypeElement(same(givenErasuredMirrorString))).thenReturn(givenTypeElement);
+
+        TypeElement actual = getErasuredTypeElement(givenMirror, givenElementUtil, givenTypeUtil);
+        assertSame(givenTypeElement, actual);
+    }
+
+    @Test
+    public void typeElementShouldBeGot() {
+        TypeMirror givenMirror = mock(TypeMirror.class);
+        Elements givenElementUtil = mock(Elements.class);
+
+        String givenMirrorString = "TestType";
+        when(givenMirror.toString()).thenReturn(givenMirrorString);
+
+        TypeElement givenTypeElement = mock(TypeElement.class);
+        when(givenElementUtil.getTypeElement(same(givenMirrorString))).thenReturn(givenTypeElement);
+
+        TypeElement actual = getTypeElement(givenMirror, givenElementUtil);
+        assertSame(givenTypeElement, actual);
     }
 }
