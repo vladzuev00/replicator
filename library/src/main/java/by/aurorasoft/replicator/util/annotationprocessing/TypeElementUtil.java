@@ -9,6 +9,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
@@ -28,18 +29,34 @@ public final class TypeElementUtil {
     }
 
     public static boolean isContainRepository(TypeElement element, Elements elementUtil, Types typeUtil) {
-        return iterate(element, e -> !isObject(e), e -> getErasuredTypeElement(e.getSuperclass(), elementUtil, typeUtil))
-                .flatMap(e -> e.getEnclosedElements().stream())
-                .filter(e -> e instanceof VariableElement)
-                .map(e -> (VariableElement) e)
-                .anyMatch(e -> isJpaRepositoryField(e, elementUtil, typeUtil));
+        return isAnyEnclosedElementMatch(
+                element,
+                elementUtil,
+                typeUtil,
+                VariableElement.class,
+                e -> isJpaRepositoryField(e, elementUtil, typeUtil)
+        );
     }
 
     public static boolean isContainIdGetter(TypeElement element, Elements elementUtil, Types typeUtil) {
+        return isAnyEnclosedElementMatch(
+                element,
+                elementUtil,
+                typeUtil,
+                ExecutableElement.class,
+                ExecutableElementUtil::isIdGetter
+        );
+    }
+
+    private static <E extends Element> boolean isAnyEnclosedElementMatch(TypeElement element,
+                                                                         Elements elementUtil,
+                                                                         Types typeUtil,
+                                                                         Class<E> elementType,
+                                                                         Predicate<E> predicate) {
         return iterate(element, e -> !isObject(e), e -> getErasuredTypeElement(e.getSuperclass(), elementUtil, typeUtil))
                 .flatMap(e -> e.getEnclosedElements().stream())
-                .filter(e -> e instanceof ExecutableElement)
-                .map(e -> (ExecutableElement) e)
-                .anyMatch(ExecutableElementUtil::isIdGetter);
+                .filter(elementType::isInstance)
+                .map(elementType::cast)
+                .anyMatch(predicate);
     }
 }
