@@ -16,7 +16,6 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 
 @UtilityClass
 public final class ElementUtil {
-    static final String JPA_REPOSITORY_FIELD_NAME = "repository";
 
     public static boolean isPublic(Element element) {
         return element.getModifiers().contains(PUBLIC);
@@ -48,13 +47,6 @@ public final class ElementUtil {
                 .filter(e -> e instanceof ExecutableElement)
                 .map(e -> (ExecutableElement) e)
                 .anyMatch(ExecutableElementUtil::isIdGetter);
-    }
-
-    //TODO VariableElementUtil
-    public static boolean isJpaRepositoryField(Element element, Elements elementUtil, Types typeUtil) {
-        return element.getKind() == FIELD
-                && element.getSimpleName().contentEquals(JPA_REPOSITORY_FIELD_NAME)
-                && isJpaRepository(element, elementUtil, typeUtil);
     }
 
     public static TypeMirror getFirstTypeArgument(Element element) {

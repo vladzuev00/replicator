@@ -12,8 +12,8 @@ import javax.lang.model.util.Types;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.ElementUtil.isJpaRepositoryField;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.getErasuredTypeElement;
+import static by.aurorasoft.replicator.util.annotationprocessing.VariableElementUtil.isJpaRepositoryField;
 import static java.util.stream.Stream.iterate;
 import static org.checkerframework.javacutil.ElementUtils.isObject;
 
