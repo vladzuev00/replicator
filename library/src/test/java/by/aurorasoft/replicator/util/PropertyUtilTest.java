@@ -1,5 +1,6 @@
 package by.aurorasoft.replicator.util;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,15 @@ public final class PropertyUtilTest {
     }
 
     @Test
+    public void inheritedDtoShouldBeGot() {
+        Object givenId = new Object();
+        ThirdTestDto givenObject = new ThirdTestDto(givenId);
+
+        Object actual = getId(givenObject);
+        assertSame(givenId, actual);
+    }
+
+    @Test
     public void repositoryShouldBeGot() {
         JpaRepository<?, ?> givenRepository = mock(JpaRepository.class);
         FirstTestService givenService = new FirstTestService(givenRepository);
@@ -65,6 +75,19 @@ public final class PropertyUtilTest {
 
         @SuppressWarnings("unused")
         private final Object id;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    private static abstract class AbstractTestDto {
+        private final Object id;
+    }
+
+    private static final class ThirdTestDto extends AbstractTestDto {
+
+        public ThirdTestDto(Object id) {
+            super(id);
+        }
     }
 
     @RequiredArgsConstructor
