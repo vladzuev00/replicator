@@ -16,8 +16,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.getAnnotatedElements;
-import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.isContainRepository;
+import static by.aurorasoft.replicator.util.annotationprocessing.ExecutableElementUtil.isIdGetter;
+import static by.aurorasoft.replicator.util.annotationprocessing.TypeElementUtil.*;
 import static by.aurorasoft.replicator.util.annotationprocessing.TypeMirrorUtil.getErasuredTypeElement;
 import static by.aurorasoft.replicator.util.annotationprocessing.VariableElementUtil.isJpaRepositoryField;
 import static java.util.Collections.singletonList;
@@ -78,18 +78,18 @@ public final class TypeElementUtilTest {
             );
 
             List firstGivenEnclosedElements = singletonList(
-                    createField(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
+                    createVariableElement(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
             );
             when(givenElement.getEnclosedElements()).thenReturn(firstGivenEnclosedElements);
 
             List secondGivenEnclosedElements = List.of(
-                    createField(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil),
-                    createField(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
+                    createVariableElement(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil),
+                    createVariableElement(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
             );
             when(firstGivenSuperClass.getEnclosedElements()).thenReturn(secondGivenEnclosedElements);
 
             List thirdGivenEnclosedElements = List.of(
-                    createField(true, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
+                    createVariableElement(true, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
             );
             when(secondGivenSuperClass.getEnclosedElements()).thenReturn(thirdGivenEnclosedElements);
 
@@ -129,22 +129,128 @@ public final class TypeElementUtilTest {
             );
 
             List firstGivenEnclosedElements = singletonList(
-                    createField(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
+                    createVariableElement(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
             );
             when(givenElement.getEnclosedElements()).thenReturn(firstGivenEnclosedElements);
 
             List secondGivenEnclosedElements = List.of(
-                    createField(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil),
-                    createField(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
+                    createVariableElement(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil),
+                    createVariableElement(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
             );
             when(firstGivenSuperClass.getEnclosedElements()).thenReturn(secondGivenEnclosedElements);
 
             List thirdGivenEnclosedElements = List.of(
-                    createField(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
+                    createVariableElement(false, mockedVariableElementUtil, givenElementUtil, givenTypeUtil)
             );
             when(secondGivenSuperClass.getEnclosedElements()).thenReturn(thirdGivenEnclosedElements);
 
             assertFalse(isContainRepository(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void elementShouldContainIdGetter() {
+        try (var mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class);
+             var mockedExecutableElementUtil = mockStatic(ExecutableElementUtil.class)) {
+            TypeElement givenElement = mock(TypeElement.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenElement.getQualifiedName()).thenReturn(new NameImpl("TestClass"));
+
+            TypeElement firstGivenSuperClass = mockErasuredSuperClass(
+                    givenElement,
+                    "FirstSuperClass",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            TypeElement secondGivenSuperClass = mockErasuredSuperClass(
+                    firstGivenSuperClass,
+                    "SecondSuperClass",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            mockErasuredSuperClass(
+                    secondGivenSuperClass,
+                    "java.lang.Object",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+
+            List firstGivenEnclosedElements = singletonList(
+                    createExecutableElement(false, mockedExecutableElementUtil)
+            );
+            when(givenElement.getEnclosedElements()).thenReturn(firstGivenEnclosedElements);
+
+            List secondGivenEnclosedElements = List.of(
+                    createExecutableElement(false, mockedExecutableElementUtil),
+                    createExecutableElement(false, mockedExecutableElementUtil)
+            );
+            when(firstGivenSuperClass.getEnclosedElements()).thenReturn(secondGivenEnclosedElements);
+
+            List thirdGivenEnclosedElements = List.of(
+                    createExecutableElement(true, mockedExecutableElementUtil)
+            );
+            when(secondGivenSuperClass.getEnclosedElements()).thenReturn(thirdGivenEnclosedElements);
+
+            assertTrue(isContainIdGetter(givenElement, givenElementUtil, givenTypeUtil));
+        }
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void elementShouldNotContainIdGetter() {
+        try (var mockedTypeMirrorUtil = mockStatic(TypeMirrorUtil.class);
+             var mockedExecutableElementUtil = mockStatic(ExecutableElementUtil.class)) {
+            TypeElement givenElement = mock(TypeElement.class);
+            Elements givenElementUtil = mock(Elements.class);
+            Types givenTypeUtil = mock(Types.class);
+
+            when(givenElement.getQualifiedName()).thenReturn(new NameImpl("TestClass"));
+
+            TypeElement firstGivenSuperClass = mockErasuredSuperClass(
+                    givenElement,
+                    "FirstSuperClass",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            TypeElement secondGivenSuperClass = mockErasuredSuperClass(
+                    firstGivenSuperClass,
+                    "SecondSuperClass",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+            mockErasuredSuperClass(
+                    secondGivenSuperClass,
+                    "java.lang.Object",
+                    mockedTypeMirrorUtil,
+                    givenElementUtil,
+                    givenTypeUtil
+            );
+
+            List firstGivenEnclosedElements = singletonList(
+                    createExecutableElement(false, mockedExecutableElementUtil)
+            );
+            when(givenElement.getEnclosedElements()).thenReturn(firstGivenEnclosedElements);
+
+            List secondGivenEnclosedElements = List.of(
+                    createExecutableElement(false, mockedExecutableElementUtil),
+                    createExecutableElement(false, mockedExecutableElementUtil)
+            );
+            when(firstGivenSuperClass.getEnclosedElements()).thenReturn(secondGivenEnclosedElements);
+
+            List thirdGivenEnclosedElements = List.of(
+                    createExecutableElement(false, mockedExecutableElementUtil)
+            );
+            when(secondGivenSuperClass.getEnclosedElements()).thenReturn(thirdGivenEnclosedElements);
+
+            assertFalse(isContainIdGetter(givenElement, givenElementUtil, givenTypeUtil));
         }
     }
 
@@ -172,13 +278,20 @@ public final class TypeElementUtilTest {
         return erasuredSuperClass;
     }
 
-    private VariableElement createField(boolean jpaRepositoryField,
-                                        MockedStatic<VariableElementUtil> mockedVariableElementUtil,
-                                        Elements elementUtil,
-                                        Types typeUtil) {
+    private VariableElement createVariableElement(boolean jpaRepositoryField,
+                                                  MockedStatic<VariableElementUtil> mockedVariableElementUtil,
+                                                  Elements elementUtil,
+                                                  Types typeUtil) {
         VariableElement element = mock(VariableElement.class);
         mockedVariableElementUtil.when(() -> isJpaRepositoryField(same(element), same(elementUtil), same(typeUtil)))
                 .thenReturn(jpaRepositoryField);
+        return element;
+    }
+
+    private ExecutableElement createExecutableElement(boolean idGetter,
+                                                      MockedStatic<ExecutableElementUtil> mockedExecutableElementUtil) {
+        ExecutableElement element = mock(ExecutableElement.class);
+        mockedExecutableElementUtil.when(() -> isIdGetter(same(element))).thenReturn(idGetter);
         return element;
     }
 }
