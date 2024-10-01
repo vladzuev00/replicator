@@ -50,6 +50,7 @@ public final class ElementUtil {
                 .anyMatch(ExecutableElementUtil::isIdGetter);
     }
 
+    //TODO VariableElementUtil
     public static boolean isJpaRepositoryField(Element element, Elements elementUtil, Types typeUtil) {
         return element.getKind() == FIELD
                 && element.getSimpleName().contentEquals(JPA_REPOSITORY_FIELD_NAME)
@@ -60,6 +61,7 @@ public final class ElementUtil {
         return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) element.asType());
     }
 
+    //TODO: use TypeMirrorUtil::getTypeElement
     public static TypeElement getTypeElement(Element element, Elements elementUtil) {
         return elementUtil.getTypeElement(element.asType().toString());
     }

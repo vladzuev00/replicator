@@ -4,7 +4,9 @@ import lombok.experimental.UtilityClass;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.stream.Stream;
@@ -28,6 +30,16 @@ public final class TypeElementUtil {
     public static boolean isContainRepository(TypeElement element, Elements elementUtil, Types typeUtil) {
         return iterate(element, e -> !isObject(e), e -> getErasuredTypeElement(e.getSuperclass(), elementUtil, typeUtil))
                 .flatMap(e -> e.getEnclosedElements().stream())
+                .filter(e -> e instanceof VariableElement)
+                .map(e -> (VariableElement) e)
                 .anyMatch(e -> isJpaRepositoryField(e, elementUtil, typeUtil));
+    }
+
+    public static boolean isContainIdGetter(TypeElement element, Elements elementUtil, Types typeUtil) {
+        return iterate(element, e -> !isObject(e), e -> getErasuredTypeElement(e.getSuperclass(), elementUtil, typeUtil))
+                .flatMap(e -> e.getEnclosedElements().stream())
+                .filter(e -> e instanceof ExecutableElement)
+                .map(e -> (ExecutableElement) e)
+                .anyMatch(ExecutableElementUtil::isIdGetter);
     }
 }

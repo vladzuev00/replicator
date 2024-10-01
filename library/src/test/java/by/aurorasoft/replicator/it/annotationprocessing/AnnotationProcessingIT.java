@@ -123,6 +123,41 @@ public final class AnnotationProcessingIT {
                         """
                                 package by.aurorasoft.replicator;
                                                                 
+                                import by.aurorasoft.replicator.annotation.operation.ReplicatedSave;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;
+                                import by.aurorasoft.replicator.annotation.service.ReplicatedService.TopicConfig;
+                                import org.apache.kafka.common.serialization.LongSerializer;
+                                                                
+                                @ReplicatedService(
+                                        producerConfig = @ProducerConfig(idSerializer = LongSerializer.class),
+                                        topicConfig = @TopicConfig(name = "sync-dto")
+                                )
+                                public class TestService {
+                                                                
+                                    @ReplicatedSave
+                                    public TestDto save() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                                                
+                                abstract class AbstractTestDto {
+                                                                
+                                    public Long getId() {
+                                        throw new UnsupportedOperationException();
+                                    }
+                                }
+                                                                
+                                class TestDto extends AbstractTestDto {
+                                                                
+                                }
+                                """
+                ),
+                new SuccessCompileTestArgument(
+                        "by.aurorasoft.replicator.TestService",
+                        """
+                                package by.aurorasoft.replicator;
+                                                                
                                 import by.aurorasoft.replicator.annotation.operation.ReplicatedSaveAll;
                                 import by.aurorasoft.replicator.annotation.service.ReplicatedService;
                                 import by.aurorasoft.replicator.annotation.service.ReplicatedService.ProducerConfig;

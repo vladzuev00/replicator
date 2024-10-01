@@ -34,7 +34,7 @@ public final class ReplicatedDeleteProcessor extends ReplicatedMethodAnnotationP
 
     @Override
     protected boolean isValidParameters(List<? extends VariableElement> elements) {
-        return !elements.isEmpty() && isContainIdGetter(elements.get(0), getTypeUtil());
+        return !elements.isEmpty() && isContainIdGetter(elements.get(0), getElementUtil(), getTypeUtil());
     }
 
     @Override
