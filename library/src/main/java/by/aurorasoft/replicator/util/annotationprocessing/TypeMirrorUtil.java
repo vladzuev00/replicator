@@ -34,13 +34,13 @@ public final class TypeMirrorUtil {
         return isErasedSubtype(mirror, JPA_REPOSITORY_TYPE_NAME, elementUtil, typeUtil);
     }
 
-    //TODO: test
     public static boolean isContainIdGetter(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
         return !isVoid(mirror)
                 && !isPrimitive(mirror)
                 && TypeElementUtil.isContainIdGetter(getTypeElement(mirror, elementUtil), elementUtil, typeUtil);
     }
 
+    //TODO: test
     public static TypeElement getErasuredTypeElement(TypeMirror mirror, Elements elementUtil, Types typeUtil) {
         return elementUtil.getTypeElement(typeUtil.erasure(mirror).toString());
     }
