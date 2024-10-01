@@ -4,14 +4,13 @@ import by.aurorasoft.replicator.annotation.service.ReplicatedService;
 import lombok.experimental.UtilityClass;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import static javax.lang.model.element.ElementKind.*;
+import static javax.lang.model.element.ElementKind.CLASS;
+import static javax.lang.model.element.ElementKind.PACKAGE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 @UtilityClass
@@ -41,20 +40,7 @@ public final class ElementUtil {
         return TypeMirrorUtil.isJpaRepository(element.asType(), elementUtil, typeUtil);
     }
 
-    public static boolean isContainIdGetter(Element element) {
-        return element.getEnclosedElements()
-                .stream()
-                .filter(e -> e instanceof ExecutableElement)
-                .map(e -> (ExecutableElement) e)
-                .anyMatch(ExecutableElementUtil::isIdGetter);
-    }
-
     public static TypeMirror getFirstTypeArgument(Element element) {
         return DeclaredTypeUtil.getFirstTypeArgument((DeclaredType) element.asType());
-    }
-
-    //TODO: use TypeMirrorUtil::getTypeElement
-    public static TypeElement getTypeElement(Element element, Elements elementUtil) {
-        return elementUtil.getTypeElement(element.asType().toString());
     }
 }
