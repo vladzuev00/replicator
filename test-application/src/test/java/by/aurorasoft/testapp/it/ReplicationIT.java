@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static java.lang.Long.MAX_VALUE;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
@@ -279,7 +280,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     @Sql(
             statements = {
                     "DELETE FROM replicated_persons",
-                    "DELETE FROM replicated_addresses",
+                    "DELETE FROM replicated_addresses WHERE id NOT IN (262, 263)",
                     "DELETE FROM persons",
                     "DELETE FROM addresses WHERE id NOT IN (262, 263)",
             }
@@ -287,10 +288,7 @@ public final class ReplicationIT extends AbstractSpringBootTest {
     public void allAddressesShouldBeDeleted() {
         executeWaitingReplication(() -> addressService.deleteAll(), 2, 0, true);
 
-        assertFalse(addressService.isExist(262L));
-        assertFalse(addressService.isExist(263L));
-        assertFalse(replicatedAddressRepository.existsById(262L));
-        assertFalse(replicatedAddressRepository.existsById(263L));
+        verifyEntities(emptyList(), emptyList(), emptyList(), emptyList());
     }
 
     @Test

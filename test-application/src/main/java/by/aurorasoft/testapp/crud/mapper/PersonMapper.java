@@ -4,9 +4,10 @@ import by.aurorasoft.testapp.crud.dto.Address;
 import by.aurorasoft.testapp.crud.dto.Person;
 import by.aurorasoft.testapp.crud.entity.PersonEntity;
 import by.nhorushko.crudgeneric.v2.mapper.AbsMapperEntityDto;
-import jakarta.persistence.EntityManager;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.EntityManager;
 
 @Component
 public final class PersonMapper extends AbsMapperEntityDto<PersonEntity, Person> {

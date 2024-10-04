@@ -46,6 +46,6 @@ public class PersonService extends AbsServiceCRUD<Long, PersonEntity, Person, Pe
     @Override
     @ReplicatedDeleteById
     public void delete(Long id) {
-        repository.deleteById(id);
+        super.delete(id);
     }
 }

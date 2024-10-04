@@ -1,18 +1,18 @@
 package by.aurorasoft.testapp.crud.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static javax.persistence.FetchType.LAZY;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @ToString
-@jakarta.persistence.Entity
+@javax.persistence.Entity
 @Table(name = "replicated_persons")
 public class ReplicatedPersonEntity extends Entity {
 
